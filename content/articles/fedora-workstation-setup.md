@@ -1,7 +1,7 @@
 +++
 title = "Setting Up Fedora Workstation for Software Development"
 slug = "fedora-workstation-setup"
-date = "2022-05-07T22:06:00+01:00"
+date = "2022-05-07T19:36:00+01:00"
 description = "Setting up a Fedora Workstation for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
@@ -41,10 +41,6 @@ may decide to turn off _Location Services_ or _Usage & History_.
 [Flatpak](https://flatpak.org) is the new standard for desktop software packages. The Fedora project still provides RPM packages for many desktop applications, but Flatpak already offers newer versions of products, as well as software that is not available from Fedora RPM repositories, such as Slack.
 
 ## Setting Up for Development
-
-Every developer needs a text editor and a version control system. Fedora Workstation
-includes the [Git version control system](http://www.git-scm.com/), but you will want to
-install the text editor or IDE of your choice.
 
 ### Text Editors
 
@@ -88,8 +84,7 @@ make Neovim (_nvim_) the favored text editor:
 
 ### Configuring Git
 
-Always set your details for Git before you create or clone repositories on a new system. This
-requires two commands in a terminal window:
+Fedora Workstation includes the [Git version control system](http://www.git-scm.com/). Always set your details for Git before you create or clone repositories on a new system. This requires two commands in a terminal window:
 
     git config --global user.name "Your Name"
     git config --global user.email "you@your-domain.com"
@@ -142,15 +137,15 @@ To create an SSH key, run the _ssh-keygen_ command in a terminal window. For exa
 
 ### Default Languages: Python and C
 
-Fedora Workstation includes Python 3, along with the GCC compiler and other tools for C code. The GCC tools enable languages like Python and JavaScript to compile native extensions that are written in C code.
+Fedora Workstation includes Python 3, along with the GCC compiler and other tools for C code. Python, Node.js and other software use GCC to compile native extensions that are written in C code.
 
 ### Working with Python on Fedora
 
-To run Python, type _python3_:
+To run Python, type _python3_, rather than _python_:
 
     python3 --version
 
-By default, the _python_ command runs the built-in version of Python 3, but you should not rely on this behavior, because it can be changed.
+By default, the _python_ command also runs the built-in version of Python 3, but you should not use _python_, because this can be changed.
 
 Use [pipx](https://pypa.github.io/pipx/) to install Python applications, rather than _pip_ or _dnf_. To set up _pipx_, run these commands in a terminal window:
 
@@ -161,7 +156,7 @@ Use [pipx](https://pypa.github.io/pipx/) to install Python applications, rather 
 
 Fedora now includes the optional [modularity](https://docs.fedoraproject.org/en-US/modularity/) feature to provide sets of software packages that are updated independently of the operating system. Use modules to install packages for extra programming languages, such as Java and Go.
 
-Modules allow to you to switch the installed packages between different streams of releases, such as LTS and current. This feature will not enable you to have multiple versions of the same product on the same system at the same time. Use containers or tools such as [nvm](https://github.com/creationix/nvm) and [rustup](https://rustup.rs/) to run multiple versions of the same product at the same time.
+Modules allow you to switch the installed packages between different streams of releases, such as LTS and current. This feature will not enable you to have multiple versions of the same product on the same system at the same time. Use containers or tools such as [nvm](https://github.com/creationix/nvm) and [rustup](https://rustup.rs/) to run multiple versions of the same product at the same time.
 
 ## Containers and Virtual Machines
 
