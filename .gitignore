@@ -1,0 +1,10 @@
+.DS_Store
+thumbs.db
+
+# Hugo
+.hugo_build.lock
+public
+resources
+
+# Visual Studio Code
+.vscode
