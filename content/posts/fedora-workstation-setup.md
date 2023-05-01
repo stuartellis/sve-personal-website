@@ -10,7 +10,7 @@ tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
 
 <!--more-->
 
-# Installation
+## Installation
 
 ### Enable Disk Encryption
 
@@ -28,21 +28,21 @@ enter the setup menu for the UEFI firmware, or BIOS. Change the boot options so 
 computer only boots from the hard drive, and set both a user password for startup, and
 an administrator password to protect the firmware menus.
 
-# Do This First!
+## Do This First!
 
 Log in once, run the GNOME Software utility, and ensure that the operating system has
 the latest updates. After all of the updates have been applied, restart the computer.
 
-# User Settings
+## User Settings
 
 Select _Settings \> Privacy_, and review the settings. Depending upon your needs, you
 may decide to turn off _Location Services_ or _Usage & History_.
 
-# Installing Desktop Applications with Flatpak
+## Installing Desktop Applications with Flatpak
 
 [Flatpak](https://flatpak.org) is the new standard for desktop software packages. The Fedora project still provides RPM packages for many desktop applications, but Flatpak already offers newer versions of products, as well as software that is not available from Fedora RPM repositories, such as Slack.
 
-# Setting Up for Development
+## Setting Up for Development
 
 Every developer needs a text editor and a version control system. Fedora Workstation
 includes the [Git version control system](http://www.git-scm.com/), but you will want to
@@ -59,7 +59,7 @@ If you do not have a preferred editor, consider using a version of [Visual Studi
 Install code editors and IDEs with RPM packages, not Flatpak. Currently, Flatpak packages may prevent application plugins from working correctly.
 {{< /alert >}}
 
-### Visual Studio Code
+#### Visual Studio Code
 
 [Visual Studio Code](https://code.visualstudio.com) is a powerful desktop editor for programming, with built-in support for version control and debugging. The large range of extensions for Visual Studio Code enable it to work with every popular programming language and framework. It is available free of charge.
 
@@ -73,13 +73,13 @@ The RPM packages for Visual Studio Code and VSCodium require the library _libXss
 Extensions may fail if you use the [Visual Studio Code OSS](https://flathub.org/apps/details/com.visualstudio.code.oss) Flatpak.
 {{< /alert >}}
 
-### Neovim
+#### Neovim
 
 If you would like a modern Vim editor with a good default configuration, set up Neovim. To install Neovim, enter this command in a terminal window:
 
     sudo dnf install neovim
 
-### Setting The EDITOR Environment Variable
+#### Setting The EDITOR Environment Variable
 
 Whichever text editor you choose, remember to set the EDITOR environment variable in
 your _~/.bashrc_ file, so that this editor is automatically invoked by command-line
@@ -140,11 +140,11 @@ To create an SSH key, run the _ssh-keygen_ command in a terminal window. For exa
 
     ssh-keygen -t rsa -b 4096 -C "Me MyName (MyDevice) <me@mydomain.com>"
 
-# Support for Programming Languages
+## Support for Programming Languages
 
 ### Default Languages: Python and C
 
-Fedora Workstation includes Python 3. It also has the GCC compiler and toolchain, for working with C. The GCC tools enable languages like Python and JavaScript to compile native extensions that are written in C code.
+Fedora Workstation includes Python 3, along with the GCC compiler and other tools for C code. The GCC tools enable languages like Python and JavaScript to compile native extensions that are written in C code.
 
 ### Working with Python on Fedora
 
@@ -165,7 +165,7 @@ Fedora now includes the optional [modularity](https://docs.fedoraproject.org/en-
 
 Modules allow to you to switch the installed packages between different streams of releases, such as LTS and current. This feature will not enable you to have multiple versions of the same product on the same system at the same time. Use containers or tools such as [nvm](https://github.com/creationix/nvm) and [rustup](https://rustup.rs/) to run multiple versions of the same product at the same time.
 
-# Containers and Virtual Machines
+## Containers and Virtual Machines
 
 ### Using Podman for Containers
 
@@ -189,7 +189,7 @@ Use [pods](https://developers.redhat.com/blog/2019/01/15/podman-managing-contain
 
 Fedora Workstation installs [GNOME Boxes](https://wiki.gnome.org/Apps/Boxes) by default, to enable you to create and manage virtual machines. GNOME Boxes provides a graphical interface for the standard KVM and QEMU software. You can also use these directly on the command-line.
 
-# SQL Databases
+## SQL Databases
 
 Consider using containers to provide the database services for your Web applications.
 This will enable you to use different versions of the database servers for different
