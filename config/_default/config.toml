@@ -2,7 +2,7 @@
 # Refer to the theme docs for more details about each of these parameters.
 # https://jpanther.github.io/congo/docs/getting-started/
 
-# baseURL = "https://www.stuartellis.name/"
+baseURL = "https://www.stuartellis.name/"
 defaultContentLanguage = "en"
 
 enableRobotsTXT = true
@@ -11,3 +11,24 @@ summaryLength = 0
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]
+
+[deployment]
+
+[[deployment.targets]]
+name = "production"
+URL = "s3://www.stuartellis.name?region=eu-west-2"
+cloudFrontDistributionID = "E3FWVVWISZCBK9"
+
+[[deployment.matchers]]
+pattern = "^.+\\.(js|css|svg|ttf)$"
+cacheControl = "max-age=630720000, no-transform, public"
+gzip = true
+
+[[deployment.matchers]]
+pattern = "^.+\\.(png|jpg)$"
+cacheControl = "max-age=630720000, no-transform, public"
+gzip = false
+
+[[deployment.matchers]]
+pattern = "^.+\\.(html|xml|json)$"
+gzip = true
