@@ -11,7 +11,7 @@
 # ordered by weight from lowest to highest.
 
 [[main]]
-  name = "Blog"
+  name = "Articles"
   pageRef = "posts"
   weight = 10
 
@@ -19,11 +19,6 @@
   name = "Categories"
   pageRef = "categories"
   weight = 20
-
-[[main]]
-  name = "Tags"
-  pageRef = "tags"
-  weight = 30
 
 [[main]]
   identifier = "search"
