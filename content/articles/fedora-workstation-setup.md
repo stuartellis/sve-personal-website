@@ -8,8 +8,6 @@ tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
 
 +++
 
-<!--more-->
-
 ## Installation
 
 ### Enable Disk Encryption
