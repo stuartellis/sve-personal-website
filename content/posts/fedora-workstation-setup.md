@@ -1,16 +1,12 @@
 +++
-Title = "Setting Up Fedora Workstation for Software Development"
-Slug = "fedora-workstation-setup"
-Date = "2022-05-07T22:06:00+01:00"
-Description = "Setting up a Fedora Workstation for development and systems administration"
-Categories = ["devops", "programming"]
-Tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
+title = "Setting Up Fedora Workstation for Software Development"
+slug = "fedora-workstation-setup"
+date = "2022-05-07T22:06:00+01:00"
+description = "Setting up a Fedora Workstation for development and systems administration"
+categories = ["devops", "programming"]
+tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
 
 +++
-
-How to set up an installation of the
-[Fedora Workstation](https://getfedora.org/) Linux distribution on your PC, specifically
-for systems administration and Web development.
 
 <!--more-->
 
@@ -46,8 +42,6 @@ may decide to turn off _Location Services_ or _Usage & History_.
 
 [Flatpak](https://flatpak.org) is the new standard for desktop software packages. The Fedora project still provides RPM packages for many desktop applications, but Flatpak already offers newer versions of products, as well as software that is not available from Fedora RPM repositories, such as Slack.
 
-> Install code editors and IDEs with RPM packages, not Flatpak. Currently, Flatpak packages may prevent application plugins from working correctly.
-
 # Setting Up for Development
 
 Every developer needs a text editor and a version control system. Fedora Workstation
@@ -61,7 +55,9 @@ desktop text editor with basic support for programming. Add the code editors or 
 
 If you do not have a preferred editor, consider using a version of [Visual Studio Code](https://code.visualstudio.com). To work with a modern Vim editor, install [Neovim](https://neovim.io).
 
-> Install code editors and IDEs with RPM packages, not Flatpak. Currently, Flatpak packages may prevent application plugins from working correctly.
+{{< alert >}}
+Install code editors and IDEs with RPM packages, not Flatpak. Currently, Flatpak packages may prevent application plugins from working correctly.
+{{< /alert >}}
 
 ### Visual Studio Code
 
@@ -73,7 +69,9 @@ The RPM packages for Visual Studio Code and VSCodium require the library _libXss
 
     sudo dnf install libXScrnSaver
 
-> Extensions may fail if you use the [Visual Studio Code OSS](https://flathub.org/apps/details/com.visualstudio.code.oss) Flatpak.
+{{< alert >}}
+Extensions may fail if you use the [Visual Studio Code OSS](https://flathub.org/apps/details/com.visualstudio.code.oss) Flatpak.
+{{< /alert >}}
 
 ### Neovim
 
@@ -183,7 +181,9 @@ This will redirect any call to Docker, so that it uses Podman instead.
 
 The [Usage Transfer](https://github.com/containers/libpod/blob/master/transfer.md) page lists Docker commands, and the equivalents for Podman. [This article](https://developers.redhat.com/blog/2019/02/21/podman-and-buildah-for-docker-users/) explains the relationship between Podman, Buildah and Docker in more detail.
 
-> Use [pods](https://developers.redhat.com/blog/2019/01/15/podman-managing-containers-pods/) to run groups of containers. This feature of Podman replaces _docker\-compose_.
+{{< alert >}}
+Use [pods](https://developers.redhat.com/blog/2019/01/15/podman-managing-containers-pods/) to run groups of containers. This feature of Podman replaces _docker\-compose_.
+{{< /alert >}}
 
 ### Working with Virtual Machines
 
