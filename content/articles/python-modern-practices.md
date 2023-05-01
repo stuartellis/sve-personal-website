@@ -1,7 +1,7 @@
 +++
 Title = "Modern Good Practices for Python Development"
 Slug = "python-modern-practices"
-Date = "2023-05-01T18:03:00+01:00"
+Date = "2023-05-01T19:35:00+01:00"
 Description = "Good development practices for modern Python"
 Categories = ["programming", "python"]
 Tags = ["python"]
@@ -133,7 +133,7 @@ Use [TOML](https://toml.io/) for data files that must be written or edited by hu
 
 Python 3.11 and above include _tomllib_ to read the TOML format. Use [tomli](https://pypi.org/project/tomli/) to add support for reading TOML to applications that run on older versions of Python.
 
-If you Python software needs to generate TOML, add [Tomli-W](https://pypi.org/project/tomli-w/).
+If your Python software needs to generate TOML, add [Tomli-W](https://pypi.org/project/tomli-w/).
 
 > [PEP 680 - tomllib: Support for Parsing TOML in the Standard Library](https://peps.python.org/pep-0680/) explains why TOML is now included with Python.
 
