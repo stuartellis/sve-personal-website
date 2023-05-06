@@ -1,10 +1,10 @@
 +++
-Title = "Modern Good Practices for Python Development"
-Slug = "python-modern-practices"
-Date = "2023-05-01T19:35:00+01:00"
-Description = "Good development practices for modern Python"
-Categories = ["programming", "python"]
-Tags = ["python"]
+title = "Modern Good Practices for Python Development"
+slug = "python-modern-practices"
+date = "2023-05-06T10:24:00+01:00"
+description = "Good development practices for modern Python"
+categories = ["programming", "python"]
+tags = ["python"]
 
 +++
 
@@ -53,7 +53,21 @@ If possible, use [Black](https://black.readthedocs.io/en/stable/) to format your
 
 You can also run the formatter with your CI system, to reject code that does not match the format for your project.
 
+### Test with pytest
+
+Use [pytest](http://pytest.org) for testing. It has superseded _nose_ as the most popular testing system for Python. Use the _unittest_ module in the standard library for situations where you cannot add _pytest_ to the project.
+
 ## Language Syntax
+
+### Use Type Hinting
+
+Current versions of Python support type hinting. Consider using type hints in any critical application. If you develop a shared library, use type hints.
+
+Once you add type hints, [Mypy](http://www.mypy-lang.org/) tool can check your code as you develop it. Code editors can also read type hints to display information about the code that you are working with.
+
+If you add [Pydantic](https://docs.pydantic.dev/) to your software, it uses type hints in your software to validate data as an application runs.
+
+> [PEP 484 - Type Hints](https://peps.python.org/pep-0484/) and [PEP 526 – Syntax for Variable Annotations](https://peps.python.org/pep-0526/) define the notation for type hinting.
 
 ### Format Strings with f-strings
 
@@ -87,11 +101,15 @@ Python 3.9 and above include the **zoneinfo** module. This provides access to th
 
 ### Use enum or Named Tuples for Immutable Sets of Key-Value Pairs
 
-Use the _enum_ type in Python 3.4 or above for immutable collections of key-value pairs. Python 3 also has _collections.namedtuple()_ for immutable key-value pairs.
+Use the _enum_ type in Python 3.4 or above for immutable collections of key-value pairs. Enums can use class inheritance.
+
+Python 3 also has _collections.namedtuple()_ for immutable key-value pairs. Named tuples do not use classes.
 
 ### Create Data Classes for Custom Data Objects
 
 The data classes feature enables you to reduce the amount of code that you need to define classes for objects that exist to store values. The new syntax for data classes does not affect the behavior of the classes that you define with it. Each data class is a standard Python class.
+
+You can set a *frozen* option to make [frozen instances](https://docs.python.org/3/library/dataclasses.html#frozen-instances) of a data class.
 
 Data classes were introduced in version 3.7 of Python.
 
@@ -110,16 +128,6 @@ This function drops you into the debugger at the point where it is called. Both 
 The [breakpoint()](https://docs.python.org/3/library/functions.html#breakpoint) feature was added in version 3.7 of Python.
 
 > [PEP 553](https://www.python.org/dev/peps/pep-0553/) describes the _breakpoint()_ function.
-
-### Use Type Hinting
-
-Current versions of Python support type hinting. Consider using type hints in any critical application. If you develop a shared library, use type hints.
-
-Once you add type hints, [Mypy](http://www.mypy-lang.org/) tool can check your code as you develop it. Code editors can also read type hints to display information about the code that you are working with.
-
-If you add [Pydantic](https://docs.pydantic.dev/) to your software, it uses type hints in your software to validate data as an application runs.
-
-> [PEP 484 - Type Hints](https://peps.python.org/pep-0484/) and [PEP 526 – Syntax for Variable Annotations](https://peps.python.org/pep-0526/) define the notation for type hinting.
 
 ## Application Design
 
@@ -206,7 +214,3 @@ The [subprocess](https://docs.python.org/3/library/subprocess.html) module provi
 ### Use Requests for Web Clients
 
 Use [requests](https://requests.readthedocs.io/en/latest/) for Web client applications, rather than _urllib.request_ from the Python standard library.
-
-### Test with pytest
-
-Use [pytest](http://pytest.org) for testing. It has superseded _nose_ as the most popular testing system for Python. Use the _unittest_ module in the standard library for situations where you cannot add _pytest_ to the project.
