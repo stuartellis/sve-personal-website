@@ -1,12 +1,14 @@
 +++
 title = "Setting Up Fedora Workstation for Software Development"
 slug = "fedora-workstation-setup"
-date = "2022-05-07T19:36:00+01:00"
+date = "2023-05-06T10:20:00+01:00"
 description = "Setting up a Fedora Workstation for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
 
 +++
+
+A guide to setting up Fedora Workstation for DevOps and software development. This is current for Fedora 38.
 
 ## Installation
 
