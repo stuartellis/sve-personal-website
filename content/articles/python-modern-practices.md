@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2023-05-06T10:24:00+01:00"
+date = "2023-07-29T11:24:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -30,9 +30,9 @@ The Python Packaging Authority maintain *pipx*, but it is not included with Pyth
 
 ### Use Virtual Environments for Development
 
-The [virtual environments](https://docs.python.org/3/tutorial/venv.html) feature enables you to define separate sets of packages for each Python project, so that the packages for a project do not conflict with any other Python packages on the system. Always use Python virtual environments for your projects. 
+The [virtual environments](https://docs.python.org/3/tutorial/venv.html) feature enables you to define separate sets of packages for each Python project, so that the packages for a project do not conflict with any other Python packages on the system. Always use Python virtual environments for your projects.
 
-If you use a tool like [Hatch](https://hatch.pypa.io) or 
+If you use a tool like [Hatch](https://hatch.pypa.io) or
 [Poetry](https://python-poetry.org/) to develop your projects it will manage Python virtual environments for you.
 
 If you prefer, you can also manually set up and manage virtual environments with _venv_, which is part of the Python standard library.
@@ -211,6 +211,8 @@ The [subprocess](https://docs.python.org/3/library/subprocess.html) module provi
 
 > [PEP 324](https://www.python.org/dev/peps/pep-0324/) explains the technical details of subprocess in detail.
 
-### Use Requests for Web Clients
+### Use httpx for Web Clients
 
-Use [requests](https://requests.readthedocs.io/en/latest/) for Web client applications, rather than _urllib.request_ from the Python standard library.
+Use [httpx](https://www.python-httpx.org/) for Web client applications. It [supports HTTP/2](https://www.python-httpx.org/http2/), and [async](https://www.python-httpx.org/async/). The httpx package supersedes [requests](https://requests.readthedocs.io/en/latest/), which only supports HTTP 1.1.
+
+Avoid using _urllib.request_ from the Python standard library. It was designed as a low-level library, and lacks the features of httpx.
