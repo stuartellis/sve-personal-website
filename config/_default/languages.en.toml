@@ -1,20 +1,20 @@
 languageCode = "en"
 languageName = "English"
-displayName = "EN"
-isoCode = "en"
 weight = 1
-rtl = false
 
 title = "Field Notes"
 # description = "My awesome website"
-copyright = ":copyright: Stuart Ellis, 2023"
-
-dateFormat = "2 January 2006"
+copyright = ":copyright: Stuart Ellis, 2024"
 
 [params]
-  # mainSections = ["section1", "section2"]
+displayName = "EN"
+isoCode = "en"
+rtl = false
+dateFormat = "2 January 2006"
 
-[author]
+# mainSections = ["section1", "section2"]
+
+[params.author]
   name = "Stuart Ellis"
   # image = "img/author.jpg"
   # headline = "I'm only human"
