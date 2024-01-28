@@ -1,14 +1,14 @@
 +++
 title = "Setting Up Fedora Workstation for Software Development"
 slug = "fedora-workstation-setup"
-date = "2023-05-06T10:20:00+01:00"
+date = "2024-01-28T17:50:00+00:00"
 description = "Setting up a Fedora Workstation for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
 
 +++
 
-A guide to setting up Fedora Workstation for DevOps and software development. This is current for Fedora 38.
+A guide to setting up Fedora Workstation for DevOps and software development. This is current for Fedora 39.
 
 ## Installation
 
@@ -28,7 +28,7 @@ enter the setup menu for the UEFI firmware, or BIOS. Change the boot options so 
 computer only boots from the hard drive, and set both a user password for startup, and
 an administrator password to protect the firmware menus.
 
-## Do This First!
+## Do This First
 
 Log in once, run the GNOME Software utility, and ensure that the operating system has
 the latest updates. After all of the updates have been applied, restart the computer.
@@ -60,10 +60,6 @@ Install code editors and IDEs with RPM packages, not Flatpak. Currently, Flatpak
 [Visual Studio Code](https://code.visualstudio.com) is a powerful desktop editor for programming, with built-in support for version control and debugging. The large range of extensions for Visual Studio Code enable it to work with every popular programming language and framework. It is available free of charge.
 
 The Microsoft releases of Visual Studio Code are proprietary software with telemetry enabled by default, and download extensions from a proprietary Microsoft app store. if you have issues or concerns about the Microsoft releases, use the RPM packages that are provided by the [vscodium](https://vscodium.com) project.
-
-The RPM packages for Visual Studio Code and VSCodium require the library _libXss_, which is provided by the _libXScrnSaver_ package. Install this package before you install Visual Studio Code:
-
-    sudo dnf install libXScrnSaver
 
 {{< alert >}}
 Extensions may fail if you use the [Visual Studio Code OSS](https://flathub.org/apps/details/com.visualstudio.code.oss) Flatpak.
@@ -100,31 +96,24 @@ To enable colors in the output, which can be very helpful, enter this command:
 
 ### Setting Up A Directory Structure for Projects
 
-To keep your projects tidy, I would recommend following the
-[Go developer conventions](http://golang.org/doc/code.html). These guidelines may seem
+To keep your projects tidy, I would recommend following these guidelines. They may seem
 slightly fussy, but they pay off when you have many projects, some of which are on
 different version control hosts.
 
-First create a top-level directory with a short, generic name like _code_. By default Go
-uses a directory called _go_, but you can change that when you set up a Go installation.
+First, create a top-level directory with a short, generic name like _repos_. For each repository host, create a subdirectory that matches your username. Check out projects in the directory.
 
-Once you set the top-level directory as the environment variable GOPATH, Go will compile
-to the _bin_, _doc_ and _pkg_ subdirectories. You can add the _bin_ directory to your
-PATH to be able to run the compiled programs by typing their names. You may or may not
-choose to use these directories with other programming environments.
-
-In this directory, create an _src_ sub-directory. For each repository host, create a
-subdirectory in _src_ that matches your username. Check out projects in the directory.
 The final directory structure looks like this:
 
-    code/
-      src/
-        bitbucket.org/
-          my-bitbucket-username/
+```
+    repos/
+      gitlab.com/
+        my-gitlab-username/
             a-project/
-        gitlab.com/
-          my-gitlab-username/
             another-project/
+      sr.ht/
+        my-sourcehut-username/
+            a-project/
+```
 
 ### Creating SSH Keys
 
@@ -133,38 +122,35 @@ includes the standard OpenSSH suite of tools.
 
 To create an SSH key, run the _ssh-keygen_ command in a terminal window. For example:
 
-    ssh-keygen -t rsa -b 4096 -C "Me MyName (MyDevice) <me@mydomain.com>"
+    ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
 
-## Support for Programming Languages
+## Working with Programming Languages
 
-### Default Languages: Python and C
+Avoid using Fedora packages for programming languages on development systems.  Use containers or tools for managing installations of programming languages, so that you can install the correct versions and dependencies for each of your projects.
 
-Fedora Workstation includes Python 3, along with the GCC compiler and other tools for C code. Python, Node.js and other software use GCC to compile native extensions that are written in C code.
+Fedora Workstation automatically includes support for containers, with [Podman](https://podman.io/) as the equivalent of Docker, along with [toolbx](https://containertoolbx.org/) to help you manage container environments for developing your projects.
 
-### Working with Python on Fedora
+### Using Version Managers
 
-To run Python, type _python3_, rather than _python_:
+You may use any version manager on Fedora Workstation, such as [pyenv](https://github.com/pyenv/pyenv) for Python, [nvm](https://github.com/creationix/nvm) for Node.js and [rustup](https://rustup.rs/) for Rust.
 
-    python3 --version
+To install a version manager, use the process that the documentation for the product recommends.
 
-By default, the _python_ command also runs the built-in version of Python 3, but you should not use _python_, because this can be changed.
+Fedora Workstation automatically includes the GCC compiler and other tools for C code. Python, Node.js and other software use GCC to compile native extensions that are written in C code.
 
-Use [pipx](https://pypa.github.io/pipx/) to install Python applications, rather than _pip_ or _dnf_. To set up _pipx_, run these commands in a terminal window:
+### The System Python Installation
 
-    sudo dnf install pipx
-    pipx ensurepath
+Fedora includes an installation of Python 3, which is used by system tools. Avoid using this system installation yourself. Instead, manage your own installations of Python with containers or version managers, as explained in the previous section.
 
-### Using Modules to Add Extra Languages
+## Working with Containers
 
-Fedora now includes the optional [modularity](https://docs.fedoraproject.org/en-US/modularity/) feature to provide sets of software packages that are updated independently of the operating system. Use modules to install packages for extra programming languages, such as Java and Go.
+Fedora Workstation automatically includes support for containers. [Podman](https://podman.io/) provides the features of Docker, and [toolbx](https://containertoolbx.org/) helps you manage container environments for developing your projects.
 
-Modules allow you to switch the installed packages between different streams of releases, such as LTS and current. This feature will not enable you to have multiple versions of the same product on the same system at the same time. Use containers or tools such as [nvm](https://github.com/creationix/nvm) and [rustup](https://rustup.rs/) to run multiple versions of the same product at the same time.
+To use a graphical interface for working with containers, add [Podman Desktop](https://podman-desktop.io) to your system. To install Podman Desktop, go to _Software_, search for _Podman Desktop_, select the entry from the list, and choose _Install_.
 
-## Containers and Virtual Machines
+### Podman
 
-### Using Podman for Containers
-
-Fedora includes [Podman](https://podman.io/) to work with containers. Podman is a command-line tool that is designed to be more robust and secure than [Docker](https://www.docker.com/). Unlike Docker, Podman does not run a background service, or require root privileges.
+Podman replaces [Docker](https://www.docker.com/), and also has additional features to integrate better with both the Linux operating system and Kubernetes. For example, [you can run Podman containers as standard system services](https://www.redhat.com/sysadmin/quadlet-podman).
 
 Podman accepts the same syntax as the _docker_ command-line tool, and will read Dockerfiles. Both Docker and Podman use the OCI image format, so that images created either product will work with the other. By default, Podman will check the Docker public registry for container images, as well as [Quay](https://quay.io/) registries.
 
@@ -180,7 +166,15 @@ The [Usage Transfer](https://github.com/containers/libpod/blob/master/transfer.m
 Use [pods](https://developers.redhat.com/blog/2019/01/15/podman-managing-containers-pods/) to run groups of containers. This feature of Podman replaces _docker\-compose_.
 {{< /alert >}}
 
-### Working with Virtual Machines
+If you need to run existing Docker Compose configurations, install _podman-compose_:
+
+    sudo dnf install podman-compose
+
+The _podman compose_ subcommand uses _podman-compose_ to substitute for Docker Compose.
+
+This enables you to convert Docker Compose configurations into Podman pod definitions at a later time. Use pod definitions to benefit from the features of Podman, such as systemd integration and the facility to generate Kubernetes configurations from pod definitions.
+
+## Working with Virtual Machines
 
 Fedora Workstation installs [GNOME Boxes](https://wiki.gnome.org/Apps/Boxes) by default, to enable you to create and manage virtual machines. GNOME Boxes provides a graphical interface for the standard KVM and QEMU software. You can also use these directly on the command-line.
 
