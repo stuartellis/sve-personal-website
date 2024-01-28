@@ -1,0 +1,27 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/go
+{
+	"name": "sje-personal-website-hugo",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/go:1-1.21-bookworm",
+	"features": {
+		"ghcr.io/devcontainers/features/aws-cli:1": {
+			"version": "latest"
+		}
+	},
+    "customizations": {
+        "vscode": {
+            "extensions": [
+				"davidanson.vscode-markdownlint",
+			    "editorconfig.editorconfig"
+            ]
+        }
+    },
+	// Required for Podman
+	"containerUser": "vscode",
+	"runArgs": [
+		"--userns=keep-id"
+	]
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+}
