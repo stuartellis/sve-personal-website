@@ -1,7 +1,7 @@
 +++
 title = "Setting Up Fedora Workstation for Software Development"
 slug = "fedora-workstation-setup"
-date = "2024-01-28T17:50:00+00:00"
+date = "2024-01-28T19:33:00+00:00"
 description = "Setting up a Fedora Workstation for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
@@ -134,9 +134,9 @@ Fedora Workstation automatically includes support for containers, with [Podman](
 
 You may use any version manager on Fedora Workstation, such as [pyenv](https://github.com/pyenv/pyenv) for Python, [nvm](https://github.com/creationix/nvm) for Node.js and [rustup](https://rustup.rs/) for Rust.
 
-To install a version manager, use the process that the documentation for the product recommends.
+Fedora Workstation includes the GCC compiler and other tools for compiling C code. Installations of Python, Node.js and other languages use GCC to compile components that are written in C.
 
-Fedora Workstation automatically includes the GCC compiler and other tools for C code. Python, Node.js and other software use GCC to compile native extensions that are written in C code.
+To install a version manager, use the process that the documentation for the product recommends.
 
 ### The System Python Installation
 
@@ -172,7 +172,7 @@ If you need to run existing Docker Compose configurations, install _podman-compo
 
 The _podman compose_ subcommand uses _podman-compose_ to substitute for Docker Compose.
 
-This enables you to convert Docker Compose configurations into Podman pod definitions at a later time. Use pod definitions to benefit from the features of Podman, such as systemd integration and the facility to generate Kubernetes configurations from pod definitions.
+This enables you to convert Docker Compose configurations into Podman pod definitions at a later time. Use pods to benefit from the features of Podman, such as systemd integration and the facility to generate Kubernetes configurations from pod definitions.
 
 ## Working with Virtual Machines
 
