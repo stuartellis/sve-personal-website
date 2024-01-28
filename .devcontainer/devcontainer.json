@@ -21,9 +21,13 @@
             ]
         }
     },
-    // Required for Podman
+    // Podman requires a containerUser and the --userns option
     "containerUser": "vscode",
     "runArgs": [
-        "--userns=keep-id"
+        "--userns=keep-id",
+        "--env-file",".devcontainer/devcontainer.env"
+    ],
+    "mounts": [
+        "source=${env:HOME}/.aws,target=/home/vscode/.aws,type=bind"
     ]
 }
