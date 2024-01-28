@@ -1,16 +1,16 @@
 +++
 title = "How to Set up an Apple Mac for Software Development"
 slug = "mac-setup"
-date = "2023-05-01T16:21:00+01:00"
+date = "2024-01-28T15:01:00+00:00"
 description = "Setting up an Apple Mac for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "macos", "golang", "java", "javascript", "python", "ruby"]
 
 +++
 
-A guide to setting up an Apple Mac for DevOps and software development. This is current for macOS 12 (Monteray). 
+A guide to setting up an Apple Mac for DevOps and software development. This is current for macOS 12 (Monteray).
 
-## Do This First!
+## Do This First
 
 Log in once, run Software Update, and ensure that the operating system is at the latest
 point release. After all of the updates have been applied, restart the computer.
@@ -222,7 +222,7 @@ OpenSSH stores your SSH keys in a _.ssh_ directory. To create this directory, ru
 
 To create an SSH key, run the _ssh-keygen_ command in a terminal window. For example:
 
-    ssh-keygen -t rsa -b 4096 -C "Me MyName (MyDevice) <me@mydomain.com>"
+    ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
 
 ## Programming Languages
 
@@ -337,7 +337,7 @@ Current versions of macOS include a copy of Python 3, but this will not be the l
 To install pyenv with Homebrew, run this command in a terminal window:
 
     brew install pyenv
-    
+
 Use [pipx](https://pypa.github.io/pipx/) to install Python applications, rather than _pip_ or Homebrew. To set up _pipx_, run these commands in a terminal window:
 
     brew install pipx
