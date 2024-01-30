@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2023-07-29T11:24:00+01:00"
+date = "2024-01-30T07:38:00+00:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -10,7 +10,7 @@ tags = ["python"]
 
 [Python](https://www.python.org/) has a long history, and it has evolved over time. This article describes some agreed modern best practices.
 
-## Tooling
+## Using Python
 
 ### Use The Most Recent Version of Python That You Can
 
@@ -22,11 +22,13 @@ Avoid using Python 2. It is not supported by the Python development team. The cu
 
 ### Use pipx To Install Python Applications
 
-Always use [pipx](https://github.com/pypa/pipx) to install Python applications, rather than _pip_. This ensures that each application has the correct libraries. Unlike *pip*, *pipx* automatically installs the libraries for each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
+Always use [pipx](https://github.com/pypa/pipx) to install Python applications, rather than _pip_. This ensures that each application has the correct libraries. Unlike _pip_, _pipx_ automatically installs the libraries for each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
 
-The Python Packaging Authority maintain *pipx*, but it is not included with Python. You can install *pipx* with Homebrew on macOS, or with your system package manager on Linux.
+The Python Packaging Authority maintain _pipx_, but it is not included with Python. You can install _pipx_ with Homebrew on macOS, or with your system package manager on Linux.
 
 > [PEP 668 - Marking Python base environments as “externally managed”](https://peps.python.org/pep-0668/#guide-users-towards-virtual-environments) recommends that users install Python applications with pipx.
+
+## Developing Python Projects
 
 ### Use Virtual Environments for Development
 
@@ -37,21 +39,36 @@ If you use a tool like [Hatch](https://hatch.pypa.io) or
 
 If you prefer, you can also manually set up and manage virtual environments with _venv_, which is part of the Python standard library.
 
-### Use a Code Linter
+### Use Package Lists with Hashes
 
-Use a code linting tool with a plugin to your editor, so that your code is automatically checked for issues.
+Avoid installing individual packages with _pip_. Use a tool to create package lists with hashes for each package, and then run the appropriate tool to install and update the packages in a virtual environment.
 
-[flake8](https://flake8.pycqa.org/en/latest/) is currently the most popular linter for Python, but it is being superseded by [Ruff](https://beta.ruff.rs/docs/).
+Current Python standards specify that lists of required packages for a  project are stored in the  _pyproject.toml_ file. Hashes must be handled separately. Many tools and projects use _requirements.txt_ files to list the packages to be installed into an environment. The _requirements.txt_ file format supports hashes.
 
-You can also run the linter with your CI system, to reject code that does not meet the standards for your project.
+To work with _requirements.txt_ files, use the utilities that are provided by [pip-tools](https://github.com/jazzband/pip-tools/). The _pip-compile_ utility generates _requirements.txt_ files with hashes, and the _pip-sync_ utility ensures that the packages in a virtual environment match the list in the  _requirements.txt_ file.
+
+You may use _pip_ with _requirements.txt_ files that include hashes. For example, these commands installs the packages specified by the file _requirements-dev.txt_ into the virtual environment _.venv_:
+
+```shell
+source ./.venv/bin/activate
+python3 -m pip install -r requirements-dev.txt 
+```
 
 ### Format Your Code
 
 Use a formatting tool with a plugin to your editor, so that your code is automatically formatted to a consistent style.
 
-If possible, use [Black](https://black.readthedocs.io/en/stable/) to format your code. Black is now the leading code formatter for Python. Black has been adopted by the Python Software Foundation and other major Python projects. It formats Python code to a style that follows the [PEP 8](https://www.python.org/dev/peps/pep-0008/) standard, but allows longer line lengths.
+[Black](https://black.readthedocs.io/en/stable/) is currently the most popular code formatting tool for Python, but it is being superseded by [Ruff](https://docs.astral.sh/ruff/).
 
-You can also run the formatter with your CI system, to reject code that does not match the format for your project.
+Run the same formatter with your CI system in check mode, to cause the CI pipeline to fail if code does not match the format for your project.
+
+### Use a Code Linter
+
+Use a code linting tool with a plugin to your editor, so that your code is automatically checked for issues.
+
+[flake8](https://flake8.pycqa.org/en/latest/) is currently the most popular linter for Python, but it is being superseded by [Ruff](https://docs.astral.sh/ruff/).
+
+Run the linter with your CI system, to reject code that does not meet the standards for your project.
 
 ### Test with pytest
 
@@ -109,7 +126,7 @@ Python 3 also has _collections.namedtuple()_ for immutable key-value pairs. Name
 
 The data classes feature enables you to reduce the amount of code that you need to define classes for objects that exist to store values. The new syntax for data classes does not affect the behavior of the classes that you define with it. Each data class is a standard Python class.
 
-You can set a *frozen* option to make [frozen instances](https://docs.python.org/3/library/dataclasses.html#frozen-instances) of a data class.
+You can set a _frozen_ option to make [frozen instances](https://docs.python.org/3/library/dataclasses.html#frozen-instances) of a data class.
 
 Data classes were introduced in version 3.7 of Python.
 
@@ -151,7 +168,7 @@ The [asynchronous features of Python](https://docs.python.org/3/library/asyncio.
 
 To run multiple application processes, either use an application server like [Gunicorn](https://gunicorn.org/) or use a container system, with one container per process. If you need to build a custom application that manages muliple processes, use the [multiprocessing](https://docs.python.org/3/library/multiprocessing.html) package in the Python standard library.
 
-Code that uses asynchronous I/O must not call *any* function that uses synchronous I/O, such as _open()_, or the _logging_ module in the standard library. Instead, you need to use either the equivalent functions from _asyncio_ in the standard library or a third-party library that is designed to support asynchronous code.
+Code that uses asynchronous I/O must not call _any_ function that uses synchronous I/O, such as _open()_, or the _logging_ module in the standard library. Instead, you need to use either the equivalent functions from _asyncio_ in the standard library or a third-party library that is designed to support asynchronous code.
 
 The [FastAPI](https://fastapi.tiangolo.com/) Web framework supports [using both synchronous and asynchronous functions in the same application](https://fastapi.tiangolo.com/async/). You must still ensure that asynchronous functions never call any synchronous function.
 
