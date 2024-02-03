@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-02-03T13:12:00+00:00"
+date = "2024-02-03T14:02:00+00:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -56,13 +56,13 @@ If you prefer, you can also manually set up and manage virtual environments with
 
 ### Use Package Lists with Hashes
 
-Avoid installing individual packages with _pip_. Use a tool to create package lists with hashes for each package, and then run the appropriate tool to install and update the packages in a virtual environment.
+Avoid installing individual packages with _pip_. Use a tool to create package lists with hashes for each package, and then run _pip_ or another tool to install and update the packages in a virtual environment.
 
-Current Python standards specify that lists of required packages for a  project are stored in the  _pyproject.toml_ file. Hashes must be handled separately. Many tools and projects use _requirements.txt_ files to list the packages to be installed into an environment. The _requirements.txt_ file format supports hashes.
+_pip_ and other tools use _requirements.txt_ files to list the packages to be installed into an environment. The _requirements.txt_ file format supports hashes.
 
-To work with _requirements.txt_ files, use the utilities that are provided by [pip-tools](https://github.com/jazzband/pip-tools/). The _pip-compile_ utility generates _requirements.txt_ files with hashes, and the _pip-sync_ utility ensures that the packages in a virtual environment match the list in the  _requirements.txt_ file.
+To work with _requirements.txt_ files, use the [pip-tools](https://github.com/jazzband/pip-tools/). The _pip-compile_ utility generates _requirements.txt_ files with hashes from _requirements.in_ files, and the _pip-sync_ utility ensures that the packages in a virtual environment match the list in the _requirements.txt_ file.
 
-You may use _pip_ with _requirements.txt_ files that include hashes. For example, these commands installs the packages specified by the file _requirements-dev.txt_ into the virtual environment _.venv_:
+If you need to install packages without using _pip-sync_, run _pip install_ with a _requirements.txt_ file. For example, these commands installs the packages specified by the file _requirements-dev.txt_ into the virtual environment _.venv_:
 
 ```shell
 source ./.venv/bin/activate
