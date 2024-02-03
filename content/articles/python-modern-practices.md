@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-01-30T07:38:00+00:00"
+date = "2024-02-03T13:12:00+00:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -29,6 +29,21 @@ The Python Packaging Authority maintain _pipx_, but it is not included with Pyth
 > [PEP 668 - Marking Python base environments as “externally managed”](https://peps.python.org/pep-0668/#guide-users-towards-virtual-environments) recommends that users install Python applications with pipx.
 
 ## Developing Python Projects
+
+### Use a pyproject.toml File
+
+Create a _pyproject.toml_ file in the root directory of each Python project. Use this file as the central place to store configuration information about the project and the tools that it uses. The [pyOpenSci project documentation on pyproject.toml](https://www.pyopensci.org/python-package-guide/package-structure-code/pyproject-toml-python-package-metadata.html) provides an introduction to the file format.
+
+Modern Python tools support _pyproject.toml_ files. Python project management tools like [Hatch](https://hatch.pypa.io) or
+[Poetry](https://python-poetry.org/) automatically create and use a _pyproject.toml_ file. If you use a tool that supports another configuration file by default, use a _pyproject.toml_ file instead.
+
+> The various features of _pyproject.toml_ files are defined these PEPs: [PEP 517](https://peps.python.org/pep-0517/), [PEP 518](https://peps.python.org/pep-0518/), [PEP 621](https://peps.python.org/pep-0621/) and [PEP 660](https://peps.python.org/pep-0660/).
+
+### Create a Directory Structure That Uses the src Layout
+
+Python itself does not require a specific directory structure for your projects. The Python packaging documentation describes two popular directory structures: [the src layout and the flat layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/). For modern Python projects, use the src layout. The [pyOpenSci project documentation on directory structures](https://www.pyopensci.org/python-package-guide/package-structure-code/python-package-structure.html) explains the differences between the two.
+
+Current versions of the [Hatch](https://hatch.pypa.io) tool create a src layout for new projects.
 
 ### Use Virtual Environments for Development
 
@@ -58,17 +73,17 @@ python3 -m pip install -r requirements-dev.txt
 
 Use a formatting tool with a plugin to your editor, so that your code is automatically formatted to a consistent style.
 
-[Black](https://black.readthedocs.io/en/stable/) is currently the most popular code formatting tool for Python, but it is being superseded by [Ruff](https://docs.astral.sh/ruff/).
+[Black](https://black.readthedocs.io/en/stable/) is currently the most popular code formatting tool for Python, but consider using [Ruff](https://docs.astral.sh/ruff/). Ruff provides both code formatting and quality checks for Python code.
 
-Run the same formatter with your CI system in check mode, to cause the CI pipeline to fail if code does not match the format for your project.
+Run the formatting tool with your CI system, to reject code that does not match the format for your project.
 
 ### Use a Code Linter
 
 Use a code linting tool with a plugin to your editor, so that your code is automatically checked for issues.
 
-[flake8](https://flake8.pycqa.org/en/latest/) is currently the most popular linter for Python, but it is being superseded by [Ruff](https://docs.astral.sh/ruff/).
+[flake8](https://flake8.pycqa.org/en/latest/) is currently the most popular linter for Python, but consider using [Ruff](https://docs.astral.sh/ruff/). Ruff includes the features of both flake8 itself and the most popular plugins for flake8.
 
-Run the linter with your CI system, to reject code that does not meet the standards for your project.
+Run the linting tool with your CI system, to reject code that does not meet the standards for your project.
 
 ### Test with pytest
 
