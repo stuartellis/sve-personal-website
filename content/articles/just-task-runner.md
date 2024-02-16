@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-02-16T22:35:00+00:00"
+date = "2024-02-16T22:55:00+00:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -11,7 +11,7 @@ The [just](https://just.systems) tool is a task runner. It provides a consistent
 
 ## More on just
 
-Each copy of _just_ is a single, small executable file, with versions for Linux, macOS and Windows. _just_ uses sets of tasks that are in plain-text files. These are called _justfiles_.
+Each copy of _just_ is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, being about 6Mb for the 64-bit Linux version. It runs sets of tasks that are written in plain-text files, which are called _justfiles_.
 
 The tasks are referred to as _recipes_. The code for a recipe may be written in any programming language that runs with an interpreter. You may write recipes for any combination of languages in the same _justfile_. This enables you to use whichever scripting languages are available in the environment, such as UNIX shell, PowerShell, Python, JavaScript or Nu.
 
@@ -47,7 +47,7 @@ To use the installation script, call it with _--tag_ to specify the version of _
 
 ### Enabling Autocompletion
 
-To enable autocompletion in a shell, use the _--completions_ subcommand to generate the autocompletion script. For example, to enable autocompletion for the Bash shell, run this command:
+To enable autocompletion in a shell, use _--completions_ to generate a completion script that you install into the correct location. For example, to enable autocompletion for the Bash shell, run this command:
 
 ```bash
 sudo su -c 'just --completions bash > /etc/bash_completion.d/just.bash'
@@ -61,7 +61,19 @@ just --completions fish > ~/.config/fish/completions
 
 Current versions of _just_ provide autocompletion for Bash, zsh, fish, PowerShell, elvish and Nu.
 
-> _macOS and Homebrew:_ Refer to  [the documentation](https://just.systems/man/en/chapter_65.html) for how to enable autocompletion for zsh when you install _just_ on macOS with Homebrew.
+> _macOS and Homebrew:_ Refer to [the documentation](https://just.systems/man/en/chapter_65.html) for how to enable autocompletion for zsh when you install _just_ on macOS with Homebrew.
+
+## Using just in a Project
+
+### Adding a Private Copy of just to a Project
+
+To install a copy of _just_ that is private to a project, you have several options. Rust and Node.js projects may use packages for _just_. You may also install  _just_ in Docker container images for any project, using either operating system packages or a setup script, as described in the previous section.
+
+To add _just_ to a Node.js project, use the [just-install](https://www.npmjs.com/package/just-install) npm package. To include _just_ in a Rust project, add _just_ as a package in Cargo.
+
+### Creating justfiles in a Project
+
+Use **just --init** to create a _justfile_ in the root directory of your project. Use this _justfile_ for tasks that apply to the entire project. You may create other _justfiles_ in subdirectories for tasks that are more specific. For example, you might create a _justfile_ in a _tests/_ subdirectory of your project for tasks that are specifically for testing.
 
 ### Creating a User justfile for Global Tasks
 
@@ -100,18 +112,6 @@ To list the recipes in your user _justfile_, type _.j_ and press the _Enter_ key
 .j
 ```
 
-## Using just in a Project
-
-### Adding just to a Project
-
-Rust and Node.js projects may use packages for _just_. You may also install  _just_ to Docker container images for any project, using operating system packages or a setup script, as described in the previous section.
-
-To add just to a Node.js project, use the [just-install](https://www.npmjs.com/package/just-install) npm package. To include _just_ in a Rust project, add _just_ as a package in Cargo.
-
-### Creating justfiles in a Project
-
-Use **just --init** to create a _justfile_ in the root directory of your project. Use this _justfile_ for tasks that apply to the entire project. You may create other _justfiles_ in subdirectories for tasks that are more specific. For example, you might create a _justfile_ in a _tests/_ subdirectory of your project for tasks that are specifically for testing.
-
 ## Developing just
 
 ### Writing justfiles
@@ -132,7 +132,7 @@ just --unstable --fmt
 
 ### Writing justfiles in Projects
 
-- Name the _just_ file in the root direcory of the project _justfile_.
+- Name the _just_ file in the root directory of the project _justfile_.
 - Create an extra _justfile_ in each subdirectory that should be a separate scope of operations. For example, if you have a monorepo, create a child _justfile_ in the main directory for each component.
 - Set _fallback_ to _true_ in each _justfile_ that is NOT in the root directory of the project. This enables _just_ to find recipes from the root _justfile_ as well as the _justfile_ in the current working directory.
 - If you have many recipes for a single _justfile_, consider putting the recipes into several _.just_ files and using [imports](https://just.systems/man/en/chapter_53.html) to combine them.
