@@ -2,7 +2,6 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/go
 {
     "name": "sje-personal-website-hugo",
-    // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
     "image": "mcr.microsoft.com/devcontainers/go:1-1.21-bookworm",
     "features": {
         "ghcr.io/devcontainers/features/aws-cli:1": {
@@ -21,11 +20,13 @@
             ]
         }
     },
+    "postCreateCommand": "bash scripts/install-just.sh --to /home/vscode/.local/bin",
     // Podman requires a containerUser and the --userns option
     "containerUser": "vscode",
     "runArgs": [
         "--userns=keep-id",
-        "--env-file",".devcontainer/devcontainer.env"
+        "--env-file",
+        ".devcontainer/devcontainer.env"
     ],
     "mounts": [
         "source=${env:HOME}/.aws,target=/home/vscode/.aws,type=bind"
