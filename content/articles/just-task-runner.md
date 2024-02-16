@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-02-16T22:55:00+00:00"
+date = "2024-02-16T23:10:00+00:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -15,7 +15,7 @@ Each copy of _just_ is a single executable file, with versions for Linux, macOS 
 
 The tasks are referred to as _recipes_. The code for a recipe may be written in any programming language that runs with an interpreter. You may write recipes for any combination of languages in the same _justfile_. This enables you to use whichever scripting languages are available in the environment, such as UNIX shell, PowerShell, Python, JavaScript or Nu.
 
-_just_ can apply logic based on the current environment, which enables you to  provide [multiple implementations of a task](https://just.systems/man/en/chapter_32.html) in the same set of recipes, or to customise the behavior of recipes for different environments. It may also use built-in [functions](https://just.systems/man/en/chapter_31.html) to provide consistent inputs across platforms. These functions include identifying the host environment, reading environment variables, generating UUIDs, calculating file checksums and formatting string inputs.
+_just_ can apply logic based on the current environment, which enables you to  provide [multiple implementations of a task](https://just.systems/man/en/chapter_32.html#enabling-and-disabling-recipes180) in the same set of recipes, or to customise the behavior of recipes for different environments. It may also use built-in [functions](https://just.systems/man/en/chapter_31.html) to provide consistent inputs across platforms. These functions include identifying the host environment, reading environment variables, generating UUIDs, calculating file checksums and formatting string inputs.
 
 The behaviour of _just_ is covered by a [backwards compatibility guarantee](https://just.systems/man/en/chapter_9.html). To verify that new versions of _just_ do not break compatibility, the _just_ project maintain automation to test against _justfiles_ that are published as Open Source.
 
@@ -75,7 +75,7 @@ The instructions that are provided in the previous section install a copy of _ju
 
 To add _just_ to a Node.js project, use the [just-install](https://www.npmjs.com/package/just-install) npm package. To include _just_ in a Rust project, add _just_ as a package in Cargo.
 
-### Creating a User justfile for Global Tasks
+## Creating a User justfile for Global Tasks
 
 To define tasks that are available at any time, create a file with the name _.user.justfile_ in your home directory.
 
