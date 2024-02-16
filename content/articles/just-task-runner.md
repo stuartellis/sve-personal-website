@@ -65,15 +65,15 @@ Current versions of _just_ provide autocompletion for Bash, zsh, fish, PowerShel
 
 ## Using just in a Project
 
-### Adding a Private Copy of just to a Project
-
-To install a copy of _just_ that is private to a project, you have several options. Rust and Node.js projects may use packages for _just_. You may also install  _just_ in Docker container images for any project, using either operating system packages or a setup script, as described in the previous section.
-
-To add _just_ to a Node.js project, use the [just-install](https://www.npmjs.com/package/just-install) npm package. To include _just_ in a Rust project, add _just_ as a package in Cargo.
-
 ### Creating justfiles in a Project
 
 Use **just --init** to create a _justfile_ in the root directory of your project. Use this _justfile_ for tasks that apply to the entire project. You may create other _justfiles_ in subdirectories for tasks that are more specific. For example, you might create a _justfile_ in a _tests/_ subdirectory of your project for tasks that are specifically for testing.
+
+### Adding a Private Copy of just to a Project
+
+The instructions that are provided in the previous section install a copy of _just_ that is shared. To install a copy of _just_ that is private to a project, you have several options. Rust and Node.js projects may use packages for _just_. You may also install _just_ in Docker container images for any project, using either operating system packages or a setup script, as described in the previous section.
+
+To add _just_ to a Node.js project, use the [just-install](https://www.npmjs.com/package/just-install) npm package. To include _just_ in a Rust project, add _just_ as a package in Cargo.
 
 ### Creating a User justfile for Global Tasks
 
