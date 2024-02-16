@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-02-16T22:15:00+00:00"
+date = "2024-02-16T22:35:00+00:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -132,8 +132,10 @@ just --unstable --fmt
 
 ### Writing justfiles in Projects
 
-- Name each _just_ file in the project _justfile_. This means that each _justfile_ is in a separate directory.
-- Set _fallback_ to _true_ in each _justfile_ that is NOT in the root directory of the project. This enables _just_ to find recipes from the root _justfile_ as well as a _justfile_ in the current working directory.
+- Name the _just_ file in the root direcory of the project _justfile_.
+- Create an extra _justfile_ in each subdirectory that should be a separate scope of operations. For example, if you have a monorepo, create a child _justfile_ in the main directory for each component.
+- Set _fallback_ to _true_ in each _justfile_ that is NOT in the root directory of the project. This enables _just_ to find recipes from the root _justfile_ as well as the _justfile_ in the current working directory.
+- If you have many recipes for a single _justfile_, consider putting the recipes into several _.just_ files and using [imports](https://just.systems/man/en/chapter_53.html) to combine them.
 - To ensure that you do not accidentally run a recipe from a user _justfile_, do NOT set _fallback_ to _true_ in a _justfile_ in the root directory of a project.
 - To ensure that a project uses the version of _just_ that you expect, use containers or a copy of _just_ that is for that project, rather than relying on a system installation of _just_.
 
