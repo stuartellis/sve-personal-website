@@ -1,30 +1,32 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-02-16T23:10:00+00:00"
+date = "2024-02-17T11:20:00+00:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
 +++
 
-The [just](https://just.systems) tool is a task runner. It provides a consistent means of organizing sets of tasks that may be written in any scripting language and may run on multiple platforms.
+The [just](https://just.systems) tool is a task runner. It provides a consistent means of organizing sets of tasks, which may be written in any scripting language and may run on multiple platforms.
 
 ## More on just
 
-Each copy of _just_ is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, being about 6Mb for the 64-bit Linux version. It runs sets of tasks that are written in plain-text files, which are called _justfiles_.
+Each copy of _just_ is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, being about 6Mb for the 64-bit Linux version. It works with set of tasks that are written in plain-text files, which are called _justfiles_.
 
 The tasks are referred to as _recipes_. The code for a recipe may be written in any programming language that runs with an interpreter. You may write recipes for any combination of languages in the same _justfile_. This enables you to use whichever scripting languages are available in the environment, such as UNIX shell, PowerShell, Python, JavaScript or Nu.
 
-_just_ can apply logic based on the current environment, which enables you to  provide [multiple implementations of a task](https://just.systems/man/en/chapter_32.html#enabling-and-disabling-recipes180) in the same set of recipes, or to customise the behavior of recipes for different environments. It may also use built-in [functions](https://just.systems/man/en/chapter_31.html) to provide consistent inputs across platforms. These functions include identifying the host environment, reading environment variables, generating UUIDs, calculating file checksums and formatting string inputs.
+_just_ enables you to provide [alternative implementations of a task](https://just.systems/man/en/chapter_32.html#enabling-and-disabling-recipes180) in the same set of recipes to support different platforms, and also customise the behavior of recipes for different environments. Built-in [functions](https://just.systems/man/en/chapter_31.html) provide consistent inputs across platforms. These functions include identifying the host environment, reading environment variables, generating UUIDs, calculating file checksums and formatting string inputs.
 
 The behaviour of _just_ is covered by a [backwards compatibility guarantee](https://just.systems/man/en/chapter_9.html). To verify that new versions of _just_ do not break compatibility, the _just_ project maintain automation to test against _justfiles_ that are published as Open Source.
 
 ## Installing just
 
-_just_ is available from the popular operating system package managers, apart from Debian and Ubuntu. For example, you may install _just_ with Homebrew on  macOS:
+_just_ is available from the popular operating system package managers, apart from Debian and Ubuntu. For example:
 
 ```shell
-brew install just
+winget install --id Casey.Just --exact  # winget on Windows
+brew install just                       # Homebrew on macOS
+sudo dnf install just                   # Fedora
 ```
 
 These operating system packages may not provide the latest version of _just_. See [the package list page](https://just.systems/man/en/chapter_4.html) for what is available from operating system package managers.
@@ -61,7 +63,7 @@ just --completions fish > ~/.config/fish/completions
 
 Current versions of _just_ provide autocompletion for Bash, zsh, fish, PowerShell, elvish and Nu.
 
-> _macOS and Homebrew:_ Refer to [the documentation](https://just.systems/man/en/chapter_65.html) for how to enable autocompletion for zsh when you install _just_ on macOS with Homebrew.
+> _macOS and Homebrew:_ If you install _just_ on macOS with Homebrew, follow [these instructions](https://just.systems/man/en/chapter_65.html) to  autocompletion for zsh.
 
 ## Using just in a Project
 
@@ -73,7 +75,7 @@ Use **just --init** to create a _justfile_ in the root directory of your project
 
 The instructions that are provided in the previous section install a copy of _just_ that is shared. To install a copy of _just_ that is private to a project, you have several options. Rust and Node.js projects may use packages for _just_. You may also install _just_ in Docker container images for any project, using either operating system packages or a setup script, as described in the previous section.
 
-To add _just_ to a Node.js project, use the [just-install](https://www.npmjs.com/package/just-install) npm package. To include _just_ in a Rust project, add _just_ as a package in Cargo.
+To add _just_ to a Node.js project, use the [just-install](https://www.npmjs.com/package/just-install) npm package. To include _just_ in a Rust project, add [just](https://crates.io/crates/just) as a package in Cargo.
 
 ## Creating a User justfile for Global Tasks
 
@@ -163,9 +165,6 @@ A larger project _justfile_:
 # Load variables from a .env file
 set dotenv-load := true
 
-# Set tempdir
-set tempdir := true
-
 # List available recipes
 default:
     @just --list
@@ -176,6 +175,8 @@ sys-info:
     @echo "OS Type: {{ os_family() }}"
     @echo "OS: {{ os() }}"
 ```
+
+> The GitHub project for _just_ includes [example justfiles](https://github.com/casey/just/tree/master/examples).
 
 ## Running just Recipes
 
@@ -214,5 +215,6 @@ You may also use these two options to check the behavior of _just_:
 
 ## Resources
 
+- [Using a task runner to help with context switching in software projects](https://www.caro.fyi/articles/just/)
 - [Just use just](https://toniogela.dev/just/) - An introductory article to Just
 - [Cheatsheet for justfile](https://cheatography.com/linux-china/cheat-sheets/justfile/)
