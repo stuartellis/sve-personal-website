@@ -1,13 +1,13 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-02-21T21:45:00+00:00"
+date = "2024-02-21T22:45:00+00:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
 +++
 
-The [just](https://just.systems) tool is a task runner. It provides a consistent framework working with sets of tasks, which may be written in any scripting language and can run on multiple platforms.
+The [just](https://just.systems) tool is a task runner. It provides a consistent framework for working with sets of tasks, which may be written in any scripting language and can run on multiple platforms.
 
 ## More on just
 
