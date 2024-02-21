@@ -1,21 +1,23 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-02-17T11:30:00+00:00"
+date = "2024-02-21T21:45:00+00:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
 +++
 
-The [just](https://just.systems) tool is a task runner. It provides a consistent means of organizing sets of tasks, which may be written in any scripting language and may run on multiple platforms.
+The [just](https://just.systems) tool is a task runner. It provides a consistent framework working with sets of tasks, which may be written in any scripting language and can run on multiple platforms.
 
 ## More on just
 
-Each copy of _just_ is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, being about 6Mb for the 64-bit Linux version. It works with set of tasks that are written in plain-text files, which are called _justfiles_.
+Each copy of _just_ is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, about 6Mb for the 64-bit Linux version. It uses sets of tasks that are written in plain-text files. You may write a task in any programming language that runs with an interpreter, such as UNIX shell, PowerShell, Python, JavaScript or Nu shell.
 
-The tasks are referred to as _recipes_. The code for a recipe may be written in any programming language that runs with an interpreter. You may write recipes for any combination of languages in the same _justfile_. This enables you to use whichever scripting languages are available in the environment, such as UNIX shell, PowerShell, Python, JavaScript or Nu.
+This means that you can add _just_ to any environment and use whichever scripting languages are available. If you define [multiple implementations of a task](https://just.systems/man/en/chapter_32.html#enabling-and-disabling-recipes180), _just_ runs the correct implementation for the current platform. It also provides other features for you to customise the behavior of tasks for different environments.
 
-_just_ enables you to provide [alternative implementations of a task](https://just.systems/man/en/chapter_32.html#enabling-and-disabling-recipes180) in the same set of recipes to support different platforms, and also customise the behavior of recipes for different environments. Built-in [functions](https://just.systems/man/en/chapter_31.html) provide consistent inputs across platforms. These functions include identifying the host environment, reading environment variables, generating UUIDs, calculating file checksums and formatting string inputs.
+In addition, built-in [functions](https://just.systems/man/en/chapter_31.html) enable you to get consistent inputs for your tasks across different platforms. These functions include identifying the host environment, reading environment variables, generating UUIDs, calculating file checksums and formatting string inputs.
+
+> **Terms:** In _just_, tasks are referred to as **recipes**. The text files that contain recipes are known as **justfiles**.
 
 The behaviour of _just_ is covered by a [backwards compatibility guarantee](https://just.systems/man/en/chapter_9.html). To verify that new versions of _just_ do not break compatibility, the _just_ project maintain automation to test against _justfiles_ that are published as Open Source.
 
@@ -63,7 +65,7 @@ just --completions fish > ~/.config/fish/completions
 
 Current versions of _just_ provide autocompletion for Bash, zsh, fish, PowerShell, elvish and Nu.
 
-> _macOS and Homebrew:_ If you install _just_ on macOS with Homebrew, follow [these instructions](https://just.systems/man/en/chapter_65.html) to  autocompletion for zsh.
+> **macOS and Homebrew:** If you install _just_ on macOS with Homebrew, follow [these instructions](https://just.systems/man/en/chapter_65.html) to  autocompletion for zsh.
 
 ## Using just in a Project
 
@@ -118,7 +120,6 @@ To list the recipes in your user _justfile_, type _.j_ and press the _Enter_ key
 
 ### Writing justfiles
 
-- For your user recipes file, use the standard name _.user.justfile_.
 - Use 4 spaces for indentation. The built-in formatting command sets identation as 4 spaces.
 - Always put a comment in the line above each recipe. These comments appear next to the recipe in _just --list_.
 - Each _justfile_ should have the first recipe named _default_. When _just_ is invoked without a recipe name, it runs the first recipe in the _justfile_.
@@ -130,7 +131,7 @@ To list the recipes in your user _justfile_, type _.j_ and press the _Enter_ key
 just --unstable --fmt
 ```
 
-> _**fmt** is Currently Unstable:_ The **fmt** subcommand is _unstable_, which means that it is expected to work correctly, but it is not subject to the standard compatibility guarantees of _just_.
+> **--fmt is Currently Unstable:** The **--fmt** subcommand is _unstable_, which means that it is expected to work correctly, but it is not subject to the standard compatibility guarantees of _just_.
 
 ### Writing justfiles in Projects
 
@@ -143,6 +144,7 @@ just --unstable --fmt
 
 ### Writing Recipes
 
+- Use [parameters](https://just.systems/man/en/chapter_38.html) to get inputs for a recipe from the command-line.
 - When it is possible, use the [built-in functions](https://just.systems/man/en/chapter_31.html) instead of shell commands, because these will behave consistently across different environments.
 - Use [shebang recipes](https://just.systems/man/en/chapter_41.html) for multi-line shell recipes, as well as recipes in other languages.
 - Use _sh_ syntax for single-line UNIX shell recipes. If you need the features of a specific shell, use a shebang recipe and [set error handling for recipes that use bash](https://just.systems/man/en/chapter_42.html).
@@ -206,7 +208,7 @@ To validate a _justfile_, run **--fmt** with **--check**. This returns an exit c
 just --unstable --fmt --check
 ```
 
-> _**fmt** is Currently Unstable:_ The **fmt** subcommand is _unstable_, which means that it is expected to work correctly, but it is not subject to the standard compatibility guarantees of _just_.
+> **--fmt is Currently Unstable:** The **--fmt** subcommand is _unstable_, which means that it is expected to work correctly, but it is not subject to the standard compatibility guarantees of _just_.
 
 You may also use these two options to check the behavior of _just_:
 
