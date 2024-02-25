@@ -1,6 +1,6 @@
 current_env := env_var_or_default('ENVIRONMENT', 'unspecified')
 current_aws_profile := env_var_or_default('AWS_PROFILE', 'unspecified')
-is_containerized := env_var_or_default('REMOTE_CONTAINERS', 'false')
+is_dev_container := env_var_or_default('REMOTE_CONTAINERS', 'false')
 
 alias info := session-info
 
@@ -18,6 +18,6 @@ session-info:
     @echo "CPU architecture: {{ arch() }}"
     @echo "Operating system type: {{ os_family() }}"
     @echo "Operating system: {{ os() }}"
-    @echo "Containerized session: {{ is_containerized }}"
+    @echo "Dev Container session: {{ is_dev_container }}"
     @echo "Environment: {{ current_env }}"
     @echo "AWS profile: {{ current_aws_profile }}"

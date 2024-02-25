@@ -20,7 +20,7 @@
             ]
         }
     },
-    "postCreateCommand": "bash .devcontainer/install-just.sh --to /home/vscode/.local/bin",
+    "postCreateCommand": "bash .devcontainer/install-just.sh --to /home/vscode/.local/bin --tag $(grep 'just' .tool-versions | awk '{print $2}')",
     // Podman requires a containerUser and the --userns option
     "containerUser": "vscode",
     "runArgs": [
