@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# From: https://github.com/casey/just/blob/master/www/install.sh
+# License: Creative Commons Zero v1.0 Universal
+# Copyright: Waived by terms of license
+# Downloaded: 2024-02-16T08:19:00Z
+
 set -euo pipefail
 
 if [ ! -z ${GITHUB_ACTIONS-} ]; then
