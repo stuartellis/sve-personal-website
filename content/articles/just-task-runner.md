@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-02-25T09:15:00+00:00"
+date = "2024-02-26T10:15:00+00:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -99,7 +99,7 @@ This _justfile_ requires extra options to run. For convenience, add an alias to 
 
 ```fish
 # Add abbr to call recipes in user Justfile by typing ".j RECIPE-NAME"
-if test -x "$HOME/.local/bin/just"
+if command -s just > /dev/null
     abbr --add .j just --justfile $HOME/.user.justfile --working-directory .
 end
 ```
@@ -122,7 +122,7 @@ To list the recipes in your user _justfile_, type _.j_ and press the _Enter_ key
 
 - Use 4 spaces for indentation. The built-in formatting command sets identation as 4 spaces.
 - Always put a comment in the line above each recipe. These comments appear next to the recipe in _just --list_.
-- Each _justfile_ should have the first recipe named _default_ or _help_. When _just_ is invoked without a recipe name, it runs the first recipe in the _justfile_.
+- Create the first recipe in each _justfile_ with the name _default_ or _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without a recipe name, it runs the first recipe in the _justfile_.
 - Use [dotenv files](https://just.systems/man/en/chapter_26.html#dotenv-settings) to get configuration from files.
 - To create namespaces for recipes, decide a standard prefix for each group of recipes, and set the name of each recipe to start with that prefix, e.g. _sys-_.
 - Use **--fmt** to format your _justfiles_. To use this option, run this command in the same directory as the _justfile_ that you want to format:
