@@ -1,4 +1,10 @@
 # -- Main Menu --
+#
+# SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
+#
+# SPDX-License-Identifier: MIT
+#
+
 # The main menu is displayed in the header at the top of the page.
 # Acceptable parameters are name, pageRef, page, url, title, weight.
 #

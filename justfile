@@ -1,23 +1,61 @@
-current_env := env_var_or_default('ENVIRONMENT', 'unspecified')
-current_aws_profile := env_var_or_default('AWS_PROFILE', 'unspecified')
-is_dev_container := env_var_or_default('REMOTE_CONTAINERS', 'false')
+# SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
+#
+# SPDX-License-Identifier: MIT
+#
+# Configuration for the just task runner
+#
+# See https://just.systems
 
-alias info := session-info
+mod hugo
+mod pre-commit
+mod project
 
 # List available recipes
 help:
-    @just --list
+    @just --unstable --list
 
-# Deploy Web site
+# Install tools and dependencies, then set up environment for development
+bootstrap:
+    @just --unstable install
+    @just --unstable setup
+
+# Build artifacts
+build:
+    @just --unstable hugo::build
+
+# Delete generated files
+clean:
+    @just --unstable hugo::clean
+    @just --unstable project::clean
+
+# Run test coverage analysis
+coverage:
+    @echo "Not implemented"
+
+# Deploy Website
 deploy:
-    @hugo
-    @hugo deploy
+    @just --unstable hugo::deploy
 
-# Show information about current working session
-session-info:
-    @echo "CPU architecture: {{ arch() }}"
-    @echo "Operating system type: {{ os_family() }}"
-    @echo "Operating system: {{ os() }}"
-    @echo "Dev Container session: {{ is_dev_container }}"
-    @echo "Environment: {{ current_env }}"
-    @echo "AWS profile: {{ current_aws_profile }}"
+# Display documentation in a Web browser
+doc:
+    @just --unstable hugo::serve
+
+# Format code
+fmt:
+    @echo "Not implemented"
+
+# Install project tools and dependencies
+install:
+    @just --unstable pre-commit::add
+
+# Run all checks
+lint:
+    @just --unstable pre-commit::check
+
+# Set up environment for development
+setup:
+    @just --unstable pre-commit::setup
+
+# Run tests for project
+test:
+    @just --unstable lint

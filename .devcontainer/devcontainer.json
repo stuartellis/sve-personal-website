@@ -1,27 +1,29 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/go
 {
-    "name": "sje-personal-website-hugo",
+    "name": "sje-personal-website-developer",
     "image": "mcr.microsoft.com/devcontainers/go:1-1.21-bookworm",
+    "remoteUser": "vscode",
     "features": {
         "ghcr.io/devcontainers/features/aws-cli:1": {
             "version": "2.15.15"
         },
+        "ghcr.io/devcontainers/features/git:1.2.0": "os-provided",
         "ghcr.io/devcontainers/features/hugo:1": {
             "extended": true,
             "version": "0.122.0"
-        }
+        },
+        "ghcr.io/devcontainers/features/python:1.4.2": "3.12.2"
     },
     "customizations": {
         "vscode": {
             "extensions": [
+                "AquaSecurityOfficial.trivy-vulnerability-scanner",
                 "davidanson.vscode-markdownlint",
-                "editorconfig.editorconfig"
+                "EditorConfig.EditorConfig",
+                "timonwong.shellcheck"
             ]
         }
     },
-    "postCreateCommand": "bash .devcontainer/install-just.sh --to /home/vscode/.local/bin --tag $(grep 'just' .tool-versions | awk '{print $2}')",
-    // Podman requires a containerUser and the --userns option
+    "postCreateCommand": "sh .devcontainer/bootstrap.sh",
     "containerUser": "vscode",
     "runArgs": [
         "--userns=keep-id",

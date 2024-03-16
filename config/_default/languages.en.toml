@@ -1,10 +1,16 @@
+#
+# SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
+#
+# SPDX-License-Identifier: MIT
+#
+
 languageCode = "en"
 languageName = "English"
 weight = 1
 
 title = "Field Notes"
 # description = "My awesome website"
-copyright = ":copyright: Stuart Ellis, 2024"
+copyright = ":copyright: 2024-present Stuart Ellis, licensed under Creative Commons CC-BY-NC-SA-4.0"
 
 [params]
 displayName = "EN"

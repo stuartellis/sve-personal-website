@@ -5,7 +5,6 @@
 # SPDX-License-Identifier: CC0-1.0
 #
 # From: https://github.com/casey/just/blob/master/www/install.sh
-# License: Creative Commons Zero v1.0 Universal
 # Commit ID: 6d7df195575c25786b4e430c194fa0ea2fde8000
 # Downloaded: 2024-02-25T08:08:00Z
 
@@ -21,7 +20,7 @@ fi
 
 help() {
   cat <<'EOF'
-Install a binary release of a just hosted on GitHub
+Install a binary release of Trivy hosted on GitHub
 
 USAGE:
     install [options]
@@ -31,14 +30,14 @@ FLAGS:
     -f, --force     Force overwriting an existing binary
 
 OPTIONS:
-    --tag TAG       Tag (version) of the crate to install, defaults to latest release
+    --tag TAG       Tag (version) to install, defaults to latest release
     --to LOCATION   Where to install the binary [default: ~/bin]
     --target TARGET
 EOF
 }
 
-crate=just
-url=https://github.com/casey/just
+package=trivy
+url=https://github.com/aquasecurity/trivy
 releases=$url/releases
 
 say() {
@@ -110,7 +109,7 @@ fi
 if [ -z "${tag-}" ]; then
   tag=$(
     curl --proto =https --tlsv1.2 -sSf \
-      https://api.github.com/repos/casey/just/releases/latest |
+      https://api.github.com/repos/aquasecurity/trivy/releases/latest |
     grep tag_name |
     cut -d'"' -f4
   )
@@ -124,12 +123,12 @@ if [ -z "${target-}" ]; then
   uname_target="$(uname -m)-$kernel"
 
   case $uname_target in
-    aarch64-Linux)     target=aarch64-unknown-linux-musl;;
-    arm64-Darwin)      target=aarch64-apple-darwin;;
-    x86_64-Darwin)     target=x86_64-apple-darwin;;
-    x86_64-Linux)      target=x86_64-unknown-linux-musl;;
-    x86_64-MINGW64_NT) target=x86_64-pc-windows-msvc;;
-    x86_64-Windows_NT) target=x86_64-pc-windows-msvc;;
+    aarch64-Linux)     target=Linux-ARM64;;
+    arm64-Darwin)      target=macOS-ARM64;;
+    x86_64-Darwin)     target=macOS-64bit;;
+    x86_64-Linux)      target=Linux-64bit;;
+    x86_64-MINGW64_NT) target=windows-64bit;;
+    x86_64-Windows_NT) target=windows-64bit;;
     *)
       # shellcheck disable=SC2016
       err 'Could not determine target from output of `uname -m`-`uname -s`, please use `--target`:' "$uname_target"
@@ -138,14 +137,14 @@ if [ -z "${target-}" ]; then
 fi
 
 case $target in
-  x86_64-pc-windows-msvc) extension=zip; need unzip;;
+  windows-64bit) extension=zip; need unzip;;
   *)                      extension=tar.gz;;
 esac
 
-archive="$releases/download/$tag/$crate-$tag-$target.$extension"
+archive="$releases"/download/v"$tag"/"$package"_"$tag"_"$target"."$extension"
 
 say "Repository:  $url"
-say "Crate:       $crate"
+say "Package:     $package"
 say "Tag:         $tag"
 say "Target:      $target"
 say "Destination: $dest"
@@ -154,17 +153,17 @@ say "Archive:     $archive"
 td=$(mktemp -d || mktemp -d -t tmp)
 
 if [ "$extension" = "zip" ]; then
-  curl --proto =https --tlsv1.2 -sSfL "$archive" > "$td/just.zip"
-  unzip -d "$td" "$td/just.zip"
+  curl --proto =https --tlsv1.2 -sSfL "$archive" > "$td/trivy.zip"
+  unzip -d "$td" "$td/trivy.zip"
 else
   curl --proto =https --tlsv1.2 -sSfL "$archive" | tar -C "$td" -xz
 fi
 
-if [ -e "$dest/just" ] && [ "$force" = false ]; then
-  err "\`$dest/just\` already exists"
+if [ -e "$dest/trivy" ] && [ "$force" = false ]; then
+  err "\`$dest/trivy\` already exists"
 else
   mkdir -p "$dest"
-  install -m 755 "$td/just" "$dest"
+  install -m 755 "$td/trivy" "$dest"
 fi
 
 rm -rf "$td"
