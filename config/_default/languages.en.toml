@@ -18,7 +18,7 @@ isoCode = "en"
 rtl = false
 dateFormat = "2 January 2006"
 
-# mainSections = ["section1", "section2"]
+mainSections = ["articles"]
 
 [params.author]
   name = "Stuart Ellis"
