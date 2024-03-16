@@ -33,7 +33,7 @@ The current version of this project is not for general use.
 
 ## Licenses
 
-The content of this project is licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/) license © 2024-present Stuart Ellis.
+The content files for this project are licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/) license © 2024-present Stuart Ellis.
 
 Code files in this project are licensed under the [MIT](https://spdx.org/licenses/MIT.html) license © 2024-present Stuart Ellis. Each of these files has the [SPDX](https://spdx.dev/) license identifier *MIT* at the top of the file.
 
