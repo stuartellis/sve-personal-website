@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: MIT
 #
-# Recipes for pre-commit
+# Recipes for Hugo
 #
-# https://pre-commit.com/
+# https://gohugo.io/
 
 # Build Website
 build:
@@ -12,12 +12,20 @@ build:
 
 # Remove generated files
 clean:
-    @hugo clean
+    #!/usr/bin/env sh
+    set -eu
+    HUGO_TEMP_PATHS=".hugo_build.lock public"
+    echo "Removing temporary files for Hugo..."
+    for HUGO_TEMP_PATH in $HUGO_TEMP_PATHS
+    do
+      rm -fr $HUGO_TEMP_PATH
+      echo "Removed $HUGO_TEMP_PATH"
+    done
 
-# Deploy site
+# Deploy Website
 deploy: build
     @hugo deploy
 
 # Run Website in development server
 serve:
-    @hugo serve
+    @hugo server
