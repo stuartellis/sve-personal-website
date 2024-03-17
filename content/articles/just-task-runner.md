@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-02-26T10:15:00+00:00"
+date = "2024-03-17T10:15:00+00:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -11,7 +11,7 @@ The [just](https://just.systems) tool is a task runner. It provides a consistent
 
 ## More on just
 
-Each copy of _just_ is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, about 6Mb for the 64-bit Linux version. It uses sets of tasks that are written in plain-text files. You may write a task in any programming language that runs with an interpreter, such as UNIX shell, PowerShell, Python, JavaScript or Nu shell.
+Each copy of _just_ is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, about 6Mb for the 64-bit Linux version. It uses sets of tasks that are written in plain-text files. You may write each task in any programming language that runs with an interpreter, such as UNIX shell, PowerShell, Python, JavaScript or Nu shell.
 
 This means that you can add _just_ to any environment and use whichever scripting languages are available. If you define [multiple implementations of a task](https://just.systems/man/en/chapter_32.html#enabling-and-disabling-recipes180), _just_ runs the correct implementation for the current platform. It also provides other features for you to customise the behavior of tasks for different environments.
 
@@ -33,9 +33,19 @@ sudo dnf install just                   # Fedora
 
 These operating system packages may not provide the latest version of _just_. See [the package list page](https://just.systems/man/en/chapter_4.html) for what is available from operating system package managers.
 
-To install the latest version of _just_, download the executable from GitHub, rather than use an operating system package manager. The _just_ project provides [a script for downloading just from GitHub](https://just.systems/man/en/chapter_5.html).
+To install the latest version of _just_, download the executable from GitHub, rather than using an operating system package manager.
 
-You may either fetch the installation script each time, as the documentation describes, or save it. To ensure that container image builds are consistent, use a saved copy of the script when you build Docker container images.
+If you are using a Dev Container, add the feature _guiyomh/features/just_ to your _devcontainer.json_ file to download _just_ from GitHub:
+
+```json
+    "features": {
+        "ghcr.io/guiyomh/features/just:0": {
+            "version": "1.25.2"
+        }
+    }
+```
+
+Otherwise, use the [script for downloading just from GitHub](https://just.systems/man/en/chapter_5.html). You may either fetch this installation script each time, as the documentation describes, or save it. To ensure that container image builds are consistent, use a saved copy of the script when you build Docker container images.
 
 To save the installation script:
 
