@@ -1,17 +1,25 @@
 {
     "name": "sje-personal-website-developer",
-    "image": "mcr.microsoft.com/devcontainers/go:1-1.21-bookworm",
-    "remoteUser": "vscode",
+    "build": {
+		"dockerfile": "devcontainer.dockerfile",
+		"args": {
+			"VARIANT": "bookworm"
+		}
+	},
     "features": {
         "ghcr.io/devcontainers/features/aws-cli:1": {
-            "version": "2.15.15"
+            "version": "latest"
         },
-        "ghcr.io/devcontainers/features/git:1.2.0": "os-provided",
         "ghcr.io/devcontainers/features/hugo:1": {
             "extended": true,
             "version": "0.122.0"
         },
-        "ghcr.io/devcontainers/features/python:1.4.2": "3.12.2"
+        "ghcr.io/guiyomh/features/just:0": {
+            "version": "1.25.2"
+        },
+        "ghcr.io/devcontainers-contrib/features/pre-commit:2": {
+            "version": "3.6.2"
+        }
     },
     "customizations": {
         "vscode": {
@@ -23,8 +31,8 @@
             ]
         }
     },
-    "postCreateCommand": "sh .devcontainer/bootstrap.sh",
     "containerUser": "vscode",
+    "postCreateCommand": "just setup",
     "runArgs": [
         "--userns=keep-id",
         "--env-file",

@@ -5,7 +5,7 @@
 
 [project]
 name = "sje-personal-website"
-version = "2024.03.16"
+version = "2024.03.17"
 description = "Personal Website for Stuart Ellis"
 authors = ["Stuart Ellis <stuart@stuartellis.name>"]
 readme = "README.md"
@@ -15,9 +15,3 @@ license = "MIT"
 Homepage = "https://www.stuartellis.name"
 Documentation = "https://github.com/stuartellis/sje-personal-website"
 Repository = "https://github.com/stuartellis/sje-personal-website"
-
-[tool.project.utilities]
-hugo = "0.122.0"
-just = "1.25.2"
-pre-commit = "3.6.2"
-trivy = "0.49.1"
