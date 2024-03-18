@@ -32,7 +32,7 @@
         }
     },
     "containerUser": "vscode",
-    "postCreateCommand": "just setup",
+    "postCreateCommand": "just bootstrap",
     "runArgs": [
         "--userns=keep-id",
         "--env-file",

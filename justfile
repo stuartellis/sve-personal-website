@@ -46,7 +46,7 @@ fmt:
 
 # Install project tools and dependencies
 install:
-    @just --unstable pre-commit::add
+    @echo "Not implemented"
 
 # Run all checks
 lint:
