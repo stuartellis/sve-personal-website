@@ -8,5 +8,9 @@
 ARG VARIANT="bookworm"
 FROM mcr.microsoft.com/devcontainers/go:1-1.21-${VARIANT}
 
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get upgrade -qy
+RUN apt-get install -qy --no-install-recommends apt-transport-https gnupg lsb-release \
+    && curl -L https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor > /usr/share/keyrings/trivy.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" > /etc/apt/sources.list.d/trivy.list \
+    && apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get upgrade -qy \
+    && apt-get install -qy trivy
