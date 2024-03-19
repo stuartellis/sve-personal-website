@@ -28,3 +28,15 @@ repos:
         language: system
         args: [--unstable, --fmt, --check, -f]
         files: justfile
+    -   id: trivy-config
+        name: trivy config
+        entry: trivy
+        language: system
+        args: [config, --cache-dir, tmp/trivy, --ignorefile, ./.trivyignore.yaml, --exit-code, '1', .]
+        pass_filenames: false
+    -   id: trivy-fs
+        name: trivy fs
+        entry: trivy
+        language: system
+        args: [fs, --cache-dir, tmp/trivy, --ignorefile, ./.trivyignore.yaml, --exit-code, '1', .]
+        pass_filenames: false
