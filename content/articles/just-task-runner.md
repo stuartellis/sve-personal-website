@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-03-18T08:15:00+00:00"
+date = "2024-03-19T20:05:00+00:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -23,7 +23,13 @@ The behaviour of _just_ is covered by a [backwards compatibility guarantee](http
 
 ## Installing just
 
-_just_ is available from the popular operating system package managers, apart from Debian and Ubuntu. For example:
+To install the latest version of _just_, download the executable from GitHub, rather than using an operating system package manager.
+
+You do not need to set up or configure _just_, because it only requires a copy of the executable, and has no configuration files apart from the files that contain the recipes.
+
+### Installing just with Operating System Packages
+
+_just_ is available from the popular operating system package managers. For example:
 
 ```shell
 winget install --id Casey.Just --exact  # winget on Windows
@@ -31,11 +37,33 @@ brew install just                       # Homebrew on macOS
 sudo dnf install just                   # Fedora
 ```
 
+Debian includes [_just_ in the _testing_ distribution](https://packages.debian.org/trixie/just). Ubuntu will provide [_just_ for 24.04 LTS](https://packages.ubuntu.com/noble/just).
+
 > _Operating system packages may not provide the latest version of _just_:_ See [the package list page](https://just.systems/man/en/chapter_4.html) for what is available from operating system package managers.
 
-To install the latest version of _just_, download the executable from GitHub, rather than using an operating system package manager.
+### Installing just with a Script
 
-If you are using a Dev Container, add the feature _guiyomh/features/just_ to your _devcontainer.json_ file to download _just_ from GitHub:
+Use the [script for downloading just from GitHub](https://just.systems/man/en/chapter_5.html). You may either fetch this installation script each time, as the documentation describes, or save it. To ensure that container image builds are consistent, use a saved copy of the script when you build Docker container images.
+
+To save the installation script:
+
+```shell
+curl -L https://just.systems/install.sh > scripts/install-just.sh
+```
+
+To use the installation script, call it with _--tag_ and _--to_ The _--tag_ specifies the version of _just_. The _--to_ specifies which directory to install it to:
+
+```shell
+./scripts/install-just.sh --tag 1.25.2 --to $HOME/.local/bin
+```
+
+### Adding a Private Copy of just to a Project
+
+The instructions that are provided in the previous sections install a copy of _just_ for a user or a system. To install a copy of _just_ that is private to a project, you have several options.
+
+Rust and Node.js projects may use packages for _just_. To add _just_ to a Node.js project, use the [just-install](https://www.npmjs.com/package/just-install) npm package. To include _just_ in a Rust project, add [just](https://crates.io/crates/just) as a package in Cargo.
+
+If you are using a Dev Container, you can add the feature _guiyomh/features/just_ to your _devcontainer.json_ file to download _just_ from GitHub:
 
 ```json
     "features": {
@@ -45,19 +73,7 @@ If you are using a Dev Container, add the feature _guiyomh/features/just_ to you
     }
 ```
 
-Otherwise, use the [script for downloading just from GitHub](https://just.systems/man/en/chapter_5.html). You may either fetch this installation script each time, as the documentation describes, or save it. To ensure that container image builds are consistent, use a saved copy of the script when you build Docker container images.
-
-To save the installation script:
-
-```shell
-curl -L https://just.systems/install.sh > scripts/install-just.sh
-```
-
-To use the installation script, call it with _--tag_ to specify the version of _just_ and _--to_ to specify which directory to install it to:
-
-```shell
-./scripts/install-just.sh --tag 1.25.2 --to $HOME/.local/bin
-```
+Finally, you can use the installation script to install a copy of _just_ into a directory within the project. If you do this, remember to exclude the path of the _just_ executable file from version control.
 
 ### Enabling Autocompletion
 
@@ -77,36 +93,25 @@ Current versions of _just_ provide autocompletion for Bash, zsh, fish, PowerShel
 
 > **macOS and Homebrew:** If you install _just_ on macOS with Homebrew, follow [these instructions](https://just.systems/man/en/chapter_65.html) to  autocompletion for zsh.
 
-## Using just in a Project
-
-### Creating justfiles in a Project
-
-Use **just --init** to create a _justfile_ in the root directory of your project. Use this _justfile_ for tasks that apply to the entire project. You may create other _justfiles_ in subdirectories for tasks that are more specific. For example, you might create a _justfile_ in a _tests/_ subdirectory of your project for tasks that are specifically for testing.
-
-### Adding a Private Copy of just to a Project
-
-The instructions that are provided in the previous section install a copy of _just_ that is shared. To install a copy of _just_ that is private to a project, you have several options.
-
-Rust and Node.js projects may use packages for _just_. To add _just_ to a Node.js project, use the [just-install](https://www.npmjs.com/package/just-install) npm package. To include _just_ in a Rust project, add [just](https://crates.io/crates/just) as a package in Cargo.
-
-You may install _just_ to a directory in the project with a setup script, as described in the previous section.
-
-You may also include _just_ in the container images for any project, using either operating system packages or a setup script, as described in the previous section.
-
 ## Creating a User justfile for Global Tasks
 
 To define tasks that are available at any time, create a file with the name _.user.justfile_ in your home directory.
 
+Create the first recipe in the root _justfile_ with the name _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without the name of a recipe, it runs the first recipe in the _justfile_.
+
+Here is an example of a user justfile:
+
 ```just
 # List available recipes
 help:
-    @just --list -f "$HOME/.user.justfile"
+    @just --list -f "{{ home_directory() }}/.user.justfile"
 
-# Display System information
+# Display system information
 system-info:
-    @echo "CPU Architecture: {{ arch() }}"
-    @echo "OS Type: {{ os_family() }}"
-    @echo "OS: {{ os() }}"
+    @echo "CPU architecture: {{ arch() }}"
+    @echo "Operating system type: {{ os_family() }}"
+    @echo "Operating system: {{ os() }}"
+    @echo "Home directory: {{ home_directory() }}"
 ```
 
 This _justfile_ requires extra options to run. For convenience, add an alias to your shell configuration. For example, add these lines in _.config/fish/config.fish_ to enable an alias in the Fish shell:
@@ -118,7 +123,7 @@ if command -s just > /dev/null
 end
 ```
 
-This means that you may run a task by entering _.j_ followed by the name of the recipe:
+This means that you run a task in the _justfile_ by entering _.j_ followed by the name of the recipe:
 
 ```shell
 .j system-info
@@ -130,15 +135,108 @@ To list the recipes in your user _justfile_, type _.j_ and press the _Enter_ key
 .j
 ```
 
-## Developing just
+## Using just in a Project
 
-### Writing justfiles
+Use **just --init** to create a _justfile_ in the root directory of your project. You should always name the _just_ file in the root directory of the project _justfile_.
+
+You have two ways to organize the other _justfiles_ in a project: modules and directory hierarchy. You can combine these approaches, but few projects will be complex enough to need to do this.
+
+If you are starting a new project, consider using _just_ modules. Real-world projects often have multiple components with many tasks, and _just_ modules enable you to define clear namespaces for recipes. Modules also provide more flexibility for organizing the files that contain your recipes.
+
+The modules feature is available in _just_ 1.19.0 and above, but it is currently _unstable_, which means that it is expected to work correctly, but it is not subject to the standard compatibility guarantees of _just_. This also means that you either need to set the environment variable _JUST_UNSTABLE_ as _true_, or use the _--unstable_ option when you run commands with _just_.
+
+### Using Modules
+
+If you decide to use _just_ modules in your project, consider following these guidelines:
+
+- Create the first recipe in the root _justfile_ with the name _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without a module or recipe name, it runs the first recipe in the _justfile_.
+- Create an extra _mod.just_ file in each subdirectory that relates to a specific component or type of work. You may not need a separate module for every main subdirectory in the project.
+- Create an extra _.just_ file in the root directory for each tool that applies to the entire project, such as pre-commit.
+- Use the root _justfile_ to define standard tasks for the project. Each of these should call the relevant recipes in one or more modules. Avoid writing recipes in the _justfile_ that do anything other than running recipes that are defined in modules.
+- Remember that the first recipe in each _mod.just_ file is the default for the module. This means that the first recipe runs when a user types the module without specifying the name of the task.
+- Specify the [no-cd attribute](https://just.systems/man/en/chapter_32.html#disabling-changing-directory190) on each recipe in a module, so that the working directory of the recipe is the root directory of the project.
+
+### Example justfile for a Project
+
+```just
+mod precommit  # Defined by pre-commit.just file in root directory
+mod python  # Defined by mod.just file in python/ directory
+
+# List available recipes
+help:
+    @just --unstable --list
+
+# Install tools and dependencies, then set up environment for development
+bootstrap:
+    @just --unstable install
+    @just --unstable setup
+
+# Build artifacts
+build:
+    @just --unstable python::build
+
+# Install project tools and dependencies
+install:
+    @just --unstable python::install
+
+# Run all checks
+lint:
+    @just --unstable pre-commit::check
+
+# Set up environment for development
+setup:
+    @just --unstable python::setup
+    @just --unstable pre-commit::setup
+```
+
+Note that the first recipe in this file is _help_, so this command runs that recipe:
+
+```shell
+just
+```
+
+### Example just Module for a Project
+
+```just
+# Check the project with pre-commit
+check:
+    @pre-commit run --all-files
+
+# Run a specific pre-commit check on the project
+run hook-id:
+    @pre-commit run "{{ hook-id }}" --all-files
+
+# Setup pre-commit for use
+setup:
+    @pre-commit install
+```
+
+Note that the first recipe in this file is _check_, so this command runs that recipe:
+
+```shell
+just pre-commit
+```
+
+### Using a Hierarchy of justfiles
+
+If you decide not to use modules, consider following these guidelines:
+
+- Create the first recipe in the root _justfile_ with the name _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without the name of a recipe, it runs the first recipe in the _justfile_.
+- Create an extra _justfile_ in each subdirectory that should be a separate scope of operations. For example, if you have a monorepo, create a child _justfile_ in the main directory for each component.
+- Set _fallback_ to _true_ in each _justfile_ that is NOT in the root directory of the project. This enables _just_ to find recipes from the root _justfile_ as well as the _justfile_ in the current working directory.
+- If you have many recipes for a single _justfile_, consider putting the recipes into several _.just_ files and using [imports](https://just.systems/man/en/chapter_53.html) to combine them.
+- To ensure that you do not accidentally run a recipe from a user _justfile_, do NOT set _fallback_ to _true_ in a _justfile_ in the root directory of a project.
+- To create namespaces for recipes, decide a standard prefix for each group of recipes, and set the name of each recipe to start with that prefix, e.g. _sys-_.
+- Use the [no-cd attribute](https://just.systems/man/en/chapter_32.html#disabling-changing-directory190) to define recipes that may be executed in one of several different possible directories. By default _just_ sets the working directory to be the location of the _justfile_ that contains the recipe.
+
+## Writing justfiles
+
+### Formatting justfiles
+
+Follow these guidelines when writing _justfiles_ and _mod.just_ modules:
 
 - Use 4 spaces for indentation. The built-in formatting command sets identation as 4 spaces.
 - Always put a comment in the line above each recipe. These comments appear next to the recipe in _just --list_.
-- Create the first recipe in each _justfile_ with the name _default_ or _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without a recipe name, it runs the first recipe in the _justfile_.
-- Use [dotenv files](https://just.systems/man/en/chapter_26.html#dotenv-settings) to get configuration from files.
-- To create namespaces for recipes, decide a standard prefix for each group of recipes, and set the name of each recipe to start with that prefix, e.g. _sys-_.
 - Use **--fmt** to format your _justfiles_. To use this option, run this command in the same directory as the _justfile_ that you want to format:
 
 ```shell
@@ -147,41 +245,21 @@ just --unstable --fmt
 
 > **--fmt is Currently Unstable:** The **--fmt** subcommand is _unstable_, which means that it is expected to work correctly, but it is not subject to the standard compatibility guarantees of _just_.
 
-### Writing justfiles in Projects
-
-- Name the _just_ file in the root directory of the project _justfile_.
-- Create an extra _justfile_ in each subdirectory that should be a separate scope of operations. For example, if you have a monorepo, create a child _justfile_ in the main directory for each component.
-- Set _fallback_ to _true_ in each _justfile_ that is NOT in the root directory of the project. This enables _just_ to find recipes from the root _justfile_ as well as the _justfile_ in the current working directory.
-- If you have many recipes for a single _justfile_, consider putting the recipes into several _.just_ files and using [imports](https://just.systems/man/en/chapter_53.html) to combine them.
-- To ensure that you do not accidentally run a recipe from a user _justfile_, do NOT set _fallback_ to _true_ in a _justfile_ in the root directory of a project.
-- To ensure that a project uses the version of _just_ that you expect, use containers or a copy of _just_ that is for that project, rather than relying on a system installation of _just_.
-
 ### Writing Recipes
 
+Follow these guidelines when writing recipes:
+
 - Use [parameters](https://just.systems/man/en/chapter_38.html) to get inputs for a recipe from the command-line.
+- Use [dotenv files](https://just.systems/man/en/chapter_26.html#dotenv-settings) to get configuration from files.
 - When it is possible, use the [built-in functions](https://just.systems/man/en/chapter_31.html) instead of shell commands, because these will behave consistently across different environments.
 - Use [shebang recipes](https://just.systems/man/en/chapter_41.html) for multi-line shell recipes, as well as recipes in other languages.
-- Use _sh_ syntax for single-line UNIX shell recipes. If you need the features of a specific shell, use a shebang recipe and [set error handling for recipes that use bash](https://just.systems/man/en/chapter_42.html).
+- Use POSIX shell (_sh_) syntax for single-line UNIX shell recipes.
+- If you need the features of a specific UNIX shell, use a shebang recipe. Set [error handling for recipes that use bash](https://just.systems/man/en/chapter_42.html).
 - Use [quotes around arguments](https://just.systems/man/en/chapter_59.html#quoting) to ensure that _just_ can identify mistakes.
-- Use the [no-cd annotation](https://just.systems/man/en/chapter_32.html#disabling-changing-directory190) to define recipes that may be executed in one of several different possible directories. By default _just_ sets the working directory to be the location of the _justfile_.
 
-### Example justfiles
+### More Examples of justfiles
 
-A minimal _justfile_:
-
-```just
-# List available recipes
-help:
-    @just --list
-
-# Show system information
-system-info:
-    @echo "CPU Architecture: {{ arch() }}"
-    @echo "OS Type: {{ os_family() }}"
-    @echo "OS: {{ os() }}"
-```
-
-> The GitHub project for _just_ includes [example justfiles](https://github.com/casey/just/tree/master/examples).
+The GitHub project for _just_ includes [example justfiles](https://github.com/casey/just/tree/master/examples).
 
 ## Running just Recipes
 
