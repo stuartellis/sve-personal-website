@@ -27,6 +27,7 @@
                 "AquaSecurityOfficial.trivy-vulnerability-scanner",
                 "davidanson.vscode-markdownlint",
                 "EditorConfig.EditorConfig",
+                "redhat.vscode-yaml",
                 "timonwong.shellcheck"
             ]
         }
