@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-03-19T20:05:00+00:00"
+date = "2024-03-20T13:15:00+00:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -9,13 +9,13 @@ tags = ["automation", "devops"]
 
 The [just](https://just.systems) tool is a task runner. It provides a consistent framework for working with sets of tasks, which may be written in any scripting language and can run on multiple platforms.
 
-## More on just
+## How just Works
 
-Each copy of _just_ is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, about 6Mb for the 64-bit Linux version. It uses sets of tasks that are written in plain-text files. You may write a task in any programming language that runs with an interpreter, such as UNIX shell, PowerShell, Python, JavaScript or Nu shell.
+Each copy of _just_ is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, about 6Mb for the 64-bit Linux version. It uses sets of tasks that are defined in plain-text files. You may write a task in any programming language that runs with an interpreter, such as UNIX shells, PowerShell, Python, JavaScript or Nu shell.
 
 This means that you can add _just_ to any environment and use whichever scripting languages are available. If you define [multiple implementations of a task](https://just.systems/man/en/chapter_32.html#enabling-and-disabling-recipes180), _just_ runs the correct implementation for the current platform. It also provides other features for you to customise the behavior of tasks for different environments.
 
-In addition, built-in [functions](https://just.systems/man/en/chapter_31.html) enable you to get consistent inputs for your tasks across different platforms. These functions include identifying the host environment, reading environment variables, generating UUIDs, calculating file checksums and formatting string inputs.
+For example, you may use built-in [functions for just](https://just.systems/man/en/chapter_31.html) in your tasks. These functions include identifying the host environment, reading environment variables, generating UUIDs, calculating file checksums and formatting string inputs. These enable you to get consistent inputs for your tasks across different platforms, even if the scripting language that you use does not have these features.
 
 > **Terms:** In _just_, tasks are referred to as **recipes**. The text files that contain recipes are known as **justfiles**.
 
@@ -39,7 +39,9 @@ sudo dnf install just                   # Fedora
 
 Debian includes [_just_ in the _testing_ distribution](https://packages.debian.org/trixie/just). Ubuntu will provide [_just_ for 24.04 LTS](https://packages.ubuntu.com/noble/just).
 
-> _Operating system packages may not provide the latest version of _just_:_ See [the package list page](https://just.systems/man/en/chapter_4.html) for what is available from operating system package managers.
+{{< alert >}}
+_Operating system packages may not provide the latest version of _just_:_ See [the package list page](https://just.systems/man/en/chapter_4.html) for what is available from operating system package managers.
+{{< /alert >}}
 
 ### Installing just with a Script
 
@@ -91,7 +93,9 @@ just --completions fish > ~/.config/fish/completions
 
 Current versions of _just_ provide autocompletion for Bash, zsh, fish, PowerShell, elvish and Nu.
 
-> **macOS and Homebrew:** If you install _just_ on macOS with Homebrew, follow [these instructions](https://just.systems/man/en/chapter_65.html) to  autocompletion for zsh.
+{{< alert >}}
+**macOS and Homebrew:** If you install _just_ on macOS with Homebrew, follow [these instructions](https://just.systems/man/en/chapter_65.html) to  autocompletion for zsh.
+{{< /alert >}}
 
 ## Creating a User justfile for Global Tasks
 
@@ -235,7 +239,7 @@ If you decide not to use modules, consider following these guidelines:
 
 Follow these guidelines when writing _justfiles_ and _mod.just_ modules:
 
-- Use 4 spaces for indentation. The built-in formatting command sets identation as 4 spaces.
+- Use 4 spaces for indentation. The built-in formatting command sets indentation as 4 spaces.
 - Always put a comment in the line above each recipe. These comments appear next to the recipe in _just --list_.
 - Use **--fmt** to format your _justfiles_. To use this option, run this command in the same directory as the _justfile_ that you want to format:
 
@@ -251,9 +255,9 @@ Follow these guidelines when writing recipes:
 
 - Use [parameters](https://just.systems/man/en/chapter_38.html) to get inputs for a recipe from the command-line.
 - Use [dotenv files](https://just.systems/man/en/chapter_26.html#dotenv-settings) to get configuration from files.
+- Remember to use POSIX shell (_sh_) syntax for single-line recipes. By default, _just_ uses the _sh_ shell on the system.
 - When it is possible, use the [built-in functions](https://just.systems/man/en/chapter_31.html) instead of shell commands, because these will behave consistently across different environments.
 - Use [shebang recipes](https://just.systems/man/en/chapter_41.html) for multi-line shell recipes, as well as recipes in other languages.
-- Use POSIX shell (_sh_) syntax for single-line UNIX shell recipes.
 - If you need the features of a specific UNIX shell, use a shebang recipe. Set [error handling for recipes that use bash](https://just.systems/man/en/chapter_42.html).
 - Use [quotes around arguments](https://just.systems/man/en/chapter_59.html#quoting) to ensure that _just_ can identify mistakes.
 
