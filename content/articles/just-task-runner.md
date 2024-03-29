@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-03-29T22:19:00+00:00"
+date = "2024-03-29T22:29:00+00:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -35,6 +35,18 @@ If you do not wish to use a tool version manager, see the section below for how 
 
 If possible, avoid using operating system packages. These are likely to provide older versions of _just_.
 
+### Adding just to a Dev Container
+
+If you are using a Dev Container, you can add the feature _guiyomh/features/just_ to your _devcontainer.json_ file to download _just_ from GitHub:
+
+```json
+    "features": {
+        "ghcr.io/guiyomh/features/just:0": {
+            "version": "1.25.2"
+        }
+    }
+```
+
 ### Installing just with a Script
 
 The _just_ project provide a [script for downloading just from GitHub](https://just.systems/man/en/chapter_5.html). You may either fetch this installation script each time, as the documentation describes, or save it. To ensure that container image builds are consistent, use a saved copy of the script when you build Docker container images.
@@ -64,18 +76,6 @@ sudo dnf install just                   # Fedora
 Debian includes [_just_ in the _testing_ distribution](https://packages.debian.org/trixie/just). Ubuntu will provide [_just_ for 24.04 LTS](https://packages.ubuntu.com/noble/just).
 
 See [the package list page](https://just.systems/man/en/chapter_4.html) for what is available from operating system package managers.
-
-### Adding just to a Dev Container
-
-If you are using a Dev Container, you can add the feature _guiyomh/features/just_ to your _devcontainer.json_ file to download _just_ from GitHub:
-
-```json
-    "features": {
-        "ghcr.io/guiyomh/features/just:0": {
-            "version": "1.25.2"
-        }
-    }
-```
 
 ### Adding a Private Copy of just to a Project
 
