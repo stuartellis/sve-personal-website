@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-03-29T21:27:00+00:00"
+date = "2024-03-29T22:11:00+00:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -28,7 +28,7 @@ The behaviour of _just_ is covered by a [backwards compatibility guarantee](http
 Consider using a tool version manager like [mise](https://mise.jdx.dev/) or [asdf](https://asdf-vm.com) to download install _just_. These can install the latest version of _just_, because they download executables from GitHub. For example, this command installs the latest version of _just_ with _mise_:
 
 ```shell
-mise use -g just
+mise use -gy just
 ```
 
 If you do not wish to use a tool version manager, see the section below for how to install _just_ with a script.
