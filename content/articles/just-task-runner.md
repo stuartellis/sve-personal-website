@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-03-29T22:11:00+00:00"
+date = "2024-03-29T22:19:00+00:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -25,7 +25,7 @@ The behaviour of _just_ is covered by a [backwards compatibility guarantee](http
 
 ## Installing just
 
-Consider using a tool version manager like [mise](https://mise.jdx.dev/) or [asdf](https://asdf-vm.com) to download install _just_. These can install the latest version of _just_, because they download executables from GitHub. For example, this command installs the latest version of _just_ with _mise_:
+Consider using a tool version manager like [mise](https://mise.jdx.dev/), [asdf](https://asdf-vm.com) or [a Dev Container feature](https://code.visualstudio.com/docs/devcontainers/containers#_dev-container-features) to download and install _just_. These can install any version of _just_ that is required, including the latest, because they download executables from GitHub. For example, this command installs the latest version of _just_ with _mise_:
 
 ```shell
 mise use -gy just
@@ -65,11 +65,7 @@ Debian includes [_just_ in the _testing_ distribution](https://packages.debian.o
 
 See [the package list page](https://just.systems/man/en/chapter_4.html) for what is available from operating system package managers.
 
-### Adding a Private Copy of just to a Project
-
-The instructions that are provided in the previous sections install a copy of _just_ for a user or a system. To install a copy of _just_ that is private to a project, you have several options.
-
-Rust and Node.js projects may use packages for _just_. To add _just_ to a Node.js project, use the [just-install](https://www.npmjs.com/package/just-install) npm package. To include _just_ in a Rust project, add [just](https://crates.io/crates/just) as a package in Cargo.
+### Adding just to a Dev Container
 
 If you are using a Dev Container, you can add the feature _guiyomh/features/just_ to your _devcontainer.json_ file to download _just_ from GitHub:
 
@@ -80,6 +76,12 @@ If you are using a Dev Container, you can add the feature _guiyomh/features/just
         }
     }
 ```
+
+### Adding a Private Copy of just to a Project
+
+The instructions that are provided in the previous sections install a copy of _just_ for a user or a system. To install a copy of _just_ that is private to a project, you have several options.
+
+Rust and Node.js projects may use packages for _just_. To add _just_ to a Node.js project, use the [just-install](https://www.npmjs.com/package/just-install) npm package. To include _just_ in a Rust project, add [just](https://crates.io/crates/just) as a package in Cargo.
 
 Finally, you can use the installation script to install a copy of _just_ into a directory within the project. If you do this, remember to exclude the path of the _just_ executable file from version control.
 
