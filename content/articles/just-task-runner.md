@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-03-20T13:15:00+00:00"
+date = "2024-03-29T21:27:00+00:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -17,35 +17,27 @@ This means that you can add _just_ to any environment and use whichever scriptin
 
 For example, you may use built-in [functions for just](https://just.systems/man/en/chapter_31.html) in your tasks. These functions include identifying the host environment, reading environment variables, generating UUIDs, calculating file checksums and formatting string inputs. These enable you to get consistent inputs for your tasks across different platforms, even if the scripting language that you use does not have these features.
 
+You do not need to set up or configure _just_, because it only requires a copy of the executable, and has no configuration files apart from the files that contain the recipes.
+
 > **Terms:** In _just_, tasks are referred to as **recipes**. The text files that contain recipes are known as **justfiles**.
 
 The behaviour of _just_ is covered by a [backwards compatibility guarantee](https://just.systems/man/en/chapter_9.html). To verify that new versions of _just_ do not break compatibility, the _just_ project maintain automation to test against _justfiles_ that are published as Open Source.
 
 ## Installing just
 
-To install the latest version of _just_, download the executable from GitHub, rather than using an operating system package manager.
-
-You do not need to set up or configure _just_, because it only requires a copy of the executable, and has no configuration files apart from the files that contain the recipes.
-
-### Installing just with Operating System Packages
-
-_just_ is available from the popular operating system package managers. For example:
+Consider using a tool version manager like [mise](https://mise.jdx.dev/) or [asdf](https://asdf-vm.com) to download install _just_. These can install the latest version of _just_, because they download executables from GitHub. For example, this command installs the latest version of _just_ with _mise_:
 
 ```shell
-winget install --id Casey.Just --exact  # winget on Windows
-brew install just                       # Homebrew on macOS
-sudo dnf install just                   # Fedora
+mise use -g just
 ```
 
-Debian includes [_just_ in the _testing_ distribution](https://packages.debian.org/trixie/just). Ubuntu will provide [_just_ for 24.04 LTS](https://packages.ubuntu.com/noble/just).
+If you do not wish to use a tool version manager, see the section below for how to install _just_ with a script.
 
-{{< alert >}}
-_Operating system packages may not provide the latest version of _just_:_ See [the package list page](https://just.systems/man/en/chapter_4.html) for what is available from operating system package managers.
-{{< /alert >}}
+If possible, avoid using operating system packages. These are likely to provide older versions of _just_.
 
 ### Installing just with a Script
 
-Use the [script for downloading just from GitHub](https://just.systems/man/en/chapter_5.html). You may either fetch this installation script each time, as the documentation describes, or save it. To ensure that container image builds are consistent, use a saved copy of the script when you build Docker container images.
+The _just_ project provide a [script for downloading just from GitHub](https://just.systems/man/en/chapter_5.html). You may either fetch this installation script each time, as the documentation describes, or save it. To ensure that container image builds are consistent, use a saved copy of the script when you build Docker container images.
 
 To save the installation script:
 
@@ -58,6 +50,20 @@ To use the installation script, call it with _--tag_ and _--to_ The _--tag_ spec
 ```shell
 ./scripts/install-just.sh --tag 1.25.2 --to $HOME/.local/bin
 ```
+
+### Installing just with Operating System Packages
+
+If you do need to install _just_ with an operating system package manager, it is available for many popular systems. For example:
+
+```shell
+winget install --id Casey.Just --exact  # winget on Windows
+brew install just                       # Homebrew on macOS
+sudo dnf install just                   # Fedora
+```
+
+Debian includes [_just_ in the _testing_ distribution](https://packages.debian.org/trixie/just). Ubuntu will provide [_just_ for 24.04 LTS](https://packages.ubuntu.com/noble/just).
+
+See [the package list page](https://just.systems/man/en/chapter_4.html) for what is available from operating system package managers.
 
 ### Adding a Private Copy of just to a Project
 

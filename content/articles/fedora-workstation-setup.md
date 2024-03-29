@@ -1,7 +1,7 @@
 +++
 title = "Setting Up Fedora Workstation for Software Development"
 slug = "fedora-workstation-setup"
-date = "2024-01-28T19:33:00+00:00"
+date = "2024-03-29T10:50:00+00:00"
 description = "Setting up a Fedora Workstation for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
@@ -132,7 +132,7 @@ Fedora Workstation automatically includes support for containers, with [Podman](
 
 ### Using Version Managers
 
-You may use any version manager on Fedora Workstation, such as [pyenv](https://github.com/pyenv/pyenv) for Python, [nvm](https://github.com/creationix/nvm) for Node.js and [rustup](https://rustup.rs/) for Rust.
+You may use any version manager on Fedora Workstation, such as [pyenv](https://github.com/pyenv/pyenv) for Python. I recommend using [rustup](https://rustup.rs/) for Rust and [mise](https://mise.jdx.dev/) for other programming languages.
 
 Fedora Workstation includes the GCC compiler and other tools for compiling C code. Installations of Python, Node.js and other languages use GCC to compile components that are written in C.
 

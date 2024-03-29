@@ -228,7 +228,7 @@ To create an SSH key, run the _ssh-keygen_ command in a terminal window. For exa
 
 ### JavaScript Development: Node.js
 
-Homebrew provides separate packages for each version of [Node.js](https://nodejs.org).
+Use either [mise](https://mise.jdx.dev/) or Homebrew to manage your Node.js installations. Homebrew provides separate packages for each version of [Node.js](https://nodejs.org).
 To ensure that you are using the version of Node.js that you expect, specify the version
 when you install it. For example, enter this command in a Terminal window to install the
 Node.js 18, the current LTS release:
@@ -241,13 +241,13 @@ Add the _bin/_ directory for this Node.js installation to your PATH:
 
 ### Go Development
 
-Use Homebrew to install [Go](https://go.dev/):
+Use either [mise](https://mise.jdx.dev/) or Homebrew to install the _go_ tool. To install [Go](https://go.dev/) with Homebrew, enter this command:
 
     brew install golang
 
 This provides the standard command-line tools for Go.
 
-The current version of Go includes support for dependency management with [modules](https://blog.golang.org/using-go-modules). Use modules for new projects. Some existing projects still use [dep](https://golang.github.io/dep/), or an older tool.
+The current version of Go includes support for dependency management with [modules](https://blog.golang.org/using-go-modules). Use modules for new projects. Some older projects may use [dep](https://golang.github.io/dep/), or another tool.
 
 #### Setting a GOPATH
 
@@ -284,10 +284,8 @@ To manually install a copy of the JDK:
 3. Copy the JDK directory to _/usr/local/lib_
 4. Edit your _~/.zshrc_ file to set environment variables. For example, to use jdk-11.0.3+7 as the Java version:
 
-```bash
-JAVA_HOME=/usr/local/lib/jdk-11.0.3+7/Contents/Home
-PATH=$PATH:/usr/local/lib/jdk-11.0.3+7/Contents/Home/bin
-```
+    JAVA_HOME=/usr/local/lib/jdk-11.0.3+7/Contents/Home
+    PATH=$PATH:/usr/local/lib/jdk-11.0.3+7/Contents/Home/bin
 
 To manually install a copy of [Apache Maven](https://maven.apache.org):
 
@@ -332,7 +330,7 @@ To see a list of the available commands, type _jenv_ in a terminal window:
 
 ### Python Development: pyenv and pipx
 
-Current versions of macOS include a copy of Python 3, but this will not be the latest version of Python. Use Homebrew to install [pyenv](https://github.com/pyenv/pyenv). This tool enables you to use multiple versions of Python.
+Current versions of macOS include a copy of Python 3, but this will not be the latest version of Python. Use either [mise](https://mise.jdx.dev/) or [pyenv](https://github.com/pyenv/pyenv) to install Python. These tools enable you to use multiple versions of Python.
 
 To install pyenv with Homebrew, run this command in a terminal window:
 
@@ -360,9 +358,7 @@ files into system directories.
 ### Ruby Development: RVM
 
 All macOS systems include a copy of Ruby, but it is outdated. To maintain current and
-clean Ruby environments, use the [RVM](https://rvm.io/) system.
-
-RVM relies on Git, so you must have a working installation of Git before you can set up RVM.
+clean Ruby environments, use either [mise](https://mise.jdx.dev/) or [RVM](https://rvm.io/).
 
 By default, RVM downloads copies of Ruby that have been compiled for your operating
 system. If there is no compiled version, RVM then falls back to downloading the source
@@ -464,9 +460,9 @@ You should also remove the anonymous accounts and test database that MySQL autom
 includes:
 
 ```sql
-DROP DATABASE test;
-DELETE FROM mysql.user WHERE user = ’’;
-FLUSH PRIVILEGES;
+    DROP DATABASE test;
+    DELETE FROM mysql.user WHERE user = ’’;
+    FLUSH PRIVILEGES;
 ```
 
 If you intend to duplicate a production environment for testing, create a configuration

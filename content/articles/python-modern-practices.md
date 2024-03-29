@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-02-03T14:02:00+00:00"
+date = "2024-03-29T21:03:00+00:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -14,9 +14,11 @@ tags = ["python"]
 
 ### Use The Most Recent Version of Python That You Can
 
-Use the most recent stable version of Python 3. This ensures that you have the latest security fixes, as well as the fastest performance. If your operating system includes an older version of Python, you can use tools like [asdf](https://asdf-vm.com), [pyenv](https://github.com/pyenv/pyenv) or [Homebrew](https://brew.sh/) to install a separate copy of Python.
+Use a tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv) to install Python, so that you can switch between different versions of Python for your projects.
 
-If you need to use an older version of Python for compatibility, check that you are using the most recent version that you can. The Python development team usually support each version for five years, but some Python libraries may only support each version of Python for a shorter period of time.
+For new projects, choose the most recent stable version of Python 3. This ensures that you have the latest security fixes, as well as the fastest performance.
+
+Try to update projects to new versions of Python as they are released. The Python development team usually support each version for five years, but some Python libraries may only support each version of Python for a shorter period of time.
 
 Avoid using Python 2. It is not supported by the Python development team. The current versions of many libraries are not compatible with Python 2.
 
@@ -24,7 +26,7 @@ Avoid using Python 2. It is not supported by the Python development team. The cu
 
 Always use [pipx](https://github.com/pypa/pipx) to install Python applications, rather than _pip_. This ensures that each application has the correct libraries. Unlike _pip_, _pipx_ automatically installs the libraries for each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
 
-The Python Packaging Authority maintain _pipx_, but it is not included with Python. You can install _pipx_ with Homebrew on macOS, or with your system package manager on Linux.
+The Python Packaging Authority maintain _pipx_, but it is not included with Python. You can install _pipx_ with Homebrew, or with your system package manager on Linux.
 
 > [PEP 668 - Marking Python base environments as “externally managed”](https://peps.python.org/pep-0668/#guide-users-towards-virtual-environments) recommends that users install Python applications with pipx.
 
@@ -41,9 +43,10 @@ Modern Python tools support _pyproject.toml_ files. Python project management to
 
 ### Create a Directory Structure That Uses the src Layout
 
-Python itself does not require a specific directory structure for your projects. The Python packaging documentation describes two popular directory structures: [the src layout and the flat layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/). For modern Python projects, use the src layout. The [pyOpenSci project documentation on directory structures](https://www.pyopensci.org/python-package-guide/package-structure-code/python-package-structure.html) explains the differences between the two.
+Python itself does not require a specific directory structure for your projects. The Python packaging documentation describes two popular directory structures: [the src layout and the flat layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/).
+The [pyOpenSci project documentation on directory structures](https://www.pyopensci.org/python-package-guide/package-structure-code/python-package-structure.html) explains the practical differences between the two.
 
-Current versions of the [Hatch](https://hatch.pypa.io) tool create a src layout for new projects.
+For modern Python projects, use the src layout. This requires you to use editable installs of the packages in your project, but tools like [Hatch](https://hatch.pypa.io) and [Poetry](https://python-poetry.org/) will handle this for you.
 
 ### Use Virtual Environments for Development
 
@@ -66,7 +69,7 @@ If you need to install packages without using _pip-sync_, run _pip install_ with
 
 ```shell
 source ./.venv/bin/activate
-python3 -m pip install -r requirements-dev.txt 
+python3 -m pip install -r requirements-dev.txt
 ```
 
 ### Format Your Code
