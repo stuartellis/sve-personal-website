@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-03-29T22:29:00+00:00"
+date = "2024-04-20T14:34:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -17,15 +17,47 @@ This means that you can add _just_ to any environment and use whichever scriptin
 
 For example, you may use built-in [functions for just](https://just.systems/man/en/chapter_31.html) in your tasks. These functions include identifying the host environment, reading environment variables, generating UUIDs, calculating file checksums and formatting string inputs. These enable you to get consistent inputs for your tasks across different platforms, even if the scripting language that you use does not have these features.
 
-You do not need to set up or configure _just_, because it only requires a copy of the executable, and has no configuration files apart from the files that contain the recipes.
-
 > **Terms:** In _just_, tasks are referred to as **recipes**. The text files that contain recipes are known as **justfiles**.
+
+You do not need to set up or configure _just_, because it only requires a copy of the executable, and has no configuration files apart from the files that contain the recipes. Here is an example of a _justfile_:
+
+```just
+# Recipes for Hugo
+#
+# https://gohugo.io/
+
+# Build Website
+build:
+    @hugo
+
+# Remove generated files
+clean:
+    #!/usr/bin/env sh
+    set -eu
+    HUGO_TEMP_PATHS=".hugo_build.lock public"
+    echo "Removing temporary files for Hugo..."
+    for HUGO_TEMP_PATH in $HUGO_TEMP_PATHS
+    do
+      rm -fr $HUGO_TEMP_PATH
+      echo "Removed $HUGO_TEMP_PATH"
+    done
+
+# Deploy Website
+deploy: build
+    @hugo deploy
+
+# Run Website in development server
+serve:
+    @hugo server
+```
 
 The behaviour of _just_ is covered by a [backwards compatibility guarantee](https://just.systems/man/en/chapter_9.html). To verify that new versions of _just_ do not break compatibility, the _just_ project maintain automation to test against _justfiles_ that are published as Open Source.
 
 ## Installing just
 
-Consider using a tool version manager like [mise](https://mise.jdx.dev/), [asdf](https://asdf-vm.com) or [a Dev Container feature](https://code.visualstudio.com/docs/devcontainers/containers#_dev-container-features) to download and install _just_. These can install any version of _just_ that is required, including the latest, because they download executables from GitHub. For example, this command installs the latest version of _just_ with _mise_:
+Consider using a tool version manager like [mise](https://mise.jdx.dev/), [asdf](https://asdf-vm.com) or [a Dev Container feature](https://code.visualstudio.com/docs/devcontainers/containers#_dev-container-features) to download and install _just_. These can install any version of _just_ that is required, including the latest, because they download executables from GitHub.
+
+For example, this command installs the latest version of _just_ with _mise_:
 
 ```shell
 mise use -gy just
@@ -37,7 +69,7 @@ If possible, avoid using operating system packages. These are likely to provide 
 
 ### Adding just to a Dev Container
 
-If you are using a Dev Container, you can add the feature _guiyomh/features/just_ to your _devcontainer.json_ file to download _just_ from GitHub:
+If you are using a Dev Container, you can add the feature [guiyomh/features/just](https://github.com/guiyomh/features/tree/main/src/just) to your _devcontainer.json_ file to download _just_ from GitHub:
 
 ```json
     "features": {
@@ -65,12 +97,12 @@ To use the installation script, call it with _--tag_ and _--to_ The _--tag_ spec
 
 ### Installing just with Operating System Packages
 
-If you do need to install _just_ with an operating system package manager, it is available for many popular systems. For example:
+If you do need to install _just_ with an operating system package manager, it is available for many popular systems. For example, these commands install _just_:
 
 ```shell
-winget install --id Casey.Just --exact  # winget on Windows
+winget install --id Casey.Just --exact  # winget on Microsoft Windows
 brew install just                       # Homebrew on macOS
-sudo dnf install just                   # Fedora
+sudo dnf install just                   # dnf on Fedora Linux
 ```
 
 Debian includes [_just_ in the _testing_ distribution](https://packages.debian.org/trixie/just). Ubuntu will provide [_just_ for 24.04 LTS](https://packages.ubuntu.com/noble/just).
@@ -151,7 +183,14 @@ To list the recipes in your user _justfile_, type _.j_ and press the _Enter_ key
 
 Use **just --init** to create a _justfile_ in the root directory of your project. You should always name the _just_ file in the root directory of the project _justfile_.
 
-You have two ways to organize the other _justfiles_ in a project: modules and directory hierarchy. You can combine these approaches, but few projects will be complex enough to need to do this.
+If a project only requires one small set of recipes, then use a single _justfile_. If you need to manage several sets of recipes, use multiple files.
+
+You have two ways to organize the other _justfiles_ in a project:
+
+1. Modules
+2. Directory hierarchy
+
+You can combine these approaches, but few projects will be complex enough to need to do this.
 
 If you are starting a new project, consider using _just_ modules. Real-world projects often have multiple components with many tasks, and _just_ modules enable you to define clear namespaces for recipes. Modules also provide more flexibility for organizing the files that contain your recipes.
 
