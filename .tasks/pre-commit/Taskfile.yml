@@ -4,7 +4,7 @@
 #
 # Tasks for pre-commit
 #
-# https://pre-commit.com
+# https://pre-commit.com/
 
 version: "3"
 

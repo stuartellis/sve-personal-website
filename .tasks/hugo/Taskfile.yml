@@ -28,7 +28,7 @@ tasks:
     desc: Delete generated files
     cmds:
       - for: [".hugo_build.lock", "public"]
-        cmd: rm -fr {{ .ITEM }}
+        cmd: rm -fr {{.ITEM}}
 
   deploy:
     desc: Deploy Website

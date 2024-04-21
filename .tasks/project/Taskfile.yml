@@ -4,7 +4,7 @@
 #
 # Project tasks for the Task runner:
 #
-# https://taskfile.dev
+# https://taskfile.dev/
 
 version: "3"
 
@@ -16,4 +16,4 @@ tasks:
     desc: Delete generated files
     cmds:
       - for: ["tmp"]
-        cmd: rm -fr {{ .ITEM }}
+        cmd: rm -fr {{.ITEM}}
