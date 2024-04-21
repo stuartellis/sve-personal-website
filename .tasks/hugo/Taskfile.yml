@@ -1,0 +1,42 @@
+# SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
+#
+# SPDX-License-Identifier: MIT
+#
+# Tasks for Hugo
+#
+# https://gohugo.io/
+
+version: "3"
+
+silent: true
+
+tasks:
+  default:
+    cmds:
+      - task: build
+
+  build:
+    desc: Build Website
+    cmds:
+      - hugo
+    sources:
+      - content/**/*.md
+    generates:
+      - public/**
+
+  clean:
+    desc: Delete generated files
+    cmds:
+      - for: [".hugo_build.lock", "public"]
+        cmd: rm -fr {{ .ITEM }}
+
+  deploy:
+    desc: Deploy Website
+    deps: [build]
+    cmds:
+      - hugo deploy
+
+  serve:
+    desc: Run Website in development server
+    cmds:
+      - hugo server

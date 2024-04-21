@@ -14,8 +14,8 @@
             "extended": true,
             "version": "0.122.0"
         },
-        "ghcr.io/guiyomh/features/just:0": {
-            "version": "1.25.2"
+        "ghcr.io/devcontainers-contrib/features/go-task:1": {
+            "version": "3.36.0"
         },
         "ghcr.io/devcontainers-contrib/features/pre-commit:2": {
             "version": "3.6.2"
@@ -28,12 +28,13 @@
                 "davidanson.vscode-markdownlint",
                 "EditorConfig.EditorConfig",
                 "redhat.vscode-yaml",
+                "task.vscode-task",
                 "timonwong.shellcheck"
             ]
         }
     },
     "containerUser": "vscode",
-    "postCreateCommand": "just bootstrap",
+    "postCreateCommand": "task bootstrap",
     "runArgs": [
         "--userns=keep-id",
         "--env-file",

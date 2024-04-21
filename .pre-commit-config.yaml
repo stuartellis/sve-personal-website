@@ -22,12 +22,6 @@ repos:
     -   id: reuse
 -   repo: local
     hooks:
-    -   id: check-justfile
-        name: check justfile
-        entry: just
-        language: system
-        args: [--unstable, --fmt, --check, -f]
-        files: justfile
     -   id: trivy-config
         name: trivy config
         entry: trivy
