@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-04-21T23:08:00+01:00"
+date = "2024-04-22T07:01:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -143,7 +143,7 @@ To define tasks that are available at any time, create a file with the name _Tas
 
 Create a task in the _Taskfile.yml_ with the name _default_. When Task is invoked without the name of a task, it runs the _default_ task in the _Taskfile.yml_.
 
-Here is an example of a user _Taskfile.yml_:
+This example user _Taskfile.yml_ includes a _default_ task that lists the available tasks:
 
 ```yaml
 version: "3"
@@ -167,7 +167,13 @@ tasks:
       - "echo Operating system: {{OS}}"
 ```
 
-This _Taskfile.yml_ requires the extra option _-g_ to run. For convenience, add an alias to your shell configuration. For example, add these lines in _.config/fish/config.fish_ to enable an alias in the Fish shell:
+The user _Taskfile.yml_ requires the option _-g_ to run:
+
+```shell
+task -g system-info
+```
+
+For convenience, add an alias to your shell configuration. For example, add these lines in _.config/fish/config.fish_ to enable an alias in the Fish shell:
 
 ```fish
 # Add abbr to call tasks in user Taskfile.yml by typing ".t task-NAME"
@@ -182,11 +188,13 @@ This means that you run a task in the _Taskfile.yml_ by entering _.t_ followed b
 .t system-info
 ```
 
-To list the tasks in your user _Taskfile.yml_, type _.t_ and press the _Enter_ key.
+To list the tasks in your user _Taskfile.yml_, you can type _.t_ and press the _Enter_ key:
 
 ```shell
 .t
 ```
+
+This runs the _default_ task. The example _Taskfile.yml_ configures this to display a list of tasks.
 
 ## Using Task in a Project
 
@@ -213,6 +221,24 @@ If you decide to use namespaces for the tasks in your project, consider followin
 - Remember to include a _default_ task for each namespace. This means that the _default_ task runs when a user types the name of the namespace without specifying the name of the task.
 - Specify any relevant [namespace aliases](https://taskfile.dev/usage/#namespace-aliases) with the _includes_ attribute.
 
+This diagram shows the suggested directory structure for a project with task namespaces:
+
+```shell
+.
+|
+| - .tasks/
+|    |
+|    |- hugo
+|    |    |
+|    |    |- Taskfile.yml
+|    |
+|    |- pre-commit
+|         |
+|         |- Taskfile.yml
+|
+|- Taskfile.yml
+```
+
 ### Example Taskfile.yml for a Project
 
 ```yaml
@@ -228,7 +254,6 @@ silent: true
 includes:
   hugo: .tasks/hugo
   pre-commit: .tasks/pre-commit
-  project: .tasks/project
 
 # Top-level tasks
 tasks:
@@ -238,7 +263,6 @@ tasks:
 
   bootstrap:
     desc: Set up environment for development
-    aliases: [setup]
     cmds:
       - task: pre-commit:setup
 
@@ -246,7 +270,6 @@ tasks:
     desc: Delete generated files
     cmds:
       - task: hugo:clean
-      - task: project:clean
 
   deploy:
     desc: Deploy Website
@@ -262,7 +285,7 @@ tasks:
 
   lint:
     desc: Run all checks
-    aliases: [check, test]
+    aliases: [check]
     cmds:
       - task: pre-commit:check
 
@@ -273,12 +296,12 @@ tasks:
 
   site:
     desc: Display Website in a Web browser
-    aliases: [doc]
+    aliases: [run]
     cmds:
       - task: hugo:serve
 ```
 
-Note that the _default_ task runs the _list_ task, so this command runs that task:
+The _default_ task runs the _list_ task, so this command displays a list of the available tasks:
 
 ```shell
 task
@@ -318,7 +341,7 @@ tasks:
       - pre-commit install
 ```
 
-Note that the _default_ task in this file runs _check_, so this command runs that task:
+The _default_ task in this file runs _check_, so this command also runs the _check_ task:
 
 ```shell
 task pre-commit
@@ -328,7 +351,7 @@ task pre-commit
 
 Follow [the style guidelines](https://taskfile.dev/styleguide/) when writing tasks. Here are some extra suggestions:
 
-- Use a YAML formatter to format your Task files.
+- Use a YAML formatter to format your Task files. For example, [Prettier](https://prettier.io/) formats YAML files.
 - Always put a _desc_ attribute for each task. The description appears next to the task in the output of _task --list_.
 - Consider adding a [summary](https://taskfile.dev/usage/#display-summary-of-task) attribute for each task. The summary appears in the output of _task --summary TASK-NAME_.
 - Use [argument forwarding](https://taskfile.dev/usage/#forwarding-cli-arguments-to-commands) or [wildcard task names](https://taskfile.dev/usage/#wildcard-arguments) to get inputs for a task from the command-line.
