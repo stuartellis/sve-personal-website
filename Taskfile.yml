@@ -4,7 +4,7 @@
 #
 # Tasks for the Task runner:
 #
-# https://taskfile.dev
+# https://taskfile.dev/
 
 version: "3"
 
@@ -57,6 +57,6 @@ tasks:
 
   site:
     desc: Display Website in a Web browser
-    aliases: [doc]
+    aliases: [doc, run]
     cmds:
       - task: hugo:serve
