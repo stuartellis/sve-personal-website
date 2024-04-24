@@ -1,21 +1,23 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-04-22T07:01:00+01:00"
+date = "2024-04-24T11:45:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
 +++
 
-The [Task](https://taskfile.dev/) tool is a task runner. It provides a consistent framework for working with sets of tasks, which can run on multiple platforms.
+The [Task](https://taskfile.dev/) tool is a task runner and build tool. It provides a consistent framework for working with sets of tasks, which can run on multiple platforms.
 
 ## How Task Works
 
-Each copy of Task is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, about 8Mb for the 64-bit Linux version. It uses sets of tasks that are defined in YAML files.
+Each copy of Task is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, about 8Mb for the 64-bit Linux version. It uses sets of tasks that are defined in YAML files, and includes a shell interpreter, so that you can use the same syntax for tasks on any platform.
 
-This means that you can add Task to any environment and use whichever scripting languages are available. If you define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfiles), Task runs the correct implementation for the current platform. It also provides other features for you to customise the behavior of tasks for different environments.
+This means that you can add Task to any environment. It also provides features for you to customise the behavior of your tasks for the different environments that you might use.
 
-For example, you may use built-in [template functions](https://taskfile.dev/usage/#gos-template-engine) in your tasks. These functions include reading environment variables, calculating file checksums and formatting string inputs. These enable you to get consistent inputs for your tasks across different platforms, even if the scripting language that you use does not have these features.
+The built-in [template functions](https://taskfile.dev/usage/#gos-template-engine) provide a range of features in your tasks. These functions include reading environment variables, calculating file checksums and formatting string inputs. These enable you to get consistent inputs for your tasks across different platforms. When needed, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfileions), so that Task uses the specific implementation for the current platform.
+
+Task includes two other important features: [conditional execution](https://taskfile.dev/usage/#prevent-unnecessary-work) and [running tasks on file changes](https://taskfile.dev/usage/#watch-tasks). These are designed to be usable with any type of software development.
 
 You do not need to set up or configure Task, because it only requires a copy of the executable, and has no configuration files apart from the files that contain the tasks. Here is an example of a _Taskfile.yml_:
 
@@ -62,7 +64,7 @@ tasks:
 
 ## Installing Task
 
-Consider using a tool version manager like [mise](https://mise.tdx.dev/), [asdf](https://asdf-vm.com) or [a Dev Container feature](https://code.visualstudio.com/docs/devcontainers/containers#_dev-container-features) to download and install Task. These can install any version of Task that is required, including the latest, because they download executables from GitHub.
+Consider using a tool version manager like [mise](https://mise.tdx.dev/), [asdf](https://asdf-vm.com) to download and install Task. If you have a Dev Container configuration for a project, use the [go-task feature](https://github.com/devcontainers-contrib/features/blob/main/src/go-task/README.md), as shown in the section below. These can install any version of Task that is required, including the latest, because they download executables from GitHub.
 
 For example, this command installs the latest version of Task with _mise_:
 
@@ -73,33 +75,6 @@ mise use -gy task
 If you do not wish to use a tool version manager, see the section below for how to install Task with a script.
 
 If possible, avoid using operating system packages. These are likely to provide older versions of Task.
-
-### Adding Task to a Dev Container
-
-If you are using a Dev Container, you can add the feature [go-task](https://github.com/devcontainers-contrib/features/blob/main/src/go-task/README.md) to your _devcontainer.json_ file to download Task from GitHub:
-
-```json
-    "features": {
-        "ghcr.io/devcontainers-contrib/features/go-task:1": {
-            "version": "3.36.0"
-        }
-    }
-```
-
-Ensure that you also include the [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) and [task.vscode-task](https://marketplace.visualstudio.com/items?itemName=task.vscode-task) extensions in the _devcontainer.json_ file:
-
-```json
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "redhat.vscode-yaml",
-                "task.vscode-task"
-            ]
-        }
-    }
-```
-
-These extensions enable YAML formatting and validation, and add a graphical integration for running tasks.
 
 ### Installing Task with a Script
 
@@ -131,11 +106,44 @@ sudo dnf install go-task  # dnf on Fedora Linux
 
 The instructions that are provided in the previous sections install a copy of Task for a user or a system. To install a copy of Task that is private to a project, you can use the installation script to install a copy of Task into a directory within the project. If you do this, remember to exclude the path of the Task executable file from version control.
 
+### Enabling Visual Studio Code Integration
+
+To use Task with Visual Studio Code, install the [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) and [task.vscode-task](https://marketplace.visualstudio.com/items?itemName=task.vscode-task) extensions.
+
+These extensions enable YAML formatting and validation, and add a graphical integration for running tasks.
+
 ### Enabling Autocompletion
 
 To enable autocompletion for Task in a shell, [download the appropriate script and install it into the correct location](https://taskfile.dev/installation#setup-completions).
 
 Current versions of Task provide autocompletion for Bash, zsh, fish and PowerShell.
+
+### Adding Task to a Dev Container
+
+If you are using a Dev Container, you can add the feature [go-task](https://github.com/devcontainers-contrib/features/blob/main/src/go-task/README.md) to your _devcontainer.json_ file to download Task from GitHub:
+
+```json
+    "features": {
+        "ghcr.io/devcontainers-contrib/features/go-task:1": {
+            "version": "3.36.0"
+        }
+    }
+```
+
+Ensure that you also include the [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) and [task.vscode-task](https://marketplace.visualstudio.com/items?itemName=task.vscode-task) extensions in the _devcontainer.json_ file:
+
+```json
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "redhat.vscode-yaml",
+                "task.vscode-task"
+            ]
+        }
+    }
+```
+
+These extensions enable YAML formatting and validation, and add a graphical integration for running tasks.
 
 ## Creating a User Taskfile.yml for Global Tasks
 
@@ -198,7 +206,7 @@ This runs the _default_ task. The example _Taskfile.yml_ configures this to disp
 
 ## Using Task in a Project
 
-First, add the _.task_ directory to the exclusions for source control. This directory is used to hold files for tracking changes.
+First, add the _.task_ directory to the exclusions for source control. This directory is used to hold [files for tracking changes](https://taskfile.dev/usage/#by-fingerprinting-locally-generated-files-and-their-sources).
 
 Use _task --init_ to create a _Taskfile.yml_ in the root directory of your project. You should always name the Task file in the root directory of the project _Taskfile.yml_.
 
@@ -228,13 +236,15 @@ This diagram shows the suggested directory structure for a project with task nam
 |
 | - .tasks/
 |    |
-|    |- hugo
+|    |- pre-commit
 |    |    |
 |    |    |- Taskfile.yml
 |    |
-|    |- pre-commit
+|    |- package
 |         |
-|         |- Taskfile.yml
+|         |- Taskfile_darwin.yml
+|         |- Taskfile_linux.yml
+|         |- Taskfile_windows.yml
 |
 |- Taskfile.yml
 ```
@@ -252,7 +262,7 @@ silent: true
 
 # Namespaces
 includes:
-  hugo: .tasks/hugo
+  package: .tasks/package/Taskfile_{{OS}}.yml
   pre-commit: .tasks/pre-commit
 
 # Top-level tasks
@@ -266,15 +276,15 @@ tasks:
     cmds:
       - task: pre-commit:setup
 
+  build:
+    desc: Build packages
+    cmds:
+      - task: package:build
+
   clean:
     desc: Delete generated files
     cmds:
-      - task: hugo:clean
-
-  deploy:
-    desc: Deploy Website
-    cmds:
-      - task: hugo:deploy
+      - task: package:clean
 
   fmt:
     desc: Format code
@@ -293,12 +303,6 @@ tasks:
     desc: List available tasks
     cmds:
       - task --list
-
-  site:
-    desc: Display Website in a Web browser
-    aliases: [run]
-    cmds:
-      - task: hugo:serve
 ```
 
 The _default_ task runs the _list_ task, so this command displays a list of the available tasks:
@@ -358,7 +362,9 @@ Follow [the style guidelines](https://taskfile.dev/styleguide/) when writing tas
 - Specify the [requires](https://taskfile.dev/usage/#ensuring-required-variables-are-set) attribute for each task that uses a variable. This ensures that the task has the necessary variables.
 - Use [dotenv files](https://taskfile.dev/usage/#env-files) to get configuration from files.
 - Use Bash shell syntax for tasks. Task uses [mvdan/sh](https://github.com/mvdan/sh) to provide the equivalent of the _bash_ shell.
+- To ensure that your tasks are portable, check the options for UNIX commands that you call in tasks, such as _rm_. Operating systems provide different implementations of these commands that may not be consistent.
 - When it is possible, use the [template functions](https://taskfile.dev/usage/#gos-template-engine) instead of shell commands, because these will behave consistently across different environments.
+- Provide [OS-specific Taskfiles](https://taskfile.dev/usage/#os-specific-taskfiles) when necessary.
 
 {{< alert >}}
 _Dependencies run in parallel._ This means that dependencies of a task should not depend one another. If you want to ensure that tasks run in sequence, see the documentation on [Calling Another Task](https://taskfile.dev/usage/#calling-another-task).
