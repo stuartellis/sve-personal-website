@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
+#
+# SPDX-License-Identifier: CC0-1.0
+#
+
 [tools]
 awscli = "latest"
 hugo = "0.122.0"
