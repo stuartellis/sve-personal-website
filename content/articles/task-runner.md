@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-04-24T11:45:00+01:00"
+date = "2024-04-27T07:08:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -17,7 +17,7 @@ This means that you can add Task to any environment. It also provides features f
 
 The built-in [template functions](https://taskfile.dev/usage/#gos-template-engine) provide a range of features in your tasks. These functions include reading environment variables, calculating file checksums and formatting string inputs. These enable you to get consistent inputs for your tasks across different platforms. When needed, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfileions), so that Task uses the specific implementation for the current platform.
 
-Task includes two other important features: [conditional execution](https://taskfile.dev/usage/#prevent-unnecessary-work) and [running tasks on file changes](https://taskfile.dev/usage/#watch-tasks). These are designed to be usable with any type of software development.
+Task includes two other important features: [conditional execution of tasks](https://taskfile.dev/usage/#prevent-unnecessary-work) and [running tasks on file changes](https://taskfile.dev/usage/#watch-tasks). These features are designed to be usable with any type of software development.
 
 You do not need to set up or configure Task, because it only requires a copy of the executable, and has no configuration files apart from the files that contain the tasks. Here is an example of a _Taskfile.yml_:
 
@@ -64,7 +64,7 @@ tasks:
 
 ## Installing Task
 
-Consider using a tool version manager like [mise](https://mise.tdx.dev/), [asdf](https://asdf-vm.com) to download and install Task. If you have a Dev Container configuration for a project, use the [go-task feature](https://github.com/devcontainers-contrib/features/blob/main/src/go-task/README.md), as shown in the section below. These can install any version of Task that is required, including the latest, because they download executables from GitHub.
+Consider using a tool version manager like [mise](https://mise.tdx.dev/) or [asdf](https://asdf-vm.com) to download and install Task. If you have a Dev Container configuration for a project, use the [go-task feature](https://github.com/devcontainers-contrib/features/blob/main/src/go-task/README.md), as shown in the section below. These tools can install any version of Task that is required, including the latest, because they download executables from GitHub.
 
 For example, this command installs the latest version of Task with _mise_:
 
@@ -110,7 +110,9 @@ The instructions that are provided in the previous sections install a copy of Ta
 
 To use Task with Visual Studio Code, install the [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) and [task.vscode-task](https://marketplace.visualstudio.com/items?itemName=task.vscode-task) extensions.
 
-These extensions enable YAML formatting and validation, and add a graphical integration for running tasks.
+The _vscode-yaml_ extension enables YAML formatting and validation, and _vscode-task_ adds a graphical integration for running tasks.
+
+You must install Task to use these extensions. Neither extension installs or updates copies of Task.
 
 ### Enabling Autocompletion
 
@@ -143,7 +145,7 @@ Ensure that you also include the [redhat.vscode-yaml](https://marketplace.visual
     }
 ```
 
-These extensions enable YAML formatting and validation, and add a graphical integration for running tasks.
+The _vscode-yaml_ extension enables YAML formatting and validation, and _vscode-task_ adds a graphical integration for running tasks.
 
 ## Creating a User Taskfile.yml for Global Tasks
 
