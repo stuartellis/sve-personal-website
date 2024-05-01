@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-04-27T07:10:00+01:00"
+date = "2024-05-01T21:03:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -64,7 +64,7 @@ tasks:
 
 ## Installing Task
 
-Consider using a tool version manager like [mise](https://mise.tdx.dev/) or [asdf](https://asdf-vm.com) to download and install Task. If you have a Dev Container configuration for a project, use the [go-task feature](https://github.com/devcontainers-contrib/features/blob/main/src/go-task/README.md), as shown in the section below. These tools can install any version of Task that is required, including the latest, because they download executables from GitHub.
+Consider using a tool version manager like [mise](https://mise.jdx.dev/) or [asdf](https://asdf-vm.com) to download and install Task. If you have a Dev Container configuration for a project, use the [go-task feature](https://github.com/devcontainers-contrib/features/blob/main/src/go-task/README.md), as shown in the section below. These tools can install any version of Task that is required, including the latest, because they download executables from GitHub.
 
 For example, this command installs the latest version of Task with _mise_:
 
