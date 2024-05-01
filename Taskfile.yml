@@ -37,6 +37,12 @@ tasks:
     cmds:
       - task: hugo:deploy
 
+  dev:
+    desc: Run generated Website
+    aliases: [run, site]
+    cmds:
+      - task: hugo:serve
+
   fmt:
     desc: Format code
     aliases: [format]
@@ -54,9 +60,3 @@ tasks:
     desc: List available tasks
     cmds:
       - task --list
-
-  site:
-    desc: Display Website in a Web browser
-    aliases: [doc, run]
-    cmds:
-      - task: hugo:serve
