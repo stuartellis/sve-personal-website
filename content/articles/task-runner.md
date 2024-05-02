@@ -1,17 +1,17 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-05-02T11:15:00+01:00"
+date = "2024-05-02T20:21:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
 +++
 
-The [Task](https://taskfile.dev/) tool is a task runner and build tool. It provides a consistent framework for working with sets of tasks, which can run on multiple platforms.
+The [Task](https://taskfile.dev/) tool is a task runner and build tool. It provides a consistent framework for working with sets of tasks, enabling you to run the same tasks on multiple platforms and environments.
 
 ## How Task Works
 
-Each copy of Task is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, about 8Mb for the 64-bit Linux version. It uses sets of tasks that are defined in YAML files, and includes a shell interpreter, so that you can use the same syntax for tasks on any platform.
+Each copy of Task is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, being about 8Mb for the 64-bit Linux version. It uses sets of tasks that are defined in YAML files, and includes a shell interpreter, so that you can use the same syntax for tasks on any platform.
 
 This means that you can add Task to any environment. It also provides features for you to customise the behavior of your tasks for the different environments that you might use.
 
@@ -78,7 +78,7 @@ If possible, avoid using operating system packages. These install a single share
 
 ### Installing Task with a Script
 
-The Task project provide a [script for downloading task from GitHub](https://taskfile.dev/installation#install-script). You may either fetch this installation script each time, as the documentation describes, or save it. To ensure that container image builds are consistent, use a saved copy of the script when you build Docker container images.
+The Task project provide a [script for downloading task from GitHub](https://taskfile.dev/installation#install-script). You may either fetch this installation script each time, as the documentation describes, or save it. If you build Docker container images that contain a copy of Task, use a saved copy of the script, to ensure that container image builds are consistent.
 
 To save the installation script:
 
@@ -212,26 +212,26 @@ First, add the _.task_ directory to the exclusions for source control. This dire
 
 Use _task --init_ to create a _Taskfile.yml_ in the root directory of your project. You should always name the Task file in the root directory of the project _Taskfile.yml_.
 
-If a project only requires one small set of tasks, then use a single _Taskfile.yml_. If you need to manage several sets of tasks, use multiple files.
+If a project only requires one small set of tasks, then use a single _Taskfile.yml_. If you need to manage several sets of tasks, use these features:
 
-You have two ways to organize the other _Taskfile.yml_ files in a project:
+1. [Taskfiles in subdirectories](https://taskfile.dev/usage/#running-a-taskfile-from-a-subdirectory)
+2. [Includes](https://taskfile.dev/usage/#including-other-taskfiles)
 
-1. [Namespaces](https://taskfile.dev/usage/#including-other-taskfiles)
-2. [Directory hierarchy](https://taskfile.dev/usage/#running-a-taskfile-from-a-subdirectory)
+Adding _Taskfile.yml_ files in subdirectories enables you to override the set of tasks for a project when you change your working directory in the project. This lets you define sets of tasks that are appropriate to the context.
 
-You can combine these approaches. Namespaces enable you to define sets of tasks, using multiple _Taskfile.yml_ files. Adding _Taskfile.yml_ files in subdirectories enables you to define tasks that should be scoped to that subdirectory.
+Includes enable you to define groups of tasks that can be added to any _Taskfile.yml_. These groups automatically become namespaces, which ensures that tasks with the same name do not override each other.
 
-### Using Namespaces
+### Using Includes
 
-If you decide to use namespaces for the tasks in your project, consider following these guidelines:
+If you decide to use Task includes in your project, consider following these guidelines:
 
 - Create the first task in the root _Taskfile.yml_ with the name _default_. When Task is invoked without a namespace or task name, it runs the _default_ task in the _Taskfile.yml_.
 - Create subdirectory called _tasks/_. For each namespace, create a directory with the same name as the namespace, with a _Taskfile.yml_ file in the directory. Write the tasks for the namespace in the relevant _Taskfile.yml_ file. Use _includes_ in the root _Taskfile.yml_ file to enable these namespaces.
 - Use the root _Taskfile.yml_ to define standard tasks for the project. Each of these should call the relevant tasks in one or more namespaces. Avoid writing tasks in the root _Taskfile.yml_ that do anything other than running tasks that are defined in namespaces.
 - Remember to include a _default_ task for each namespace. This means that the _default_ task runs when a user types the name of the namespace without specifying the name of the task.
-- Specify any relevant [namespace aliases](https://taskfile.dev/usage/#namespace-aliases) with the _includes_ attribute.
+- Specify any relevant [aliases](https://taskfile.dev/usage/#namespace-aliases) for a namespace with the _includes_ attribute.
 
-This diagram shows the suggested directory structure for a project with task namespaces:
+This diagram shows the suggested directory structure for a project with task includes:
 
 ```shell
 .
@@ -363,7 +363,7 @@ task pre-commit:check
 
 Follow [the style guidelines](https://taskfile.dev/styleguide/) when writing tasks. Here are some extra suggestions:
 
-- Use a YAML formatter to format your Task files. The [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension adds formatting of YAML files to Visual Studio Code. The [Prettier](https://prettier.io/) tool formats YAML files, and can be used in any environment.
+- Use a YAML formatter to format your Task files. The [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension adds support for formatting YAML files to Visual Studio Code. The [Prettier](https://prettier.io/) tool formats YAML files, and can be used in any environment.
 - Always put a _desc_ attribute for each task. The description appears next to the task in the output of _task --list_.
 - Consider adding a [summary](https://taskfile.dev/usage/#display-summary-of-task) attribute for each task. The summary appears in the output of _task --summary TASK-NAME_.
 - Use [argument forwarding](https://taskfile.dev/usage/#forwarding-cli-arguments-to-commands) or [wildcard task names](https://taskfile.dev/usage/#wildcard-arguments) to get inputs for a task from the command-line.
