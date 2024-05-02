@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-05-01T21:03:00+01:00"
+date = "2024-05-02T11:15:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -64,7 +64,7 @@ tasks:
 
 ## Installing Task
 
-Consider using a tool version manager like [mise](https://mise.jdx.dev/) or [asdf](https://asdf-vm.com) to download and install Task. If you have a Dev Container configuration for a project, use the [go-task feature](https://github.com/devcontainers-contrib/features/blob/main/src/go-task/README.md), as shown in the section below. These tools can install any version of Task that is required, including the latest, because they download executables from GitHub.
+Consider using a tool version manager like [mise](https://mise.jdx.dev/) or [asdf](https://asdf-vm.com) to download and install Task. If you have a Dev Container configuration for a project, use the [go-task feature](https://github.com/devcontainers-contrib/features/blob/main/src/go-task/README.md), as shown in the section below. These tools can install any version of Task that is required for each of your projects, including the latest, because they download executables from GitHub.
 
 For example, this command installs the latest version of Task with _mise_:
 
@@ -74,7 +74,7 @@ mise use -gy task
 
 If you do not wish to use a tool version manager, see the section below for how to install Task with a script.
 
-If possible, avoid using operating system packages. These are likely to provide older versions of Task.
+If possible, avoid using operating system packages. These install a single shared copy of the Task tool, and are likely to provide an older version.
 
 ### Installing Task with a Script
 
@@ -219,14 +219,14 @@ You have two ways to organize the other _Taskfile.yml_ files in a project:
 1. [Namespaces](https://taskfile.dev/usage/#including-other-taskfiles)
 2. [Directory hierarchy](https://taskfile.dev/usage/#running-a-taskfile-from-a-subdirectory)
 
-You can combine these approaches. Namespaces enable you to use sets of tasks from multiple _Taskfile.yml_ files. You may also place _Taskfile.yml_ files in subdirectories for tasks that should be scoped to that subdirectory.
+You can combine these approaches. Namespaces enable you to define sets of tasks, using multiple _Taskfile.yml_ files. Adding _Taskfile.yml_ files in subdirectories enables you to define tasks that should be scoped to that subdirectory.
 
 ### Using Namespaces
 
 If you decide to use namespaces for the tasks in your project, consider following these guidelines:
 
 - Create the first task in the root _Taskfile.yml_ with the name _default_. When Task is invoked without a namespace or task name, it runs the _default_ task in the _Taskfile.yml_.
-- Create subdirectory called _.tasks/_. For each namespace, create a directory with the same name as the namespace, with a _Taskfile.yml_ file in the directory. Write the tasks for the namespace in the relevant _Taskfile.yml_ file. Use _includes_ in the root _Taskfile.yml_ file to enable these namespaces.
+- Create subdirectory called _tasks/_. For each namespace, create a directory with the same name as the namespace, with a _Taskfile.yml_ file in the directory. Write the tasks for the namespace in the relevant _Taskfile.yml_ file. Use _includes_ in the root _Taskfile.yml_ file to enable these namespaces.
 - Use the root _Taskfile.yml_ to define standard tasks for the project. Each of these should call the relevant tasks in one or more namespaces. Avoid writing tasks in the root _Taskfile.yml_ that do anything other than running tasks that are defined in namespaces.
 - Remember to include a _default_ task for each namespace. This means that the _default_ task runs when a user types the name of the namespace without specifying the name of the task.
 - Specify any relevant [namespace aliases](https://taskfile.dev/usage/#namespace-aliases) with the _includes_ attribute.
@@ -236,7 +236,7 @@ This diagram shows the suggested directory structure for a project with task nam
 ```shell
 .
 |
-| - .tasks/
+| - tasks/
 |    |
 |    |- pre-commit
 |    |    |
@@ -264,8 +264,8 @@ silent: true
 
 # Namespaces
 includes:
-  package: .tasks/package/Taskfile_{{OS}}.yml
-  pre-commit: .tasks/pre-commit
+  package: tasks/package/Taskfile_{{OS}}.yml
+  pre-commit: tasks/pre-commit
 
 # Top-level tasks
 tasks:
@@ -307,7 +307,7 @@ tasks:
       - task --list
 ```
 
-The _default_ task runs the _list_ task, so this command displays a list of the available tasks:
+The _default_ task runs the _list_ task, so this command displays a list of all of the available tasks, including the tasks in the namespaces:
 
 ```shell
 task
@@ -347,10 +347,16 @@ tasks:
       - pre-commit install
 ```
 
-The _default_ task in this file runs _check_, so this command also runs the _check_ task:
+The _default_ task in this file runs _check_, so this command runs the _check_ task:
 
 ```shell
 task pre-commit
+```
+
+The result is the same as if used this command to you explicitly select the _check_ task:
+
+```shell
+task pre-commit:check
 ```
 
 ## Writing Taskfile.yml files
@@ -364,9 +370,9 @@ Follow [the style guidelines](https://taskfile.dev/styleguide/) when writing tas
 - Specify the [requires](https://taskfile.dev/usage/#ensuring-required-variables-are-set) attribute for each task that uses a variable. This ensures that the task has the necessary variables.
 - Use [dotenv files](https://taskfile.dev/usage/#env-files) to get configuration from files.
 - Use Bash shell syntax for tasks. Task uses [mvdan/sh](https://github.com/mvdan/sh) to provide the equivalent of the _bash_ shell.
-- To ensure that your tasks are portable, check the options for UNIX commands that you call in tasks, such as _rm_. Operating systems provide different implementations of these commands that may not be consistent.
+- To ensure that your tasks are portable, check the options for UNIX commands that you call in tasks, such as _rm_. Operating systems provide different implementations of these commands, and the options may not be consistent across different environments.
 - When it is possible, use the [template functions](https://taskfile.dev/usage/#gos-template-engine) instead of shell commands, because these will behave consistently across different environments.
-- Provide [OS-specific Taskfiles](https://taskfile.dev/usage/#os-specific-taskfiles) when necessary.
+- Provide [operating system specific Taskfiles](https://taskfile.dev/usage/#os-specific-taskfiles) when necessary.
 
 {{< alert >}}
 _Dependencies run in parallel._ This means that dependencies of a task should not depend one another. If you want to ensure that tasks run in sequence, see the documentation on [Calling Another Task](https://taskfile.dev/usage/#calling-another-task).
@@ -409,7 +415,7 @@ To validate Task files before you commit them to source control, add the [pre-co
 
 ### Testing a Task
 
-To test a task, run it with the _--dry_ option:
+To test a task, run it with the [--dry](https://taskfile.dev/usage/#dry-run-mode) option:
 
 ```shell
 task --dry TASK-NAME
@@ -417,4 +423,5 @@ task --dry TASK-NAME
 
 ## Resources
 
+- [Documentation for Task](https://taskfile.dev/)
 - [Using a task runner to help with context switching in software projects](https://www.caro.fyi/articles/just/)
