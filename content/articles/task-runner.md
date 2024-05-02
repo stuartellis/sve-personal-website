@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-05-02T20:21:00+01:00"
+date = "2024-05-02T20:52:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -19,7 +19,7 @@ The built-in [template functions](https://taskfile.dev/usage/#gos-template-engin
 
 Task includes two other important features: [conditional execution of tasks](https://taskfile.dev/usage/#prevent-unnecessary-work) and [running tasks on file changes](https://taskfile.dev/usage/#watch-tasks). These features are designed to be usable with any type of software development.
 
-You do not need to set up or configure Task, because it only requires a copy of the executable, and has no configuration files apart from the files that contain the tasks. Here is an example of a _Taskfile.yml_:
+You do not need to set up or configure Task, because it only requires a copy of the executable, and has no configuration files apart from the YAML files that contain the tasks. Here is an example of a _Taskfile.yml_:
 
 ```yaml
 # Tasks for a Hugo website project
@@ -64,21 +64,23 @@ tasks:
 
 ## Installing Task
 
-Consider using a tool version manager like [mise](https://mise.jdx.dev/) or [asdf](https://asdf-vm.com) to download and install Task. If you have a Dev Container configuration for a project, use the [go-task feature](https://github.com/devcontainers-contrib/features/blob/main/src/go-task/README.md), as shown in the section below. These tools can install any version of Task that is required for each of your projects, including the latest, because they download executables from GitHub.
-
-For example, this command installs the latest version of Task with _mise_:
+Consider using a tool version manager like [mise](https://mise.jdx.dev/) or [asdf](https://asdf-vm.com) to install Task. For example, this command installs the latest version of Task with _mise_:
 
 ```shell
 mise use -gy task
 ```
 
-If you do not wish to use a tool version manager, see the section below for how to install Task with a script.
+If you have a Dev Container configuration for a project, use the [go-task feature](https://github.com/devcontainers-contrib/features/blob/main/src/go-task/README.md), as shown in the section below.
 
-If possible, avoid using operating system packages. These install a single shared copy of the Task tool, and are likely to provide an older version.
+To add Task to container images or systems without a tool version manager, see the section below for how to install Task with a script.
+
+All of these tools can provide the specific version of Task that is required for a project, including the latest, because they download executables from GitHub as needed. If possible, avoid using operating system packages. A package installs a single shared copy of Task, and is likely to provide an older version.
 
 ### Installing Task with a Script
 
-The Task project provide a [script for downloading task from GitHub](https://taskfile.dev/installation#install-script). You may either fetch this installation script each time, as the documentation describes, or save it. If you build Docker container images that contain a copy of Task, use a saved copy of the script, to ensure that container image builds are consistent.
+The Task project provide a [script for downloading task from GitHub](https://taskfile.dev/installation#install-script). You may either fetch this installation script each time, as the documentation describes, or save it.
+
+If you build Docker container images that contain a copy of Task, use a saved copy of the script. This ensures that container image builds are consistent.
 
 To save the installation script:
 
@@ -92,19 +94,19 @@ To use the installation script, call it with the Git tag and the _-b_ option. Th
 ./scripts/install-task.sh -b $HOME/.local/bin v3.36.0
 ```
 
+{{< alert >}}
+_Exclude the path for the Task executable file from version control._ If you use the script to download a copy of Task into a development project, make sure that the _.gitignore_ (or equivalent) excludes it from version control.
+{{< /alert >}}
+
 ### Installing Task with Operating System Packages
 
-If you do need to install Task with an operating system package manager, it is available for many popular systems. For example, these commands install Task:
+If you do need to install Task with an operating system package manager, it is available for several popular systems. For example, these commands install Task:
 
 ```shell
 winget install Task.Task  # winget on Microsoft Windows
 brew install go-task      # Homebrew on macOS
 sudo dnf install go-task  # dnf on Fedora Linux
 ```
-
-### Adding a Private Copy of Task to a Project
-
-The instructions that are provided in the previous sections install a copy of Task for a user or a system. To install a copy of Task that is private to a project, you can use the installation script to install a copy of Task into a directory within the project. If you do this, remember to exclude the path of the Task executable file from version control.
 
 ### Enabling Visual Studio Code Integration
 
