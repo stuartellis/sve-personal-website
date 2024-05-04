@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-05-04T09:31:00+01:00"
+date = "2024-05-04T12:31:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -114,7 +114,7 @@ To use Task with Visual Studio Code, install the [redhat.vscode-yaml](https://ma
 
 The _vscode-yaml_ extension enables YAML formatting and validation, and _vscode-task_ adds a graphical integration for running tasks.
 
-You must install Task to use these extensions. Neither extension installs or updates copies of Task.
+> _You must install Task to use the vscode-task extension._
 
 ### Enabling Autocompletion
 
@@ -408,7 +408,7 @@ MY_VARIABLE_NAME=my-variable-value task example-task
 
 ## Checking Taskfile.yml files
 
-If your text editor supports [JSON Schemas](https://json-schema.org/), it can automatically check your Task files. JSON Schema tools also work with types of YAML that have defined schemas, such _.gitlab-ci.yml_ and _Taskfile.yml_ files.
+The Task project publish the schema for Task files as a [JSON Schema](https://json-schema.org/). This means that any software that supports JSON Schemas for YAML documents can automatically check your Task files. For example, Visual Studio Code will automatically do this when the [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension is installed.
 
 To validate the Task files on the command-line, use a YAML linter that supports JSON Schemas, such as [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/index.html). The _check-jsonschema_ tool automatically includes the schema for Task files.
 
