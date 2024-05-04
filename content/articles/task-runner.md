@@ -1,13 +1,13 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-05-04T09:15:00+01:00"
+date = "2024-05-04T09:31:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
 +++
 
-The [Task](https://taskfile.dev/) tool is a task runner and build tool. It provides a consistent framework for working with sets of tasks, enabling you to run the same tasks on multiple platforms and environments.
+The [Task](https://taskfile.dev) tool is a task runner and build tool. It provides a consistent framework for working with sets of tasks, enabling you to run the same tasks on multiple platforms and environments.
 
 ## How Task Works
 
@@ -410,7 +410,7 @@ MY_VARIABLE_NAME=my-variable-value task example-task
 
 If your text editor supports [JSON Schemas](https://json-schema.org/), it can automatically check your Task files. JSON Schema tools also work with types of YAML that have defined schemas, such _.gitlab-ci.yml_ and _Taskfile.yml_ files.
 
-To validate the Task files on the command-line, use a YAML linter that supports JSON schemas, such as [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/index.html). The _check-jsonschema_ tool automatically includes the schema for Task files.
+To validate the Task files on the command-line, use a YAML linter that supports JSON Schemas, such as [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/index.html). The _check-jsonschema_ tool automatically includes the schema for Task files.
 
 The _check-jsonschema_ project also provides a _pre-commit_ hook to check Task files before changes are committed to source control.
 
@@ -425,7 +425,7 @@ To validate Task files before you commit them to source control, add the [pre-co
     - id: check-taskfile
 ```
 
-You may also run the same check at any time with the _pre-commit_ command-line tool:
+Once this is added to your project you may run the same check at any time with the _pre-commit_ command-line tool:
 
 ```shell
 pre-commit run check-taskfile --all-files
@@ -437,6 +437,14 @@ To test a task, run it with the [--dry](https://taskfile.dev/usage/#dry-run-mode
 
 ```shell
 task --dry TASK-NAME
+```
+
+This compiles and prints tasks in the order that they would be run.
+
+To debug a task, ensure that _silent_ is not enabled in the appropriate _Taskfile.yml_, so that the outputs of the commands are visible:
+
+```yaml
+silent: false
 ```
 
 ## Resources
