@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-05-02T20:52:00+01:00"
+date = "2024-05-04T09:15:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -13,18 +13,18 @@ The [Task](https://taskfile.dev/) tool is a task runner and build tool. It provi
 
 Each copy of Task is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, being about 8Mb for the 64-bit Linux version. It uses sets of tasks that are defined in YAML files, and includes a shell interpreter, so that you can use the same syntax for tasks on any platform.
 
-This means that you can add Task to any environment. It also provides features for you to customise the behavior of your tasks for the different environments that you might use.
+This means that you can use Task in any environment. It only requires a copy of the Task executable, and has no configuration files apart from the YAML files that contain the tasks.
 
-The built-in [template functions](https://taskfile.dev/usage/#gos-template-engine) provide a range of features in your tasks. These functions include reading environment variables, calculating file checksums and formatting string inputs. These enable you to get consistent inputs for your tasks across different platforms. When needed, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfileions), so that Task uses the specific implementation for the current platform.
+It also provides features for you to customise the behavior of your tasks for the different environments that you might use. The built-in [template functions](https://taskfile.dev/usage/#gos-template-engine) enable you to get consistent inputs for your tasks across different platforms. When needed, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfileions), so that Task uses the specific implementation for the current platform.
 
 Task includes two other important features: [conditional execution of tasks](https://taskfile.dev/usage/#prevent-unnecessary-work) and [running tasks on file changes](https://taskfile.dev/usage/#watch-tasks). These features are designed to be usable with any type of software development.
 
-You do not need to set up or configure Task, because it only requires a copy of the executable, and has no configuration files apart from the YAML files that contain the tasks. Here is an example of a _Taskfile.yml_:
+Here is an example of a _Taskfile.yml_, with a _build_ task that only runs when the _sources_ change:
 
 ```yaml
-# Tasks for a Hugo website project
+# Tasks for a Hugo static website project
 #
-# https://gohugo.io/
+# Hugo: https://gohugo.io
 
 version: "3"
 
@@ -74,7 +74,7 @@ If you have a Dev Container configuration for a project, use the [go-task featur
 
 To add Task to container images or systems without a tool version manager, see the section below for how to install Task with a script.
 
-All of these tools can provide the specific version of Task that is required for a project, including the latest, because they download executables from GitHub as needed. If possible, avoid using operating system packages. A package installs a single shared copy of Task, and is likely to provide an older version.
+All of these tools enable you to have multiple versions of Task and use the version of Task that is required for each project that you work on. If possible, avoid using operating system packages. A package installs a single shared copy of Task, and is likely to provide an older version.
 
 ### Installing Task with a Script
 
@@ -85,13 +85,13 @@ If you build Docker container images that contain a copy of Task, use a saved co
 To save the installation script:
 
 ```shell
-curl -L https://taskfile.dev/install.sh > scripts/install-task.sh
+curl -L https://taskfile.dev/install.sh > install-task.sh
 ```
 
 To use the installation script, call it with the Git tag and the _-b_ option. The Git tag specifies the version of Task. The _-b_ option specifies which directory to install it to:
 
 ```shell
-./scripts/install-task.sh -b $HOME/.local/bin v3.36.0
+./install-task.sh -b $HOME/.local/bin v3.36.0
 ```
 
 {{< alert >}}
@@ -118,9 +118,13 @@ You must install Task to use these extensions. Neither extension installs or upd
 
 ### Enabling Autocompletion
 
-To enable autocompletion for Task in a shell, [download the appropriate script and install it into the correct location](https://taskfile.dev/installation#setup-completions).
+To enable autocompletion for Task in a shell, [download the appropriate script and install it into the correct location](https://taskfile.dev/installation#setup-completions). For example, this command enables autocompletion in the fish shell:
 
-Current versions of Task provide autocompletion for Bash, zsh, fish and PowerShell.
+```shell
+curl -L https://raw.githubusercontent.com/go-task/task/main/completion/fish/task.fish > $HOME/.config/fish/completions/task.fish
+```
+
+The Task project currently provides autocompletions for Bash, zsh, fish and PowerShell.
 
 ### Adding Task to a Dev Container
 
@@ -188,13 +192,13 @@ task -g system-info
 For convenience, add an alias to your shell configuration. For example, add these lines in _.config/fish/config.fish_ to enable an alias in the Fish shell:
 
 ```fish
-# Add abbr to call tasks in user Taskfile.yml by typing ".t task-NAME"
+# Add abbr to call tasks in user Taskfile.yml by typing ".t TASK-NAME"
 if command -s task > /dev/null
     abbr --add .t task -g
 end
 ```
 
-This means that you run a task in the _Taskfile.yml_ by entering _.t_ followed by the name of the task:
+This means that you run a task in the user _Taskfile.yml_ by entering _.t_ followed by the name of the task:
 
 ```shell
 .t system-info
@@ -212,7 +216,9 @@ This runs the _default_ task. The example _Taskfile.yml_ configures this to disp
 
 First, add the _.task_ directory to the exclusions for source control. This directory is used to hold [files for tracking changes](https://taskfile.dev/usage/#by-fingerprinting-locally-generated-files-and-their-sources).
 
-Use _task --init_ to create a _Taskfile.yml_ in the root directory of your project. You should always name the Task file in the root directory of the project _Taskfile.yml_.
+Use _task --init_ to create a _Taskfile.yml_ in the root directory of your project.
+
+> _Always use the name Taskfile.yml for Task files._ This enables tools that support [JSON Schemas](https://json-schema.org/) to identify the format of the files, so that they can provide autocompletion and validation.
 
 If a project only requires one small set of tasks, then use a single _Taskfile.yml_. If you need to manage several sets of tasks, use these features:
 
@@ -221,7 +227,7 @@ If a project only requires one small set of tasks, then use a single _Taskfile.y
 
 Adding _Taskfile.yml_ files in subdirectories enables you to override the set of tasks for a project when you change your working directory in the project. This lets you define sets of tasks that are appropriate to the context.
 
-Includes enable you to define groups of tasks that can be added to any _Taskfile.yml_. These groups automatically become namespaces, which ensures that tasks with the same name do not override each other.
+Task includes enable you to define groups of tasks that can be added to any _Taskfile.yml_. These groups automatically become namespaces, which ensures that tasks with the same name do not override each other. For example, if you create an include for _python_ and an include for _web_, they may both have a task called _test_, which you can call as _python:task_ and _web:test_.
 
 ### Using Includes
 
@@ -355,7 +361,7 @@ The _default_ task in this file runs _check_, so this command runs the _check_ t
 task pre-commit
 ```
 
-The result is the same as if used this command to you explicitly select the _check_ task:
+The result is the same as this command:
 
 ```shell
 task pre-commit:check
@@ -372,7 +378,7 @@ Follow [the style guidelines](https://taskfile.dev/styleguide/) when writing tas
 - Specify the [requires](https://taskfile.dev/usage/#ensuring-required-variables-are-set) attribute for each task that uses a variable. This ensures that the task has the necessary variables.
 - Use [dotenv files](https://taskfile.dev/usage/#env-files) to get configuration from files.
 - Use Bash shell syntax for tasks. Task uses [mvdan/sh](https://github.com/mvdan/sh) to provide the equivalent of the _bash_ shell.
-- To ensure that your tasks are portable, check the options for UNIX commands that you call in tasks, such as _rm_. Operating systems provide different implementations of these commands, and the options may not be consistent across different environments.
+- To ensure that your tasks are portable, check the options for UNIX commands that you call in tasks, such as _rm_. Operating systems provide different implementations of these commands, which means that the options may not be consistent across different environments.
 - When it is possible, use the [template functions](https://taskfile.dev/usage/#gos-template-engine) instead of shell commands, because these will behave consistently across different environments.
 - Provide [operating system specific Taskfiles](https://taskfile.dev/usage/#os-specific-taskfiles) when necessary.
 
@@ -402,7 +408,11 @@ MY_VARIABLE_NAME=my-variable-value task example-task
 
 ## Checking Taskfile.yml files
 
-To validate the Task files, use a YAML linter that supports JSON schema, such as [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/index.html).
+If your text editor supports [JSON Schemas](https://json-schema.org/), it can automatically check your Task files. JSON Schema tools also work with types of YAML that have defined schemas, such _.gitlab-ci.yml_ and _Taskfile.yml_ files.
+
+To validate the Task files on the command-line, use a YAML linter that supports JSON schemas, such as [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/index.html). The _check-jsonschema_ tool automatically includes the schema for Task files.
+
+The _check-jsonschema_ project also provides a _pre-commit_ hook to check Task files before changes are committed to source control.
 
 ### Validating Task files with pre-commit
 
@@ -413,6 +423,12 @@ To validate Task files before you commit them to source control, add the [pre-co
   rev: 0.28.2
   hooks:
     - id: check-taskfile
+```
+
+You may also run the same check at any time with the _pre-commit_ command-line tool:
+
+```shell
+pre-commit run check-taskfile --all-files
 ```
 
 ### Testing a Task
