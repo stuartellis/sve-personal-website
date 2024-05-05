@@ -17,7 +17,7 @@ This project builds and deploys the personal Website for [Stuart Ellis](https://
 - [Install](#install)
 - [Usage](#usage)
 - [Contributing](#contributing)
-- [License](#license)
+- [Licenses](#licenses)
 
 ## Install
 
