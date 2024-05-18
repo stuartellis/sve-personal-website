@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-03-29T21:03:00+00:00"
+date = "2024-05-18T17:58:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -12,9 +12,13 @@ tags = ["python"]
 
 ## Using Python
 
-### Use The Most Recent Version of Python That You Can
+### Use Tools that Support Multiple Versions of Python
 
-Use a tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv) to install Python, so that you can switch between different versions of Python for your projects.
+Use a tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv) to install Python on your development systems, so that you can switch between different versions of Python for your projects. This enables you to upgrade each project to a new version of Python without interfering with other tools and projects that use Python.
+
+To deploy a Python application, package it in a format that enables you to include a copy of Python with the application. This ensures that your code runs with the expected versions of Python and other dependencies. In most cases, use container images, which can be run by Podman, Kubernetes and Docker. Consider using [PyInstaller](https://pyinstaller.org/) to package Python command-line and desktop applications into files that users can run on their own systems.
+
+### Use The Most Recent Version of Python That You Can
 
 For new projects, choose the most recent stable version of Python 3. This ensures that you have the latest security fixes, as well as the fastest performance.
 
@@ -24,7 +28,7 @@ Avoid using Python 2. It is not supported by the Python development team. The cu
 
 ### Use pipx To Install Python Applications
 
-Always use [pipx](https://github.com/pypa/pipx) to install Python applications, rather than _pip_. This ensures that each application has the correct libraries. Unlike _pip_, _pipx_ automatically installs the libraries for each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
+Use [pipx](https://github.com/pypa/pipx) to install Python applications from the Python Packaging Index, rather than _pip_. This ensures that each application has the correct libraries. Unlike _pip_, _pipx_ automatically installs the libraries for each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
 
 The Python Packaging Authority maintain _pipx_, but it is not included with Python. You can install _pipx_ with Homebrew, or with your system package manager on Linux.
 
@@ -36,24 +40,26 @@ The Python Packaging Authority maintain _pipx_, but it is not included with Pyth
 
 Create a _pyproject.toml_ file in the root directory of each Python project. Use this file as the central place to store configuration information about the project and the tools that it uses. The [pyOpenSci project documentation on pyproject.toml](https://www.pyopensci.org/python-package-guide/package-structure-code/pyproject-toml-python-package-metadata.html) provides an introduction to the file format.
 
-Modern Python tools support _pyproject.toml_ files. Python project management tools like [Hatch](https://hatch.pypa.io) or
-[Poetry](https://python-poetry.org/) automatically create and use a _pyproject.toml_ file. If you use a tool that supports another configuration file by default, use a _pyproject.toml_ file instead.
+Modern Python tools support _pyproject.toml_ files. Python project management tools like [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) automatically create and use a _pyproject.toml_ file. If you use a tool that supports another configuration file by default, use a _pyproject.toml_ file instead.
 
 > The various features of _pyproject.toml_ files are defined these PEPs: [PEP 517](https://peps.python.org/pep-0517/), [PEP 518](https://peps.python.org/pep-0518/), [PEP 621](https://peps.python.org/pep-0621/) and [PEP 660](https://peps.python.org/pep-0660/).
+
+### Avoid Using Poetry
+
+Avoid using [Poetry](https://python-poetry.org/) for new projects. Poetry predates many standards for Python tooling. This means that it uses non-standard implementations of key features, such as the dependency resolver and configuration formats in _pyproject.toml_ files. If you would like to use a similar tool to develop your applications, consider using [PDM](https://pdm-project.org). [Hatch](https://hatch.pypa.io) provides similar features, but is most useful for developing Python libraries. Both of these tools follow modern standards, which avoids compatibility issues.
 
 ### Create a Directory Structure That Uses the src Layout
 
 Python itself does not require a specific directory structure for your projects. The Python packaging documentation describes two popular directory structures: [the src layout and the flat layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/).
 The [pyOpenSci project documentation on directory structures](https://www.pyopensci.org/python-package-guide/package-structure-code/python-package-structure.html) explains the practical differences between the two.
 
-For modern Python projects, use the src layout. This requires you to use editable installs of the packages in your project, but tools like [Hatch](https://hatch.pypa.io) and [Poetry](https://python-poetry.org/) will handle this for you.
+For modern Python projects, use the src layout. This requires you to use editable installs of the packages in your project, but tools like [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) will handle this for you.
 
 ### Use Virtual Environments for Development
 
 The [virtual environments](https://docs.python.org/3/tutorial/venv.html) feature enables you to define separate sets of packages for each Python project, so that the packages for a project do not conflict with any other Python packages on the system. Always use Python virtual environments for your projects.
 
-If you use a tool like [Hatch](https://hatch.pypa.io) or
-[Poetry](https://python-poetry.org/) to develop your projects it will manage Python virtual environments for you.
+If you use a tool like [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io) to develop your projects, it will manage Python virtual environments for you.
 
 If you prefer, you can also manually set up and manage virtual environments with _venv_, which is part of the Python standard library.
 
