@@ -1,7 +1,7 @@
 +++
 title = "API for the Azure DevOps Team Calendar"
 slug = "ado-team-calendar"
-date = "2021-02-08T06:30:00+00:00"
+date = "2024-05-18T16:15:00+01:00"
 description = "API for the Azure DevOps Team Calendar"
 categories = ["automation", "devops"]
 tags = ["azure devops", "automation", "devops"]
@@ -18,11 +18,15 @@ Add the [Azure DevOps Team Calendar](https://marketplace.visualstudio.com/items?
 
 To access a calendar, you must build a URL that specifies your Azure DevOps *organization*, the *teamId* of the Team, and the *month* and *year* that are relevant for the operation:
 
-    https://extmgmt.dev.azure.com/{organisation}/_apis/ExtensionManagement/InstalledExtensions/ms-devlabs/team-calendar/Data/Scopes/Default/Current/Collections/{teamId}.{monthNumber}.{year}/Documents
+```text
+https://extmgmt.dev.azure.com/{organisation}/_apis/ExtensionManagement/InstalledExtensions/ms-devlabs/team-calendar/Data/Scopes/Default/Current/Collections/{teamId}.{monthNumber}.{year}/Documents
+```
 
 You must include an API version with calls that create, update or delete a calendar event:
 
-    https://extmgmt.dev.azure.com/{organisation}/_apis/ExtensionManagement/InstalledExtensions/ms-devlabs/team-calendar/Data/Scopes/Default/Current/Collections/{teamId}.{monthNumber}.{year}/Documents?api-version=6.1-preview.1
+```text
+https://extmgmt.dev.azure.com/{organisation}/_apis/ExtensionManagement/InstalledExtensions/ms-devlabs/team-calendar/Data/Scopes/Default/Current/Collections/{teamId}.{monthNumber}.{year}/Documents?api-version=6.1-preview.1
+```
 
 {{< alert >}}
 It seems that the API will accept any version, but the query string for *api-version* must include the string *-preview*.
@@ -36,7 +40,9 @@ You access the calendar resources through the [Azure DevOps REST API](https://do
 
 Issue a GET request on the main URL:
 
-    https://extmgmt.dev.azure.com/{organisation}/_apis/ExtensionManagement/InstalledExtensions/ms-devlabs/team-calendar/Data/Scopes/Default/Current/Collections/{teamId}.{monthNumber}.{year}/Documents
+```text
+https://extmgmt.dev.azure.com/{organisation}/_apis/ExtensionManagement/InstalledExtensions/ms-devlabs/team-calendar/Data/Scopes/Default/Current/Collections/{teamId}.{monthNumber}.{year}/Documents
+```
 
 This returns a document with this structure:
 
@@ -102,7 +108,9 @@ Note that this includes the *id* of the calendar, and an *\__etag* value. Always
 
 To delete a calendar event, send a HTTP DELETE request to a URL that includes the ID for the event:
 
-    https://extmgmt.dev.azure.com/{organisation}/_apis/ExtensionManagement/InstalledExtensions/ms-devlabs/team-calendar/Data/Scopes/Default/Current/Collections/{teamId}.{monthId}.{year}/Documents/{eventId}?api-version=6.1-preview.1
+```text
+https://extmgmt.dev.azure.com/{organisation}/_apis/ExtensionManagement/InstalledExtensions/ms-devlabs/team-calendar/Data/Scopes/Default/Current/Collections/{teamId}.{monthId}.{year}/Documents/{eventId}?api-version=6.1-preview.1
+```
 
 This returns a HTTP 204 response, with an empty body.
 

@@ -1,7 +1,7 @@
 +++
 title = "How to Set up an Apple Mac for Software Development"
 slug = "mac-setup"
-date = "2024-01-28T15:01:00+00:00"
+date = "2024-05-18T16:17:00+01:00"
 description = "Setting up an Apple Mac for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "macos", "golang", "java", "javascript", "python", "ruby"]
@@ -102,7 +102,9 @@ The first step is to install the _Command Line Tools for Xcode_. Once you have i
 
 Apple now provide the Xcode suite as a free download from the App Store. To install the Command Line Tools, install Xcode from the App Store, then open a Terminal window and enter the following command:
 
-    xcode-select --install
+```shell
+xcode-select --install
+```
 
 If you want to install just the Command Line Tools, you can download a package from [the Apple Developer Downloads site](https://developer.apple.com/download/all/).
 
@@ -116,17 +118,23 @@ You should also amend your PATH, so that the versions of tools that are installe
 Homebrew take precedence over others. To do this, edit the file _.zshrc_ in
 your home directory to include this line:
 
-    export PATH="/usr/local/bin:/usr/local/sbin:~/bin:$PATH"
+```shell
+export PATH="/usr/local/bin:/usr/local/sbin:~/bin:$PATH"
+```
 
 You need to close all terminal windows for this change to take effect.
 
 To check that Homebrew is installed correctly, run this command in a terminal window:
 
-    brew doctor
+```shell
+brew doctor
+```
 
 To update the index of available packages, run this command in a terminal window:
 
-    brew update
+```shell
+brew update
+```
 
 ### Enabling Auto Completion of Commands
 
@@ -148,7 +156,9 @@ The Xcode Command Line Tools include a copy of [Git](http://www.git-scm.com/), b
 
 To install a newer version of Git than Apple provide, use Homebrew. Enter this command in a terminal window:
 
-    brew install git
+```shell
+brew install git
+```
 
 If you do not use Homebrew, go to the [Web site](http://www.git-scm.com/) and follow the
 link for _Other Download Options_ to obtain a macOS disk image. Open your downloaded
@@ -158,15 +168,19 @@ the disk image.
 Always set your details before you create or clone repositories on a new system. This
 requires two commands in a terminal window:
 
-    git config --global user.name "Your Name"
-    git config --global user.email "you@your-domain.com"
+```shell
+git config --global user.name "Your Name"
+git config --global user.email "you@your-domain.com"
+```
 
 The _global_ option means that the setting will apply to every repository that you work
 with in the current user account.
 
 To enable colors in the output, which can be very helpful, enter this command:
 
-    git config --global color.ui auto
+```shell
+git config --global color.ui auto
+```
 
 ### Text Editors
 
@@ -189,7 +203,9 @@ your _~/.zshrc_ file, so that this editor is automatically invoked by command-li
 tools like your version control system. For example, put this line in your profile to
 make Neovim (_nvim_) the favored text editor:
 
-    export EDITOR="nvim"
+```shell
+export EDITOR="nvim"
+```
 
 ### Setting Up A Directory Structure for Projects
 
@@ -199,7 +215,7 @@ different version control hosts.
 
 First create a top-level directory with a short, generic name like _repos_. For each repository host, create a subdirectory in _repos_. Add a subdirectory that matches your username. The final directory structure looks like this:
 
-```
+```text
 repos/
     gitlab.com/
         my-gitlab-username/
@@ -217,37 +233,49 @@ includes the standard OpenSSH suite of tools.
 
 OpenSSH stores your SSH keys in a _.ssh_ directory. To create this directory, run these commands in a terminal window:
 
-    mkdir $HOME/.ssh
-    chmod 0700 $HOME/.ssh
+```shell
+mkdir $HOME/.ssh
+chmod 0700 $HOME/.ssh
+```
 
 To create an SSH key, run the _ssh-keygen_ command in a terminal window. For example:
 
-    ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
+```shell
+ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
+```
 
 ## Programming Languages
+
+Avoid using the installations of programming languages that are included in macOS. Instead, use containers or specialized tools like version managers. These enable you to use the correct versions and dependencies for each project that you work on.
+
+This article provides instructions to help you install programming languages with the [mise](https://mise.jdx.dev/) version manager. For convenience, it also includes instructions for Homebrew. If possible you should avoid using Homebrew to install programming languages, because it has limited support for working with multiple versions of the same programming language.
 
 ### JavaScript Development: Node.js
 
 Use either [mise](https://mise.jdx.dev/) or Homebrew to manage your Node.js installations. Homebrew provides separate packages for each version of [Node.js](https://nodejs.org).
 To ensure that you are using the version of Node.js that you expect, specify the version
 when you install it. For example, enter this command in a Terminal window to install the
-Node.js 18, the current LTS release:
+Node.js 20, the current LTS release:
 
-    brew install node@18
+```shell
+brew install node@20
+```
 
 Add the _bin/_ directory for this Node.js installation to your PATH:
 
-    /usr/local/opt/node@18/bin
+```shell
+/usr/local/opt/node@20/bin
+```
 
 ### Go Development
 
 Use either [mise](https://mise.jdx.dev/) or Homebrew to install the _go_ tool. To install [Go](https://go.dev/) with Homebrew, enter this command:
 
-    brew install golang
+```shell
+brew install golang
+```
 
-This provides the standard command-line tools for Go.
-
-The current version of Go includes support for dependency management with [modules](https://blog.golang.org/using-go-modules). Use modules for new projects. Some older projects may use [dep](https://golang.github.io/dep/), or another tool.
+This provides the standard command-line tool for Go. The _go_ tool includes support for working with [multiple versions of Go](https://go.dev/doc/manage-install#installing-multiple).
 
 #### Setting a GOPATH
 
@@ -255,11 +283,15 @@ Current versions of Go do not require a GOPATH environment variable, but you sho
 
 Set a GOPATH environment variable in your _~/.zshrc_ file:
 
-    export GOPATH="$HOME/go"
+```shell
+export GOPATH="$HOME/go"
+```
 
 Then, add this to your PATH:
 
-    $GOPATH/bin
+```shell
+$GOPATH/bin
+```
 
 Close the Terminal and open it again for the changes to take effect.
 
@@ -267,13 +299,11 @@ Close the Terminal and open it again for the changes to take effect.
 
 #### Which Version of Java?
 
-Many vendors provide a JDK. To avoid licensing and support issues, use Eclipse Temurin. This is an Open Source JDK that is maintained by the [Adoptium](https://adoptium.net/) project. The versions of Java on the OpenJDK Website are for testers, and the Oracle JDK is a proprietary product.
+Many vendors provide a JDK. To avoid licensing and support issues, use Eclipse Temurin. This is an Open Source JDK that is maintained by the [Adoptium](https://adoptium.net/) project. The versions of Java on the OpenJDK Website are for testers, and the Oracle JDK is a proprietary product. Use the _LTS_ version of Temurin, unless you need features that are in the latest releases.
 
-Use the _LTS_ version of Temurin, unless you need features that are in the latest releases.
+Use the [jEnv](https://www.jenv.be/) version manager to work with multiple JDKs, such as different versions of the same JDK. The [mise](https://mise.jdx.dev/) version manager does not include support for Java.
 
 Once you have installed a JDK, get the [Apache Maven](https://maven.apache.org) build tool. This is provided by the Maven project itself, and is not part of Temurin or the OpenJDK.
-
-Use [jEnv](https://www.jenv.be/) if you need to run multiple JDKs, such as different versions of the same JDK.
 
 #### Manual Set up of Eclipse Temurin
 
@@ -284,8 +314,10 @@ To manually install a copy of the JDK:
 3. Copy the JDK directory to _/usr/local/lib_
 4. Edit your _~/.zshrc_ file to set environment variables. For example, to use jdk-11.0.3+7 as the Java version:
 
-    JAVA_HOME=/usr/local/lib/jdk-11.0.3+7/Contents/Home
-    PATH=$PATH:/usr/local/lib/jdk-11.0.3+7/Contents/Home/bin
+```shell
+JAVA_HOME=/usr/local/lib/jdk-11.0.3+7/Contents/Home
+PATH=$PATH:/usr/local/lib/jdk-11.0.3+7/Contents/Home/bin
+```
 
 To manually install a copy of [Apache Maven](https://maven.apache.org):
 
@@ -302,19 +334,27 @@ Maven is written in Java, which means that the project provides one package, whi
 
 Run this command in a terminal window to install [jEnv](https://www.jenv.be/):
 
-    brew install jenv
+```shell
+brew install jenv
+```
 
 Next, add this to your PATH:
 
-    $HOME/.jenv/bin
+```shell
+$HOME/.jenv/bin
+```
 
 Add this to your _~/.zshrc_ file:
 
-    eval "$(jenv init -)"
+```shell
+eval "$(jenv init -)"
+```
 
 Open a new terminal window, and run this command:
 
-    jenv enable-plugin export
+```shell
+jenv enable-plugin export
+```
 
 This enables jEnv to manage the JAVA_HOME environment variable.
 
@@ -322,11 +362,15 @@ To avoid inconsistent behaviour, close all the terminal windows that you current
 
 Lastly, run this command to register your current JDK with jEnv:
 
-    jenv add $(/usr/libexec/java_home)
+```shell
+jenv add $(/usr/libexec/java_home)
+```
 
 To see a list of the available commands, type _jenv_ in a terminal window:
 
-    jenv
+```shell
+jenv
+```
 
 ### Python Development: pyenv and pipx
 
@@ -334,12 +378,16 @@ Current versions of macOS include a copy of Python 3, but this will not be the l
 
 To install pyenv with Homebrew, run this command in a terminal window:
 
-    brew install pyenv
+```shell
+brew install pyenv
+```
 
 Use [pipx](https://pypa.github.io/pipx/) to install Python applications, rather than _pip_ or Homebrew. To set up _pipx_, run these commands in a terminal window:
 
-    brew install pipx
-    pipx ensurepath
+```shell
+brew install pipx
+pipx ensurepath
+```
 
 ### Rust Development: rustup
 
@@ -350,7 +398,9 @@ with the Rust programming language. Click on the Install button on the front pag
 By default, the installer adds the correct directory to your path. If this does not
 work, add this to your PATH manually:
 
-    $HOME/.cargo/bin
+```shell
+$HOME/.cargo/bin
+```
 
 This process installs all of the tools into your home directory, and does not add any
 files into system directories.
@@ -365,13 +415,17 @@ system. If there is no compiled version, RVM then falls back to downloading the 
 code and then compiling it on your computer. Enter this command to ensure that the
 requirements for compiling Ruby are on your system, using Homebrew:
 
-    brew install autoconf automake gdbm gmp libksba libtool libyaml openssl pkg-config readline
+```shell
+brew install autoconf automake gdbm gmp libksba libtool libyaml openssl pkg-config readline
+```
 
 Finally, you can speed up installation of gem packages by disabling the generation of
 local documentation. To do this, create a file in your home directory with the name
 _.gemrc_ and put this line in it:
 
-    gem: --no-ri --no-rdoc
+```shell
+gem: --no-ri --no-rdoc
+```
 
 ## Kubernetes: Minikube
 
@@ -379,20 +433,28 @@ _.gemrc_ and put this line in it:
 
 To install Minikube with Homebrew, run these commands in a terminal window:
 
-    brew install kubernetes-cli
-    brew install minikube
+```shell
+brew install kubernetes-cli
+brew install minikube
+```
 
 By default, Minikube uses a virtual machine manager. If you choose to install VirtualBox, MiniKube will use it. If you do not need VirtualBox, install [hyperkit](https://github.com/moby/hyperkit), which provides a minimal virtual machine manager.
 
-    brew install hyperkit
+```shell
+brew install hyperkit
+```
 
 To install [Helm](https://helm.sh/) with Homebrew, run this command in a terminal window:
 
-    brew install kubernetes-helm
+```shell
+brew install kubernetes-helm
+```
 
 To install [Skaffold](https://skaffold.dev/) with Homebrew, run this command in a terminal window:
 
-    brew install skaffold
+```shell
+brew install skaffold
+```
 
 ## Databases
 
@@ -403,7 +465,9 @@ directly on to your workstation, Homebrew provides packages for PostgreSQL, Mari
 
 To install PostgreSQL using Homebrew, enter this command in a terminal window:
 
-    brew install postgresql
+```shell
+brew install postgresql
+```
 
 This command installs the server, the command-line tools, and the client libraries that
 are needed to compile adapters for programming languages.
@@ -417,11 +481,15 @@ use the _postgresql-upgrade-database_ command that Homebrew gives you.
 
 To install MariaDB using Homebrew, enter this command in a terminal window:
 
-    brew install mariadb
+```shell
+brew install mariadb
+```
 
 To install MySQL using Homebrew, enter this command in a terminal window:
 
-    brew install mysql
+```shell
+brew install mysql
+```
 
 These commands install the server, the command-line tools, and the client libraries that
 are needed to compile adapters for programming languages. To start the server, follow
@@ -434,7 +502,9 @@ For compatibility, MariaDB uses the same names for command-line tools as MySQL.
 Remember to set a password for the root accounts. First, login with the _mysql_
 command-line utility:
 
-    mysql -u root -q
+```shell
+mysql -u root -q
+```
 
 {{< alert >}}
 _The -q Option Disables Command History:_ By default, the command-line client stores the full text of every command in a history file. If you know that you are going to run statements that include passwords or other sensitive data, use the -q option.
@@ -452,7 +522,9 @@ EXIT;
 You now need a password to login to the installation as root. To login with root again,
 use this command:
 
-    mysql -u root -p
+```shell
+mysql -u root -p
+```
 
 Enter the password when prompted.
 
@@ -460,9 +532,9 @@ You should also remove the anonymous accounts and test database that MySQL autom
 includes:
 
 ```sql
-    DROP DATABASE test;
-    DELETE FROM mysql.user WHERE user = ’’;
-    FLUSH PRIVILEGES;
+DROP DATABASE test;
+DELETE FROM mysql.user WHERE user = ’’;
+FLUSH PRIVILEGES;
 ```
 
 If you intend to duplicate a production environment for testing, create a configuration
@@ -476,7 +548,9 @@ To work with SQL databases, use [Beekeeper Studio](https://www.beekeeperstudio.i
 
 Install Beekeeper with Homebrew:
 
-    brew install --cask beekeeper-studio
+```shell
+brew install --cask beekeeper-studio
+```
 
 Each vendor recommends a specific graphical tool for their particular database product. These are the tools that the vendors suggest:
 

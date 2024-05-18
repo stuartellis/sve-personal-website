@@ -1,7 +1,7 @@
 +++
 title = "Setting Up Fedora Workstation for Software Development"
 slug = "fedora-workstation-setup"
-date = "2024-03-29T10:50:00+00:00"
+date = "2024-05-18T16:18:00+01:00"
 description = "Setting up a Fedora Workstation for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
@@ -69,7 +69,9 @@ Extensions may fail if you use the [Visual Studio Code OSS](https://flathub.org/
 
 If you would like a modern Vim editor with a good default configuration, set up Neovim. To install Neovim, enter this command in a terminal window:
 
-    sudo dnf install neovim
+```shell
+sudo dnf install neovim
+```
 
 #### Setting The EDITOR Environment Variable
 
@@ -78,21 +80,27 @@ your _~/.bashrc_ file, so that this editor is automatically invoked by command-l
 tools like your version control system. For example, put this line in your profile to
 make Neovim (_nvim_) the favored text editor:
 
-    export EDITOR="nvim"
+```shell
+export EDITOR="nvim"
+```
 
 ### Configuring Git
 
 Fedora Workstation includes the [Git version control system](http://www.git-scm.com/). Always set your details for Git before you create or clone repositories on a new system. This requires two commands in a terminal window:
 
-    git config --global user.name "Your Name"
-    git config --global user.email "you@your-domain.com"
+```shell
+git config --global user.name "Your Name"
+git config --global user.email "you@your-domain.com"
+```
 
 The _global_ option means that the setting will apply to every repository that you work
 with in the current user account.
 
 To enable colors in the output, which can be very helpful, enter this command:
 
-    git config --global color.ui auto
+```shell
+git config --global color.ui auto
+```
 
 ### Setting Up A Directory Structure for Projects
 
@@ -104,7 +112,7 @@ First, create a top-level directory with a short, generic name like _repos_. For
 
 The final directory structure looks like this:
 
-```
+```text
     repos/
       gitlab.com/
         my-gitlab-username/
@@ -122,21 +130,29 @@ includes the standard OpenSSH suite of tools.
 
 To create an SSH key, run the _ssh-keygen_ command in a terminal window. For example:
 
-    ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
+```shell
+ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
+```
 
 ## Working with Programming Languages
 
-Avoid using Fedora packages for programming languages on development systems.  Use containers or tools for managing installations of programming languages, so that you can install the correct versions and dependencies for each of your projects.
+Avoid using the Fedora packages for programming languages. Use either containers or specialized tools like the [mise](https://mise.jdx.dev/) version manager to handle the installation of programming languages. These enable you to install the correct versions and dependencies for each of your projects.
 
-Fedora Workstation automatically includes support for containers, with [Podman](https://podman.io/) as the equivalent of Docker, along with [toolbx](https://containertoolbx.org/) to help you manage container environments for developing your projects.
+Fedora Workstation automatically includes support for containers, with [Podman](https://podman.io/) as the equivalent of Docker, along with [toolbx](https://containertoolbx.org/) to help you manage container environments for developing your projects. You may use any version manager on Fedora Workstation, but you will need to install the tool yourself.
 
 ### Using Version Managers
 
-You may use any version manager on Fedora Workstation, such as [pyenv](https://github.com/pyenv/pyenv) for Python. I recommend using [rustup](https://rustup.rs/) for Rust and [mise](https://mise.jdx.dev/) for other programming languages.
-
-Fedora Workstation includes the GCC compiler and other tools for compiling C code. Installations of Python, Node.js and other languages use GCC to compile components that are written in C.
+You may use any version manager on Fedora Workstation, such as [pyenv](https://github.com/pyenv/pyenv) for Python. I recommend using [rustup](https://rustup.rs/) for Rust and [mise](https://mise.jdx.dev/) for other programming languages. The _mise_ version manager provides the same set of features for managing several programming languages, including Python, Go and JavaScript.
 
 To install a version manager, use the process that the documentation for the product recommends.
+
+If you use a version manager, you will also need to install compiler tools for the C programming language. Installations of Python, Node.js and other languages use GCC to compile components that are written in C. To provide GCC use the Fedora packages for GCC:
+
+```shell
+sudo dnf install gcc
+```
+
+We use the GCC compiler for this purpose because it is compatible with the widest range of C code. If you are developing your own C code, consider using the [Clang](https://clang.llvm.org/) compiler for your project.
 
 ### The System Python Installation
 
@@ -156,7 +172,9 @@ Podman accepts the same syntax as the _docker_ command-line tool, and will read 
 
 For convenience, define a shell alias in your _.bashrc_ file:
 
-    alias docker="podman"
+```shell
+alias docker="podman"
+```
 
 This will redirect any call to Docker, so that it uses Podman instead.
 
@@ -168,7 +186,9 @@ Use [pods](https://developers.redhat.com/blog/2019/01/15/podman-managing-contain
 
 If you need to run existing Docker Compose configurations, install _podman-compose_:
 
-    sudo dnf install podman-compose
+```shell
+sudo dnf install podman-compose
+```
 
 The _podman compose_ subcommand uses _podman-compose_ to substitute for Docker Compose.
 
@@ -194,10 +214,12 @@ better choice for new applications.
 
 To install PostgreSQL using _dnf_, enter these commands in a terminal window:
 
-    sudo dnf install postgresql-server
-    sudo postgresql-setup --initdb
-    sudo systemctl enable postgresql
-    sudo systemctl start postgresql
+```shell
+sudo dnf install postgresql-server
+sudo postgresql-setup --initdb
+sudo systemctl enable postgresql
+sudo systemctl start postgresql
+```
 
 These commands install the server, the command-line tools, and the client libraries that
 are needed to compile adapters for programming languages.
@@ -205,9 +227,11 @@ are needed to compile adapters for programming languages.
 To create a user account for yourself in PostgreSQL with administrative rights, enter
 this command in a terminal window:
 
-    sudo su - postgres
-    createuser -s YOU
-    exit
+```shell
+sudo su - postgres
+createuser -s YOU
+exit
+```
 
 Replace _YOU_ with the username of your account on Fedora.
 
@@ -217,7 +241,9 @@ _createuser_ or log in to databases without using sudo or the _-U_ option.
 
 For example, to create an extra user account that is not a superuser:
 
-    createuser EXTRA-ACCOUNT
+```shell
+createuser EXTRA-ACCOUNT
+```
 
 Replace _EXTRA-ACCOUNT_ with the username of the new account.
 
