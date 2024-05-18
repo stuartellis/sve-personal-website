@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-05-18T17:58:00+01:00"
+date = "2024-05-18T22:15:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -16,19 +16,21 @@ tags = ["python"]
 
 Use a tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv) to install Python on your development systems, so that you can switch between different versions of Python for your projects. This enables you to upgrade each project to a new version of Python without interfering with other tools and projects that use Python.
 
-To deploy a Python application, package it in a format that enables you to include a copy of Python with the application. This ensures that your code runs with the expected versions of Python and other dependencies. In most cases, use container images, which can be run by Podman, Kubernetes and Docker. Consider using [PyInstaller](https://pyinstaller.org/) to package Python command-line and desktop applications into files that users can run on their own systems.
+Alternatively, consider using [Development Containers](https://containers.dev/), which enable you to define an isolated environment for a software project. This also ensure that you can use a separate version of Python for each project.
+
+Avoid installing Python with tools that limit you to a single version of Python.
 
 ### Use The Most Recent Version of Python That You Can
 
 For new projects, choose the most recent stable version of Python 3. This ensures that you have the latest security fixes, as well as the fastest performance.
 
-Try to update projects to new versions of Python as they are released. The Python development team usually support each version for five years, but some Python libraries may only support each version of Python for a shorter period of time.
+For existing projects, upgrade them as new Python versions are released. The Python development team usually support each version for five years, but some Python libraries may only support each version of Python for a shorter period of time. If you use tools that support multiple versions of Python and automated testing, you can test your projects on new Python versions with little risk.
 
-Avoid using Python 2. It is not supported by the Python development team. The current versions of many libraries are not compatible with Python 2.
+Avoid using Python 2. It is not supported by the Python development team or by the developers of most popular Python libraries.
 
-### Use pipx To Install Python Applications
+### Use pipx To Install Developer Applications
 
-Use [pipx](https://github.com/pypa/pipx) to install Python applications from the Python Packaging Index, rather than _pip_. This ensures that each application has the correct libraries. Unlike _pip_, _pipx_ automatically installs the libraries for each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
+Use [pipx](https://github.com/pypa/pipx) to install Python applications on to development systems, rather than _pip_. This ensures that each application has the correct libraries. Unlike _pip_, _pipx_ automatically installs the libraries for each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
 
 The Python Packaging Authority maintain _pipx_, but it is not included with Python. You can install _pipx_ with Homebrew, or with your system package manager on Linux.
 
@@ -46,7 +48,9 @@ Modern Python tools support _pyproject.toml_ files. Python project management to
 
 ### Avoid Using Poetry
 
-Avoid using [Poetry](https://python-poetry.org/) for new projects. Poetry predates many standards for Python tooling. This means that it uses non-standard implementations of key features, such as the dependency resolver and configuration formats in _pyproject.toml_ files. If you would like to use a similar tool to develop your applications, consider using [PDM](https://pdm-project.org). [Hatch](https://hatch.pypa.io) provides similar features, but is most useful for developing Python libraries. Both of these tools follow modern standards, which avoids compatibility issues.
+Avoid using [Poetry](https://python-poetry.org/) for new projects. Poetry predates many standards for Python tooling. This means that it uses non-standard implementations of key features, such as the dependency resolver and configuration formats in _pyproject.toml_ files.
+
+If you would like to use a similar tool to develop your applications, consider using [PDM](https://pdm-project.org). [Hatch](https://hatch.pypa.io) provides many equivalent features, but it is most useful for developing Python libraries. Both of these tools follow modern standards, which avoids compatibility issues.
 
 ### Create a Directory Structure That Uses the src Layout
 
@@ -59,24 +63,26 @@ For modern Python projects, use the src layout. This requires you to use editabl
 
 The [virtual environments](https://docs.python.org/3/tutorial/venv.html) feature enables you to define separate sets of packages for each Python project, so that the packages for a project do not conflict with any other Python packages on the system. Always use Python virtual environments for your projects.
 
-If you use a tool like [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io) to develop your projects, it will manage Python virtual environments for you.
+Several tools automate creating and switching between virtual environments. The [mise](https://mise.jdx.dev) version manager includes [support for virtual environments](https://mise.jdx.dev/lang/python.html#automatic-virtualenv-activation). The [pyenv](https://github.com/pyenv/pyenv) version manager supports virtual environments with the [virtualenv plugin](https://github.com/pyenv/pyenv-virtualenv). If you use a tool like [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io) to develop your projects, these also manage Python virtual environments for you.
 
-If you prefer, you can also manually set up and manage virtual environments with _venv_, which is part of the Python standard library.
+You can set up and use virtual environments with _venv_, which is part of the Python standard library, but this is a manual process.
 
-### Use Package Lists with Hashes
+### Use requirements.txt Files to Install Packages Into Environments
 
-Avoid installing individual packages with _pip_. Use a tool to create package lists with hashes for each package, and then run _pip_ or another tool to install and update the packages in a virtual environment.
+Avoid using _pip_ commands to install packages into virtual environments. If you use [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io), they manage packages in development and test environments. For other cases, create a _requirements.txt_ file that specifies all of the packages that are required in the environment.
 
-_pip_ and other tools use _requirements.txt_ files to list the packages to be installed into an environment. The _requirements.txt_ file format supports hashes.
+You can create _requirements.txt_ files with whichever tool is appropriate. For example, PDM includes [an export feature](https://pdm-project.org/en/stable/usage/lockfile/#export-locked-packages-to-alternative-formats) that creates _requirements.txt_ files. If you do not already have a tool to create _requirements.txt_ files, use the _pip-compile_ utility that is provided by [pip-tools](https://github.com/jazzband/pip-tools/).
 
-To work with _requirements.txt_ files, use the [pip-tools](https://github.com/jazzband/pip-tools/). The _pip-compile_ utility generates _requirements.txt_ files with hashes from _requirements.in_ files, and the _pip-sync_ utility ensures that the packages in a virtual environment match the list in the _requirements.txt_ file.
+You can then use the _pip-sync_ utility in [pip-tools](https://github.com/jazzband/pip-tools/) to add the packages that are specified in the _requirements.txt_ file into a target virtual environment. The _pip-sync_ utility ensures that the packages in a virtual environment match the list in the _requirements.txt_ file.
 
-If you need to install packages without using _pip-sync_, run _pip install_ with a _requirements.txt_ file. For example, these commands installs the packages specified by the file _requirements-dev.txt_ into the virtual environment _.venv_:
+If you need to install packages without using _pip-sync_, run _pip install_ with a _requirements.txt_ file. For example, these commands install the packages that are specified by the file _requirements-dev.txt_ into the virtual environment _.venv_:
 
 ```shell
 source ./.venv/bin/activate
 python3 -m pip install -r requirements-dev.txt
 ```
+
+> Ensure that your _requirements.txt_ files include hashes for the packages. The _pip-compile_ utility generates _requirements.txt_ files with hashes if you specify the _generate-hashes_ option.
 
 ### Format Your Code
 
@@ -84,7 +90,7 @@ Use a formatting tool with a plugin to your editor, so that your code is automat
 
 [Black](https://black.readthedocs.io/en/stable/) is currently the most popular code formatting tool for Python, but consider using [Ruff](https://docs.astral.sh/ruff/). Ruff provides both code formatting and quality checks for Python code.
 
-Run the formatting tool with your CI system, to reject code that does not match the format for your project.
+Run the formatting tool with your CI system, so that it rejects any code that does not match the format for your project.
 
 ### Use a Code Linter
 
@@ -92,11 +98,19 @@ Use a code linting tool with a plugin to your editor, so that your code is autom
 
 [flake8](https://flake8.pycqa.org/en/latest/) is currently the most popular linter for Python, but consider using [Ruff](https://docs.astral.sh/ruff/). Ruff includes the features of both flake8 itself and the most popular plugins for flake8.
 
-Run the linting tool with your CI system, to reject code that does not meet the standards for your project.
+Run the linting tool with your CI system, so that it rejects any code that does not meet the standards for your project.
 
 ### Test with pytest
 
 Use [pytest](http://pytest.org) for testing. It has superseded _nose_ as the most popular testing system for Python. Use the _unittest_ module in the standard library for situations where you cannot add _pytest_ to the project.
+
+### Package Your Applications
+
+Use _wheel_ packages for libraries, and for tools that are intended to be used with an existing installation of Python. If you only publish your Python application as a _wheel_, other developers can install it with _pipx_ and _pip-sync_, but it cannot be used without a Python installation.
+
+In most cases, you should also package an application in a format that enables you to include your code, the dependencies and a copy of the required version of Python. This ensures that your code runs with the expected version of Python and has the correct version of each dependency.
+
+If your application is a network service or a command-line utility, then consider building container images that include a Python installation, your code, and all of the dependencies. Use [PyInstaller](https://pyinstaller.org/) to publish desktop and command-line applications as files that can be run in a wide range of systems.
 
 ## Language Syntax
 
