@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-05-19T21:30:00+01:00"
+date = "2024-05-19T22:45:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -18,9 +18,9 @@ Use a tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv
 
 Alternatively, consider using [Development Containers](https://containers.dev/), which enable you to define an isolated environment for a software project. This also ensure that you can use a separate version of Python for each project.
 
-If your operating system includes a Python installation, avoid using it. This Python installation is for operating system tools. It is likely to use an older version of Python, and may not include all of the standard features. An operating system copy of Python should be [marked](https://packaging.python.org/en/latest/specifications/externally-managed-environments/#externally-managed-environments) to prevent you from installing packages into it, but not all operating systems set the marker.
+Where possible, use tools that compile Python. Some tools use [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/), which are modified versions of Python that are maintained by a third-party. The pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) compile Python, but you must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation. [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) always download standalone builds when you use them to set up versions of Python.
 
-> Tools like [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) enable switching between Python versions by using [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). These builds are not supported by the Python development team.
+If your operating system includes a Python installation, avoid using it. This Python installation is for operating system tools. It is likely to use an older version of Python, and may not include all of the standard features. An operating system copy of Python should be [marked](https://packaging.python.org/en/latest/specifications/externally-managed-environments/#externally-managed-environments) to prevent you from installing packages into it, but not all operating systems set the marker.
 
 ### Use The Most Recent Version of Python That You Can
 
