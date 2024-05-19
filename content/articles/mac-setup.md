@@ -1,7 +1,7 @@
 +++
 title = "How to Set up an Apple Mac for Software Development"
 slug = "mac-setup"
-date = "2024-05-18T16:17:00+01:00"
+date = "2024-05-19T21:40:00+01:00"
 description = "Setting up an Apple Mac for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "macos", "golang", "java", "javascript", "python", "ruby"]
@@ -301,7 +301,7 @@ Close the Terminal and open it again for the changes to take effect.
 
 Many vendors provide a JDK. To avoid licensing and support issues, use Eclipse Temurin. This is an Open Source JDK that is maintained by the [Adoptium](https://adoptium.net/) project. The versions of Java on the OpenJDK Website are for testers, and the Oracle JDK is a proprietary product. Use the _LTS_ version of Temurin, unless you need features that are in the latest releases.
 
-Use the [jEnv](https://www.jenv.be/) version manager to work with multiple JDKs, such as different versions of the same JDK. The [mise](https://mise.jdx.dev/) version manager does not include support for Java.
+Use either [mise](https://mise.jdx.dev/) or the [jEnv](https://www.jenv.be/) version manager to work with multiple JDKs.
 
 Once you have installed a JDK, get the [Apache Maven](https://maven.apache.org) build tool. This is provided by the Maven project itself, and is not part of Temurin or the OpenJDK.
 

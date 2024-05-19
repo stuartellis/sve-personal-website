@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-05-19T07:19:00+01:00"
+date = "2024-05-19T21:30:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -12,19 +12,21 @@ tags = ["python"]
 
 ## Using Python
 
-### Use Tools that Provide Multiple Versions of Python
+### Install Python With Tools That Support Multiple Versions
 
 Use a tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv) to install Python on your development systems, so that you can switch between different versions of Python for your projects. This enables you to upgrade each project to a new version of Python without interfering with other tools and projects that use Python.
 
 Alternatively, consider using [Development Containers](https://containers.dev/), which enable you to define an isolated environment for a software project. This also ensure that you can use a separate version of Python for each project.
 
-If your operating system includes a Python installation, avoid using it. This Python installation is for operating system tools. It is likely to use an older version of Python, and may not include all of the standard features. This copy of Python also should be [specially marked](https://packaging.python.org/en/latest/specifications/externally-managed-environments/#externally-managed-environments) to prevent you from installing packages into it, but not all operating systems set the marker.
+If your operating system includes a Python installation, avoid using it. This Python installation is for operating system tools. It is likely to use an older version of Python, and may not include all of the standard features. An operating system copy of Python should be [marked](https://packaging.python.org/en/latest/specifications/externally-managed-environments/#externally-managed-environments) to prevent you from installing packages into it, but not all operating systems set the marker.
+
+> Tools like [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) enable switching between Python versions by using [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). These builds are not supported by the Python development team.
 
 ### Use The Most Recent Version of Python That You Can
 
 For new projects, choose the most recent stable version of Python 3. This ensures that you have the latest security fixes, as well as the fastest performance.
 
-For existing projects, upgrade them as new Python versions are released. The Python development team usually support each version for five years, but some Python libraries may only support each version of Python for a shorter period of time. If you use tools that support multiple versions of Python and automated testing, you can test your projects on new Python versions with little risk.
+Upgrade your projects as new Python versions are released. The Python development team usually support each version for five years, but some Python libraries may only support each version of Python for a shorter period of time. If you use tools that support multiple versions of Python and automated testing, you can test your projects on new Python versions with little risk.
 
 Avoid using Python 2. It is not supported by the Python development team or by the developers of most popular Python libraries.
 
@@ -106,9 +108,9 @@ Use [pytest](http://pytest.org) for testing. It has superseded _nose_ as the mos
 
 ### Package Your Applications
 
-Use _wheel_ packages for libraries, and for tools that are intended to be used with an existing installation of Python. If you only publish your Python application as a _wheel_, other developers can install it with _pipx_ and _pip-sync_, but it cannot be used without a Python installation.
+Use _wheel_ packages for libraries, and for tools that are intended to be used with an existing installation of Python. If you publish your Python application as a _wheel_, other developers can install it with _pipx_ and _pip-sync_, but it cannot be used without a Python installation.
 
-In most cases, you should also package an application in a format that enables you to include your code, the dependencies and a copy of the required version of Python. This ensures that your code runs with the expected version of Python and has the correct version of each dependency.
+In most cases, you should package an application in a format that enables you to include your code, the dependencies and a copy of the required version of Python. This ensures that your code runs with the expected version of Python and has the correct version of each dependency.
 
 If your application is a network service or a command-line utility, then consider building container images that include a Python installation, your code, and all of the dependencies. Use [PyInstaller](https://pyinstaller.org/) to publish desktop and command-line applications as files that can be run in a wide range of systems.
 
@@ -204,7 +206,7 @@ If your Python software needs to generate TOML, add [Tomli-W](https://pypi.org/p
 
 The [asynchronous features of Python](https://docs.python.org/3/library/asyncio.html) enable a single process to avoid blocking on I/O operations. To achieve concurrency with Python, you must run multiple Python processes. Each of these processes may or may not use asynchronous I/O.
 
-To run multiple application processes, either use an application server like [Gunicorn](https://gunicorn.org/) or use a container system, with one container per process. If you need to build a custom application that manages muliple processes, use the [multiprocessing](https://docs.python.org/3/library/multiprocessing.html) package in the Python standard library.
+To run multiple application processes, either use a container system, with one container per process, or an application server like [Gunicorn](https://gunicorn.org/). If you need to build a custom application that manages muliple processes, use the [multiprocessing](https://docs.python.org/3/library/multiprocessing.html) package in the Python standard library.
 
 Code that uses asynchronous I/O must not call _any_ function that uses synchronous I/O, such as _open()_, or the _logging_ module in the standard library. Instead, you need to use either the equivalent functions from _asyncio_ in the standard library or a third-party library that is designed to support asynchronous code.
 

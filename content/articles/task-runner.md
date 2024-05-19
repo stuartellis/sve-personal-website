@@ -1,13 +1,13 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-05-04T12:31:00+01:00"
+date = "2024-05-19T21:51:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
 +++
 
-The [Task](https://taskfile.dev) tool is a task runner and build tool. It provides a consistent framework for working with sets of tasks, enabling you to run the same tasks on multiple platforms and environments.
+[Task](https://taskfile.dev) is a task runner and build tool. It provides a consistent framework for sets of tasks, enabling you to run the same workflows on multiple platforms and environments.
 
 ## How Task Works
 
@@ -15,7 +15,7 @@ Each copy of Task is a single executable file, with versions for Linux, macOS an
 
 This means that you can use Task in any environment. It only requires a copy of the Task executable, and has no configuration files apart from the YAML files that contain the tasks.
 
-It also provides features for you to customise the behavior of your tasks for the different environments that you might use. The built-in [template functions](https://taskfile.dev/usage/#gos-template-engine) enable you to get consistent inputs for your tasks across different platforms. When needed, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfileions), so that Task uses the specific implementation for the current platform.
+It also provides features for you to customise the behavior of your tasks for the different environments that you might use. The built-in [template functions](https://taskfile.dev/usage/#gos-template-engine) enable you to get consistent inputs for your tasks across different platforms. When needed, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfiles), so that Task uses the specific implementation for the current platform.
 
 Task includes two other important features: [conditional execution of tasks](https://taskfile.dev/usage/#prevent-unnecessary-work) and [running tasks on file changes](https://taskfile.dev/usage/#watch-tasks). These features are designed to be usable with any type of software development.
 

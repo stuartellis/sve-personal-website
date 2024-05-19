@@ -1,7 +1,7 @@
 +++
 title = "Setting Up Fedora Workstation for Software Development"
 slug = "fedora-workstation-setup"
-date = "2024-05-18T16:18:00+01:00"
+date = "2024-05-19T21:41:00+01:00"
 description = "Setting up a Fedora Workstation for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
@@ -136,7 +136,7 @@ ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
 
 ## Working with Programming Languages
 
-Avoid using the Fedora packages for programming languages. Use either containers or specialized tools like the [mise](https://mise.jdx.dev/) version manager to handle the installation of programming languages. These enable you to install the correct versions and dependencies for each of your projects.
+Avoid using the Fedora packages for programming languages. Instead, use either containers or specialized tools like the [mise](https://mise.jdx.dev/) version manager. These enable you to install the correct version of the required programming language and dependencies for each of your projects.
 
 Fedora Workstation automatically includes support for containers, with [Podman](https://podman.io/) as the equivalent of Docker, along with [toolbx](https://containertoolbx.org/) to help you manage container environments for developing your projects. You may use any version manager on Fedora Workstation, but you will need to install the tool yourself.
 
