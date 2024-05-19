@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-05-18T22:15:00+01:00"
+date = "2024-05-19T07:19:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -12,13 +12,13 @@ tags = ["python"]
 
 ## Using Python
 
-### Use Tools that Support Multiple Versions of Python
+### Use Tools that Provide Multiple Versions of Python
 
 Use a tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv) to install Python on your development systems, so that you can switch between different versions of Python for your projects. This enables you to upgrade each project to a new version of Python without interfering with other tools and projects that use Python.
 
 Alternatively, consider using [Development Containers](https://containers.dev/), which enable you to define an isolated environment for a software project. This also ensure that you can use a separate version of Python for each project.
 
-Avoid installing Python with tools that limit you to a single version of Python.
+If your operating system includes a Python installation, avoid using it. This Python installation is for operating system tools. It is likely to use an older version of Python, and may not include all of the standard features. This copy of Python also should be [specially marked](https://packaging.python.org/en/latest/specifications/externally-managed-environments/#externally-managed-environments) to prevent you from installing packages into it, but not all operating systems set the marker.
 
 ### Use The Most Recent Version of Python That You Can
 
@@ -42,7 +42,7 @@ The Python Packaging Authority maintain _pipx_, but it is not included with Pyth
 
 Create a _pyproject.toml_ file in the root directory of each Python project. Use this file as the central place to store configuration information about the project and the tools that it uses. The [pyOpenSci project documentation on pyproject.toml](https://www.pyopensci.org/python-package-guide/package-structure-code/pyproject-toml-python-package-metadata.html) provides an introduction to the file format.
 
-Modern Python tools support _pyproject.toml_ files. Python project management tools like [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) automatically create and use a _pyproject.toml_ file. If you use a tool that supports another configuration file by default, use a _pyproject.toml_ file instead.
+Modern Python tools support _pyproject.toml_ files, although not all of them use a _pyproject.toml_ by default. Python project management tools like [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) automatically create and use a _pyproject.toml_ file.
 
 > The various features of _pyproject.toml_ files are defined these PEPs: [PEP 517](https://peps.python.org/pep-0517/), [PEP 518](https://peps.python.org/pep-0518/), [PEP 621](https://peps.python.org/pep-0621/) and [PEP 660](https://peps.python.org/pep-0660/).
 
@@ -50,7 +50,7 @@ Modern Python tools support _pyproject.toml_ files. Python project management to
 
 Avoid using [Poetry](https://python-poetry.org/) for new projects. Poetry predates many standards for Python tooling. This means that it uses non-standard implementations of key features, such as the dependency resolver and configuration formats in _pyproject.toml_ files.
 
-If you would like to use a similar tool to develop your applications, consider using [PDM](https://pdm-project.org). [Hatch](https://hatch.pypa.io) provides many equivalent features, but it is most useful for developing Python libraries. Both of these tools follow modern standards, which avoids compatibility issues.
+If you would like to use a similar tool to develop your applications, consider using [PDM](https://pdm-project.org). [Hatch](https://hatch.pypa.io) is another alternative to Poetry, but it is most useful for developing Python libraries. Both of these tools follow modern standards, which avoids compatibility issues.
 
 ### Create a Directory Structure That Uses the src Layout
 
