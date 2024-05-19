@@ -43,13 +43,6 @@ tasks:
     cmds:
       - task: hugo:serve
 
-  fmt:
-    desc: Format code
-    aliases: [format]
-    cmds:
-      - task: pre-commit:run
-        vars: { HOOK_ID: "ruff-format" }
-
   lint:
     desc: Run all checks
     aliases: [check, test]
