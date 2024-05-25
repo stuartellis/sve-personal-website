@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-05-19T21:51:00+01:00"
+date = "2024-05-25T12:35:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -91,7 +91,7 @@ curl -L https://taskfile.dev/install.sh > install-task.sh
 To use the installation script, call it with the Git tag and the _-b_ option. The Git tag specifies the version of Task. The _-b_ option specifies which directory to install it to:
 
 ```shell
-./install-task.sh -b $HOME/.local/bin v3.36.0
+./install-task.sh -b $HOME/.local/bin v3.37.2
 ```
 
 {{< alert >}}
@@ -133,7 +133,7 @@ If you are using a Dev Container, you can add the feature [go-task](https://gith
 ```json
     "features": {
         "ghcr.io/devcontainers-contrib/features/go-task:1": {
-            "version": "3.36.0"
+            "version": "3.37.2"
         }
     }
 ```
@@ -420,7 +420,7 @@ To validate Task files before you commit them to source control, add the [pre-co
 
 ```yaml
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.28.2
+  rev: 0.28.4
   hooks:
     - id: check-taskfile
 ```

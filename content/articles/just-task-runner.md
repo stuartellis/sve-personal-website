@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-04-20T14:34:00+01:00"
+date = "2024-05-25T12:30:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -69,12 +69,12 @@ If possible, avoid using operating system packages. These are likely to provide 
 
 ### Adding just to a Dev Container
 
-If you are using a Dev Container, you can add the feature [guiyomh/features/just](https://github.com/guiyomh/features/tree/main/src/just) to your _devcontainer.json_ file to download _just_ from GitHub:
+If you are using a Visual Studio Code Dev Container, you can add the feature [guiyomh/features/just](https://github.com/guiyomh/features/tree/main/src/just) to your _devcontainer.json_ file to download _just_ from GitHub:
 
 ```json
     "features": {
         "ghcr.io/guiyomh/features/just:0": {
-            "version": "1.25.2"
+            "version": "1.26.0"
         }
     }
 ```
@@ -92,7 +92,7 @@ curl -L https://just.systems/install.sh > scripts/install-just.sh
 To use the installation script, call it with _--tag_ and _--to_ The _--tag_ specifies the version of _just_. The _--to_ specifies which directory to install it to:
 
 ```shell
-./scripts/install-just.sh --tag 1.25.2 --to $HOME/.local/bin
+./scripts/install-just.sh --tag 1.26.0 --to $HOME/.local/bin
 ```
 
 ### Installing just with Operating System Packages
@@ -105,7 +105,7 @@ brew install just                       # Homebrew on macOS
 sudo dnf install just                   # dnf on Fedora Linux
 ```
 
-Debian includes [_just_ in the _testing_ distribution](https://packages.debian.org/trixie/just). Ubuntu will provide [_just_ for 24.04 LTS](https://packages.ubuntu.com/noble/just).
+Debian includes [_just_ in the _testing_ distribution](https://packages.debian.org/trixie/just). Ubuntu provides [_just_ in 24.04 LTS](https://packages.ubuntu.com/noble/just).
 
 See [the package list page](https://just.systems/man/en/chapter_4.html) for what is available from operating system package managers.
 
@@ -135,6 +135,14 @@ Current versions of _just_ provide autocompletion for Bash, zsh, fish, PowerShel
 
 {{< alert >}}
 **macOS and Homebrew:** If you install _just_ on macOS with Homebrew, follow [these instructions](https://just.systems/man/en/chapter_65.html) to  autocompletion for zsh.
+{{< /alert >}}
+
+### Enabling Visual Studio Code Integration
+
+To use _just_ with Visual Studio Code, install the [nefrob.vscode-just-syntax](https://marketplace.visualstudio.com/items?itemName=nefrob.vscode-just-syntax) extension. This provides support for the _justfile_ syntax in Visual Studio Code.
+
+{{< alert >}}
+**Extension only provide syntax highlighting:** The Visual Studio Code extension currently only provides syntax highlighting.
 {{< /alert >}}
 
 ## Creating a User justfile for Global Tasks
