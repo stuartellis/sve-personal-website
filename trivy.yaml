@@ -23,8 +23,8 @@ dependency-tree: false
 exit-code: 0
 format: table
 ignore-policy: ""
-ignorefile: .trivyignore
-include-dev-deps: false
+ignorefile: .trivyignore.yaml
+include-dev-deps: true
 insecure: false
 license:
     confidencelevel: "0.9"
