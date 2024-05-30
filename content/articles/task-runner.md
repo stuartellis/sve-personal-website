@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-05-25T12:35:00+01:00"
+date = "2024-05-30T22:22:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -19,7 +19,7 @@ It also provides features for you to customise the behavior of your tasks for th
 
 Task includes two other important features: [conditional execution of tasks](https://taskfile.dev/usage/#prevent-unnecessary-work) and [running tasks on file changes](https://taskfile.dev/usage/#watch-tasks). These features are designed to be usable with any type of software development.
 
-Here is an example of a _Taskfile.yml_, with a _build_ task that only runs when the _sources_ change:
+Here is an example of a _Taskfile.yaml_, with a _build_ task that only runs when the _sources_ change:
 
 ```yaml
 # Tasks for a Hugo static website project
@@ -153,13 +153,13 @@ Ensure that you also include the [redhat.vscode-yaml](https://marketplace.visual
 
 The _vscode-yaml_ extension enables YAML formatting and validation, and _vscode-task_ adds a graphical integration for running tasks.
 
-## Creating a User Taskfile.yml for Global Tasks
+## Creating a User Taskfile.yaml for Global Tasks
 
-To define tasks that are available at any time, create a file with the name _Taskfile.yml_ in your home directory.
+To define tasks that are available at any time, create a file with the name _Taskfile.yaml_ in your home directory.
 
-Create a task in the _Taskfile.yml_ with the name _default_. When Task is invoked without the name of a task, it runs the _default_ task in the _Taskfile.yml_.
+Create a task in the _Taskfile.yaml_ with the name _default_. When Task is invoked without the name of a task, it runs the _default_ task in the _Taskfile.yaml_.
 
-This example user _Taskfile.yml_ includes a _default_ task that lists the available tasks:
+This example user _Taskfile.yaml_ includes a _default_ task that lists the available tasks:
 
 ```yaml
 version: "3"
@@ -183,7 +183,7 @@ tasks:
       - "echo Operating system: {{OS}}"
 ```
 
-The user _Taskfile.yml_ requires the option _-g_ to run:
+The user _Taskfile.yaml_ requires the option _-g_ to run:
 
 ```shell
 task -g system-info
@@ -192,50 +192,50 @@ task -g system-info
 For convenience, add an alias to your shell configuration. For example, add these lines in _.config/fish/config.fish_ to enable an alias in the Fish shell:
 
 ```fish
-# Add abbr to call tasks in user Taskfile.yml by typing ".t TASK-NAME"
+# Add abbr to call tasks in user Taskfile.yaml by typing ".t TASK-NAME"
 if command -s task > /dev/null
     abbr --add .t task -g
 end
 ```
 
-This means that you run a task in the user _Taskfile.yml_ by entering _.t_ followed by the name of the task:
+This means that you run a task in the user _Taskfile.yaml_ by entering _.t_ followed by the name of the task:
 
 ```shell
 .t system-info
 ```
 
-To list the tasks in your user _Taskfile.yml_, you can type _.t_ and press the _Enter_ key:
+To list the tasks in your user _Taskfile.yaml_, you can type _.t_ and press the _Enter_ key:
 
 ```shell
 .t
 ```
 
-This runs the _default_ task. The example _Taskfile.yml_ configures this to display a list of tasks.
+This runs the _default_ task. The example _Taskfile.yaml_ configures this to display a list of tasks.
 
 ## Using Task in a Project
 
 First, add the _.task_ directory to the exclusions for source control. This directory is used to hold [files for tracking changes](https://taskfile.dev/usage/#by-fingerprinting-locally-generated-files-and-their-sources).
 
-Use _task --init_ to create a _Taskfile.yml_ in the root directory of your project.
+Use _task --init_ to create a _Taskfile.yaml_ in the root directory of your project.
 
-> _Always use the name Taskfile.yml for Task files._ This enables tools that support [JSON Schemas](https://json-schema.org/) to identify the format of the files, so that they can provide autocompletion and validation.
+> _Always use the name Taskfile.yaml for Task files._ This enables tools that support [JSON Schemas](https://json-schema.org/) to identify the format of the files, so that they can provide autocompletion and validation.
 
-If a project only requires one small set of tasks, then use a single _Taskfile.yml_. If you need to manage several sets of tasks, use these features:
+If a project only requires one small set of tasks, then use a single _Taskfile.yaml_. If you need to manage several sets of tasks, use these features:
 
 1. [Taskfiles in subdirectories](https://taskfile.dev/usage/#running-a-taskfile-from-a-subdirectory)
 2. [Includes](https://taskfile.dev/usage/#including-other-taskfiles)
 
-Adding _Taskfile.yml_ files in subdirectories enables you to override the set of tasks for a project when you change your working directory in the project. This lets you define sets of tasks that are appropriate to the context.
+Adding _Taskfile.yaml_ files in subdirectories enables you to override the set of tasks for a project when you change your working directory in the project. This lets you define sets of tasks that are appropriate to the context.
 
-Task includes enable you to define groups of tasks that can be added to any _Taskfile.yml_. These groups automatically become namespaces, which ensures that tasks with the same name do not override each other. For example, if you create an include for _python_ and an include for _web_, they may both have a task called _test_, which you can call as _python:task_ and _web:test_.
+Task includes enable you to define groups of tasks that can be added to any _Taskfile.yaml_. These groups automatically become namespaces, which ensures that tasks with the same name do not override each other. For example, if you create an include for _python_ and an include for _web_, they may both have a task called _test_, which you can call as _python:task_ and _web:test_.
 
 ### Using Includes
 
 If you decide to use Task includes in your project, consider following these guidelines:
 
-- Create the first task in the root _Taskfile.yml_ with the name _default_. When Task is invoked without a namespace or task name, it runs the _default_ task in the _Taskfile.yml_.
-- Create subdirectory called _tasks/_. For each namespace, create a directory with the same name as the namespace, with a _Taskfile.yml_ file in the directory. Write the tasks for the namespace in the relevant _Taskfile.yml_ file. Use _includes_ in the root _Taskfile.yml_ file to enable these namespaces.
-- Use the root _Taskfile.yml_ to define standard tasks for the project. Each of these should call the relevant tasks in one or more namespaces. Avoid writing tasks in the root _Taskfile.yml_ that do anything other than running tasks that are defined in namespaces.
+- Create the first task in the root _Taskfile.yaml_ with the name _default_. When Task is invoked without a namespace or task name, it runs the _default_ task in the _Taskfile.yaml_.
+- Create subdirectory called _tasks/_. For each namespace, create a directory with the same name as the namespace, with a _Taskfile.yaml_ file in the directory. Write the tasks for the namespace in the relevant _Taskfile.yaml_ file. Use _includes_ in the root _Taskfile.yaml_ file to enable these namespaces.
+- Use the root _Taskfile.yaml_ to define standard tasks for the project. Each of these should call the relevant tasks in one or more namespaces. Avoid writing tasks in the root _Taskfile.yaml_ that do anything other than running tasks that are defined in namespaces.
 - Remember to include a _default_ task for each namespace. This means that the _default_ task runs when a user types the name of the namespace without specifying the name of the task.
 - Specify any relevant [aliases](https://taskfile.dev/usage/#namespace-aliases) for a namespace with the _includes_ attribute.
 
@@ -248,7 +248,7 @@ This diagram shows the suggested directory structure for a project with task inc
 |    |
 |    |- pre-commit
 |    |    |
-|    |    |- Taskfile.yml
+|    |    |- Taskfile.yaml
 |    |
 |    |- package
 |         |
@@ -256,10 +256,10 @@ This diagram shows the suggested directory structure for a project with task inc
 |         |- Taskfile_linux.yml
 |         |- Taskfile_windows.yml
 |
-|- Taskfile.yml
+|- Taskfile.yaml
 ```
 
-### Example Taskfile.yml for a Project
+### Example Taskfile.yaml for a Project
 
 ```yaml
 # Tasks for the Task runner:
@@ -367,7 +367,7 @@ The result is the same as this command:
 task pre-commit:check
 ```
 
-## Writing Taskfile.yml files
+## Writing Taskfile.yaml files
 
 Follow [the style guidelines](https://taskfile.dev/styleguide/) when writing tasks. Here are some extra suggestions:
 
@@ -388,7 +388,7 @@ _Dependencies run in parallel._ This means that dependencies of a task should no
 
 ## Running Tasks
 
-To run a task in a _Taskfile.yml_, enter _task_ followed by the name of the task:
+To run a task in a _Taskfile.yaml_, enter _task_ followed by the name of the task:
 
 ```shell
 task example-task
@@ -406,7 +406,7 @@ You may [set variables](https://taskfile.dev/usage/#variables) by specifying env
 MY_VARIABLE_NAME=my-variable-value task example-task
 ```
 
-## Checking Taskfile.yml files
+## Checking Taskfile.yaml files
 
 The Task project publish the schema for Task files as a [JSON Schema](https://json-schema.org/). This means that any software that supports JSON Schemas for YAML documents can automatically check your Task files. For example, Visual Studio Code will automatically do this when the [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension is installed.
 
@@ -441,7 +441,7 @@ task --dry TASK-NAME
 
 This compiles and prints tasks in the order that they would be run.
 
-To debug a task, ensure that _silent_ is not enabled in the appropriate _Taskfile.yml_, so that the outputs of the commands are visible:
+To debug a task, ensure that _silent_ is not enabled in the appropriate _Taskfile.yaml_, so that the outputs of the commands are visible:
 
 ```yaml
 silent: false
