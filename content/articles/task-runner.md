@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-06-01T07:32:00+01:00"
+date = "2024-06-01T13:05:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -431,7 +431,7 @@ Add these lines to the _.pre-commit-config.yaml_ file in the root directory of y
   rev: v1.35.1
   hooks:
     - id: yamllint
-    args: [--strict]
+      args: [--strict]
 ```
 
 To ensure that _yamllint_ handles Task files, add a _.yamllint.yaml_ file with this content:
