@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-05-30T22:22:00+01:00"
+date = "2024-06-01T07:32:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -408,24 +408,49 @@ MY_VARIABLE_NAME=my-variable-value task example-task
 
 ## Checking Taskfile.yaml files
 
-The Task project publish the schema for Task files as a [JSON Schema](https://json-schema.org/). This means that any software that supports JSON Schemas for YAML documents can automatically check your Task files. For example, Visual Studio Code will automatically do this when the [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension is installed.
+The Task project publish the schema for Task files as a [JSON Schema](https://json-schema.org/). This means that any software that supports JSON Schemas for YAML documents can check that your Task files are valid. To ensure that your Task files are consistently formatted, use standard tools for YAML files.
 
-To validate the Task files on the command-line, use a YAML linter that supports JSON Schemas, such as [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/index.html). The _check-jsonschema_ tool automatically includes the schema for Task files.
+Visual Studio Code will both validate and format Task files when the [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension is installed. This extension use a language server for the YAML format, with support for JSON Schemas.
 
-The _check-jsonschema_ project also provides a _pre-commit_ hook to check Task files before changes are committed to source control.
+To validate Task files on the command-line, use [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/index.html). The _check-jsonschema_ tool automatically includes the schema for Task files. The [yamllint](https://yamllint.readthedocs.io) command-line tool provides format and quality checks for all types of YAML file.
+
+The _check-jsonschema_ and _yamllint_ projects also provide hooks for [pre-commit](https://pre-commit.com), so that files are automatically checked before changes are committed to source control.
 
 ### Validating Task files with pre-commit
 
-To validate Task files before you commit them to source control, add the [pre-commit hook for check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/precommit_usage.html) to the [pre-commit](https://pre-commit.com/) configuration for your project:
+To validate Task files before you commit them to source control, add the [hook for check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/precommit_usage.html) and the [hook for yamllint](https://yamllint.readthedocs.io/en/stable/integration.html#integration-with-pre-commit) to the [pre-commit](https://pre-commit.com/) configuration for your project.
+
+Add these lines to the _.pre-commit-config.yaml_ file in the root directory of your project:
 
 ```yaml
 - repo: https://github.com/python-jsonschema/check-jsonschema
   rev: 0.28.4
   hooks:
     - id: check-taskfile
+- repo: https://github.com/adrienverge/yamllint.git
+  rev: v1.35.1
+  hooks:
+    - id: yamllint
+    args: [--strict]
 ```
 
-Once this is added to your project you may run the same check at any time with the _pre-commit_ command-line tool:
+To ensure that _yamllint_ handles Task files, add a _.yamllint.yaml_ file with this content:
+
+```yaml
+---
+extends: default
+
+rules:
+  braces:
+    forbid: false
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+    min-spaces-inside-empty: -1
+    max-spaces-inside-empty: -1
+  document-start: disable
+```
+
+These checks automatically run when you commit code. You may also run the checks yourself at any time, with the _pre-commit_ command-line tool. For example, this command validates all of the Task files in your project:
 
 ```shell
 pre-commit run check-taskfile --all-files
