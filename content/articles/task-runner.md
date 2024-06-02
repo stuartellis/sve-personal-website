@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-06-01T13:05:00+01:00"
+date = "2024-06-02T20:51:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -183,34 +183,11 @@ tasks:
       - "echo Operating system: {{OS}}"
 ```
 
-The user _Taskfile.yaml_ requires the option _-g_ to run:
+Use the option _-g_ to run the user _Taskfile.yaml_, rather than the nearest Taskfile:
 
 ```shell
 task -g system-info
 ```
-
-For convenience, add an alias to your shell configuration. For example, add these lines in _.config/fish/config.fish_ to enable an alias in the Fish shell:
-
-```fish
-# Add abbr to call tasks in user Taskfile.yaml by typing ".t TASK-NAME"
-if command -s task > /dev/null
-    abbr --add .t task -g
-end
-```
-
-This means that you run a task in the user _Taskfile.yaml_ by entering _.t_ followed by the name of the task:
-
-```shell
-.t system-info
-```
-
-To list the tasks in your user _Taskfile.yaml_, you can type _.t_ and press the _Enter_ key:
-
-```shell
-.t
-```
-
-This runs the _default_ task. The example _Taskfile.yaml_ configures this to display a list of tasks.
 
 ## Using Task in a Project
 
@@ -252,9 +229,9 @@ This diagram shows the suggested directory structure for a project with task inc
 |    |
 |    |- package
 |         |
-|         |- Taskfile_darwin.yml
-|         |- Taskfile_linux.yml
-|         |- Taskfile_windows.yml
+|         |- Taskfile_darwin.yaml
+|         |- Taskfile_linux.yaml
+|         |- Taskfile_windows.yaml
 |
 |- Taskfile.yaml
 ```
@@ -272,7 +249,7 @@ silent: true
 
 # Namespaces
 includes:
-  package: tasks/package/Taskfile_{{OS}}.yml
+  package: tasks/package/Taskfile_{{OS}}.yaml
   pre-commit: tasks/pre-commit
 
 # Top-level tasks
