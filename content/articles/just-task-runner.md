@@ -1,13 +1,15 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-05-25T12:30:00+01:00"
+date = "2024-06-08T13:05:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
 +++
 
 The [just](https://just.systems) tool is a task runner. It provides a consistent framework for working with sets of tasks, which may be written in any scripting language and can run on multiple platforms.
+
+> _Consider using Task:_ Read [this article on Task](https://www.stuartellis.name/articles/task-runner/) before choosing _just_. Task provides similar capabilities to _just_, but with different design choices.
 
 ## How just Works
 
@@ -74,7 +76,7 @@ If you are using a Visual Studio Code Dev Container, you can add the feature [gu
 ```json
     "features": {
         "ghcr.io/guiyomh/features/just:0": {
-            "version": "1.26.0"
+            "version": "1.28.0"
         }
     }
 ```
@@ -92,7 +94,7 @@ curl -L https://just.systems/install.sh > scripts/install-just.sh
 To use the installation script, call it with _--tag_ and _--to_ The _--tag_ specifies the version of _just_. The _--to_ specifies which directory to install it to:
 
 ```shell
-./scripts/install-just.sh --tag 1.26.0 --to $HOME/.local/bin
+./scripts/install-just.sh --tag 1.28.0 --to $HOME/.local/bin
 ```
 
 ### Installing just with Operating System Packages

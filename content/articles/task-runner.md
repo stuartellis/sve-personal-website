@@ -1,13 +1,15 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-06-02T20:51:00+01:00"
+date = "2024-06-08T13:09:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
 +++
 
 [Task](https://taskfile.dev) is a task runner and build tool. It provides a consistent framework for sets of tasks, enabling you to run the same workflows on multiple platforms and environments.
+
+> Task is also known as go-task.
 
 ## How Task Works
 
@@ -17,7 +19,7 @@ This means that you can use Task in any environment. It only requires a copy of 
 
 It also provides features for you to customise the behavior of your tasks for the different environments that you might use. The built-in [template functions](https://taskfile.dev/usage/#gos-template-engine) enable you to get consistent inputs for your tasks across different platforms. When needed, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfiles), so that Task uses the specific implementation for the current platform.
 
-Task includes two other important features: [conditional execution of tasks](https://taskfile.dev/usage/#prevent-unnecessary-work) and [running tasks on file changes](https://taskfile.dev/usage/#watch-tasks). These features are designed to be usable with any type of software development.
+Task includes two other key features: [conditional execution of tasks](https://taskfile.dev/usage/#prevent-unnecessary-work) and [running tasks on file changes](https://taskfile.dev/usage/#watch-tasks). These features are designed to be usable with any type of software development.
 
 Here is an example of a _Taskfile.yaml_, with a _build_ task that only runs when the _sources_ change:
 
@@ -153,7 +155,7 @@ Ensure that you also include the [redhat.vscode-yaml](https://marketplace.visual
 
 The _vscode-yaml_ extension enables YAML formatting and validation, and _vscode-task_ adds a graphical integration for running tasks.
 
-## Creating a User Taskfile.yaml for Global Tasks
+## Creating a User Taskfile for Global Tasks
 
 To define tasks that are available at any time, create a file with the name _Taskfile.yaml_ in your home directory.
 
@@ -193,18 +195,16 @@ task -g system-info
 
 First, add the _.task_ directory to the exclusions for source control. This directory is used to hold [files for tracking changes](https://taskfile.dev/usage/#by-fingerprinting-locally-generated-files-and-their-sources).
 
-Use _task --init_ to create a _Taskfile.yaml_ in the root directory of your project.
+> _Always use the name Taskfile.yaml or Taskfile.yml for Task files._ This enables tools that support [JSON Schemas](https://json-schema.org/) to identify the format of the files, so that they can provide autocompletion and validation.
 
-> _Always use the name Taskfile.yaml for Task files._ This enables tools that support [JSON Schemas](https://json-schema.org/) to identify the format of the files, so that they can provide autocompletion and validation.
-
-If a project only requires one small set of tasks, then use a single _Taskfile.yaml_. If you need to manage several sets of tasks, use these features:
+If a project only requires one small set of tasks, then use a single Taskfile. If you need to manage several sets of tasks, use these features:
 
 1. [Taskfiles in subdirectories](https://taskfile.dev/usage/#running-a-taskfile-from-a-subdirectory)
 2. [Includes](https://taskfile.dev/usage/#including-other-taskfiles)
 
 Adding _Taskfile.yaml_ files in subdirectories enables you to override the set of tasks for a project when you change your working directory in the project. This lets you define sets of tasks that are appropriate to the context.
 
-Task includes enable you to define groups of tasks that can be added to any _Taskfile.yaml_. These groups automatically become namespaces, which ensures that tasks with the same name do not override each other. For example, if you create an include for _python_ and an include for _web_, they may both have a task called _test_, which you can call as _python:task_ and _web:test_.
+The includes feature of Task enables you to define groups of tasks that can be added to any Taskfile. These groups automatically become namespaces, which ensures that tasks with the same name do not override each other. For example, if you create an include for _python_ and an include for _web_, they may both have a task called _test_, which you can call as _python:task_ and _web:test_.
 
 ### Using Includes
 
@@ -344,7 +344,7 @@ The result is the same as this command:
 task pre-commit:check
 ```
 
-## Writing Taskfile.yaml files
+## Writing Taskfiles
 
 Follow [the style guidelines](https://taskfile.dev/styleguide/) when writing tasks. Here are some extra suggestions:
 
@@ -383,7 +383,7 @@ You may [set variables](https://taskfile.dev/usage/#variables) by specifying env
 MY_VARIABLE_NAME=my-variable-value task example-task
 ```
 
-## Checking Taskfile.yaml files
+## Checking Taskfiles
 
 The Task project publish the schema for Task files as a [JSON Schema](https://json-schema.org/). This means that any software that supports JSON Schemas for YAML documents can check that your Task files are valid. To ensure that your Task files are consistently formatted, use standard tools for YAML files.
 
