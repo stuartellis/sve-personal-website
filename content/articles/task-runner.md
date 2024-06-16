@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-06-08T13:09:00+01:00"
+date = "2024-06-16T08:10:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -401,11 +401,11 @@ Add these lines to the _.pre-commit-config.yaml_ file in the root directory of y
 
 ```yaml
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.28.4
+  rev: "0.28.4"
   hooks:
     - id: check-taskfile
 - repo: https://github.com/adrienverge/yamllint.git
-  rev: v1.35.1
+  rev: "v1.35.1"
   hooks:
     - id: yamllint
       args: [--strict]
@@ -415,19 +415,36 @@ To ensure that _yamllint_ handles Task files, add a _.yamllint.yaml_ file with t
 
 ```yaml
 ---
+# Begin with yamllint default settings
 extends: default
 
 rules:
+  # Rules for curly braces: {}
   braces:
     forbid: false
-    min-spaces-inside: 0
+    min-spaces-inside: 1
     max-spaces-inside: 1
-    min-spaces-inside-empty: -1
-    max-spaces-inside-empty: -1
+    min-spaces-inside-empty: 0
+    max-spaces-inside-empty: 0
+
+  # Rules for round brackets: ()
+  brackets:
+    forbid: false
+    min-spaces-inside: 0
+    max-spaces-inside: 0
+    min-spaces-inside-empty: 0
+    max-spaces-inside-empty: 0
+
+  # Do not require three dashes at the start of a YAML document
   document-start: disable
+
+  # Rules for line length
+  line-length:
+    max: 88
+    level: error
 ```
 
-These checks automatically run when you commit code. You may also run the checks yourself at any time, with the _pre-commit_ command-line tool. For example, this command validates all of the Task files in your project:
+The _pre-commit_ checks automatically run when you commit code. You may also run the checks yourself at any time, with the _pre-commit_ command-line tool. For example, this command validates all of the Task files in your project:
 
 ```shell
 pre-commit run check-taskfile --all-files
@@ -453,3 +470,4 @@ silent: false
 
 - [Documentation for Task](https://taskfile.dev/)
 - [Using a task runner to help with context switching in software projects](https://www.caro.fyi/articles/just/)
+- [Video: Say Goodbye to Makefile - Use Taskfile to Manage Tasks in CI/CD Pipelines and Locally](https://www.youtube.com/watch?v=Z7EnwBaJzCk) (YouTube, 17 minutes long)
