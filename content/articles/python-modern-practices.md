@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-05-19T22:45:00+01:00"
+date = "2024-06-16T20:30:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -18,7 +18,7 @@ Use a tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv
 
 Alternatively, consider using [Development Containers](https://containers.dev/), which enable you to define an isolated environment for a software project. This also ensure that you can use a separate version of Python for each project.
 
-Where possible, use tools that compile Python. Some tools use [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/), which are modified versions of Python that are maintained by a third-party. The pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) compile Python, but you must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation. [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) always download standalone builds when you use them to set up versions of Python.
+Ensure that the tool compiles Python, rather downloading [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). The standlone builds are modified versions of Python that are maintained by a third-party. Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) automatically compile Python, but you must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation. [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) always download standalone builds when you use them to set up versions of Python.
 
 If your operating system includes a Python installation, avoid using it. This Python installation is for operating system tools. It is likely to use an older version of Python, and may not include all of the standard features. An operating system copy of Python should be [marked](https://packaging.python.org/en/latest/specifications/externally-managed-environments/#externally-managed-environments) to prevent you from installing packages into it, but not all operating systems set the marker.
 
@@ -28,13 +28,21 @@ For new projects, choose the most recent stable version of Python 3. This ensure
 
 Upgrade your projects as new Python versions are released. The Python development team usually support each version for five years, but some Python libraries may only support each version of Python for a shorter period of time. If you use tools that support multiple versions of Python and automated testing, you can test your projects on new Python versions with little risk.
 
-Avoid using Python 2. It is not supported by the Python development team or by the developers of most popular Python libraries.
+{{< alert >}}
+_Avoid using Python 2._ It is not supported by the Python development team or by the developers of most popular Python libraries.
+{{< /alert >}}
 
-### Use pipx To Install Developer Applications
+### Use pipx To Run Developer Applications
 
-Use [pipx](https://github.com/pypa/pipx) to install Python applications on to development systems, rather than _pip_. This ensures that each application has the correct libraries. Unlike _pip_, _pipx_ automatically installs the libraries for each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
+Use [pipx](https://pipx.pypa.io) to run Python applications on development systems, rather than installing the applications with _pip_ or another method. This ensures that each application has the correct libraries, because _pipx_ automatically puts the libraries for each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
 
-The Python Packaging Authority maintain _pipx_, but it is not included with Python. You can install _pipx_ with Homebrew, or with your system package manager on Linux.
+Consider using the [pipx run](https://pipx.pypa.io/stable/#walkthrough-running-an-application-in-a-temporary-virtual-environment) command, rather than _pipx install_. The _pipx run_ command downloads and runs the application without installing it. Each application is cached for several days after the first download, so _pipx run_ may not be slower than _pipx install_.
+
+The Python Packaging Authority maintain _pipx_, but it is not included with Python. To install _pipx_, run this command:
+
+```shell
+python3 -m pip install pipx
+```
 
 > [PEP 668 - Marking Python base environments as “externally managed”](https://peps.python.org/pep-0668/#guide-users-towards-virtual-environments) recommends that users install Python applications with pipx.
 
@@ -44,7 +52,7 @@ The Python Packaging Authority maintain _pipx_, but it is not included with Pyth
 
 Create a _pyproject.toml_ file in the root directory of each Python project. Use this file as the central place to store configuration information about the project and the tools that it uses. The [pyOpenSci project documentation on pyproject.toml](https://www.pyopensci.org/python-package-guide/package-structure-code/pyproject-toml-python-package-metadata.html) provides an introduction to the file format.
 
-Modern Python tools support _pyproject.toml_ files, although not all of them use a _pyproject.toml_ by default. Python project management tools like [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) automatically create and use a _pyproject.toml_ file.
+Modern Python tools use the _pyproject.toml_ file to store configuration. Some tools support _pyproject.toml_, but do not use it by default. Python project management tools like [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) automatically create and use a _pyproject.toml_ file.
 
 > The various features of _pyproject.toml_ files are defined these PEPs: [PEP 517](https://peps.python.org/pep-0517/), [PEP 518](https://peps.python.org/pep-0518/), [PEP 621](https://peps.python.org/pep-0621/) and [PEP 660](https://peps.python.org/pep-0660/).
 
@@ -108,11 +116,11 @@ Use [pytest](http://pytest.org) for testing. It has superseded _nose_ as the mos
 
 ### Package Your Applications
 
-Use _wheel_ packages for libraries, and for tools that are intended to be used with an existing installation of Python. If you publish your Python application as a _wheel_, other developers can install it with _pipx_ and _pip-sync_, but it cannot be used without a Python installation.
+Use _wheel_ packages for libraries, or for tools that are intended to be used with an existing installation of Python. If you publish your Python application as a _wheel_, other developers can use it with _pipx_ and _pip-sync_. These packages cannot be used without a Python installation.
 
-In most cases, you should package an application in a format that enables you to include your code, the dependencies and a copy of the required version of Python. This ensures that your code runs with the expected version of Python and has the correct version of each dependency.
+In most cases, you should package an application in a format that enables you to include your code, the dependencies and a copy of the required version of Python. This ensures that your code runs with the expected version of Python, and has the correct version of each dependency.
 
-If your application is a network service or a command-line utility, then consider building container images that include a Python installation, your code, and all of the dependencies. Use [PyInstaller](https://pyinstaller.org/) to publish desktop and command-line applications as files that can be run in a wide range of systems.
+Use container images to package applications that provide a network service, such as a Web application. Use [PyInstaller](https://pyinstaller.org/) to publish desktop and command-line applications as a single executable file. Each container image and PyInstaller file includes a copy of Python, along with your code and the required dependencies.
 
 ## Language Syntax
 
@@ -120,9 +128,9 @@ If your application is a network service or a command-line utility, then conside
 
 Current versions of Python support type hinting. Consider using type hints in any critical application. If you develop a shared library, use type hints.
 
-Once you add type hints, [Mypy](http://www.mypy-lang.org/) tool can check your code as you develop it. Code editors can also read type hints to display information about the code that you are working with.
+Once you add type hints, the [mypy](http://www.mypy-lang.org/) tool can check your code as you develop it. Code editors can also read type hints to display information about the code that you are working with.
 
-If you add [Pydantic](https://docs.pydantic.dev/) to your software, it uses type hints in your software to validate data as an application runs.
+If you use [Pydantic](https://docs.pydantic.dev/) in your application, it can work with type hints. Use the [mypy plugin for Pydantic](https://docs.pydantic.dev/latest/integrations/mypy/) to improve the integration between mypy and Pydantic.
 
 > [PEP 484 - Type Hints](https://peps.python.org/pep-0484/) and [PEP 526 – Syntax for Variable Annotations](https://peps.python.org/pep-0526/) define the notation for type hinting.
 
