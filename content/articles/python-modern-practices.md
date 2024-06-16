@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-06-16T20:30:00+01:00"
+date = "2024-06-16T21:40:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -18,7 +18,7 @@ Use a tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv
 
 Alternatively, consider using [Development Containers](https://containers.dev/), which enable you to define an isolated environment for a software project. This also ensure that you can use a separate version of Python for each project.
 
-Ensure that the tool compiles Python, rather downloading [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). The standlone builds are modified versions of Python that are maintained by a third-party. Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) automatically compile Python, but you must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation. [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) always download standalone builds when you use them to set up versions of Python.
+Ensure that the tool compiles Python, rather than downloading [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). The standlone builds are modified versions of Python that are maintained by a third-party. Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) automatically compile Python, but you must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation. [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) always download standalone builds when you use them to set up versions of Python.
 
 If your operating system includes a Python installation, avoid using it. This Python installation is for operating system tools. It is likely to use an older version of Python, and may not include all of the standard features. An operating system copy of Python should be [marked](https://packaging.python.org/en/latest/specifications/externally-managed-environments/#externally-managed-environments) to prevent you from installing packages into it, but not all operating systems set the marker.
 
@@ -48,6 +48,12 @@ python3 -m pip install pipx
 
 ## Developing Python Projects
 
+### Avoid Using Poetry
+
+Avoid using [Poetry](https://python-poetry.org/) for new projects. Poetry predates many standards for Python tooling. This means that it uses non-standard implementations of key features, such as the dependency resolver and configuration formats in _pyproject.toml_ files.
+
+If you would like to use a similar tool to develop your applications, consider using [PDM](https://pdm-project.org). [Hatch](https://hatch.pypa.io) is another alternative to Poetry, but it is most useful for developing Python libraries. Both of these tools follow modern standards, which avoids compatibility issues.
+
 ### Use a pyproject.toml File
 
 Create a _pyproject.toml_ file in the root directory of each Python project. Use this file as the central place to store configuration information about the project and the tools that it uses. The [pyOpenSci project documentation on pyproject.toml](https://www.pyopensci.org/python-package-guide/package-structure-code/pyproject-toml-python-package-metadata.html) provides an introduction to the file format.
@@ -55,12 +61,6 @@ Create a _pyproject.toml_ file in the root directory of each Python project. Use
 Modern Python tools use the _pyproject.toml_ file to store configuration. Some tools support _pyproject.toml_, but do not use it by default. Python project management tools like [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) automatically create and use a _pyproject.toml_ file.
 
 > The various features of _pyproject.toml_ files are defined these PEPs: [PEP 517](https://peps.python.org/pep-0517/), [PEP 518](https://peps.python.org/pep-0518/), [PEP 621](https://peps.python.org/pep-0621/) and [PEP 660](https://peps.python.org/pep-0660/).
-
-### Avoid Using Poetry
-
-Avoid using [Poetry](https://python-poetry.org/) for new projects. Poetry predates many standards for Python tooling. This means that it uses non-standard implementations of key features, such as the dependency resolver and configuration formats in _pyproject.toml_ files.
-
-If you would like to use a similar tool to develop your applications, consider using [PDM](https://pdm-project.org). [Hatch](https://hatch.pypa.io) is another alternative to Poetry, but it is most useful for developing Python libraries. Both of these tools follow modern standards, which avoids compatibility issues.
 
 ### Create a Directory Structure That Uses the src Layout
 
