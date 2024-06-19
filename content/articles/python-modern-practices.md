@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-06-16T21:40:00+01:00"
+date = "2024-06-19T06:10:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -16,7 +16,7 @@ tags = ["python"]
 
 Use a tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv) to install Python on your development systems, so that you can switch between different versions of Python for your projects. This enables you to upgrade each project to a new version of Python without interfering with other tools and projects that use Python.
 
-Alternatively, consider using [Development Containers](https://containers.dev/), which enable you to define an isolated environment for a software project. This also ensure that you can use a separate version of Python for each project.
+Alternatively, consider using [Development Containers](https://containers.dev/), which enable you to define an isolated environment for a software project. This also allows you to use a separate version of Python for each project.
 
 Ensure that the tool compiles Python, rather than downloading [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). The standlone builds are modified versions of Python that are maintained by a third-party. Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) automatically compile Python, but you must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation. [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) always download standalone builds when you use them to set up versions of Python.
 
@@ -36,12 +36,18 @@ _Avoid using Python 2._ It is not supported by the Python development team or by
 
 Use [pipx](https://pipx.pypa.io) to run Python applications on development systems, rather than installing the applications with _pip_ or another method. This ensures that each application has the correct libraries, because _pipx_ automatically puts the libraries for each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
 
-Consider using the [pipx run](https://pipx.pypa.io/stable/#walkthrough-running-an-application-in-a-temporary-virtual-environment) command, rather than _pipx install_. The _pipx run_ command downloads and runs the application without installing it. Each application is cached for several days after the first download, so _pipx run_ may not be slower than _pipx install_.
+Consider using the [pipx run](https://pipx.pypa.io/stable/#walkthrough-running-an-application-in-a-temporary-virtual-environment) command, rather than _pipx install_. The _pipx run_ command downloads and runs the application without installing it. Each application is cached for several days after the first download, which means that _pipx run_ may not be slower than running a manually installed application.
 
 The Python Packaging Authority maintain _pipx_, but it is not included with Python. To install _pipx_, run this command:
 
 ```shell
-python3 -m pip install pipx
+python3 -m pip install --user pipx
+```
+
+This enables you to use any Python command-line application with _pipx_. For example, this command downloads and runs the latest version of [bpytop](https://github.com/aristocratos/bpytop), a system monitoring tool:
+
+```shell
+pipx run bpytop
 ```
 
 > [PEP 668 - Marking Python base environments as “externally managed”](https://peps.python.org/pep-0668/#guide-users-towards-virtual-environments) recommends that users install Python applications with pipx.
@@ -67,7 +73,7 @@ Modern Python tools use the _pyproject.toml_ file to store configuration. Some t
 Python itself does not require a specific directory structure for your projects. The Python packaging documentation describes two popular directory structures: [the src layout and the flat layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/).
 The [pyOpenSci project documentation on directory structures](https://www.pyopensci.org/python-package-guide/package-structure-code/python-package-structure.html) explains the practical differences between the two.
 
-For modern Python projects, use the src layout. This requires you to use editable installs of the packages in your project, but tools like [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) will handle this for you.
+For modern Python projects, use the src layout. This requires you to use [editable installs](https://setuptools.pypa.io/en/latest/userguide/development_mode.html) of the packages in your project, but tools like [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) will handle this for you.
 
 ### Use Virtual Environments for Development
 
