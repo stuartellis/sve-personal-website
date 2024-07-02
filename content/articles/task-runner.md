@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-06-16T08:10:00+01:00"
+date = "2024-07-01T18:10:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -17,7 +17,7 @@ Each copy of Task is a single executable file, with versions for Linux, macOS an
 
 This means that you can use Task in any environment. It only requires a copy of the Task executable, and has no configuration files apart from the YAML files that contain the tasks.
 
-It also provides features for you to customise the behavior of your tasks for the different environments that you might use. The built-in [template functions](https://taskfile.dev/usage/#gos-template-engine) enable you to get consistent inputs for your tasks across different platforms. When needed, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfiles), so that Task uses the specific implementation for the current platform.
+It also provides features for you to customise the behavior of your tasks for the different environments that you might use. The built-in [template functions](https://taskfile.dev/reference/templating/#functions) enable you to get consistent inputs for your tasks across different platforms. When needed, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfiles), so that Task uses the specific implementation for the current platform.
 
 Task includes two other key features: [conditional execution of tasks](https://taskfile.dev/usage/#prevent-unnecessary-work) and [running tasks on file changes](https://taskfile.dev/usage/#watch-tasks). These features are designed to be usable with any type of software development.
 
@@ -76,7 +76,7 @@ If you have a Dev Container configuration for a project, use the [go-task featur
 
 To add Task to container images or systems without a tool version manager, see the section below for how to install Task with a script.
 
-All of these tools enable you to have multiple versions of Task and use the version of Task that is required for each project that you work on. If possible, avoid using operating system packages. A package installs a single shared copy of Task, and is likely to provide an older version.
+All of these methods enable you to specify a version of Task for each project that you work on, and ensure that the expected version of Task is present. If possible, avoid using operating system packages. A package installs a single shared copy of Task, and is likely to provide an older version.
 
 ### Installing Task with a Script
 
@@ -93,7 +93,7 @@ curl -L https://taskfile.dev/install.sh > install-task.sh
 To use the installation script, call it with the Git tag and the _-b_ option. The Git tag specifies the version of Task. The _-b_ option specifies which directory to install it to:
 
 ```shell
-./install-task.sh -b $HOME/.local/bin v3.37.2
+./install-task.sh -b $HOME/.local/bin v3.38.0
 ```
 
 {{< alert >}}
@@ -135,7 +135,7 @@ If you are using a Dev Container, you can add the feature [go-task](https://gith
 ```json
     "features": {
         "ghcr.io/devcontainers-contrib/features/go-task:1": {
-            "version": "3.37.2"
+            "version": "3.38.0"
         }
     }
 ```
@@ -204,7 +204,7 @@ If a project only requires one small set of tasks, then use a single Taskfile. I
 
 Adding _Taskfile.yaml_ files in subdirectories enables you to override the set of tasks for a project when you change your working directory in the project. This lets you define sets of tasks that are appropriate to the context.
 
-The includes feature of Task enables you to define groups of tasks that can be added to any Taskfile. These groups automatically become namespaces, which ensures that tasks with the same name do not override each other. For example, if you create an include for _python_ and an include for _web_, they may both have a task called _test_, which you can call as _python:task_ and _web:test_.
+The _includes_ feature of Task enables you to define groups of tasks that can be added to any Taskfile. These groups automatically become namespaces, which ensures that tasks with the same name do not override each other. For example, if you create an include for _python_ and an include for _web_, they may both have a task called _test_, which you can call as _python:test_ and _web:test_.
 
 ### Using Includes
 
@@ -355,8 +355,8 @@ Follow [the style guidelines](https://taskfile.dev/styleguide/) when writing tas
 - Specify the [requires](https://taskfile.dev/usage/#ensuring-required-variables-are-set) attribute for each task that uses a variable. This ensures that the task has the necessary variables.
 - Use [dotenv files](https://taskfile.dev/usage/#env-files) to get configuration from files.
 - Use Bash shell syntax for tasks. Task uses [mvdan/sh](https://github.com/mvdan/sh) to provide the equivalent of the _bash_ shell.
-- To ensure that your tasks are portable, check the options for UNIX commands that you call in tasks, such as _rm_. Operating systems provide different implementations of these commands, which means that the options may not be consistent across different environments.
-- When it is possible, use the [template functions](https://taskfile.dev/usage/#gos-template-engine) instead of shell commands, because these will behave consistently across different environments.
+- To ensure that your tasks are portable, check the options for UNIX commands that you call in tasks, such as _rm_. Different operating systems and Linux distributions provide different implementations of these commands, which means that the options may not be consistent across environments.
+- When it is possible, use the [template functions](https://taskfile.dev/reference/templating/#functions) instead of shell commands, because these will behave consistently across different environments.
 - Provide [operating system specific Taskfiles](https://taskfile.dev/usage/#os-specific-taskfiles) when necessary.
 
 {{< alert >}}
