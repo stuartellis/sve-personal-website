@@ -1,15 +1,13 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-06-08T13:05:00+01:00"
+date = "2024-07-03T17:40:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
 +++
 
 The [just](https://just.systems) tool is a task runner. It provides a consistent framework for working with sets of tasks, which may be written in any scripting language and can run on multiple platforms.
-
-> _Consider using Task:_ Read [this article on Task](https://www.stuartellis.name/articles/task-runner/) before choosing _just_. Task provides similar capabilities to _just_, but with different design choices.
 
 ## How just Works
 
@@ -76,7 +74,7 @@ If you are using a Visual Studio Code Dev Container, you can add the feature [gu
 ```json
     "features": {
         "ghcr.io/guiyomh/features/just:0": {
-            "version": "1.28.0"
+            "version": "1.29.1"
         }
     }
 ```
@@ -94,7 +92,7 @@ curl -L https://just.systems/install.sh > scripts/install-just.sh
 To use the installation script, call it with _--tag_ and _--to_ The _--tag_ specifies the version of _just_. The _--to_ specifies which directory to install it to:
 
 ```shell
-./scripts/install-just.sh --tag 1.28.0 --to $HOME/.local/bin
+./scripts/install-just.sh --tag 1.29.1 --to $HOME/.local/bin
 ```
 
 ### Installing just with Operating System Packages
@@ -141,11 +139,7 @@ Current versions of _just_ provide autocompletion for Bash, zsh, fish, PowerShel
 
 ### Enabling Visual Studio Code Integration
 
-To use _just_ with Visual Studio Code, install the [nefrob.vscode-just-syntax](https://marketplace.visualstudio.com/items?itemName=nefrob.vscode-just-syntax) extension. This provides support for the _justfile_ syntax in Visual Studio Code.
-
-{{< alert >}}
-**Extension only provide syntax highlighting:** The Visual Studio Code extension currently only provides syntax highlighting.
-{{< /alert >}}
+The [nefrob.vscode-just-syntax](https://marketplace.visualstudio.com/items?itemName=nefrob.vscode-just-syntax) extension provides support for _justfiles_ in Visual Studio Code. This extension currently only provides syntax highlighting.
 
 ## Creating a User justfile for Global Tasks
 
@@ -197,16 +191,30 @@ If a project only requires one small set of recipes, then use a single _justfile
 
 You have two ways to organize the other _justfiles_ in a project:
 
-1. Modules
-2. Directory hierarchy
+1. Directory structure
+2. Modules
 
 You can combine these approaches, but few projects will be complex enough to need to do this.
 
-If you are starting a new project, consider using _just_ modules. Real-world projects often have multiple components with many tasks, and _just_ modules enable you to define clear namespaces for recipes. Modules also provide more flexibility for organizing the files that contain your recipes.
+The project directory structure approach is to create a _justfile_ in the root directory of the project, and then create an extra _justfile_ in each sub-directory that relates to a separate area of work. You then enable _fallback_ in the _justfiles_ in subdirectories. Users change working directories to get different recipes from the nearest _justfile_, and if they specify a recipe that is not defined in the nearest _justfile_, then _just_ will try _justfiles_ in parent directories.
+
+If you are starting a new project, you might  consider using _just_ modules. Real-world projects often have multiple components with many tasks, and _just_ modules enable you to define clear namespaces for recipes. Modules also provide more flexibility for organizing the files that contain your recipes.
 
 The modules feature is available in _just_ 1.19.0 and above, but it is currently _unstable_, which means that it is expected to work correctly, but it is not subject to the standard compatibility guarantees of _just_. This also means that you either need to set the environment variable _JUST_UNSTABLE_ as _true_, or use the _--unstable_ option when you run commands with _just_.
 
-### Using Modules
+## Using justfiles in a Directory Structure
+
+If you use multiple _justfiles_ in a project, consider following these guidelines:
+
+- Create the first recipe in the root _justfile_ with the name _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without the name of a recipe, it runs the first recipe in the _justfile_.
+- Create an extra _justfile_ in each subdirectory that should be a separate scope of operations. For example, if you have a monorepo, create a child _justfile_ in the main directory for each component.
+- Set _fallback_ to _true_ in each _justfile_ that is NOT in the root directory of the project. This enables _just_ to find recipes from the root _justfile_ as well as the _justfile_ in the current working directory.
+- If you have many recipes for a single _justfile_, consider putting the recipes into several _.just_ files and using [imports](https://just.systems/man/en/chapter_53.html) to combine them.
+- To ensure that you do not accidentally run a recipe from a user _justfile_, do NOT set _fallback_ to _true_ in a _justfile_ in the root directory of a project.
+- To create namespaces for recipes, decide a standard prefix for each group of recipes, and set the name of each recipe to start with that prefix, e.g. _sys-_.
+- Use the [no-cd attribute](https://just.systems/man/en/chapter_32.html#disabling-changing-directory190) to define recipes that may be executed in one of several different possible directories. By default _just_ sets the working directory to be the location of the _justfile_ that contains the recipe.
+
+## Using Modules
 
 If you decide to use _just_ modules in your project, consider following these guidelines:
 
@@ -217,7 +225,7 @@ If you decide to use _just_ modules in your project, consider following these gu
 - Remember that the first recipe in each _mod.just_ file is the default for the module. This means that the first recipe runs when a user types the module without specifying the name of the task.
 - Specify the [no-cd attribute](https://just.systems/man/en/chapter_32.html#disabling-changing-directory190) on each recipe in a module, so that the working directory of the recipe is the root directory of the project.
 
-### Example justfile for a Project
+### Example justfile for a Project with Modules
 
 ```just
 mod precommit  # Defined by pre-commit.just file in root directory
@@ -277,18 +285,6 @@ Note that the first recipe in this file is _check_, so this command runs that re
 ```shell
 just pre-commit
 ```
-
-### Using a Hierarchy of justfiles
-
-If you decide not to use modules, consider following these guidelines:
-
-- Create the first recipe in the root _justfile_ with the name _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without the name of a recipe, it runs the first recipe in the _justfile_.
-- Create an extra _justfile_ in each subdirectory that should be a separate scope of operations. For example, if you have a monorepo, create a child _justfile_ in the main directory for each component.
-- Set _fallback_ to _true_ in each _justfile_ that is NOT in the root directory of the project. This enables _just_ to find recipes from the root _justfile_ as well as the _justfile_ in the current working directory.
-- If you have many recipes for a single _justfile_, consider putting the recipes into several _.just_ files and using [imports](https://just.systems/man/en/chapter_53.html) to combine them.
-- To ensure that you do not accidentally run a recipe from a user _justfile_, do NOT set _fallback_ to _true_ in a _justfile_ in the root directory of a project.
-- To create namespaces for recipes, decide a standard prefix for each group of recipes, and set the name of each recipe to start with that prefix, e.g. _sys-_.
-- Use the [no-cd attribute](https://just.systems/man/en/chapter_32.html#disabling-changing-directory190) to define recipes that may be executed in one of several different possible directories. By default _just_ sets the working directory to be the location of the _justfile_ that contains the recipe.
 
 ## Writing justfiles
 
