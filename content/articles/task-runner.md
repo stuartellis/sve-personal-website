@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-07-01T18:10:00+01:00"
+date = "2024-07-06T07:10:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -117,6 +117,10 @@ To use Task with Visual Studio Code, install the [redhat.vscode-yaml](https://ma
 The _vscode-yaml_ extension enables YAML formatting and validation, and _vscode-task_ adds a graphical integration for running tasks.
 
 > _You must install Task to use the vscode-task extension._
+
+### Enabling Integration with JetBrains IDEs
+
+To enable support for Task in JetBrains IDEs such as PyCharm, install the [Taskfile](https://plugins.jetbrains.com/plugin/17058-taskfile) plugin.
 
 ### Enabling Autocompletion
 
