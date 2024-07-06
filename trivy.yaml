@@ -14,7 +14,6 @@ config: trivy.yaml
 db:
     download-only: false
     java-skip-update: true
-    light: false
     no-progress: false
     repository: ghcr.io/aquasecurity/trivy-db
     skip-update: false
@@ -176,8 +175,7 @@ license:
 list-all-pkgs: false
 misconfiguration:
     include-non-failures: false
-    policy-bundle-repository: ghcr.io/aquasecurity/trivy-policies:0
-    reset-policy-bundle: false
+    checks-bundle-repository: ghcr.io/aquasecurity/trivy-policies:0
     scanners:
         - dockerfile
 output: ""
@@ -194,7 +192,6 @@ rego:
     skip-policy-update: false
     trace: false
 report: all
-reset: false
 scan:
     compliance: ""
     file-patterns: []
@@ -207,7 +204,6 @@ scan:
         - secret
     skip-dirs: []
     skip-files: []
-    slow: false
 secret:
     config: trivy-secret.yaml
 server:
