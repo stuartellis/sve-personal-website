@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-06-19T06:10:00+01:00"
+date = "2024-07-06T06:35:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -106,7 +106,7 @@ Use a formatting tool with a plugin to your editor, so that your code is automat
 
 [Black](https://black.readthedocs.io/en/stable/) is currently the most popular code formatting tool for Python, but consider using [Ruff](https://docs.astral.sh/ruff/). Ruff provides both code formatting and quality checks for Python code.
 
-Run the formatting tool with your CI system, so that it rejects any code that does not match the format for your project.
+Use [pre-commit](https://pre-commit.com/) to run the formatting tool before each commit to source control. You should also run the formatting tool with your CI system, so that it rejects any code that does not match the format for your project.
 
 ### Use a Code Linter
 
@@ -114,11 +114,15 @@ Use a code linting tool with a plugin to your editor, so that your code is autom
 
 [flake8](https://flake8.pycqa.org/en/latest/) is currently the most popular linter for Python, but consider using [Ruff](https://docs.astral.sh/ruff/). Ruff includes the features of both flake8 itself and the most popular plugins for flake8.
 
-Run the linting tool with your CI system, so that it rejects any code that does not meet the standards for your project.
+Use [pre-commit](https://pre-commit.com/) to run the linting tool before each commit to source control. You should also run the linting tool with your CI system, so that it rejects any code that does not meet the standards for your project.
 
 ### Test with pytest
 
-Use [pytest](http://pytest.org) for testing. It has superseded _nose_ as the most popular testing system for Python. Use the _unittest_ module in the standard library for situations where you cannot add _pytest_ to the project.
+Use [pytest](http://pytest.org) for testing. Use the _unittest_ module in the standard library for situations where you cannot add _pytest_ to the project.
+
+By default, _pytest_ runs tests in the order that they appear in the test code. To avoid issues where tests interfere with each other, always add the [pytest-randomly](https://pypi.org/project/pytest-randomly/) plugin to _pytest_. This plugin causes _pytest_ to run tests in random order. Randomizing the order of tests is a common good practice for software development.
+
+To see how much of your code is covered by tests, add the [pytest-cov](https://pytest-cov.readthedocs.io) plugin to _pytest_. This plugin uses [coverage](https://coverage.readthedocs.io) to analyze your code.
 
 ### Package Your Applications
 
