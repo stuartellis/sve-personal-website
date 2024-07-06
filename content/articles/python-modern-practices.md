@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-07-06T06:58:00+01:00"
+date = "2024-07-06T22:25:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -62,11 +62,11 @@ If you would like to use a similar tool to develop your applications, consider u
 
 ### Use a pyproject.toml File
 
-Create a _pyproject.toml_ file in the root directory of each Python project. Use this file as the central place to store configuration information about the project and the tools that it uses. The [pyOpenSci project documentation on pyproject.toml](https://www.pyopensci.org/python-package-guide/package-structure-code/pyproject-toml-python-package-metadata.html) provides an introduction to the file format.
+Create a _pyproject.toml_ file in the root directory of each Python project. Use this file as the central place to store configuration information about the project and the tools that it uses. For example, you list [the dependencies of your project](https://www.pyopensci.org/python-package-guide/package-structure-code/declare-dependencies.html) in the _pyproject.toml_ file.
 
-Modern Python tools use the _pyproject.toml_ file to store configuration. Some tools support _pyproject.toml_, but do not use it by default. Python project management tools like [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) automatically create and use a _pyproject.toml_ file.
+Python project management tools like [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) automatically create and use a _pyproject.toml_ file.
 
-> The various features of _pyproject.toml_ files are defined these PEPs: [PEP 517](https://peps.python.org/pep-0517/), [PEP 518](https://peps.python.org/pep-0518/), [PEP 621](https://peps.python.org/pep-0621/) and [PEP 660](https://peps.python.org/pep-0660/).
+> The [pyOpenSci project documentation on pyproject.toml](https://www.pyopensci.org/python-package-guide/package-structure-code/pyproject-toml-python-package-metadata.html) provides an introduction to the file format. The various features of _pyproject.toml_ files are defined these PEPs: [PEP 517](https://peps.python.org/pep-0517/), [PEP 518](https://peps.python.org/pep-0518/), [PEP 621](https://peps.python.org/pep-0621/) and [PEP 660](https://peps.python.org/pep-0660/).
 
 ### Create a Directory Structure That Uses the src Layout
 
@@ -85,20 +85,30 @@ You can set up and use virtual environments with _venv_, which is part of the Py
 
 ### Use requirements.txt Files to Install Packages Into Environments
 
-Avoid using _pip_ commands to install packages into virtual environments. If you use [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io), they manage packages in development and test environments. For other cases, create a _requirements.txt_ file that specifies all of the packages that are required in the environment.
+Avoid using _pip_ commands to install individual packages into virtual environments. If you use [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io), they manage the virtual environments for you.
 
-You can create _requirements.txt_ files with whichever tool is appropriate. For example, PDM includes [an export feature](https://pdm-project.org/en/stable/usage/lockfile/#export-locked-packages-to-alternative-formats) that creates _requirements.txt_ files. If you do not already have a tool to create _requirements.txt_ files, use the _pip-compile_ utility that is provided by [pip-tools](https://github.com/jazzband/pip-tools/).
+For other cases, use a _requirements.txt_ file. A requirements file specifies the exact version and hash of each required package. If you do not already have a tool to create requirements files, use the _pip-compile_ utility that is provided by [pip-tools](https://github.com/jazzband/pip-tools/).
 
-You can then use the _pip-sync_ utility in [pip-tools](https://github.com/jazzband/pip-tools/) to add the packages that are specified in the _requirements.txt_ file into a target virtual environment. The _pip-sync_ utility ensures that the packages in a virtual environment match the list in the _requirements.txt_ file.
+You must set the _generate-hashes_ option for the _pip-compile_ and _uv_ utilities to generate _requirements.txt_ files that include hashes. To ensure that this option is set, add it to the _pyproject.toml_ file for the project:
 
-If you need to install packages without using _pip-sync_, run _pip install_ with a _requirements.txt_ file. For example, these commands install the packages that are specified by the file _requirements-dev.txt_ into the virtual environment _.venv_:
+```toml
+[tool.pip-tools]
+# Set generate-hashes for pip-compile
+generate-hashes = true
+
+[tool.uv.pip]
+# Set generate-hashes for uv
+generate-hashes = true
+```
+
+You can then use the _pip-sync_ utility in [pip-tools](https://github.com/jazzband/pip-tools/) to make the packages in a target virtual environment match the list in the requirements file.
+
+If you need to install packages without using additional tools, run _pip install_ with a requirements file. For example, these commands install the packages that are specified by the file _requirements-dev.txt_ into the virtual environment _.venv_:
 
 ```shell
 source ./.venv/bin/activate
-python3 -m pip install -r requirements-dev.txt
+python3 -m pip install --require-virtualenv -r requirements-dev.txt
 ```
-
-> Ensure that your _requirements.txt_ files include hashes for the packages. The _pip-compile_ utility generates _requirements.txt_ files with hashes if you specify the _generate-hashes_ option.
 
 ### Format Your Code
 
