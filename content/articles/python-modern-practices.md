@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-07-06T06:35:00+01:00"
+date = "2024-07-06T06:58:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -284,7 +284,7 @@ The _os.scandir()_ function was added in version 3.5 of Python.
 
 The [subprocess](https://docs.python.org/3/library/subprocess.html) module provides a safe way to run external commands. Use _subprocess_ rather than shell backquoting or the functions in _os_, such as _spawn_, _popen2_ and _popen3_. The _subprocess.run()_ function in current versions of Python is sufficient for most cases.
 
-> [PEP 324](https://www.python.org/dev/peps/pep-0324/) explains the technical details of subprocess in detail.
+> [PEP 324](https://www.python.org/dev/peps/pep-0324/) explains subprocess in detail.
 
 ### Use httpx for Web Clients
 
