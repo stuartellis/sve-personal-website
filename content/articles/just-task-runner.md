@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-07-03T17:40:00+01:00"
+date = "2024-07-06T07:12:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -15,7 +15,7 @@ Each copy of _just_ is a single executable file, with versions for Linux, macOS 
 
 This means that you can add _just_ to any environment and use whichever scripting languages are available. If you define [multiple implementations of a task](https://just.systems/man/en/chapter_32.html#enabling-and-disabling-recipes180), _just_ runs the correct implementation for the current platform. It also provides other features for you to customise the behavior of tasks for different environments.
 
-For example, you may use built-in [functions for just](https://just.systems/man/en/chapter_31.html) in your tasks. These functions include identifying the host environment, reading environment variables, generating UUIDs, calculating file checksums and formatting string inputs. These enable you to get consistent inputs for your tasks across different platforms, even if the scripting language that you use does not have these features.
+For example, you may use built-in [functions for just](https://just.systems/man/en/chapter_32.html) in your tasks. These functions include identifying the host environment, reading environment variables, generating UUIDs, calculating file checksums and formatting string inputs. These enable you to get consistent inputs for your tasks across different platforms, even if the scripting language that you use does not have these features.
 
 > **Terms:** In _just_, tasks are referred to as **recipes**. The text files that contain recipes are known as **justfiles**.
 
@@ -134,12 +134,26 @@ just --completions fish > ~/.config/fish/completions
 Current versions of _just_ provide autocompletion for Bash, zsh, fish, PowerShell, elvish and Nu.
 
 {{< alert >}}
-**macOS and Homebrew:** If you install _just_ on macOS with Homebrew, follow [these instructions](https://just.systems/man/en/chapter_65.html) to  autocompletion for zsh.
+**macOS and Homebrew:** If you install _just_ on macOS with Homebrew, follow [these instructions](https://just.systems/man/en/chapter_69.html) for autocompletion with zsh.
 {{< /alert >}}
 
 ### Enabling Visual Studio Code Integration
 
 The [nefrob.vscode-just-syntax](https://marketplace.visualstudio.com/items?itemName=nefrob.vscode-just-syntax) extension provides support for _justfiles_ in Visual Studio Code. This extension currently only provides syntax highlighting.
+
+### Enabling Integration with JetBrains IDEs
+
+To enable support for _just_ in JetBrains IDEs such as PyCharm, install the [Just](https://plugins.jetbrains.com/plugin/18658-just) plugin.
+
+### Registering justfiles for EditorConfig
+
+To ensure that [EditorConfig](https://editorconfig.org/) correctly manages the format of files for _just_, add this to the _.editorconfig_ file in your project:
+
+```toml
+[{justfile, *.just}]
+indent_style = space
+indent_size = 4
+```
 
 ## Creating a User justfile for Global Tasks
 
@@ -198,21 +212,92 @@ You can combine these approaches, but few projects will be complex enough to nee
 
 The project directory structure approach is to create a _justfile_ in the root directory of the project, and then create an extra _justfile_ in each sub-directory that relates to a separate area of work. You then enable _fallback_ in the _justfiles_ in subdirectories. Users change working directories to get different recipes from the nearest _justfile_, and if they specify a recipe that is not defined in the nearest _justfile_, then _just_ will try _justfiles_ in parent directories.
 
-If you are starting a new project, you might  consider using _just_ modules. Real-world projects often have multiple components with many tasks, and _just_ modules enable you to define clear namespaces for recipes. Modules also provide more flexibility for organizing the files that contain your recipes.
+The [next section](#multiple-justfiles-in-a-directory-structure) explains how to use multiple _justfiles_ in a directory structure.
+
+If you are starting a new project, consider trying _just_ modules. Real-world projects often have multiple components with many tasks, and _just_ modules enable you to define clear namespaces for recipes. Modules also provide more flexibility for organizing the files that contain your recipes.
 
 The modules feature is available in _just_ 1.19.0 and above, but it is currently _unstable_, which means that it is expected to work correctly, but it is not subject to the standard compatibility guarantees of _just_. This also means that you either need to set the environment variable _JUST_UNSTABLE_ as _true_, or use the _--unstable_ option when you run commands with _just_.
 
-## Using justfiles in a Directory Structure
+A [later section](#using-modules) in this article explains how to use modules.
+
+### Multiple justfiles in a Directory Structure
 
 If you use multiple _justfiles_ in a project, consider following these guidelines:
 
 - Create the first recipe in the root _justfile_ with the name _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without the name of a recipe, it runs the first recipe in the _justfile_.
 - Create an extra _justfile_ in each subdirectory that should be a separate scope of operations. For example, if you have a monorepo, create a child _justfile_ in the main directory for each component.
 - Set _fallback_ to _true_ in each _justfile_ that is NOT in the root directory of the project. This enables _just_ to find recipes from the root _justfile_ as well as the _justfile_ in the current working directory.
-- If you have many recipes for a single _justfile_, consider putting the recipes into several _.just_ files and using [imports](https://just.systems/man/en/chapter_53.html) to combine them.
+- If you have many recipes for a single _justfile_, consider putting the recipes into several _.just_ files and using [imports](https://just.systems/man/en/chapter_55.html) to combine them.
 - To ensure that you do not accidentally run a recipe from a user _justfile_, do NOT set _fallback_ to _true_ in a _justfile_ in the root directory of a project.
 - To create namespaces for recipes, decide a standard prefix for each group of recipes, and set the name of each recipe to start with that prefix, e.g. _sys-_.
-- Use the [no-cd attribute](https://just.systems/man/en/chapter_32.html#disabling-changing-directory190) to define recipes that may be executed in one of several different possible directories. By default _just_ sets the working directory to be the location of the _justfile_ that contains the recipe.
+- Use the [no-cd attribute](https://just.systems/man/en/chapter_34.html#disabling-changing-directory190) to define recipes that may be executed in one of several different possible directories. By default _just_ sets the working directory to be the location of the _justfile_ that contains the recipe.
+
+## Writing justfiles
+
+### Formatting justfiles
+
+Follow these guidelines when writing _justfiles_ and _mod.just_ modules:
+
+- Use 4 spaces for indentation. The built-in formatting command sets indentation as 4 spaces.
+- Always put a comment in the line above each recipe. These comments appear next to the recipe in _just --list_.
+- Use **--fmt** to format your _justfiles_. To use this option, run this command in the same directory as the _justfile_ that you want to format:
+
+```shell
+just --unstable --fmt
+```
+
+> **--fmt is Currently Unstable:** The **--fmt** subcommand is _unstable_, which means that it is expected to work correctly, but it is not subject to the standard compatibility guarantees of _just_.
+
+### Writing Recipes
+
+Follow these guidelines when writing recipes:
+
+- Use [parameters](https://just.systems/man/en/chapter_41.html) to get inputs for a recipe from the command-line.
+- Use [dotenv files](https://just.systems/man/en/chapter_27.html#dotenv-settings) to get configuration from files.
+- Remember to use POSIX shell (_sh_) syntax for single-line recipes. By default, _just_ uses the _sh_ shell on the system.
+- When it is possible, use the [built-in functions](https://just.systems/man/en/chapter_32.html) instead of shell commands, because these will behave consistently across different environments.
+- Use [shebang recipes](https://just.systems/man/en/chapter_43.html) for multi-line shell recipes, as well as recipes in other languages.
+- If you need the features of a specific UNIX shell, use a shebang recipe. Set [error handling for recipes that use bash](https://just.systems/man/en/chapter_44.html).
+- Use [quotes around arguments](https://just.systems/man/en/chapter_61.html#quoting) to ensure that _just_ can identify mistakes.
+
+### More Examples of justfiles
+
+The GitHub project for _just_ includes [example justfiles](https://github.com/casey/just/tree/master/examples).
+
+## Running just Recipes
+
+To run a recipe in a _justfile_, enter _just_ followed by the name of the recipe:
+
+```shell
+just example-recipe
+```
+
+If a recipe accepts [parameters](https://just.systems/man/en/chapter_41.html), add the value for the parameter to the command:
+
+```shell
+just example-recipe my-parameter-value
+```
+
+You may always [override a variable](https://just.systems/man/en/chapter_39.html) by specifying a value with the _just_ command:
+
+```shell
+just example-recipe my-var=my-var-value
+```
+
+## Checking justfiles
+
+To validate a _justfile_, run **--fmt** with **--check**. This returns an exit code of 0 if the _justfile_ is formatted correctly. If the _justfile_ is not correctly formatted, it returns an exit code of 1 and prints a diff.
+
+```shell
+just --unstable --fmt --check
+```
+
+> **--fmt is Currently Unstable:** The **--fmt** subcommand is _unstable_, which means that it is expected to work correctly, but it is not subject to the standard compatibility guarantees of _just_.
+
+You may also use these two options to check the behavior of _just_:
+
+- **-n, --dry-run** - Prints what _just_ would do without doing it
+- **--evaluate** - Evaluates and prints all of the variables. If a variable name is given as an argument, it only prints the value of that variable.
 
 ## Using Modules
 
@@ -223,7 +308,7 @@ If you decide to use _just_ modules in your project, consider following these gu
 - Create an extra _.just_ file in the root directory for each tool that applies to the entire project, such as pre-commit.
 - Use the root _justfile_ to define standard tasks for the project. Each of these should call the relevant recipes in one or more modules. Avoid writing recipes in the _justfile_ that do anything other than running recipes that are defined in modules.
 - Remember that the first recipe in each _mod.just_ file is the default for the module. This means that the first recipe runs when a user types the module without specifying the name of the task.
-- Specify the [no-cd attribute](https://just.systems/man/en/chapter_32.html#disabling-changing-directory190) on each recipe in a module, so that the working directory of the recipe is the root directory of the project.
+- Specify the [no-cd attribute](https://just.systems/man/en/chapter_34.html#disabling-changing-directory190) on each recipe in a module, so that the working directory of the recipe is the root directory of the project.
 
 ### Example justfile for a Project with Modules
 
@@ -285,73 +370,6 @@ Note that the first recipe in this file is _check_, so this command runs that re
 ```shell
 just pre-commit
 ```
-
-## Writing justfiles
-
-### Formatting justfiles
-
-Follow these guidelines when writing _justfiles_ and _mod.just_ modules:
-
-- Use 4 spaces for indentation. The built-in formatting command sets indentation as 4 spaces.
-- Always put a comment in the line above each recipe. These comments appear next to the recipe in _just --list_.
-- Use **--fmt** to format your _justfiles_. To use this option, run this command in the same directory as the _justfile_ that you want to format:
-
-```shell
-just --unstable --fmt
-```
-
-> **--fmt is Currently Unstable:** The **--fmt** subcommand is _unstable_, which means that it is expected to work correctly, but it is not subject to the standard compatibility guarantees of _just_.
-
-### Writing Recipes
-
-Follow these guidelines when writing recipes:
-
-- Use [parameters](https://just.systems/man/en/chapter_38.html) to get inputs for a recipe from the command-line.
-- Use [dotenv files](https://just.systems/man/en/chapter_26.html#dotenv-settings) to get configuration from files.
-- Remember to use POSIX shell (_sh_) syntax for single-line recipes. By default, _just_ uses the _sh_ shell on the system.
-- When it is possible, use the [built-in functions](https://just.systems/man/en/chapter_31.html) instead of shell commands, because these will behave consistently across different environments.
-- Use [shebang recipes](https://just.systems/man/en/chapter_41.html) for multi-line shell recipes, as well as recipes in other languages.
-- If you need the features of a specific UNIX shell, use a shebang recipe. Set [error handling for recipes that use bash](https://just.systems/man/en/chapter_42.html).
-- Use [quotes around arguments](https://just.systems/man/en/chapter_59.html#quoting) to ensure that _just_ can identify mistakes.
-
-### More Examples of justfiles
-
-The GitHub project for _just_ includes [example justfiles](https://github.com/casey/just/tree/master/examples).
-
-## Running just Recipes
-
-To run a recipe in a _justfile_, enter _just_ followed by the name of the recipe:
-
-```shell
-just example-recipe
-```
-
-If a recipe accepts [parameters](https://just.systems/man/en/chapter_38.html), add the value for the parameter to the command:
-
-```shell
-just example-recipe my-parameter-value
-```
-
-You may always [override a variable](https://just.systems/man/en/chapter_36.html) by specifying a value with the _just_ command:
-
-```shell
-just example-recipe my-var=my-var-value
-```
-
-## Checking justfiles
-
-To validate a _justfile_, run **--fmt** with **--check**. This returns an exit code of 0 if the _justfile_ is formatted correctly. If the _justfile_ is not correctly formatted, it returns an exit code of 1 and prints a diff.
-
-```shell
-just --unstable --fmt --check
-```
-
-> **--fmt is Currently Unstable:** The **--fmt** subcommand is _unstable_, which means that it is expected to work correctly, but it is not subject to the standard compatibility guarantees of _just_.
-
-You may also use these two options to check the behavior of _just_:
-
-- **-n, --dry-run** - Prints what _just_ would do without doing it
-- **--evaluate** - Evaluates and prints all of the variables. If a variable name is given as an argument, it only prints the value of that variable.
 
 ## Resources
 
