@@ -62,7 +62,7 @@ If you would like to use a similar tool to develop your applications, consider u
 
 ### Use a pyproject.toml File
 
-Create a _pyproject.toml_ file in the root directory of each Python project. Use this file as the central place to store configuration information about the project and the tools that it uses. For example, you list [the dependencies of your project](https://www.pyopensci.org/python-package-guide/package-structure-code/declare-dependencies.html) in the _pyproject.toml_ file.
+Create a _pyproject.toml_ file in the root directory of each Python project. Use this file as the central place to store configuration information about the project and the tools that it uses. For example, list [the dependencies of your project](https://www.pyopensci.org/python-package-guide/package-structure-code/declare-dependencies.html) in the _pyproject.toml_ file.
 
 Python project management tools like [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) automatically create and use a _pyproject.toml_ file.
 
@@ -77,17 +77,17 @@ For modern Python projects, use the src layout. This requires you to use [editab
 
 ### Use Virtual Environments for Development
 
-The [virtual environments](https://docs.python.org/3/tutorial/venv.html) feature enables you to define separate sets of packages for each Python project, so that the packages for a project do not conflict with any other Python packages on the system. Always use Python virtual environments for your projects.
+The [virtual environments](https://docs.python.org/3/tutorial/venv.html) feature enables you to define one or more separate sets of packages for each Python project, and switch between them. This ensures that a set of  packages that you use for working with a project do not conflict with any other Python packages on the system. Always use Python virtual environments for your projects.
 
 Several tools automate creating and switching between virtual environments. The [mise](https://mise.jdx.dev) version manager includes [support for virtual environments](https://mise.jdx.dev/lang/python.html#automatic-virtualenv-activation). The [pyenv](https://github.com/pyenv/pyenv) version manager supports virtual environments with the [virtualenv plugin](https://github.com/pyenv/pyenv-virtualenv). If you use a tool like [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io) to develop your projects, these also manage Python virtual environments for you.
 
 You can set up and use virtual environments with _venv_, which is part of the Python standard library, but this is a manual process.
 
-### Use requirements.txt Files to Install Packages Into Environments
+### Use Requirements Files to Install Packages Into Environments
 
-Avoid using _pip_ commands to install individual packages into virtual environments. If you use [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io), they manage the virtual environments for you.
+Avoid using _pip_ commands to install individual packages into virtual environments. If you use [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io), they can manage the contents of virtual environments for development and testing projects.
 
-For other cases, use a _requirements.txt_ file. A requirements file specifies the exact version and hash of each required package. If you do not already have a tool to create requirements files, use the _pip-compile_ utility that is provided by [pip-tools](https://github.com/jazzband/pip-tools/).
+For other cases, use [requirements files](https://pip.pypa.io/en/stable/reference/requirements-file-format/). A requirements file specifies the exact version and hash of each required package. PDM and [uv](https://github.com/astral-sh/uv) include features to create requirements files. If you do not already have a tool to create requirements files, use the [pip-compile](https://pip-tools.readthedocs.io/en/stable/cli/pip-compile/) utility that is provided by [pip-tools](https://pip-tools.readthedocs.io/en/stable/).
 
 You must set the _generate-hashes_ option for the _pip-compile_ and _uv_ utilities to generate _requirements.txt_ files that include hashes. To ensure that this option is set, add it to the _pyproject.toml_ file for the project:
 
@@ -101,9 +101,9 @@ generate-hashes = true
 generate-hashes = true
 ```
 
-You can then use the _pip-sync_ utility in [pip-tools](https://github.com/jazzband/pip-tools/) to make the packages in a target virtual environment match the list in the requirements file.
+You can then use [pip-sync](https://pip-tools.readthedocs.io/en/stable/cli/pip-sync/) or the _pip sync_ feature of _uv_ to make the packages in a target virtual environment match the list in the requirements file. The [pip-tools](https://pip-tools.readthedocs.io/en/stable/) package provides both _pip-compile_ and _pip-sync_.
 
-If you need to install packages without using additional tools, run _pip install_ with a requirements file. For example, these commands install the packages that are specified by the file _requirements-dev.txt_ into the virtual environment _.venv_:
+If you need to install packages without adding tools, run _pip install_ with a requirements file. For example, these commands install the packages that are specified by the file _requirements-dev.txt_ into the virtual environment _.venv_:
 
 ```shell
 source ./.venv/bin/activate
@@ -192,9 +192,11 @@ Python 3 also has _collections.namedtuple()_ for immutable key-value pairs. Name
 
 ### Create Data Classes for Custom Data Objects
 
-The data classes feature enables you to reduce the amount of code that you need to define classes for objects that exist to store values. The new syntax for data classes does not affect the behavior of the classes that you define with it. Each data class is a standard Python class.
+Python code frequently has classes for data objects, items that exist to store values, but do not carry out actions. If your application could have a number of classes for data objects, consider using either [Pydantic](https://docs.pydantic.dev/) or the built-in [data classes](https://docs.python.org/3/library/dataclasses.html) feature.
 
-You can set a _frozen_ option to make [frozen instances](https://docs.python.org/3/library/dataclasses.html#frozen-instances) of a data class.
+Pydantic provides validation, serialization and other features for data objects. You need to define the classes for Pydantic data objects with type hints.
+
+The built-in syntax for data classes just enables you to reduce the amount of code that you need to define data objects. It also provides some features, such as the ability to mark instances of a data class as [frozen](https://docs.python.org/3/library/dataclasses.html#frozen-instances). Each data class acts as a standard Python class, because syntax for data classes does not change the behavior of the classes that you define with it.
 
 Data classes were introduced in version 3.7 of Python.
 
