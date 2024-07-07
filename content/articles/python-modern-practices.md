@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-07-06T22:25:00+01:00"
+date = "2024-07-07T08:31:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -236,7 +236,7 @@ If your Python software needs to generate TOML, add [Tomli-W](https://pypi.org/p
 
 The [asynchronous features of Python](https://docs.python.org/3/library/asyncio.html) enable a single process to avoid blocking on I/O operations. To achieve concurrency with Python, you must run multiple Python processes. Each of these processes may or may not use asynchronous I/O.
 
-To run multiple application processes, either use a container system, with one container per process, or an application server like [Gunicorn](https://gunicorn.org/). If you need to build a custom application that manages muliple processes, use the [multiprocessing](https://docs.python.org/3/library/multiprocessing.html) package in the Python standard library.
+To run multiple application processes, either use a container system, with one container per process, or an application server like [Gunicorn](https://gunicorn.org/). If you need to build a custom application that manages multiple processes, use the [multiprocessing](https://docs.python.org/3/library/multiprocessing.html) package in the Python standard library.
 
 Code that uses asynchronous I/O must not call _any_ function that uses synchronous I/O, such as _open()_, or the _logging_ module in the standard library. Instead, you need to use either the equivalent functions from _asyncio_ in the standard library or a third-party library that is designed to support asynchronous code.
 
