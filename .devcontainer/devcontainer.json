@@ -1,5 +1,5 @@
 {
-    "name": "sje-personal-website-developer",
+    "name": "devc-sje-personal-website",
     "build": {
 		"dockerfile": "devcontainer.dockerfile",
 		"args": {
