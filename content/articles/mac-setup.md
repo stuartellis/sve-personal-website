@@ -1,7 +1,7 @@
 +++
 title = "How to Set up an Apple Mac for Software Development"
 slug = "mac-setup"
-date = "2024-05-19T21:40:00+01:00"
+date = "2024-07-13T09:02:00+01:00"
 description = "Setting up an Apple Mac for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "macos", "golang", "java", "javascript", "python", "ruby"]
@@ -248,7 +248,42 @@ ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
 
 Avoid using the installations of programming languages that are included in macOS. Instead, use containers or specialized tools like version managers. These enable you to use the correct versions and dependencies for each project that you work on.
 
-This article provides instructions to help you install programming languages with the [mise](https://mise.jdx.dev/) version manager. For convenience, it also includes instructions for Homebrew. If possible you should avoid using Homebrew to install programming languages, because it has limited support for working with multiple versions of the same programming language.
+This article provides instructions to help you install programming languages with the [mise](https://mise.jdx.dev/) version manager. It also includes instructions using Homebrew to install specialized version managers for some programming languages.
+
+If possible, avoid using Homebrew itself to install programming languages. Homebrew has limited support for working with multiple versions of the same programming language.
+
+### Python Development: pyenv and pipx
+
+Current versions of macOS include a copy of Python 3, but this will not be the latest version of Python. Use either [mise](https://mise.jdx.dev/) or [pyenv](https://github.com/pyenv/pyenv) to install Python. These tools enable you to use multiple versions of Python.
+
+To install pyenv with Homebrew, run this command in a terminal window:
+
+```shell
+brew install pyenv
+```
+
+Use [pipx](https://pypa.github.io/pipx/) to install Python applications, rather than _pip_ or Homebrew. To set up _pipx_, run these commands in a terminal window:
+
+```shell
+brew install pipx
+pipx ensurepath
+```
+
+### Rust Development: rustup
+
+The official _rustup_ utility enables you to install the tools for building software
+with the Rust programming language. Click on the Install button on the front page of the
+[Rust Website](https://www.rust-lang.org), and follow the instructions.
+
+By default, the installer adds the correct directory to your path. If this does not
+work, add this to your PATH manually:
+
+```shell
+$HOME/.cargo/bin
+```
+
+This process installs all of the tools into your home directory, and does not add any
+files into system directories.
 
 ### JavaScript Development: Node.js
 
@@ -372,90 +407,6 @@ To see a list of the available commands, type _jenv_ in a terminal window:
 jenv
 ```
 
-### Python Development: pyenv and pipx
-
-Current versions of macOS include a copy of Python 3, but this will not be the latest version of Python. Use either [mise](https://mise.jdx.dev/) or [pyenv](https://github.com/pyenv/pyenv) to install Python. These tools enable you to use multiple versions of Python.
-
-To install pyenv with Homebrew, run this command in a terminal window:
-
-```shell
-brew install pyenv
-```
-
-Use [pipx](https://pypa.github.io/pipx/) to install Python applications, rather than _pip_ or Homebrew. To set up _pipx_, run these commands in a terminal window:
-
-```shell
-brew install pipx
-pipx ensurepath
-```
-
-### Rust Development: rustup
-
-The official _rustup_ utility enables you to install the tools for building software
-with the Rust programming language. Click on the Install button on the front page of the
-[Rust Website](https://www.rust-lang.org), and follow the instructions.
-
-By default, the installer adds the correct directory to your path. If this does not
-work, add this to your PATH manually:
-
-```shell
-$HOME/.cargo/bin
-```
-
-This process installs all of the tools into your home directory, and does not add any
-files into system directories.
-
-### Ruby Development: RVM
-
-All macOS systems include a copy of Ruby, but it is outdated. To maintain current and
-clean Ruby environments, use either [mise](https://mise.jdx.dev/) or [RVM](https://rvm.io/).
-
-By default, RVM downloads copies of Ruby that have been compiled for your operating
-system. If there is no compiled version, RVM then falls back to downloading the source
-code and then compiling it on your computer. Enter this command to ensure that the
-requirements for compiling Ruby are on your system, using Homebrew:
-
-```shell
-brew install autoconf automake gdbm gmp libksba libtool libyaml openssl pkg-config readline
-```
-
-Finally, you can speed up installation of gem packages by disabling the generation of
-local documentation. To do this, create a file in your home directory with the name
-_.gemrc_ and put this line in it:
-
-```shell
-gem: --no-ri --no-rdoc
-```
-
-## Kubernetes: Minikube
-
-[Minikube](https://kubernetes.io/docs/setup/minikube/) sets up and manages Kubernetes on a single system, so that you can develop and test without needing a set of servers.
-
-To install Minikube with Homebrew, run these commands in a terminal window:
-
-```shell
-brew install kubernetes-cli
-brew install minikube
-```
-
-By default, Minikube uses a virtual machine manager. If you choose to install VirtualBox, MiniKube will use it. If you do not need VirtualBox, install [hyperkit](https://github.com/moby/hyperkit), which provides a minimal virtual machine manager.
-
-```shell
-brew install hyperkit
-```
-
-To install [Helm](https://helm.sh/) with Homebrew, run this command in a terminal window:
-
-```shell
-brew install kubernetes-helm
-```
-
-To install [Skaffold](https://skaffold.dev/) with Homebrew, run this command in a terminal window:
-
-```shell
-brew install skaffold
-```
-
 ## Databases
 
 Consider using containers to run the databases that you need. If you prefer to install services
@@ -564,11 +515,6 @@ Each vendor recommends a specific graphical tool for their particular database p
 
 - [Joplin](https://joplinapp.org/) note-taking: _brew install \--cask joplin_
 - [LibreOffice](http://www.libreoffice.org/) suite: _brew install \--cask libreoffice_
-- [VirtualBox](http://www.virtualbox.org/) virtual machine management: _brew install \--cask virtualbox_
-
-{{< alert >}}
-If you install VirtualBox, use [Vagrant](https://www.vagrantup.com/) to manage virtual machines for development.
-{{< /alert >}}
 
 ## Online Resources
 
