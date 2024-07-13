@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-07-07T08:31:00+01:00"
+date = "2024-07-13T11:48:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -18,9 +18,11 @@ Use a tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv
 
 Alternatively, consider using [Development Containers](https://containers.dev/), which enable you to define an isolated environment for a software project. This also allows you to use a separate version of Python for each project.
 
-Ensure that the tool compiles Python, rather than downloading [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). The standlone builds are modified versions of Python that are maintained by a third-party. Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) automatically compile Python, but you must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation. [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) always download standalone builds when you use them to set up versions of Python.
+Ensure that the tool compiles Python, rather than downloading [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). The standlone builds are modified versions of Python that are maintained by a third-party. Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) automatically compile Python, but you must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation.
 
-If your operating system includes a Python installation, avoid using it. This Python installation is for operating system tools. It is likely to use an older version of Python, and may not include all of the standard features. An operating system copy of Python should be [marked](https://packaging.python.org/en/latest/specifications/externally-managed-environments/#externally-managed-environments) to prevent you from installing packages into it, but not all operating systems set the marker.
+> [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) currently download the third-party standalone builds when they manage versions of Python. For this reason, only use their Python installation features for experimental projects.
+
+If your operating system includes a Python installation, avoid using it for your projects. This Python installation is for operating system tools. It is likely to use an older version of Python, and may not include all of the standard features. An operating system copy of Python should be [marked](https://packaging.python.org/en/latest/specifications/externally-managed-environments/#externally-managed-environments) to prevent you from installing packages into it, but not all operating systems set the marker.
 
 ### Use The Most Recent Version of Python That You Can
 
@@ -36,79 +38,33 @@ _Avoid using Python 2._ It is not supported by the Python development team or by
 
 Use [pipx](https://pipx.pypa.io) to run Python applications on development systems, rather than installing the applications with _pip_ or another method. This ensures that each application has the correct libraries, because _pipx_ automatically puts the libraries for each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
 
-Consider using the [pipx run](https://pipx.pypa.io/stable/#walkthrough-running-an-application-in-a-temporary-virtual-environment) command, rather than _pipx install_. The _pipx run_ command downloads and runs the application without installing it. Each application is cached for several days after the first download, which means that _pipx run_ may not be slower than running a manually installed application.
-
-The Python Packaging Authority maintain _pipx_, but it is not included with Python. To install _pipx_, run this command:
-
-```shell
-python3 -m pip install --user pipx
-```
-
-This enables you to use any Python command-line application with _pipx_. For example, this command downloads and runs the latest version of [bpytop](https://github.com/aristocratos/bpytop), a system monitoring tool:
+Use the [pipx run](https://pipx.pypa.io/stable/#walkthrough-running-an-application-in-a-temporary-virtual-environment) command for most tools, rather than _pipx install_. The _pipx run_ command downloads and runs the application without installing it. For example, this command downloads and runs the latest version of [bpytop](https://github.com/aristocratos/bpytop), a system monitoring tool:
 
 ```shell
 pipx run bpytop
 ```
 
+Each application is cached for 14 days after the first download, which means that most uses of _pipx run_ will be as fast as a manually installed application.
+
+Use _pipx install_ for tools that are essential for your development process, such as [pre-commit](https://pre-commit.com/):
+
+```shell
+pipx install pre-commit
+```
+
+If you use _pre-commit_, it automatically runs every time that you commit a change to version control. We install it to ensure that the tool is always available, and that we keep the same version until we decide to upgrade it.
+
+To set up _pipx_, follow the instructions on the [pipx Website](https://pipx.pypa.io) for your operating system. This ensure that _pipx_ works with an appropriate Python installation.
+
 > [PEP 668 - Marking Python base environments as “externally managed”](https://peps.python.org/pep-0668/#guide-users-towards-virtual-environments) recommends that users install Python applications with pipx.
 
 ## Developing Python Projects
 
-### Avoid Using Poetry
+### Use a Project Tool
 
-Avoid using [Poetry](https://python-poetry.org/) for new projects. Poetry predates many standards for Python tooling. This means that it uses non-standard implementations of key features, such as the dependency resolver and configuration formats in _pyproject.toml_ files.
+If you use a project tool, it will follow [the best practices for Python projects](#best-practices-for-python-projects). Consider using [PDM](https://pdm-project.org) to help you develop Python applications. [Hatch](https://hatch.pypa.io) is another well-known project tool, but it is most useful for developing Python libraries. [Rye](https://rye.astral.sh/) is a more experimental tool for Python projects, and it is likely to be superseded in future.
 
-If you would like to use a similar tool to develop your applications, consider using [PDM](https://pdm-project.org). [Hatch](https://hatch.pypa.io) is another alternative to Poetry, but it is most useful for developing Python libraries. Both of these tools follow modern standards, which avoids compatibility issues.
-
-### Use a pyproject.toml File
-
-Create a _pyproject.toml_ file in the root directory of each Python project. Use this file as the central place to store configuration information about the project and the tools that it uses. For example, list [the dependencies of your project](https://www.pyopensci.org/python-package-guide/package-structure-code/declare-dependencies.html) in the _pyproject.toml_ file.
-
-Python project management tools like [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) automatically create and use a _pyproject.toml_ file.
-
-> The [pyOpenSci project documentation on pyproject.toml](https://www.pyopensci.org/python-package-guide/package-structure-code/pyproject-toml-python-package-metadata.html) provides an introduction to the file format. The various features of _pyproject.toml_ files are defined these PEPs: [PEP 517](https://peps.python.org/pep-0517/), [PEP 518](https://peps.python.org/pep-0518/), [PEP 621](https://peps.python.org/pep-0621/) and [PEP 660](https://peps.python.org/pep-0660/).
-
-### Create a Directory Structure That Uses the src Layout
-
-Python itself does not require a specific directory structure for your projects. The Python packaging documentation describes two popular directory structures: [the src layout and the flat layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/).
-The [pyOpenSci project documentation on directory structures](https://www.pyopensci.org/python-package-guide/package-structure-code/python-package-structure.html) explains the practical differences between the two.
-
-For modern Python projects, use the src layout. This requires you to use [editable installs](https://setuptools.pypa.io/en/latest/userguide/development_mode.html) of the packages in your project, but tools like [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) will handle this for you.
-
-### Use Virtual Environments for Development
-
-The [virtual environments](https://docs.python.org/3/tutorial/venv.html) feature enables you to define one or more separate sets of packages for each Python project, and switch between them. This ensures that a set of  packages that you use for working with a project do not conflict with any other Python packages on the system. Always use Python virtual environments for your projects.
-
-Several tools automate creating and switching between virtual environments. The [mise](https://mise.jdx.dev) version manager includes [support for virtual environments](https://mise.jdx.dev/lang/python.html#automatic-virtualenv-activation). The [pyenv](https://github.com/pyenv/pyenv) version manager supports virtual environments with the [virtualenv plugin](https://github.com/pyenv/pyenv-virtualenv). If you use a tool like [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io) to develop your projects, these also manage Python virtual environments for you.
-
-You can set up and use virtual environments with _venv_, which is part of the Python standard library, but this is a manual process.
-
-### Use Requirements Files to Install Packages Into Environments
-
-Avoid using _pip_ commands to install individual packages into virtual environments. If you use [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io), they can manage the contents of virtual environments for development and testing projects.
-
-For other cases, use [requirements files](https://pip.pypa.io/en/stable/reference/requirements-file-format/). A requirements file specifies the exact version and hash of each required package. PDM and [uv](https://github.com/astral-sh/uv) include features to create requirements files. If you do not already have a tool to create requirements files, use the [pip-compile](https://pip-tools.readthedocs.io/en/stable/cli/pip-compile/) utility that is provided by [pip-tools](https://pip-tools.readthedocs.io/en/stable/).
-
-You must set the _generate-hashes_ option for the _pip-compile_ and _uv_ utilities to generate _requirements.txt_ files that include hashes. To ensure that this option is set, add it to the _pyproject.toml_ file for the project:
-
-```toml
-[tool.pip-tools]
-# Set generate-hashes for pip-compile
-generate-hashes = true
-
-[tool.uv.pip]
-# Set generate-hashes for uv
-generate-hashes = true
-```
-
-You can then use [pip-sync](https://pip-tools.readthedocs.io/en/stable/cli/pip-sync/) or the _pip sync_ feature of _uv_ to make the packages in a target virtual environment match the list in the requirements file. The [pip-tools](https://pip-tools.readthedocs.io/en/stable/) package provides both _pip-compile_ and _pip-sync_.
-
-If you need to install packages without adding tools, run _pip install_ with a requirements file. For example, these commands install the packages that are specified by the file _requirements-dev.txt_ into the virtual environment _.venv_:
-
-```shell
-source ./.venv/bin/activate
-python3 -m pip install --require-virtualenv -r requirements-dev.txt
-```
+Avoid using the [Poetry](https://python-poetry.org/) tool for new projects. Poetry uses non-standard implementations of key features. For example, it does not use the standard format in _pyproject.toml_ files, which may cause compatibility issues with other tools.
 
 ### Format Your Code
 
@@ -134,9 +90,11 @@ By default, _pytest_ runs tests in the order that they appear in the test code. 
 
 To see how much of your code is covered by tests, add the [pytest-cov](https://pytest-cov.readthedocs.io) plugin to _pytest_. This plugin uses [coverage](https://coverage.readthedocs.io) to analyze your code.
 
-### Package Your Applications
+### Package Your Projects
 
-Use _wheel_ packages for libraries, or for tools that are intended to be used with an existing installation of Python. If you publish your Python application as a _wheel_, other developers can use it with _pipx_ and _pip-sync_. These packages cannot be used without a Python installation.
+Always package the tools and code libraries that you would like to share with other people. Packages enable people to select which version of your code to use, with the tools and systems that they prefer to work with.
+
+Use _wheel_ packages for libraries. You can also use _wheel_ packages for development tools. If you publish your Python application as a _wheel_, other developers can use it with _pipx_. All _wheel_ packages require an existing installation of Python.
 
 In most cases, you should package an application in a format that enables you to include your code, the dependencies and a copy of the required version of Python. This ensures that your code runs with the expected version of Python, and has the correct version of each dependency.
 
@@ -222,7 +180,7 @@ The [breakpoint()](https://docs.python.org/3/library/functions.html#breakpoint) 
 
 The built-in _print()_ statement is convenient for adding debugging information, but you should include logging in your scripts and applications. Use the [logging](https://docs.python.org/3/library/logging.html#logrecord-attributes) module in the standard library, or a third-party logging module.
 
-### Use The TOML Format for Configuration
+### Use the TOML Format for Configuration
 
 Use [TOML](https://toml.io/) for data files that must be written or edited by human beings. Use the JSON format for data that is transferred between computer programs. Avoid using the INI or YAML formats.
 
@@ -303,3 +261,63 @@ The [subprocess](https://docs.python.org/3/library/subprocess.html) module provi
 Use [httpx](https://www.python-httpx.org/) for Web client applications. It [supports HTTP/2](https://www.python-httpx.org/http2/), and [async](https://www.python-httpx.org/async/). The httpx package supersedes [requests](https://requests.readthedocs.io/en/latest/), which only supports HTTP 1.1.
 
 Avoid using _urllib.request_ from the Python standard library. It was designed as a low-level library, and lacks the features of httpx.
+
+## Best Practices for Python Projects
+
+Consider [using a project tool](#use-a-project-tool) to set up and develop your Python projects. If you decide not to use a project tool, set up your projects to follow the best practices in this section.
+
+### Use a pyproject.toml File
+
+Create a _pyproject.toml_ file in the root directory of each Python project. Use this file as the central place to store configuration information about the project and the tools that it uses. For example, you list [the dependencies of your project](https://www.pyopensci.org/python-package-guide/package-structure-code/declare-dependencies.html) in the _pyproject.toml_ file.
+
+Python project tools like PDM and Hatch automatically create and use a _pyproject.toml_ file.
+
+> The [pyOpenSci project documentation on pyproject.toml](https://www.pyopensci.org/python-package-guide/package-structure-code/pyproject-toml-python-package-metadata.html) provides an introduction to the file format. The various features of _pyproject.toml_ files are defined these PEPs: [PEP 517](https://peps.python.org/pep-0517/), [PEP 518](https://peps.python.org/pep-0518/), [PEP 621](https://peps.python.org/pep-0621/) and [PEP 660](https://peps.python.org/pep-0660/).
+
+### Create a Directory Structure That Uses the src Layout
+
+Python itself does not require a specific directory structure for your projects. The Python packaging documentation describes two popular directory structures: [the src layout and the flat layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/).
+The [pyOpenSci project documentation on directory structures](https://www.pyopensci.org/python-package-guide/package-structure-code/python-package-structure.html) explains the practical differences between the two.
+
+For modern Python projects, use the src layout. This requires you to use [editable installs](https://setuptools.pypa.io/en/latest/userguide/development_mode.html) of the packages in your project. [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) support editable installs.
+
+### Use Virtual Environments for Development
+
+The [virtual environments](https://docs.python.org/3/tutorial/venv.html) feature enables you to define one or more separate sets of packages for each Python project, and switch between them. This ensures that a set of packages that you use for working with a project do not conflict with any other Python packages on the system. Always use Python virtual environments for your projects.
+
+Several tools automate virtual environments. The [mise](https://mise.jdx.dev) version manager includes [support for virtual environments](https://mise.jdx.dev/lang/python.html#automatic-virtualenv-activation). The [pyenv](https://github.com/pyenv/pyenv) version manager supports virtual environments with the [virtualenv plugin](https://github.com/pyenv/pyenv-virtualenv). If you use a tool like [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io) to develop your projects, these also manage Python virtual environments for you.
+
+You can set up and use virtual environments with _venv_, which is part of the Python standard library. This is a manual process.
+
+### Use Requirements Files to Install Packages Into Environments
+
+Avoid using _pip_ commands to install individual packages into virtual environments. If you use [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io) to develop your project, they can manage the contents of virtual environments for development and testing.
+
+For other cases, use [requirements files](https://pip.pypa.io/en/stable/reference/requirements-file-format/). A requirements file specifies the exact version and hash of each required package. You run a tool to read the dependencies in the _pyproject.toml_ file and generate a requirements file that lists the specific packages that are needed to provide those dependencies for the Python version and operating system. PDM and [uv](https://github.com/astral-sh/uv) include features to create requirements files.
+
+You can then use [pip-sync](https://pip-tools.readthedocs.io/en/stable/cli/pip-sync/) or the _pip sync_ feature of _uv_ to make the packages in a target virtual environment match the list in the requirements file. This process ensure that any extra packages are removed from the virtual environment.
+
+You can also run _pip install_ with a requirements file. This only attempts to install the specified packages. For example, these commands install the packages that are specified by the file _requirements-dev.txt_ into the virtual environment _.venv_:
+
+```shell
+source ./.venv/bin/activate
+python3 -m pip install --require-virtualenv -r requirements-macos-dev.txt
+```
+
+#### If You Use pip-compile
+
+If you do not already have a tool that can create requirements files, you can use the [pip-compile](https://pip-tools.readthedocs.io/en/stable/cli/pip-compile/) utility that is provided by [pip-tools](https://pip-tools.readthedocs.io/en/stable/).
+
+To ensure that it calculates the correct requirements for your application, this tool must be run in a virtual environment that includes your application package. This means that you cannot use _pipx_ to install _pip-compile_.
+
+You must also set the _generate-hashes_ option for the _pip-compile_ and _uv_ utilities to generate _requirements.txt_ files that include hashes. To ensure that this option is set, add it to the _pyproject.toml_ file for the project:
+
+```toml
+[tool.pip-tools]
+# Set generate-hashes for pip-compile
+generate-hashes = true
+
+[tool.uv.pip]
+# Set generate-hashes for uv
+generate-hashes = true
+```
