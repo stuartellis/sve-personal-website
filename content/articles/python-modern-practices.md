@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-07-14T14:05:00+01:00"
+date = "2024-07-14T14:30:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -301,10 +301,10 @@ You run a tool to read the dependencies in the _pyproject.toml_ file and generat
 
 You can then use [pip-sync](https://pip-tools.readthedocs.io/en/stable/cli/pip-sync/) or the _pip sync_ feature of _uv_ to make the packages in a target virtual environment match the list in the requirements file. This process ensures that any extra packages are removed from the virtual environment.
 
-You can also run _pip install_ with a requirements file. This only attempts to install the specified packages. For example, these commands install the packages that are specified by the file _requirements-dev.txt_ into the virtual environment _.venv_:
+You can also run _pip install_ with a requirements file. This only attempts to install the specified packages. For example, these commands install the packages that are specified by the file _requirements-macos-dev.txt_ into the virtual environment _.venv-dev_:
 
 ```shell
-source ./.venv/bin/activate
+source ./.venv-dev/bin/activate
 python3 -m pip install --require-virtualenv -r requirements-macos-dev.txt
 ```
 
