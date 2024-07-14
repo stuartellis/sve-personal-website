@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-07-14T13:54:00+01:00"
+date = "2024-07-14T14:05:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -310,11 +310,9 @@ python3 -m pip install --require-virtualenv -r requirements-macos-dev.txt
 
 ### Ensure That Requirements Files Include Hashes
 
-Some tools require extra configuration to include package hashes in the requirements files that they generate.
+Some tools require extra configuration to include package hashes in the requirements files that they generate. For example, you must set the _generate-hashes_ option for the _pip-compile_ and _uv_ utilities to generate _requirements.txt_ files that include hashes. Add this option to the relevant section of the _pyproject.toml_ file.
 
-For example, you must set the _generate-hashes_ option for the _pip-compile_ and _uv_ utilities to generate _requirements.txt_ files that include hashes. Add this option to the section of the _pyproject.toml_ file for the project:
-
-For _pip-tools_:
+For _pip-tools_, add the option to the _tool.pip-tools_ section:
 
 ```toml
 [tool.pip-tools]
@@ -322,7 +320,7 @@ For _pip-tools_:
 generate-hashes = true
 ```
 
-For _uv_:
+For _uv_, add the option to the _tool.uv.pip_ section:
 
 ```toml
 [tool.uv.pip]
