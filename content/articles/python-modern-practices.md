@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-07-13T16:13:00+01:00"
+date = "2024-07-14T13:54:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -295,7 +295,9 @@ You can set up and use virtual environments with _venv_, which is part of the Py
 
 Avoid using _pip_ commands to install individual packages into virtual environments. If you use [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io) to develop your project, they can manage the contents of virtual environments for development and testing.
 
-For other cases, use [requirements files](https://pip.pypa.io/en/stable/reference/requirements-file-format/). A requirements file specifies the exact version and hash of each required package. You run a tool to read the dependencies in the _pyproject.toml_ file and generate a requirements file that lists the specific packages that are needed to provide those dependencies for the Python version and operating system. PDM and [uv](https://github.com/astral-sh/uv) include features to create requirements files.
+For other cases, use [requirements files](https://pip.pypa.io/en/stable/reference/requirements-file-format/). A requirements file can specify the exact version and hash for each required package.
+
+You run a tool to read the dependencies in the _pyproject.toml_ file and generate a requirements file that lists the specific packages that are needed to provide those dependencies for the Python version and operating system. PDM, [pip-tools](https://pip-tools.readthedocs.io/en/stable/) and [uv](https://github.com/astral-sh/uv) include features to create requirements files.
 
 You can then use [pip-sync](https://pip-tools.readthedocs.io/en/stable/cli/pip-sync/) or the _pip sync_ feature of _uv_ to make the packages in a target virtual environment match the list in the requirements file. This process ensures that any extra packages are removed from the virtual environment.
 
@@ -306,13 +308,13 @@ source ./.venv/bin/activate
 python3 -m pip install --require-virtualenv -r requirements-macos-dev.txt
 ```
 
-#### If You Use pip-compile
+### Ensure That Requirements Files Include Hashes
 
-If you do not already have a tool that can create requirements files, you can use the [pip-compile](https://pip-tools.readthedocs.io/en/stable/cli/pip-compile/) utility that is provided by [pip-tools](https://pip-tools.readthedocs.io/en/stable/).
+Some tools require extra configuration to include package hashes in the requirements files that they generate.
 
-To ensure that it calculates the correct requirements for your application, the _pip-compile_ tool must be run in a virtual environment that includes your application package. This means that you cannot use _pipx_ to install _pip-compile_.
+For example, you must set the _generate-hashes_ option for the _pip-compile_ and _uv_ utilities to generate _requirements.txt_ files that include hashes. Add this option to the section of the _pyproject.toml_ file for the project:
 
-You must also set the _generate-hashes_ option for the _pip-compile_ and _uv_ utilities to generate _requirements.txt_ files that include hashes. Add it to the _pyproject.toml_ file for the project:
+For _pip-tools_:
 
 ```toml
 [tool.pip-tools]
@@ -320,8 +322,16 @@ You must also set the _generate-hashes_ option for the _pip-compile_ and _uv_ ut
 generate-hashes = true
 ```
 
+For _uv_:
+
 ```toml
 [tool.uv.pip]
 # Set generate-hashes for uv
 generate-hashes = true
 ```
+
+### pip-compile: Use the Correct Virtual Environment
+
+If you do not already have a tool that can create requirements files, you can use the [pip-compile](https://pip-tools.readthedocs.io/en/stable/cli/pip-compile/) utility that is provided by [pip-tools](https://pip-tools.readthedocs.io/en/stable/).
+
+To ensure that it calculates the correct requirements for your application, the _pip-compile_ tool must be run in a virtual environment that includes your application package. This means that you cannot use _pipx_ to install _pip-compile_.
