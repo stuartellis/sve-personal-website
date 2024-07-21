@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-07-06T07:12:00+01:00"
+date = "2024-07-21T09:50:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -51,7 +51,11 @@ serve:
     @hugo server
 ```
 
+## The Backwards Compatibility Guarantee
+
 The behaviour of _just_ is covered by a [backwards compatibility guarantee](https://just.systems/man/en/chapter_9.html). To verify that new versions of _just_ do not break compatibility, the _just_ project maintain automation to test against _justfiles_ that are published as Open Source.
+
+This guarantee makes _just_ more suitable for public Open Source projects than other alternatives. The developers of the project simply need to specify the minimum version of _just_ that supports the features that they use. Tasks will work for contributors and users that have any version of _just_ that is the same or more recent than this minimum version.
 
 ## Installing just
 

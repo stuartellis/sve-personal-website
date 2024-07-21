@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-07-14T14:30:00+01:00"
+date = "2024-07-21T09:31:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -94,9 +94,9 @@ To see how much of your code is covered by tests, add the [pytest-cov](https://p
 
 ### Package Your Projects
 
-Always package the tools and code libraries that you would like to share with other people. Packages enable people to select which version of your code to use, with the tools and systems that they prefer to work with.
+Always package the tools and code libraries that you would like to share with other people. Packages enable people to use your code with the tools and systems that they prefer to work with, and select the version of your code that is best for them.
 
-Use _wheel_ packages for libraries. You can also use _wheel_ packages for development tools. If you publish your Python application as a _wheel_, other developers can use it with _pipx_. All _wheel_ packages require an existing installation of Python.
+Use [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages for libraries. You can also use _wheel_ packages for development tools. If you publish your Python application as a _wheel_, other developers can use it with _pipx_. Remember that all _wheel_ packages require an existing installation of Python.
 
 In most cases, you should package an application in a format that enables you to include your code, the dependencies and a copy of the required version of Python. This ensures that your code runs with the expected version of Python, and has the correct version of each dependency.
 
@@ -113,6 +113,24 @@ Once you add type hints, the [mypy](http://www.mypy-lang.org/) tool can check yo
 If you use [Pydantic](https://docs.pydantic.dev/) in your application, it can work with type hints. Use the [mypy plugin for Pydantic](https://docs.pydantic.dev/latest/integrations/mypy/) to improve the integration between mypy and Pydantic.
 
 > [PEP 484 - Type Hints](https://peps.python.org/pep-0484/) and [PEP 526 – Syntax for Variable Annotations](https://peps.python.org/pep-0526/) define the notation for type hinting.
+
+### Create Data Classes for Custom Data Objects
+
+Python code frequently has classes for data objects, items that exist to store values, but do not carry out actions. If your application could have a number of classes for data objects, consider using either [Pydantic](https://docs.pydantic.dev/) or the built-in [data classes](https://docs.python.org/3/library/dataclasses.html) feature.
+
+Pydantic provides validation, serialization and other features for data objects. You need to define the classes for Pydantic data objects with type hints.
+
+The built-in syntax for data classes just enables you to reduce the amount of code that you need to define data objects. It also provides some features, such as the ability to mark instances of a data class as [frozen](https://docs.python.org/3/library/dataclasses.html#frozen-instances). Each data class acts as a standard Python class, because syntax for data classes does not change the behavior of the classes that you define with it.
+
+Data classes were introduced in version 3.7 of Python.
+
+> [PEP 557](https://www.python.org/dev/peps/pep-0557/) describes data classes.
+
+### Use enum or Named Tuples for Immutable Sets of Key-Value Pairs
+
+Use the _enum_ type in Python 3.4 or above for immutable collections of key-value pairs. Enums can use class inheritance.
+
+Python 3 also has _collections.namedtuple()_ for immutable key-value pairs. Named tuples do not use classes.
 
 ### Format Strings with f-strings
 
@@ -143,24 +161,6 @@ dt = datetime.now(timezone.utc)
 Python 3.9 and above include the **zoneinfo** module. This provides access to the standard IANA database of time zones. Previous versions of Python require a third-party library for time zones.
 
 > [PEP 615](https://www.python.org/dev/peps/pep-0615/) describes support for the IANA time zone database with **zoneinfo**.
-
-### Use enum or Named Tuples for Immutable Sets of Key-Value Pairs
-
-Use the _enum_ type in Python 3.4 or above for immutable collections of key-value pairs. Enums can use class inheritance.
-
-Python 3 also has _collections.namedtuple()_ for immutable key-value pairs. Named tuples do not use classes.
-
-### Create Data Classes for Custom Data Objects
-
-Python code frequently has classes for data objects, items that exist to store values, but do not carry out actions. If your application could have a number of classes for data objects, consider using either [Pydantic](https://docs.pydantic.dev/) or the built-in [data classes](https://docs.python.org/3/library/dataclasses.html) feature.
-
-Pydantic provides validation, serialization and other features for data objects. You need to define the classes for Pydantic data objects with type hints.
-
-The built-in syntax for data classes just enables you to reduce the amount of code that you need to define data objects. It also provides some features, such as the ability to mark instances of a data class as [frozen](https://docs.python.org/3/library/dataclasses.html#frozen-instances). Each data class acts as a standard Python class, because syntax for data classes does not change the behavior of the classes that you define with it.
-
-Data classes were introduced in version 3.7 of Python.
-
-> [PEP 557](https://www.python.org/dev/peps/pep-0557/) describes data classes.
 
 ### Use collections.abc for Custom Collection Types
 

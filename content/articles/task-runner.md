@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-07-06T07:10:00+01:00"
+date = "2024-07-21T09:30:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -72,7 +72,7 @@ Consider using a tool version manager like [mise](https://mise.jdx.dev/) or [asd
 mise use -gy task
 ```
 
-If you have a Dev Container configuration for a project, use the [go-task feature](https://github.com/devcontainers-contrib/features/blob/main/src/go-task/README.md), as shown in the section below.
+If you use Visual Studio Code and have a Dev Container configuration for a project, use the [go-task feature](https://github.com/devcontainers-contrib/features/blob/main/src/go-task/README.md), as shown in the section below.
 
 To add Task to container images or systems without a tool version manager, see the section below for how to install Task with a script.
 
@@ -134,7 +134,7 @@ The Task project currently provides autocompletions for Bash, zsh, fish and Powe
 
 ### Adding Task to a Dev Container
 
-If you are using a Dev Container, you can add the feature [go-task](https://github.com/devcontainers-contrib/features/blob/main/src/go-task/README.md) to your _devcontainer.json_ file to download Task from GitHub:
+If you are using a Dev Container with Visual Studio Code, you can add the feature [go-task](https://github.com/devcontainers-contrib/features/blob/main/src/go-task/README.md) to your _devcontainer.json_ file to download Task from GitHub:
 
 ```json
     "features": {
@@ -364,7 +364,7 @@ Follow [the style guidelines](https://taskfile.dev/styleguide/) when writing tas
 - Provide [operating system specific Taskfiles](https://taskfile.dev/usage/#os-specific-taskfiles) when necessary.
 
 {{< alert >}}
-_Dependencies run in parallel._ This means that dependencies of a task should not depend one another. If you want to ensure that tasks run in sequence, see the documentation on [Calling Another Task](https://taskfile.dev/usage/#calling-another-task).
+_Dependencies run in parallel._ This means that dependencies of a task should not depend on each other. If you want to ensure that tasks run in sequence, see the documentation on [Calling Another Task](https://taskfile.dev/usage/#calling-another-task).
 {{< /alert >}}
 
 ## Running Tasks
