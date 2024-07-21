@@ -15,7 +15,7 @@
             "version": "0.122.0"
         },
         "ghcr.io/devcontainers-contrib/features/go-task:1": {
-            "version": "3.37.2"
+            "version": "3.38.0"
         },
         "ghcr.io/devcontainers-contrib/features/pre-commit:2": {
             "version": "3.6.2"

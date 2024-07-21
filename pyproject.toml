@@ -5,7 +5,7 @@
 
 [project]
 name = "sje-personal-website"
-version = "2024.03.17"
+version = "2024.07.21"
 description = "Personal Website for Stuart Ellis"
 authors = ["Stuart Ellis <stuart@stuartellis.name>"]
 readme = "README.md"

@@ -16,11 +16,11 @@ repos:
       - id: check-toml
       - id: check-added-large-files
   - repo: https://github.com/fsfe/reuse-tool
-    rev: "v4.0.2"
+    rev: "v4.0.3"
     hooks:
       - id: reuse
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: "0.28.2"
+    rev: "0.29.0"
     hooks:
       - id: check-taskfile
   - repo: https://github.com/DavidAnson/markdownlint-cli2
