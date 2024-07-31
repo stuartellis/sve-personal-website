@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-07-21T09:50:00+01:00"
+date = "2024-07-31T22:16:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -78,7 +78,7 @@ If you are using a Visual Studio Code Dev Container, you can add the feature [gu
 ```json
     "features": {
         "ghcr.io/guiyomh/features/just:0": {
-            "version": "1.29.1"
+            "version": "1.33.0"
         }
     }
 ```
@@ -96,7 +96,7 @@ curl -L https://just.systems/install.sh > scripts/install-just.sh
 To use the installation script, call it with _--tag_ and _--to_ The _--tag_ specifies the version of _just_. The _--to_ specifies which directory to install it to:
 
 ```shell
-./scripts/install-just.sh --tag 1.29.1 --to $HOME/.local/bin
+./scripts/install-just.sh --tag 1.33.0 --to $HOME/.local/bin
 ```
 
 ### Installing just with Operating System Packages
@@ -218,9 +218,9 @@ The project directory structure approach is to create a _justfile_ in the root d
 
 The [next section](#multiple-justfiles-in-a-directory-structure) explains how to use multiple _justfiles_ in a directory structure.
 
-If you are starting a new project, consider trying _just_ modules. Real-world projects often have multiple components with many tasks, and _just_ modules enable you to define clear namespaces for recipes. Modules also provide more flexibility for organizing the files that contain your recipes.
+If you are starting a new project and can require a current version of _just_, consider using _just_ modules. Real-world projects often have multiple components with many tasks, and _just_ modules enable you to define clear namespaces for recipes. Modules also provide more flexibility for organizing the files that contain your recipes.
 
-The modules feature is available in _just_ 1.19.0 and above, but it is currently _unstable_, which means that it is expected to work correctly, but it is not subject to the standard compatibility guarantees of _just_. This also means that you either need to set the environment variable _JUST_UNSTABLE_ as _true_, or use the _--unstable_ option when you run commands with _just_.
+> _Use just 1.31.0 or later with modules:_ The modules feature became available by default with  _just_ 1.31.0.
 
 A [later section](#using-modules) in this article explains how to use modules.
 
@@ -322,29 +322,29 @@ mod python  # Defined by mod.just file in python/ directory
 
 # List available recipes
 help:
-    @just --unstable --list
+    @just --list
 
 # Install tools and dependencies, then set up environment for development
 bootstrap:
-    @just --unstable install
-    @just --unstable setup
+    @just install
+    @just setup
 
 # Build artifacts
 build:
-    @just --unstable python::build
+    @just python::build
 
 # Install project tools and dependencies
 install:
-    @just --unstable python::install
+    @just python::install
 
 # Run all checks
 lint:
-    @just --unstable pre-commit::check
+    @just pre-commit::check
 
 # Set up environment for development
 setup:
-    @just --unstable python::setup
-    @just --unstable pre-commit::setup
+    @just python::setup
+    @just pre-commit::setup
 ```
 
 Note that the first recipe in this file is _help_, so this command runs that recipe:
