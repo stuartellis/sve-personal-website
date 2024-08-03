@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-07-31T22:16:00+01:00"
+date = "2024-08-03T15:40:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -106,6 +106,7 @@ If you do need to install _just_ with an operating system package manager, it is
 ```shell
 winget install --id Casey.Just --exact  # winget on Microsoft Windows
 brew install just                       # Homebrew on macOS
+doas apk add just                       # apk on Alpine Linux
 sudo dnf install just                   # dnf on Fedora Linux
 ```
 

@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-07-21T09:30:00+01:00"
+date = "2024-08-03T15:45:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -107,8 +107,11 @@ If you do need to install Task with an operating system package manager, it is a
 ```shell
 winget install Task.Task  # winget on Microsoft Windows
 brew install go-task      # Homebrew on macOS
+doas apk add go-task      # apk on Alpine Linux
 sudo dnf install go-task  # dnf on Fedora Linux
 ```
+
+> _Alpine Linux installs Task as go-task._ This means that you need to use the name _go-task_ rather than _task_ on the command-line. For example _go-task --list_.
 
 ### Enabling Visual Studio Code Integration
 
@@ -193,6 +196,15 @@ Use the option _-g_ to run the user _Taskfile.yaml_, rather than the nearest Tas
 
 ```shell
 task -g system-info
+```
+
+For convenience, add an alias to your shell configuration. For example, add these lines in _.config/fish/config.fish_ to enable an alias in the Fish shell:
+
+```fish
+# Add abbr to call tasks in global Taskfile by typing ".t TASK-NAME"
+if command -s task > /dev/null
+    abbr --add .t task -g
+end
 ```
 
 ## Using Task in a Project
@@ -405,7 +417,7 @@ Add these lines to the _.pre-commit-config.yaml_ file in the root directory of y
 
 ```yaml
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: "0.28.4"
+  rev: "0.29.1"
   hooks:
     - id: check-taskfile
 - repo: https://github.com/adrienverge/yamllint.git
