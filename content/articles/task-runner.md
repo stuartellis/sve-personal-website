@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-08-03T15:45:00+01:00"
+date = "2024-08-04T08:20:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -110,6 +110,8 @@ brew install go-task      # Homebrew on macOS
 doas apk add go-task      # apk on Alpine Linux
 sudo dnf install go-task  # dnf on Fedora Linux
 ```
+
+To install Task on Alpine Linux, you need to enable the _community_ package repository.
 
 > _Alpine Linux installs Task as go-task._ This means that you need to use the name _go-task_ rather than _task_ on the command-line. For example _go-task --list_.
 

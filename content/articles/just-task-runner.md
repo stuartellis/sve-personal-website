@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-08-03T15:40:00+01:00"
+date = "2024-08-04T08:16:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -108,11 +108,14 @@ winget install --id Casey.Just --exact  # winget on Microsoft Windows
 brew install just                       # Homebrew on macOS
 doas apk add just                       # apk on Alpine Linux
 sudo dnf install just                   # dnf on Fedora Linux
+sudo apt install just                   # apt on Ubuntu
 ```
 
-Debian includes [_just_ in the _testing_ distribution](https://packages.debian.org/trixie/just). Ubuntu provides [_just_ in 24.04 LTS](https://packages.ubuntu.com/noble/just).
+To install _just_, you also need to enable the _community_ package repository for Alpine Linux, and _universe_ on Ubuntu 24.04 LTS or later.
 
-See [the package list page](https://just.systems/man/en/chapter_4.html) for what is available from operating system package managers.
+Debian only includes [_just_ in the _testing_ distribution](https://packages.debian.org/trixie/just).
+
+> See [the package list page](https://just.systems/man/en/chapter_4.html) for a list of the available operating system packages.
 
 ### Adding a Private Copy of just to a Project
 
