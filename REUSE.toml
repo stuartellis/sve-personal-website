@@ -7,9 +7,9 @@
 # https://reuse.software/
 
 version = 1
-SPDX-PackageName = "sje-personal-website"
+SPDX-PackageName = "sve-personal-website"
 SPDX-PackageSupplier = "Stuart Ellis <https://www.stuartellis.name>"
-SPDX-PackageDownloadLocation = "https://github.com/stuartellis/sje-personal-website"
+SPDX-PackageDownloadLocation = "https://github.com/stuartellis/sve-personal-website"
 
 [[annotations]]
 path = "content/**/**.md"

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-module github.com/stuartellis/sje-personal-website
+module github.com/stuartellis/sve-personal-website
 
 go 1.21
 
