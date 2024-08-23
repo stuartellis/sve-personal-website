@@ -1,7 +1,7 @@
 +++
 title = "Setting Up Fedora Workstation for Software Development"
 slug = "fedora-workstation-setup"
-date = "2024-08-23T20:02:00+01:00"
+date = "2024-08-23T22:07:00+01:00"
 description = "Setting up a Fedora Workstation for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
@@ -182,7 +182,7 @@ repos/
 
 The [Homebrew](http://brew.sh/) package management system provides the latest versions of tools. Always use Homebrew to install tools that are frequently updated, like the [AWS CLI](https://aws.amazon.com/cli/) and [Trivy](https://aquasecurity.github.io/trivy).
 
-Follow the instructions on the site to install Homebrew.
+Follow the instructions on the Homebrew site to install it.
 
 To check that Homebrew is installed correctly, run this command in a terminal window:
 
@@ -200,7 +200,7 @@ brew update
 
 Avoid using the Fedora packages for programming languages. Instead, use version manager tools. These enable you to install the correct version of the required programming language and dependencies for each of your projects. Use Homebrew to install version manager tools.
 
-Use [pyenv](https://github.com/pyenv/pyenv) for Python and [rustup](https://rustup.rs/) for Rust. The standard _go_ tool [manages versions of Go](https://go.dev/doc/manage-install#installing-multiple). If you work with Terraform or OpenTofu, use [tenv](https://tofuutils.github.io/tenv/). Use the _mise_ version manager for JavaScript, as it provides a consistent set of features for managing many tools, including Node.js, Deno and Bun.
+Use [pyenv](https://github.com/pyenv/pyenv) for Python and [rustup](https://rustup.rs/) for Rust. The standard _go_ tool [manages versions of Go](https://go.dev/doc/manage-install#installing-multiple). If you work with Terraform or OpenTofu, use [tenv](https://tofuutils.github.io/tenv/). Use the [mise](https://mise.jdx.dev/) version manager for JavaScript, as it provides a consistent set of features for managing many tools, including Node.js, Deno and Bun.
 
 Alternatively, Fedora Workstation includes [toolbx](https://containertoolbx.org/) to help you manage container environments for developing your projects. Container environments also enable you to have separate versions of software for each of your projects.
 
