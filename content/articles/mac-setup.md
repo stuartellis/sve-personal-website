@@ -1,10 +1,10 @@
 +++
 title = "How to Set up an Apple Mac for Software Development"
 slug = "mac-setup"
-date = "2024-07-13T09:02:00+01:00"
+date = "2024-08-23T20:10:00+01:00"
 description = "Setting up an Apple Mac for development and systems administration"
 categories = ["devops", "programming"]
-tags = ["devops", "macos", "golang", "java", "javascript", "python", "ruby"]
+tags = ["devops", "macos", "golang", "java", "javascript", "python"]
 
 +++
 
@@ -111,8 +111,9 @@ If you want to install just the Command Line Tools, you can download a package f
 ### Setting Up Homebrew
 
 [Homebrew](http://brew.sh/) provides a package management system for macOS, enabling you
-to quickly install and update the tools and libraries that you need. Follow the
-instructions on the site.
+to quickly install and update the tools and libraries that you need. Always use Homebrew to install tools that are frequently updated, like the [AWS CLI](https://aws.amazon.com/cli/) and [Trivy](https://aquasecurity.github.io/trivy).
+
+To install Homebrew, download and open the latest PKG file from [the Releases on GitHub](https://github.com/Homebrew/brew/releases/latest).
 
 You should also amend your PATH, so that the versions of tools that are installed with
 Homebrew take precedence over others. To do this, edit the file _.zshrc_ in
@@ -122,7 +123,7 @@ your home directory to include this line:
 export PATH="/usr/local/bin:/usr/local/sbin:~/bin:$PATH"
 ```
 
-You need to close all terminal windows for this change to take effect.
+You need to close all of your terminal windows for this change to take effect.
 
 To check that Homebrew is installed correctly, run this command in a terminal window:
 
@@ -226,9 +227,59 @@ repos/
             a-project/
 ```
 
+### Using a GPG Key
+
+Use a key for [GPG](https://gnupg.org/) to sign the commits that you make in code repositories.
+
+To install GPG on macOS, use Homebrew.
+
+```shell
+brew install gnupg
+brew install pinentry-mac
+```
+
+To create a GPG key, run the _gpg_ command in a terminal window. For example:
+
+```shell
+gpg --full-gen-key
+```
+
+GPG will prompt you for several options. Use these values:
+
+- Select the _RSA and RSA_ algorithm
+- Choose a key length of _4096_
+- Accept the default option to have no expiration date for your key
+- Enter the same email address that you will use for code hosting sites such as GitHub
+
+Once you have created a GPG key, configure Git to use it.
+
+First get the ID of the key:
+
+```shell
+gpg --list-secret-keys --keyid-format=long
+```
+
+This displays an output like this:
+
+```shell
+pub   rsa4096/C36CB86CB86B3716 2022-01-18 [SC]
+      BF18AC2876178908D6E71267D36CB86CB86B3716
+uid                 [ultimate] Anne Example <anne@example.org>
+sub   rsa4096/B7BB94F0C9BA6CAA 2022-01-18 [E]
+```
+
+In this example, the key ID is _C36CB86CB86B3716_.
+
+Next, configure Git to use this key:
+
+```shell
+git config --global user.signingkey C36CB86CB86B3716
+git config --global commit.gpgsign true
+```
+
 ### Creating SSH Keys
 
-You will frequently use SSH to access Git repositories or remote UNIX systems. macOS
+You may use SSH to access Git repositories or remote UNIX systems. macOS
 includes the standard OpenSSH suite of tools.
 
 OpenSSH stores your SSH keys in a _.ssh_ directory. To create this directory, run these commands in a terminal window:
@@ -246,15 +297,13 @@ ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
 
 ## Programming Languages
 
-Avoid using the installations of programming languages that are included in macOS. Instead, use containers or specialized tools like version managers. These enable you to use the correct versions and dependencies for each project that you work on.
-
-This article provides instructions to help you install programming languages with the [mise](https://mise.jdx.dev/) version manager. It also includes instructions using Homebrew to install specialized version managers for some programming languages.
+Avoid using the installations of programming languages that are included in macOS. Instead, use version manager tools. These enable you to use the correct versions and dependencies for each project that you work on. Follow the advice in the sections below to install version managers for popular programming languages with Homebrew.
 
 If possible, avoid using Homebrew itself to install programming languages. Homebrew has limited support for working with multiple versions of the same programming language.
 
 ### Python Development: pyenv and pipx
 
-Current versions of macOS include a copy of Python 3, but this will not be the latest version of Python. Use either [mise](https://mise.jdx.dev/) or [pyenv](https://github.com/pyenv/pyenv) to install Python. These tools enable you to use multiple versions of Python.
+Current versions of macOS include a copy of Python 3, but this will not be the latest version of Python. Use either [mise](https://mise.jdx.dev/) or [pyenv](https://github.com/pyenv/pyenv) to install Python. Both of these tools enable you to use multiple versions of Python.
 
 To install pyenv with Homebrew, run this command in a terminal window:
 
@@ -282,29 +331,15 @@ work, add this to your PATH manually:
 $HOME/.cargo/bin
 ```
 
-This process installs all of the tools into your home directory, and does not add any
-files into system directories.
+This process installs all of the tools into your home directory, and does not add any files into system directories.
 
 ### JavaScript Development: Node.js
 
-Use either [mise](https://mise.jdx.dev/) or Homebrew to manage your Node.js installations. Homebrew provides separate packages for each version of [Node.js](https://nodejs.org).
-To ensure that you are using the version of Node.js that you expect, specify the version
-when you install it. For example, enter this command in a Terminal window to install the
-Node.js 20, the current LTS release:
-
-```shell
-brew install node@20
-```
-
-Add the _bin/_ directory for this Node.js installation to your PATH:
-
-```shell
-/usr/local/opt/node@20/bin
-```
+Use [mise](https://mise.jdx.dev/) to manage your Node.js installations.
 
 ### Go Development
 
-Use either [mise](https://mise.jdx.dev/) or Homebrew to install the _go_ tool. To install [Go](https://go.dev/) with Homebrew, enter this command:
+Use Homebrew to install the _go_ tool. To install [Go](https://go.dev/) with Homebrew, enter this command:
 
 ```shell
 brew install golang
@@ -406,6 +441,16 @@ To see a list of the available commands, type _jenv_ in a terminal window:
 ```shell
 jenv
 ```
+
+### Terraform and OpenTofu
+
+Use the [tenv](https://tofuutils.github.io/tenv/) version manager to install versions of Terraform and OpenTofu. To install _tenv_ with Homebrew, run this command in a terminal window:
+
+```shell
+brew install tenv cosign
+```
+
+Always install _cosign_ along with _tenv_. If _cosign_ is present, _tenv_ automatically uses it to carry out signature verification on the binaries that it downloads.
 
 ## Databases
 

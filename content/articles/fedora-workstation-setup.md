@@ -1,14 +1,14 @@
 +++
 title = "Setting Up Fedora Workstation for Software Development"
 slug = "fedora-workstation-setup"
-date = "2024-05-19T21:41:00+01:00"
+date = "2024-08-23T20:02:00+01:00"
 description = "Setting up a Fedora Workstation for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
 
 +++
 
-A guide to setting up Fedora Workstation for DevOps and software development. This is current for Fedora 39.
+A guide to setting up Fedora Workstation for DevOps and software development. This is current for Fedora 40.
 
 ## Installation
 
@@ -30,17 +30,20 @@ an administrator password to protect the firmware menus.
 
 ## Do This First
 
-Log in once, run the GNOME Software utility, and ensure that the operating system has
+Log in once, run the Software utility, and ensure that the operating system has
 the latest updates. After all of the updates have been applied, restart the computer.
 
 ## User Settings
 
-Select _Settings \> Privacy_, and review the settings. Depending upon your needs, you
-may decide to turn off _Location Services_ or _Usage & History_.
+Select _Settings \> Privacy & Security_. Check these settings:
+
+- Always set _Thunderbolt Access_ to _Only USB and Display Port devices can attach._ unless you know that you need to connect other types of devices to your computer.
+- Set _Location \> Automatic Device Location_ to off.
+- Adjust the _File History & Wastebasket_ settings if you need to.
 
 ## Installing Desktop Applications with Flatpak
 
-[Flatpak](https://flatpak.org) is the new standard for desktop software packages. The Fedora project still provides RPM packages for many desktop applications, but Flatpak already offers newer versions of products, as well as software that is not available from Fedora RPM repositories, such as Slack.
+[Flatpak](https://flatpak.org) is the new standard for desktop software packages. Flatpak offers newer versions of products than Fedora itself, as well as providing software that is not available from Fedora RPM repositories, such as Slack.
 
 ## Setting Up for Development
 
@@ -102,30 +105,52 @@ To enable colors in the output, which can be very helpful, enter this command:
 git config --global color.ui auto
 ```
 
-### Setting Up A Directory Structure for Projects
+### Using a GPG Key
 
-To keep your projects tidy, I would recommend following these guidelines. They may seem
-slightly fussy, but they pay off when you have many projects, some of which are on
-different version control hosts.
+Use a key for [GPG](https://gnupg.org/) to sign the commits that you make in code repositories. Fedora includes the GPG software.
 
-First, create a top-level directory with a short, generic name like _repos_. For each repository host, create a subdirectory that matches your username. Check out projects in the directory.
+To create a GPG key, run the _gpg_ command in a terminal window. For example:
 
-The final directory structure looks like this:
+```shell
+gpg --full-gen-key
+```
 
-```text
-    repos/
-      gitlab.com/
-        my-gitlab-username/
-            a-project/
-            another-project/
-      sr.ht/
-        my-sourcehut-username/
-            a-project/
+GPG will prompt you for several options. Use these values:
+
+- Select the _RSA and RSA_ algorithm
+- Choose a key length of _4096_
+- Accept the default option to have no expiration date for your key
+- Enter the same email address that you will use for code hosting sites such as GitHub
+
+Once you have created a GPG key, configure Git to use it.
+
+First get the ID of the key:
+
+```shell
+gpg --list-secret-keys --keyid-format=long
+```
+
+This displays an output like this:
+
+```shell
+pub   rsa4096/C36CB86CB86B3716 2022-01-18 [SC]
+      BF18AC2876178908D6E71267D36CB86CB86B3716
+uid                 [ultimate] Anne Example <anne@example.org>
+sub   rsa4096/B7BB94F0C9BA6CAA 2022-01-18 [E]
+```
+
+In this example, the key ID is _C36CB86CB86B3716_.
+
+Next, configure Git to use this key:
+
+```shell
+git config --global user.signingkey C36CB86CB86B3716
+git config --global commit.gpgsign true
 ```
 
 ### Creating SSH Keys
 
-You will frequently use SSH to access Git repositories or remote UNIX systems. Fedora
+You may use SSH to access Git repositories or remote UNIX systems. Fedora
 includes the standard OpenSSH suite of tools.
 
 To create an SSH key, run the _ssh-keygen_ command in a terminal window. For example:
@@ -134,15 +159,52 @@ To create an SSH key, run the _ssh-keygen_ command in a terminal window. For exa
 ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
 ```
 
+### Setting Up A Directory Structure for Projects
+
+To keep your projects tidy, I would recommend following these guidelines. They may seem
+slightly fussy, but they pay off when you have many projects, some of which are on
+different version control hosts.
+
+First create a top-level directory with a short, generic name like _repos_. For each repository host, create a subdirectory in _repos_. Add a subdirectory that matches your username. The final directory structure looks like this:
+
+```text
+repos/
+    gitlab.com/
+        my-gitlab-username/
+            a-project/
+            another-project/
+    sr.ht/
+        my-sourcehut-username/
+            a-project/
+```
+
+## Setting Up Homebrew
+
+The [Homebrew](http://brew.sh/) package management system provides the latest versions of tools. Always use Homebrew to install tools that are frequently updated, like the [AWS CLI](https://aws.amazon.com/cli/) and [Trivy](https://aquasecurity.github.io/trivy).
+
+Follow the instructions on the site to install Homebrew.
+
+To check that Homebrew is installed correctly, run this command in a terminal window:
+
+```shell
+brew doctor
+```
+
+To update the index of available packages, run this command in a terminal window:
+
+```shell
+brew update
+```
+
 ## Working with Programming Languages
 
-Avoid using the Fedora packages for programming languages. Instead, use either containers or specialized tools like the [mise](https://mise.jdx.dev/) version manager. These enable you to install the correct version of the required programming language and dependencies for each of your projects.
+Avoid using the Fedora packages for programming languages. Instead, use version manager tools. These enable you to install the correct version of the required programming language and dependencies for each of your projects. Use Homebrew to install version manager tools.
 
-Fedora Workstation automatically includes support for containers, with [Podman](https://podman.io/) as the equivalent of Docker, along with [toolbx](https://containertoolbx.org/) to help you manage container environments for developing your projects. You may use any version manager on Fedora Workstation, but you will need to install the tool yourself.
+Use [pyenv](https://github.com/pyenv/pyenv) for Python and [rustup](https://rustup.rs/) for Rust. The standard _go_ tool [manages versions of Go](https://go.dev/doc/manage-install#installing-multiple). If you work with Terraform or OpenTofu, use [tenv](https://tofuutils.github.io/tenv/). Use the _mise_ version manager for JavaScript, as it provides a consistent set of features for managing many tools, including Node.js, Deno and Bun.
+
+Alternatively, Fedora Workstation includes [toolbx](https://containertoolbx.org/) to help you manage container environments for developing your projects. Container environments also enable you to have separate versions of software for each of your projects.
 
 ### Using Version Managers
-
-You may use any version manager on Fedora Workstation, such as [pyenv](https://github.com/pyenv/pyenv) for Python. I recommend using [rustup](https://rustup.rs/) for Rust and [mise](https://mise.jdx.dev/) for other programming languages. The _mise_ version manager provides the same set of features for managing several programming languages, including Python, Go and JavaScript.
 
 To install a version manager, use the process that the documentation for the product recommends.
 
@@ -154,13 +216,23 @@ sudo dnf install gcc
 
 We use the GCC compiler for this purpose because it is compatible with the widest range of C code. If you are developing your own C code, consider using the [Clang](https://clang.llvm.org/) compiler for your project.
 
-### The System Python Installation
+### Terraform and OpenTofu
+
+Use the [tenv](https://tofuutils.github.io/tenv/) version manager to install versions of Terraform and OpenTofu. To install _tenv_ with Homebrew, run this command in a terminal window:
+
+```shell
+brew install tenv cosign
+```
+
+Always install _cosign_ along with _tenv_. If _cosign_ is present, _tenv_ automatically uses it to carry out signature verification on the binaries that it downloads.
+
+### Avoid Using The System Python Installation
 
 Fedora includes an installation of Python 3, which is used by system tools. Avoid using this system installation yourself. Instead, manage your own installations of Python with containers or version managers, as explained in the previous section.
 
 ## Working with Containers
 
-Fedora Workstation automatically includes support for containers. [Podman](https://podman.io/) provides the features of Docker, and [toolbx](https://containertoolbx.org/) helps you manage container environments for developing your projects.
+Fedora Workstation automatically includes support for containers. [Podman](https://podman.io/) provides the features of Docker and [toolbx](https://containertoolbx.org/) helps you manage container environments for developing your projects.
 
 To use a graphical interface for working with containers, add [Podman Desktop](https://podman-desktop.io) to your system. To install Podman Desktop, go to _Software_, search for _Podman Desktop_, select the entry from the list, and choose _Install_.
 
@@ -196,7 +268,7 @@ This enables you to convert Docker Compose configurations into Podman pod defini
 
 ## Working with Virtual Machines
 
-Fedora Workstation installs [GNOME Boxes](https://wiki.gnome.org/Apps/Boxes) by default, to enable you to create and manage virtual machines. GNOME Boxes provides a graphical interface for the standard KVM and QEMU software. You can also use these directly on the command-line.
+Fedora Workstation installs [GNOME Boxes](https://apps.gnome.org/en-GB/Boxes/) by default, to enable you to create and manage virtual machines. GNOME Boxes provides a graphical interface for the standard KVM and QEMU software. You can also use these tools directly on the command-line.
 
 ## SQL Databases
 
