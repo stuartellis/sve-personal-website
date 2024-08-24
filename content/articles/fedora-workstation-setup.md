@@ -1,14 +1,14 @@
 +++
 title = "Setting Up Fedora Workstation for Software Development"
 slug = "fedora-workstation-setup"
-date = "2024-08-23T22:07:00+01:00"
+date = "2024-08-24T06:49:00+01:00"
 description = "Setting up a Fedora Workstation for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
 
 +++
 
-A guide to setting up Fedora Workstation for DevOps and software development. This is current for Fedora 40.
+A guide to setting up [Fedora Workstation](https://fedoraproject.org/workstation/) for DevOps and software development. This is current for Fedora 40.
 
 ## Installation
 
@@ -43,7 +43,19 @@ Select _Settings \> Privacy & Security_. Check these settings:
 
 ## Installing Desktop Applications with Flatpak
 
-[Flatpak](https://flatpak.org) is the new standard for desktop software packages. Flatpak offers newer versions of products than Fedora itself, as well as providing software that is not available from Fedora RPM repositories, such as Slack.
+[Flatpak](https://flatpak.org) is now the standard for desktop software packages on Linux. Flatpak offers newer versions of products than Fedora itself, as well as providing software that is not available from Fedora RPM repositories, such as Slack.
+
+The Software utility uses the [Flathub](https://flathub.org/) service for Flatpak packages. Software shows both Flatpak and RPM packages for apps. If a Flatpak is available, use that package rather than RPM.
+
+{{< alert >}}
+Install code editors and IDEs with RPM packages, not Flatpak. Currently, security features for Flatpak may prevent application plugins from working correctly.
+{{< /alert >}}
+
+Useful software that you can install as Flatpaks include:
+
+- [Beekeeper Studio](https://www.beekeeperstudio.io) for working with databases
+- [Draw.io](https://www.drawio.com/) for drawing diagrams
+- [Joplin](https://joplinapp.org/) for note-taking
 
 ## Setting Up for Development
 
@@ -53,10 +65,6 @@ Fedora includes the command-line editor [nano](https://www.nano-editor.org/) and
 desktop text editor with basic support for programming. Add the code editors or IDEs that you would prefer to use.
 
 If you do not have a preferred editor, consider using a version of [Visual Studio Code](https://code.visualstudio.com). To work with a modern Vim editor, install [Neovim](https://neovim.io).
-
-{{< alert >}}
-Install code editors and IDEs with RPM packages, not Flatpak. Currently, Flatpak packages may prevent application plugins from working correctly.
-{{< /alert >}}
 
 #### Visual Studio Code
 
@@ -81,10 +89,10 @@ sudo dnf install neovim
 Whichever text editor you choose, remember to set the EDITOR environment variable in
 your _~/.bashrc_ file, so that this editor is automatically invoked by command-line
 tools like your version control system. For example, put this line in your profile to
-make Neovim (_nvim_) the favored text editor:
+make Visual Studio Code the favored text editor:
 
 ```shell
-export EDITOR="nvim"
+export EDITOR="code"
 ```
 
 ### Configuring Git
@@ -105,9 +113,18 @@ To enable colors in the output, which can be very helpful, enter this command:
 git config --global color.ui auto
 ```
 
+Add a GPG key to Git before you commit to shared projects. The next section explains how to do this.
+
 ### Using a GPG Key
 
-Use a key for [GPG](https://gnupg.org/) to sign the commits that you make in code repositories. Fedora includes the GPG software.
+Always use [GPG](https://gnupg.org/) to sign the commits that you make in code repositories, especially for shared projects like Open Source software. This means that each commit can be linked to the author.
+
+To install GPG on macOS, use Homebrew.
+
+```shell
+brew install gnupg
+brew install pinentry-mac
+```
 
 To create a GPG key, run the _gpg_ command in a terminal window. For example:
 
@@ -120,7 +137,7 @@ GPG will prompt you for several options. Use these values:
 - Select the _RSA and RSA_ algorithm
 - Choose a key length of _4096_
 - Accept the default option to have no expiration date for your key
-- Enter the same email address that you will use for code hosting sites such as GitHub
+- Enter the same email address that you will use for code hosting sites, such as Codeberg or GitHub
 
 Once you have created a GPG key, configure Git to use it.
 
@@ -148,16 +165,13 @@ git config --global user.signingkey C36CB86CB86B3716
 git config --global commit.gpgsign true
 ```
 
-### Creating SSH Keys
+Finally, add your GPG key to your accounts on code hosting services that you use:
 
-You may use SSH to access Git repositories or remote UNIX systems. Fedora
-includes the standard OpenSSH suite of tools.
+- [Codeberg](https://docs.codeberg.org/security/gpg-key/)
+- [GitLab](https://docs.gitlab.com/ee/user/project/repository/signed_commits/gpg.html#add-a-gpg-key-to-your-account)
+- [GitHub](https://docs.github.com/en/authentication/managing-commit-signature-verification/adding-a-gpg-key-to-your-github-account)
 
-To create an SSH key, run the _ssh-keygen_ command in a terminal window. For example:
-
-```shell
-ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
-```
+If you use multiple code hosting services for your projects, use the same GPG key for all of them. This ensures that copies of the same commits can be verified everywhere.
 
 ### Setting Up A Directory Structure for Projects
 
@@ -169,14 +183,26 @@ First create a top-level directory with a short, generic name like _repos_. For 
 
 ```text
 repos/
+    codeberg.org/
+        my-codeberg-username/
+            a-project/
     gitlab.com/
         my-gitlab-username/
             a-project/
             another-project/
-    sr.ht/
-        my-sourcehut-username/
-            a-project/
 ```
+
+### Creating SSH Keys
+
+You may use SSH to access Git repositories or remote UNIX systems. Fedora includes the standard OpenSSH suite of tools.
+
+To create an SSH key, run the _ssh-keygen_ command in a terminal window. For example:
+
+```shell
+ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
+```
+
+Create a separate SSH key for each set of systems that you access.
 
 ## Setting Up Homebrew
 

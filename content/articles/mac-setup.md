@@ -1,7 +1,7 @@
 +++
 title = "How to Set up an Apple Mac for Software Development"
 slug = "mac-setup"
-date = "2024-08-23T20:10:00+01:00"
+date = "2024-08-24T06:48:00+01:00"
 description = "Setting up an Apple Mac for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "macos", "golang", "java", "javascript", "python"]
@@ -9,6 +9,8 @@ tags = ["devops", "macos", "golang", "java", "javascript", "python"]
 +++
 
 A guide to setting up an Apple Mac for DevOps and software development. This is current for macOS 12 (Monteray).
+
+If you are thinking of switching to Linux, I also provide a [guide for setting up Fedora Workstation for development and DevOps](https://www.stuartellis.name/articles/fedora-workstation-setup/). Fedora is consistently the highest quality Linux desktop distribution.
 
 ## Do This First
 
@@ -183,53 +185,11 @@ To enable colors in the output, which can be very helpful, enter this command:
 git config --global color.ui auto
 ```
 
-### Text Editors
-
-Installations of macOS include a command-line version of [vim](http://www.vim.org/) and TextEdit, a desktop text editor. TextEdit is designed for light-weight word processing, and it has no support for programming. Add the code editors or IDEs that you would prefer to use.
-
-If you do not have a preferred editor, consider using a version of [Visual Studio Code](https://code.visualstudio.com). Read the next section for more details.
-
-To use a modern code editor that works like Vim, install [Neovim](https://neovim.io). The default configuration for Neovim follows best practices for Vim, but you can customise it as you wish.
-
-#### Visual Studio Code
-
-[Visual Studio Code](https://code.visualstudio.com) is a powerful desktop editor for programming, with built-in support for version control and debugging. The large range of extensions for Visual Studio Code enable it to work with every popular programming language and framework. It is available free of charge.
-
-The Microsoft releases of Visual Studio Code are proprietary software with telemetry enabled by default, and download extensions from a proprietary Microsoft app store. if you have issues or concerns about the Microsoft releases, use the packages that are provided by the [vscodium](https://vscodium.com) project.
-
-#### Setting The EDITOR Environment Variable
-
-Whichever text editor you choose, remember to set the EDITOR environment variable in
-your _~/.zshrc_ file, so that this editor is automatically invoked by command-line
-tools like your version control system. For example, put this line in your profile to
-make Neovim (_nvim_) the favored text editor:
-
-```shell
-export EDITOR="nvim"
-```
-
-### Setting Up A Directory Structure for Projects
-
-To keep your projects tidy, I would recommend following these guidelines. They may seem
-slightly fussy, but they pay off when you have many projects, some of which are on
-different version control hosts.
-
-First create a top-level directory with a short, generic name like _repos_. For each repository host, create a subdirectory in _repos_. Add a subdirectory that matches your username. The final directory structure looks like this:
-
-```text
-repos/
-    gitlab.com/
-        my-gitlab-username/
-            a-project/
-            another-project/
-    sr.ht/
-        my-sourcehut-username/
-            a-project/
-```
+Add a GPG key to Git before you commit to shared projects. The next section explains how to do this.
 
 ### Using a GPG Key
 
-Use a key for [GPG](https://gnupg.org/) to sign the commits that you make in code repositories.
+Always use [GPG](https://gnupg.org/) to sign the commits that you make in code repositories, especially for shared projects like Open Source software. This means that each commit can be linked to the author.
 
 To install GPG on macOS, use Homebrew.
 
@@ -249,7 +209,7 @@ GPG will prompt you for several options. Use these values:
 - Select the _RSA and RSA_ algorithm
 - Choose a key length of _4096_
 - Accept the default option to have no expiration date for your key
-- Enter the same email address that you will use for code hosting sites such as GitHub
+- Enter the same email address that you will use for code hosting sites, such as Codeberg or GitHub
 
 Once you have created a GPG key, configure Git to use it.
 
@@ -277,10 +237,61 @@ git config --global user.signingkey C36CB86CB86B3716
 git config --global commit.gpgsign true
 ```
 
+Finally, add your GPG key to your accounts on code hosting services that you use:
+
+- [Codeberg](https://docs.codeberg.org/security/gpg-key/)
+- [GitLab](https://docs.gitlab.com/ee/user/project/repository/signed_commits/gpg.html#add-a-gpg-key-to-your-account)
+- [GitHub](https://docs.github.com/en/authentication/managing-commit-signature-verification/adding-a-gpg-key-to-your-github-account)
+
+If you use multiple code hosting services for your projects, use the same GPG key for all of them. This ensures that copies of the same commits can be verified everywhere.
+
+### Setting Up A Directory Structure for Projects
+
+To keep your projects tidy, I would recommend following these guidelines. They may seem
+slightly fussy, but they pay off when you have many projects, some of which are on
+different version control hosts.
+
+First create a top-level directory with a short, generic name like _repos_. For each repository host, create a subdirectory in _repos_. Add a subdirectory that matches your username. The final directory structure looks like this:
+
+```text
+repos/
+    codeberg.org/
+        my-codeberg-username/
+            a-project/
+    gitlab.com/
+        my-gitlab-username/
+            a-project/
+            another-project/
+```
+
+### Text Editors
+
+Installations of macOS include a command-line version of [vim](http://www.vim.org/) and TextEdit, a desktop text editor. TextEdit is designed for light-weight word processing, and it has no support for programming. Add the code editors or IDEs that you would prefer to use.
+
+If you do not have a preferred editor, consider using a version of [Visual Studio Code](https://code.visualstudio.com). Read the next section for more details.
+
+To use a modern code editor that works like Vim, install [Neovim](https://neovim.io). The default configuration for Neovim follows best practices for Vim, but you can customise it as you wish.
+
+#### Visual Studio Code
+
+[Visual Studio Code](https://code.visualstudio.com) is a powerful desktop editor for programming, with built-in support for version control and debugging. The large range of extensions for Visual Studio Code enable it to work with every popular programming language and framework. It is available free of charge.
+
+The Microsoft releases of Visual Studio Code are proprietary software with telemetry enabled by default, and download extensions from a proprietary Microsoft app store. if you have issues or concerns about the Microsoft releases, use the packages that are provided by the [vscodium](https://vscodium.com) project.
+
+#### Setting The EDITOR Environment Variable
+
+Whichever text editor you choose, remember to set the EDITOR environment variable in
+your _~/.zshrc_ file, so that this editor is automatically invoked by command-line
+tools like your version control system. For example, put this line in your profile to
+make Visual Studio Code the favored text editor:
+
+```shell
+export EDITOR="code"
+```
+
 ### Creating SSH Keys
 
-You may use SSH to access Git repositories or remote UNIX systems. macOS
-includes the standard OpenSSH suite of tools.
+You may use SSH to access Git repositories or remote UNIX systems. macOS includes the standard OpenSSH suite of tools.
 
 OpenSSH stores your SSH keys in a _.ssh_ directory. To create this directory, run these commands in a terminal window:
 
@@ -294,6 +305,8 @@ To create an SSH key, run the _ssh-keygen_ command in a terminal window. For exa
 ```shell
 ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
 ```
+
+Create a separate SSH key for each set of systems that you access.
 
 ## Programming Languages
 
