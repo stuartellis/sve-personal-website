@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-07-21T09:31:00+01:00"
+date = "2024-08-25T14:03:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -22,9 +22,9 @@ Use a tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv
 
 Alternatively, consider using [Development Containers](https://containers.dev/), which enable you to define an isolated environment for a software project. This also allows you to use a separate version of Python for each project.
 
-Ensure that the tool compiles Python, rather than downloading [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). The standlone builds are modified versions of Python that are maintained by a third-party. Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) automatically compile Python, but you must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation.
+Ensure that the tool compiles Python, rather than downloading [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). These standalone builds are modified versions of Python that are maintained by a third-party. Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) automatically compile Python, but you must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation.
 
-Only use the Python installation features of [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) for experimental projects. These tools always download the third-party standalone builds when they manage versions of Python.
+Only use the Python installation features of [uv](https://docs.astral.sh/uv/), [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) for experimental projects. These tools always download the third-party standalone builds when they manage versions of Python.
 
 ### Use the Most Recent Version of Python That You Can
 
@@ -36,37 +36,43 @@ Upgrade your projects as new Python versions are released. The Python developmen
 _Avoid using Python 2._ It is not supported by the Python development team or by the developers of most popular Python libraries.
 {{< /alert >}}
 
-### Use pipx To Run Developer Applications
+### Use a Helper to Run Python Tools
 
-Use [pipx](https://pipx.pypa.io) to run Python applications on development systems, rather than installing the applications with _pip_ or another method. The _pipx_ tool automatically puts the libraries for each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
+Use either [uv](https://docs.astral.sh/uv/) or [pipx](https://pipx.pypa.io) to run Python tools on development systems, rather than installing these applications with _pip_ or another method. Both _uv_ and _pipx_ automatically put each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
 
-Use the [pipx run](https://pipx.pypa.io/stable/#walkthrough-running-an-application-in-a-temporary-virtual-environment) command for most applications, rather than _pipx install_. The _pipx run_ command downloads and runs the application without installing it. For example, this command downloads and runs the latest version of [bpytop](https://github.com/aristocratos/bpytop), a system monitoring tool:
+Use the [uvx](https://docs.astral.sh/uv/#tool-management) command of _uv_ or the [pipx run](https://pipx.pypa.io/stable/#walkthrough-running-an-application-in-a-temporary-virtual-environment) feature of _pipx_ for most applications. These download the application to a cache and run it. For example, these commands download and run the latest version of [bpytop](https://github.com/aristocratos/bpytop), a system monitoring tool:
+
+```shell
+uvx bpytop
+```
 
 ```shell
 pipx run bpytop
 ```
 
-Each application is cached for 14 days after the first download, which means that the second use of _pipx run bpytop_ will run as quickly as an installed application.
+The _bpytop_ tool is cached after the first download, which means that the second use of it will run as quickly as an installed application.
 
-Use _pipx install_ for tools that are essential for your development process, such as [pre-commit](https://pre-commit.com/):
+Use _uv tool install_ or _pipx install_ for tools that are essential for your development process. These options install the tool on to your system. This ensures that the tool is available if you have no Internet access, and that you keep the same version of the tool until you decide to upgrade it.
+
+For example, install [pre-commit](https://pre-commit.com/), rather than use a temporary copy. The  _pre-commit_ tool automatically runs every time that we commit a change to version control, so we want it to be consistent and always available. To install _pre-commit_, run the appropriate command for _uv_ or _pipx_:
+
+```shell
+uv tool install pre-commit
+```
 
 ```shell
 pipx install pre-commit
 ```
 
-If you use _pre-commit_, it automatically runs every time that you commit a change to version control. We install _pre-commit_, so that we keep the same version until we decide to upgrade it.
-
-To set up _pipx_, follow the instructions on the [pipx Website](https://pipx.pypa.io) for your operating system. This ensures that _pipx_ works with an appropriate Python installation.
-
-> [PEP 668 - Marking Python base environments as “externally managed”](https://peps.python.org/pep-0668/#guide-users-towards-virtual-environments) recommends that users install Python applications with pipx.
+> Always follow the instructions on the [pipx Website](https://pipx.pypa.io) for your specific operating system. This ensures that _pipx_ works with an appropriate Python installation.
 
 ## Developing Python Projects
 
 ### Use a Project Tool
 
-If you use a project tool, it will follow [the best practices for Python projects](#best-practices-for-python-projects). Consider using the [PDM](https://pdm-project.org) tool to help you develop Python applications. [Hatch](https://hatch.pypa.io) is another well-known project tool, but it is most useful for developing Python libraries. [Rye](https://rye.astral.sh/) is a more experimental tool for Python projects, and it is likely to be superseded in future.
+If you use a project tool, it will follow [the best practices for Python projects](#best-practices-for-python-projects). Use either [PDM](https://pdm-project.org) or [uv](https://docs.astral.sh/uv/) to help you develop Python applications. [Hatch](https://hatch.pypa.io) is another well-known project tool, but it is most useful for developing Python libraries.
 
-Avoid using the [Poetry](https://python-poetry.org/) tool for new projects. Poetry uses non-standard implementations of key features. For example, it does not use the standard format in _pyproject.toml_ files, which may cause compatibility issues with other tools.
+Avoid using the [Poetry](https://python-poetry.org/) or [Rye](https://rye.astral.sh/) tools for new projects. Poetry uses non-standard implementations of key features. For example, it does not use the standard format in _pyproject.toml_ files, which may cause compatibility issues with other tools. Rye is for developing experimental features that may be implemented in _uv_ in future.
 
 ### Format Your Code
 
@@ -96,7 +102,7 @@ To see how much of your code is covered by tests, add the [pytest-cov](https://p
 
 Always package the tools and code libraries that you would like to share with other people. Packages enable people to use your code with the tools and systems that they prefer to work with, and select the version of your code that is best for them.
 
-Use [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages for libraries. You can also use _wheel_ packages for development tools. If you publish your Python application as a _wheel_, other developers can use it with _pipx_. Remember that all _wheel_ packages require an existing installation of Python.
+Use [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages for libraries. You can also use _wheel_ packages for development tools. If you publish your Python application as a _wheel_, other developers can run it with _uv_ or _pipx_. Remember that all _wheel_ packages require an existing installation of Python.
 
 In most cases, you should package an application in a format that enables you to include your code, the dependencies and a copy of the required version of Python. This ensures that your code runs with the expected version of Python, and has the correct version of each dependency.
 
@@ -293,13 +299,13 @@ You can set up and use virtual environments with _venv_, which is part of the Py
 
 ### Use Requirements Files to Install Packages Into Environments
 
-Avoid using _pip_ commands to install individual packages into virtual environments. If you use [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io) to develop your project, they can manage the contents of virtual environments for development and testing.
+Avoid using _pip_ commands to install individual packages into virtual environments. If you use [uv](https://docs.astral.sh/uv/), [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io) to develop your project, they can manage the contents of virtual environments for development and testing.
 
 For other cases, use [requirements files](https://pip.pypa.io/en/stable/reference/requirements-file-format/). A requirements file can specify the exact version and hash for each required package.
 
-You run a tool to read the dependencies in the _pyproject.toml_ file and generate a requirements file that lists the specific packages that are needed to provide those dependencies for the Python version and operating system. PDM, [pip-tools](https://pip-tools.readthedocs.io/en/stable/) and [uv](https://github.com/astral-sh/uv) include features to create requirements files.
+You run a tool to read the dependencies in the _pyproject.toml_ file and generate a requirements file that lists the specific packages that are needed to provide those dependencies for the Python version and operating system. PDM, [pip-tools](https://pip-tools.readthedocs.io/en/stable/) and [uv](https://docs.astral.sh/uv/) include features to create requirements files.
 
-You can then use [pip-sync](https://pip-tools.readthedocs.io/en/stable/cli/pip-sync/) or the _pip sync_ feature of _uv_ to make the packages in a target virtual environment match the list in the requirements file. This process ensures that any extra packages are removed from the virtual environment.
+You can then use [pip-sync](https://pip-tools.readthedocs.io/en/stable/cli/pip-sync/) or the _sync_ feature of _uv_ to make the packages in a target virtual environment match the list in the requirements file. This process ensures that any extra packages are removed from the virtual environment.
 
 You can also run _pip install_ with a requirements file. This only attempts to install the specified packages. For example, these commands install the packages that are specified by the file _requirements-macos-dev.txt_ into the virtual environment _.venv-dev_:
 
