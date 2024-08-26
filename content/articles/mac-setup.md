@@ -1,20 +1,20 @@
 +++
 title = "How to Set up an Apple Mac for Software Development"
 slug = "mac-setup"
-date = "2024-08-24T06:48:00+01:00"
+date = "2024-08-26T11:53:00+01:00"
 description = "Setting up an Apple Mac for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "macos", "golang", "java", "javascript", "python"]
 
 +++
 
-A guide to setting up an Apple Mac for DevOps and software development. This is current for macOS 12 (Monteray).
+A guide to setting up an Apple Mac for DevOps and software development.
 
 If you are thinking of switching to Linux, I also provide a [guide for setting up Fedora Workstation for development and DevOps](https://www.stuartellis.name/articles/fedora-workstation-setup/). Fedora is consistently the highest quality Linux desktop distribution.
 
 ## Do This First
 
-Log in once, run Software Update, and ensure that the operating system is at the latest
+Log in once, go to _System Settings_ and use _Software Update_ to ensure that the operating system is at the latest
 point release. After all of the updates have been applied, restart the computer.
 
 ## Configuring a User Account
@@ -35,36 +35,37 @@ _Admin accounts have sudo privileges:_ All Admin accounts on a Mac may use sudo 
 Whether or not you regularly use Safari, you should open it once, and adjust the
 settings in case that you use it later.
 
-First, choose _Safari \> Preferences \> General_ and deselect the option _Open “safe” files after downloading_.
+First, choose _Safari \> Settings \> General_ and deselect the option _Open “safe” files after downloading_.
 
-Second, go to _Safari \> Preferences \> Search_. Decide which search engine that you want to use. Ensure that _Safari Suggestions_  and _Preload Top Hit in the background_ are not enabled.
+Second, go to _Safari \> Settings \> Search_. Decide which search engine that you want to use. Ensure that _Include search engine suggestions_, _Include Safari Suggestions_ and _Preload Top Hit in the background_ are not enabled.
 
 ## Configuring Security
 
 Apple provide quite secure operating systems, but unfortunately convenience has won out
 over security in a few places. These can easily be corrected by changing a few settings.
-If you are using a laptop then you should probably make all of these changes as soon as
-possible.
+If you are using a laptop then make all of these changes as soon as possible.
 
 ### Security & Privacy
 
-Select _System Preferences \> Security & Privacy_, and set the following:
+Select _System Settings \> Privacy & Security_.
 
-- Under _General_, set _require a password after sleep or screen saver begins_ to
-  _immediately_
-- Under _General_, click _Advanced..._ and select _Require an administrator password to access system-wide preferences_
-- Under _Firewall_, click _Turn Firewall On_.
-- Under _Privacy_, select _Analytics & Improvements_ and ensure that the options are not enabled.
+- Select _Analytics & Improvements_ and ensure that the options are not enabled.
+- Select _Apple Advertising_ and ensure that _Personalised Ads_ is set to _off_.
+- Ensure that _Allow accessories to connect_ is set to _Ask for New Accessories_.
+- Choose  _Advanced..._ and select _Require an administrator password to access systemwide settings_.
 
-### Spotlight
+### Lock Screen
 
-By default, Spotlight sends queries to Apple. Unless you want this feature, turn it off.
+- Set _require password after screen saver begins or display is turned off_ to _Immediately_.
+- Set _Show password hints_ to _off_.
 
-Select _System Preferences \> Spotlight \> Search Results_, and ensure that _Siri Suggestions_ is not enabled.
+### Network
+
+- Ensure that _Firewall_ is _Active_.
 
 ### Enable File Vault NOW
 
-File Vault 2, a full-disk encryption system. You should enable File Vault
+File Vault is a full-disk encryption system. You should enable File Vault
 _NOW_, because it is the only protection against anyone with physical access to your
 computer. All other security measures will be completely bypassed if someone with
 physical access simply restarts the computer with a bootable pen drive.
@@ -92,7 +93,7 @@ drive. The only settings that may need to change are the exclusions.
 
 Choose _System Preferences \> Time Machine_, and click _Options_. Add to the exclusions
 list any folders that contain ISO disk images, virtual machines, or database files (such
-as Entourage). If the external hard drive is short of space, exclude the _System_
+as Outlook). If the external hard drive is short of space, exclude the _System_
 folder.
 
 ## Setting Up for Development
@@ -112,8 +113,8 @@ If you want to install just the Command Line Tools, you can download a package f
 
 ### Setting Up Homebrew
 
-[Homebrew](http://brew.sh/) provides a package management system for macOS, enabling you
-to quickly install and update the tools and libraries that you need. Always use Homebrew to install tools that are frequently updated, like the [AWS CLI](https://aws.amazon.com/cli/) and [Trivy](https://aquasecurity.github.io/trivy).
+[Homebrew](http://brew.sh/) provides a package management system for macOS. It enables you
+to quickly install the tools and libraries that you need and regularly update all of them. Always use Homebrew for tools that have frequently have new releases, like the [AWS CLI](https://aws.amazon.com/cli/) and [Trivy](https://aquasecurity.github.io/trivy).
 
 To install Homebrew, download and open the latest PKG file from [the Releases on GitHub](https://github.com/Homebrew/brew/releases/latest).
 
@@ -137,6 +138,12 @@ To update the index of available packages, run this command in a terminal window
 
 ```shell
 brew update
+```
+
+To upgrade all the packages that you have installed, run this command in a terminal window:
+
+```shell
+brew upgrade
 ```
 
 ### Enabling Auto Completion of Commands
@@ -237,11 +244,11 @@ git config --global user.signingkey C36CB86CB86B3716
 git config --global commit.gpgsign true
 ```
 
-Finally, add your GPG key to your accounts on code hosting services that you use:
+Finally, add your GPG key to your accounts on code hosting services that you use. Here are links to the documentation for some popular code hosting services:
 
 - [Codeberg](https://docs.codeberg.org/security/gpg-key/)
-- [GitLab](https://docs.gitlab.com/ee/user/project/repository/signed_commits/gpg.html#add-a-gpg-key-to-your-account)
 - [GitHub](https://docs.github.com/en/authentication/managing-commit-signature-verification/adding-a-gpg-key-to-your-github-account)
+- [GitLab](https://docs.gitlab.com/ee/user/project/repository/signed_commits/gpg.html#add-a-gpg-key-to-your-account)
 
 If you use multiple code hosting services for your projects, use the same GPG key for all of them. This ensures that copies of the same commits can be verified everywhere.
 
@@ -316,7 +323,7 @@ If possible, avoid using Homebrew itself to install programming languages. Homeb
 
 ### Python Development: pyenv and pipx
 
-Current versions of macOS include a copy of Python 3, but this will not be the latest version of Python. Use either [mise](https://mise.jdx.dev/) or [pyenv](https://github.com/pyenv/pyenv) to install Python. Both of these tools enable you to use multiple versions of Python.
+The copy of Python 3 that is supplied with macOS is never the latest version of Python. Use either [mise](https://mise.jdx.dev/) or [pyenv](https://github.com/pyenv/pyenv) to install newer versions of Python. Both of these tools enable you to use multiple versions of Python.
 
 To install pyenv with Homebrew, run this command in a terminal window:
 
