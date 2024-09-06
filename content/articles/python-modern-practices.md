@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-08-25T14:03:00+01:00"
+date = "2024-09-06T19:21:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -54,7 +54,7 @@ The _bpytop_ tool is cached after the first download, which means that the secon
 
 Use _uv tool install_ or _pipx install_ for tools that are essential for your development process. These options install the tool on to your system. This ensures that the tool is available if you have no Internet access, and that you keep the same version of the tool until you decide to upgrade it.
 
-For example, install [pre-commit](https://pre-commit.com/), rather than use a temporary copy. The  _pre-commit_ tool automatically runs every time that we commit a change to version control, so we want it to be consistent and always available. To install _pre-commit_, run the appropriate command for _uv_ or _pipx_:
+For example, install [pre-commit](https://pre-commit.com/), rather than use a temporary copy. The _pre-commit_ tool automatically runs every time that we commit a change to version control, so we want it to be consistent and always available. To install _pre-commit_, run the appropriate command for _uv_ or _pipx_:
 
 ```shell
 uv tool install pre-commit
@@ -78,7 +78,7 @@ Avoid using the [Poetry](https://python-poetry.org/) or [Rye](https://rye.astral
 
 Use a formatting tool with a plugin to your editor, so that your code is automatically formatted to a consistent style.
 
-[Black](https://black.readthedocs.io/en/stable/) is currently the most popular code formatting tool for Python, but consider using [Ruff](https://docs.astral.sh/ruff/). Ruff provides both code formatting and quality checks for Python code.
+[Black](https://black.readthedocs.io/en/stable/) is a popular code formatting tool for Python, but consider using [Ruff](https://docs.astral.sh/ruff/). Ruff provides both code formatting and quality checks for Python code.
 
 Use [pre-commit](https://pre-commit.com/) to run the formatting tool before each commit to source control. You should also run the formatting tool with your CI system, so that it rejects any code that does not match the format for your project.
 
@@ -287,13 +287,15 @@ Python project tools like PDM and Hatch automatically create and use a _pyprojec
 Python itself does not require a specific directory structure for your projects. The Python packaging documentation describes two popular directory structures: [the src layout and the flat layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/).
 The [pyOpenSci project documentation on directory structures](https://www.pyopensci.org/python-package-guide/package-structure-code/python-package-structure.html) explains the practical differences between the two.
 
-For modern Python projects, use the src layout. This requires you to use [editable installs](https://setuptools.pypa.io/en/latest/userguide/development_mode.html) of the packages in your project. [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) support editable installs.
+Use the src layout for a project that creates Python _wheel_ packages. This requires you to use [editable installs](https://setuptools.pypa.io/en/latest/userguide/development_mode.html) of the packages in your project. [PDM](https://pdm-project.org), [uv](https://docs.astral.sh/uv/) and [Hatch](https://hatch.pypa.io) support editable installs.
+
+> By default, uv will create a project with the flat layout. Use the _--lib_ flag to create a project with the src layout.
 
 ### Use Virtual Environments for Development
 
 The [virtual environments](https://docs.python.org/3/tutorial/venv.html) feature enables you to define one or more separate sets of packages for each Python project, and switch between them. This ensures that a set of packages that you use for a specific purpose do not conflict with any other Python packages on the system. Always use Python virtual environments for your projects.
 
-Several tools automate virtual environments. The [mise](https://mise.jdx.dev) version manager includes [support for virtual environments](https://mise.jdx.dev/lang/python.html#automatic-virtualenv-activation). The [pyenv](https://github.com/pyenv/pyenv) version manager supports virtual environments with the [virtualenv plugin](https://github.com/pyenv/pyenv-virtualenv). If you use a tool like [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io) to develop your projects, these also manage Python virtual environments for you.
+Several tools automate virtual environments. The [mise](https://mise.jdx.dev) version manager includes [support for virtual environments](https://mise.jdx.dev/lang/python.html#automatic-virtualenv-activation). The [pyenv](https://github.com/pyenv/pyenv) version manager supports virtual environments with the [virtualenv plugin](https://github.com/pyenv/pyenv-virtualenv). If you use a tool like [uv](https://docs.astral.sh/uv/), [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io) to develop your projects, these also manage Python virtual environments for you.
 
 You can set up and use virtual environments with _venv_, which is part of the Python standard library. This is a manual process.
 
