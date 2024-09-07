@@ -1,7 +1,7 @@
 +++
 title = "Setting Up Fedora Workstation for Software Development"
 slug = "fedora-workstation-setup"
-date = "2024-08-24T06:49:00+01:00"
+date = "2024-09-07T08:40:00+01:00"
 description = "Setting up a Fedora Workstation for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
@@ -119,13 +119,6 @@ Add a GPG key to Git before you commit to shared projects. The next section expl
 
 Always use [GPG](https://gnupg.org/) to sign the commits that you make in code repositories, especially for shared projects like Open Source software. This means that each commit can be linked to the author.
 
-To install GPG on macOS, use Homebrew.
-
-```shell
-brew install gnupg
-brew install pinentry-mac
-```
-
 To create a GPG key, run the _gpg_ command in a terminal window. For example:
 
 ```shell
@@ -226,7 +219,7 @@ brew update
 
 Avoid using the Fedora packages for programming languages. Instead, use version manager tools. These enable you to install the correct version of the required programming language and dependencies for each of your projects. Use Homebrew to install version manager tools.
 
-Use [pyenv](https://github.com/pyenv/pyenv) for Python and [rustup](https://rustup.rs/) for Rust. The standard _go_ tool [manages versions of Go](https://go.dev/doc/manage-install#installing-multiple). If you work with Terraform or OpenTofu, use [tenv](https://tofuutils.github.io/tenv/). Use the [mise](https://mise.jdx.dev/) version manager for JavaScript, as it provides a consistent set of features for managing many tools, including Node.js, Deno and Bun.
+Use [pyenv](https://github.com/pyenv/pyenv) for Python and [rustup](https://rustup.rs/) for Rust. The standard _go_ tool [manages versions of Go](https://go.dev/doc/manage-install#installing-multiple). If you work with Terraform or OpenTofu, use [tenv](https://tofuutils.github.io/tenv/). Consider using the [mise](https://mise.jdx.dev/) version manager for JavaScript, as it provides a consistent set of features for managing many tools, including Node.js, Deno and Bun.
 
 Alternatively, Fedora Workstation includes [toolbx](https://containertoolbx.org/) to help you manage container environments for developing your projects. Container environments also enable you to have separate versions of software for each of your projects.
 
@@ -258,13 +251,15 @@ Fedora includes an installation of Python 3, which is used by system tools. Avoi
 
 ## Working with Containers
 
-Fedora Workstation automatically includes support for containers. [Podman](https://podman.io/) provides the features of Docker and [toolbx](https://containertoolbx.org/) helps you manage container environments for developing your projects.
+Fedora Workstation automatically has support for running containers with [Podman](https://podman.io/). This provides the features of Docker for running container images. It also includes [toolbx](https://containertoolbx.org/), which uses containers to manage environments for developing your projects.
 
 To use a graphical interface for working with containers, add [Podman Desktop](https://podman-desktop.io) to your system. To install Podman Desktop, go to _Software_, search for _Podman Desktop_, select the entry from the list, and choose _Install_.
 
+To create container images, install [buildah](https://buildah.io). This command-line tool provides the same features as Docker for building container images.
+
 ### Podman
 
-Podman replaces [Docker](https://www.docker.com/), and also has additional features to integrate better with both the Linux operating system and Kubernetes. For example, [you can run Podman containers as standard system services](https://www.redhat.com/sysadmin/quadlet-podman).
+Podman replaces [Docker](https://www.docker.com/) for running container images, and also has additional features to integrate better with both the Linux operating system and Kubernetes. For example, [you can run Podman containers as standard system services](https://www.redhat.com/sysadmin/quadlet-podman).
 
 Podman accepts the same syntax as the _docker_ command-line tool, and will read Dockerfiles. Both Docker and Podman use the OCI image format, so that images created either product will work with the other. By default, Podman will check the Docker public registry for container images, as well as [Quay](https://quay.io/) registries.
 
@@ -304,7 +299,7 @@ projects, and ensure that you are running the same versions as the database inst
 your production systems.
 
 If you prefer to install services directly on to your workstation, Fedora provides
-packages for PostgreSQL and [MariaDB](https://mariadb.org/). If you need a database
+packages for [PostgreSQL](https://www.postgresql.org/) and [MariaDB](https://mariadb.org/). If you need a database
 server that is compatible with MySQL, install MariaDB. Otherwise, PostgreSQL is often a
 better choice for new applications.
 
@@ -345,5 +340,5 @@ createuser EXTRA-ACCOUNT
 
 Replace _EXTRA-ACCOUNT_ with the username of the new account.
 
-Refer to the [Fedora Wiki article](https://fedoraproject.org/wiki/PostgreSQL) for more
+Refer to the [Fedora documentation](https://docs.fedoraproject.org/en-US/quick-docs/postgresql/) for more
 information on working with PostgreSQL.
