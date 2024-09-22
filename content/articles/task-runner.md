@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-08-04T08:20:00+01:00"
+date = "2024-09-22T09:20:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -93,7 +93,7 @@ curl -L https://taskfile.dev/install.sh > install-task.sh
 To use the installation script, call it with the Git tag and the _-b_ option. The Git tag specifies the version of Task. The _-b_ option specifies which directory to install it to:
 
 ```shell
-./install-task.sh -b $HOME/.local/bin v3.38.0
+./install-task.sh -b $HOME/.local/bin v3.39.2
 ```
 
 {{< alert >}}
@@ -129,13 +129,13 @@ To enable support for Task in JetBrains IDEs such as PyCharm, install the [Taskf
 
 ### Enabling Autocompletion
 
-To enable autocompletion for Task in a shell, [download the appropriate script and install it into the correct location](https://taskfile.dev/installation#setup-completions). For example, this command enables autocompletion in the fish shell:
+To enable autocompletion for Task in a shell, [follow the instructions for the shell that you use](https://taskfile.dev/installation/#option-1-load-the-completions-in-your-shells-startup-config-recommended). For example, to add autocompletion for the fish shell, add this line to the file _~/.config/fish/config.fish_:
 
 ```shell
-curl -L https://raw.githubusercontent.com/go-task/task/main/completion/fish/task.fish > $HOME/.config/fish/completions/task.fish
+task --completion fish | source
 ```
 
-The Task project currently provides autocompletions for Bash, zsh, fish and PowerShell.
+The Task project currently provides completion support for Bash, zsh, fish and PowerShell.
 
 ### Adding Task to a Dev Container
 
@@ -144,7 +144,7 @@ If you are using a Dev Container with Visual Studio Code, you can add the featur
 ```json
     "features": {
         "ghcr.io/devcontainers-contrib/features/go-task:1": {
-            "version": "3.38.0"
+            "version": "3.39.2"
         }
     }
 ```
