@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-08-04T08:16:00+01:00"
+date = "2024-10-05T19:41:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -11,7 +11,7 @@ The [just](https://just.systems) tool is a task runner. It provides a consistent
 
 ## How just Works
 
-Each copy of _just_ is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, about 6Mb for the 64-bit Linux version. It uses sets of tasks that are defined in plain-text files. You may write a task in any programming language that runs with an interpreter, such as UNIX shells, PowerShell, Python, JavaScript or Nu shell.
+Each copy of _just_ is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, about 5Mb for the 64-bit Linux version. It uses sets of tasks that are defined in plain-text files. You may write a task in any programming language that runs with an interpreter, such as UNIX shells, PowerShell, Python, JavaScript or Nu shell.
 
 This means that you can add _just_ to any environment and use whichever scripting languages are available. If you define [multiple implementations of a task](https://just.systems/man/en/chapter_32.html#enabling-and-disabling-recipes180), _just_ runs the correct implementation for the current platform. It also provides other features for you to customise the behavior of tasks for different environments.
 
@@ -59,17 +59,51 @@ This guarantee makes _just_ more suitable for public Open Source projects than o
 
 ## Installing just
 
-Consider using a tool version manager like [mise](https://mise.jdx.dev/), [asdf](https://asdf-vm.com) or [a Dev Container feature](https://code.visualstudio.com/docs/devcontainers/containers#_dev-container-features) to download and install _just_. These can install any version of _just_ that is required, including the latest, because they download executables from GitHub.
+If possible, use a tool that enables you to specify which versions of _just_ to install. This means that you can install the most recent version of _just_ that is available. You can use the [packages for your programming language](#using-just-in-a-project), a tool version manager like [mise](#installing-just-with-mise), or [the feature for Dev Containers](#adding-just-to-a-dev-container).
 
-For example, this command installs the latest version of _just_ with _mise_:
+If you do not wish to use a tool, see the section on [how to install _just_ with a script](#installing-just-with-a-script).
+
+These methods also enable you to add a copy of _just_ to a specific project, or install _just_ into a user account so that it is available for all of your work. If you install a copy of _just_ into a user account you can [integrate it  with your shell](#integrating-just-with-your-shell).
+
+Avoid [using operating system packages](#installing-just-with-operating-system-packages). These packages are likely to provide older versions of _just_.
+
+> If possible, use the Python or Rust tools to install _just_. The Python and Rust packages contain a copy of the _just_ executable. Other methods use scripts to download files from GitHub.
+
+### Installing just for a User with Python Tools
+
+If you use Python, you can install _just_ into your user account with your existing tools. It is available on the Python Package Index as [rust-just](https://pypi.org/project/rust-just/).
+
+To install _just_ with [uv](https://docs.astral.sh/uv/), run this command:
+
+```shell
+uv tool install rust-just==1.36.0
+```
+
+To install _just_ with [pipx](https://pipx.pypa.io), run this command:
+
+```shell
+pipx install rust-just==1.36.0
+```
+
+### Adding a Copy of just to a Project
+
+Python, Rust and Node.js projects may use packages for _just_:
+
+- Node.js: Use the [just-install](https://www.npmjs.com/package/just-install) npm package
+- Python: Use the [rust-just](https://pypi.org/project/rust-just/) package
+- Rust: To include _just_ in a Rust project, add [just](https://crates.io/crates/just) as a package in Cargo.
+
+If necessary, you can use the [installation script](#installing-just-with-a-script) to download a copy of _just_ into a directory within the project. If you do this, remember to exclude the path of the _just_ executable file from version control.
+
+### Installing just with mise
+
+This command installs the latest version of _just_ with [mise](https://mise.jdx.dev/) and makes it available to your user account:
 
 ```shell
 mise use -gy just
 ```
 
-If you do not wish to use a tool version manager, see the section below for how to install _just_ with a script.
-
-If possible, avoid using operating system packages. These are likely to provide older versions of _just_.
+You can also use _mise_ to specify alternate versions of _just_ for specific projects in the same ways that it manages other tools.
 
 ### Adding just to a Dev Container
 
@@ -78,7 +112,7 @@ If you are using a Visual Studio Code Dev Container, you can add the feature [gu
 ```json
     "features": {
         "ghcr.io/guiyomh/features/just:0": {
-            "version": "1.33.0"
+            "version": "1.36.0"
         }
     }
 ```
@@ -96,12 +130,12 @@ curl -L https://just.systems/install.sh > scripts/install-just.sh
 To use the installation script, call it with _--tag_ and _--to_ The _--tag_ specifies the version of _just_. The _--to_ specifies which directory to install it to:
 
 ```shell
-./scripts/install-just.sh --tag 1.33.0 --to $HOME/.local/bin
+./scripts/install-just.sh --tag 1.36.0 --to $HOME/.local/bin
 ```
 
 ### Installing just with Operating System Packages
 
-If you do need to install _just_ with an operating system package manager, it is available for many popular systems. For example, these commands install _just_:
+You can install _just_ with an operating system package manager, if necessary. For example, these commands install _just_:
 
 ```shell
 winget install --id Casey.Just --exact  # winget on Microsoft Windows
@@ -117,15 +151,11 @@ Debian only includes [_just_ in the _testing_ distribution](https://packages.deb
 
 > See [the package list page](https://just.systems/man/en/chapter_4.html) for a list of the available operating system packages.
 
-### Adding a Private Copy of just to a Project
+## Integrating just with Your Shell
 
-The instructions that are provided in the previous sections install a copy of _just_ for a user or a system. To install a copy of _just_ that is private to a project, you have several options.
+If you install a copy of _just_ into a user account you can integrate with your shell to enable autocompletion and a global set of of tasks.
 
-Rust and Node.js projects may use packages for _just_. To add _just_ to a Node.js project, use the [just-install](https://www.npmjs.com/package/just-install) npm package. To include _just_ in a Rust project, add [just](https://crates.io/crates/just) as a package in Cargo.
-
-Finally, you can use the installation script to install a copy of _just_ into a directory within the project. If you do this, remember to exclude the path of the _just_ executable file from version control.
-
-### Enabling Autocompletion
+### Enabling Shell Autocompletion
 
 To enable autocompletion in a shell, use _--completions_ to generate a completion script that you install into the correct location. For example, to enable autocompletion for the Bash shell, run this command:
 
@@ -136,7 +166,7 @@ sudo su -c 'just --completions bash > /etc/bash_completion.d/just.bash'
 To install autocompletion for the fish shell, use this command:
 
 ```fish
-just --completions fish > ~/.config/fish/completions
+just --completions fish > ~/.config/fish/completions/just.fish
 ```
 
 Current versions of _just_ provide autocompletion for Bash, zsh, fish, PowerShell, elvish and Nu.
@@ -145,29 +175,11 @@ Current versions of _just_ provide autocompletion for Bash, zsh, fish, PowerShel
 **macOS and Homebrew:** If you install _just_ on macOS with Homebrew, follow [these instructions](https://just.systems/man/en/chapter_69.html) for autocompletion with zsh.
 {{< /alert >}}
 
-### Enabling Visual Studio Code Integration
+### Creating a User justfile for Global Tasks
 
-The [nefrob.vscode-just-syntax](https://marketplace.visualstudio.com/items?itemName=nefrob.vscode-just-syntax) extension provides support for _justfiles_ in Visual Studio Code. This extension currently only provides syntax highlighting.
+If you install _just_ into a user account, you can define a set of recipes that are available at any time. Create a file with the name _.user.justfile_ in your home directory to store these recipes.
 
-### Enabling Integration with JetBrains IDEs
-
-To enable support for _just_ in JetBrains IDEs such as PyCharm, install the [Just](https://plugins.jetbrains.com/plugin/18658-just) plugin.
-
-### Registering justfiles for EditorConfig
-
-To ensure that [EditorConfig](https://editorconfig.org/) correctly manages the format of files for _just_, add this to the _.editorconfig_ file in your project:
-
-```toml
-[{justfile, *.just}]
-indent_style = space
-indent_size = 4
-```
-
-## Creating a User justfile for Global Tasks
-
-To define tasks that are available at any time, create a file with the name _.user.justfile_ in your home directory.
-
-Create the first recipe in the root _justfile_ with the name _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without the name of a recipe, it runs the first recipe in the _justfile_.
+Add the first recipe in the root _justfile_ with the name _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without the name of a recipe, it runs the first recipe in the _justfile_.
 
 Here is an example of a user justfile:
 
@@ -205,6 +217,16 @@ To list the recipes in your user _justfile_, type _.j_ and press the _Enter_ key
 .j
 ```
 
+## Integrating just with Other Tools
+
+### Enabling Visual Studio Code Integration
+
+The [nefrob.vscode-just-syntax](https://marketplace.visualstudio.com/items?itemName=nefrob.vscode-just-syntax) extension provides support for _justfiles_ in Visual Studio Code. This extension currently only provides syntax highlighting.
+
+### Enabling Integration with JetBrains IDEs
+
+To enable support for _just_ in JetBrains IDEs such as PyCharm, install the [Just](https://plugins.jetbrains.com/plugin/18658-just) plugin.
+
 ## Using just in a Project
 
 Use **just --init** to create a _justfile_ in the root directory of your project. You should always name the _just_ file in the root directory of the project _justfile_.
@@ -239,6 +261,16 @@ If you use multiple _justfiles_ in a project, consider following these guideline
 - To ensure that you do not accidentally run a recipe from a user _justfile_, do NOT set _fallback_ to _true_ in a _justfile_ in the root directory of a project.
 - To create namespaces for recipes, decide a standard prefix for each group of recipes, and set the name of each recipe to start with that prefix, e.g. _sys-_.
 - Use the [no-cd attribute](https://just.systems/man/en/chapter_34.html#disabling-changing-directory190) to define recipes that may be executed in one of several different possible directories. By default _just_ sets the working directory to be the location of the _justfile_ that contains the recipe.
+
+### Registering justfiles for EditorConfig
+
+To ensure that [EditorConfig](https://editorconfig.org/) correctly manages the format of files for _just_, add this to the _.editorconfig_ file in your project:
+
+```toml
+[{justfile, *.just}]
+indent_style = space
+indent_size = 4
+```
 
 ## Writing justfiles
 
