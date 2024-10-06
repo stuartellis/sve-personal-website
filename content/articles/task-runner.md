@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-10-06T14:05:00+01:00"
+date = "2024-10-06T14:10:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -162,7 +162,7 @@ task --completion fish | source
 
 The Task project currently provides completion support for Bash, zsh, fish and PowerShell.
 
-## Creating a User Taskfile for Global Tasks
+### Creating a User Taskfile for Global Tasks
 
 To define tasks that are available at any time, create a file with the name _Taskfile.yaml_ in your home directory.
 
