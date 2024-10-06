@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-10-05T19:41:00+01:00"
+date = "2024-10-06T14:03:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -63,11 +63,11 @@ If possible, use a tool that enables you to specify which versions of _just_ to 
 
 If you do not wish to use a tool, see the section on [how to install _just_ with a script](#installing-just-with-a-script).
 
-These methods also enable you to add a copy of _just_ to a specific project, or install _just_ into a user account so that it is available for all of your work. If you install a copy of _just_ into a user account you can [integrate it  with your shell](#integrating-just-with-your-shell).
+These methods also enable you to add a copy of _just_ to a specific project, or install _just_ into a user account so that it is available for all of your work. If you install a copy of _just_ into a user account you can [integrate it with your shell](#integrating-just-with-your-shell).
 
-Avoid [using operating system packages](#installing-just-with-operating-system-packages). These packages are likely to provide older versions of _just_.
+> If possible, use the Python or Rust tools to install _just_. The Python and Rust packages contain a copy of the _just_ executable. Other tools may download files from GitHub.
 
-> If possible, use the Python or Rust tools to install _just_. The Python and Rust packages contain a copy of the _just_ executable. Other methods use scripts to download files from GitHub.
+You can also install _just_ with [operating system packages](#installing-just-with-operating-system-packages). These packages may provide older versions of _just_.
 
 ### Installing just for a User with Python Tools
 
@@ -231,12 +231,26 @@ To enable support for _just_ in JetBrains IDEs such as PyCharm, install the [Jus
 
 Use **just --init** to create a _justfile_ in the root directory of your project. You should always name the _just_ file in the root directory of the project _justfile_.
 
-If a project only requires one small set of recipes, then use a single _justfile_. If you need to manage several sets of recipes, use multiple files.
+If a project only requires one small set of recipes, then use a single _justfile_.
+
+If you need to manage several sets of recipes, use multiple files.
+
+### Registering justfiles for EditorConfig
+
+To ensure that [EditorConfig](https://editorconfig.org/) correctly manages the format of files for _just_, add this to the _.editorconfig_ file in your project:
+
+```toml
+[{justfile, *.just}]
+indent_style = space
+indent_size = 4
+```
+
+### Multiple justfiles in a Project
 
 You have two ways to organize the other _justfiles_ in a project:
 
-1. Directory structure
-2. Modules
+1. [Directory structure](#multiple-justfiles-in-a-directory-structure)
+2. [Modules](#using-modules)
 
 You can combine these approaches, but few projects will be complex enough to need to do this.
 
@@ -249,28 +263,6 @@ If you are starting a new project and can require a current version of _just_, c
 > _Use just 1.31.0 or later with modules:_ The modules feature became available by default with  _just_ 1.31.0.
 
 A [later section](#using-modules) in this article explains how to use modules.
-
-### Multiple justfiles in a Directory Structure
-
-If you use multiple _justfiles_ in a project, consider following these guidelines:
-
-- Create the first recipe in the root _justfile_ with the name _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without the name of a recipe, it runs the first recipe in the _justfile_.
-- Create an extra _justfile_ in each subdirectory that should be a separate scope of operations. For example, if you have a monorepo, create a child _justfile_ in the main directory for each component.
-- Set _fallback_ to _true_ in each _justfile_ that is NOT in the root directory of the project. This enables _just_ to find recipes from the root _justfile_ as well as the _justfile_ in the current working directory.
-- If you have many recipes for a single _justfile_, consider putting the recipes into several _.just_ files and using [imports](https://just.systems/man/en/chapter_55.html) to combine them.
-- To ensure that you do not accidentally run a recipe from a user _justfile_, do NOT set _fallback_ to _true_ in a _justfile_ in the root directory of a project.
-- To create namespaces for recipes, decide a standard prefix for each group of recipes, and set the name of each recipe to start with that prefix, e.g. _sys-_.
-- Use the [no-cd attribute](https://just.systems/man/en/chapter_34.html#disabling-changing-directory190) to define recipes that may be executed in one of several different possible directories. By default _just_ sets the working directory to be the location of the _justfile_ that contains the recipe.
-
-### Registering justfiles for EditorConfig
-
-To ensure that [EditorConfig](https://editorconfig.org/) correctly manages the format of files for _just_, add this to the _.editorconfig_ file in your project:
-
-```toml
-[{justfile, *.just}]
-indent_style = space
-indent_size = 4
-```
 
 ## Writing justfiles
 
@@ -338,6 +330,18 @@ You may also use these two options to check the behavior of _just_:
 
 - **-n, --dry-run** - Prints what _just_ would do without doing it
 - **--evaluate** - Evaluates and prints all of the variables. If a variable name is given as an argument, it only prints the value of that variable.
+
+## Multiple justfiles in a Directory Structure
+
+If you use multiple _justfiles_ in a project, consider following these guidelines:
+
+- Create the first recipe in the root _justfile_ with the name _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without the name of a recipe, it runs the first recipe in the _justfile_.
+- Create an extra _justfile_ in each subdirectory that should be a separate scope of operations. For example, if you have a monorepo, create a child _justfile_ in the main directory for each component.
+- Set _fallback_ to _true_ in each _justfile_ that is NOT in the root directory of the project. This enables _just_ to find recipes from the root _justfile_ as well as the _justfile_ in the current working directory.
+- If you have many recipes for a single _justfile_, consider putting the recipes into several _.just_ files and using [imports](https://just.systems/man/en/chapter_55.html) to combine them.
+- To ensure that you do not accidentally run a recipe from a user _justfile_, do NOT set _fallback_ to _true_ in a _justfile_ in the root directory of a project.
+- To create namespaces for recipes, decide a standard prefix for each group of recipes, and set the name of each recipe to start with that prefix, e.g. _sys-_.
+- Use the [no-cd attribute](https://just.systems/man/en/chapter_34.html#disabling-changing-directory190) to define recipes that may be executed in one of several different possible directories. By default _just_ sets the working directory to be the location of the _justfile_ that contains the recipe.
 
 ## Using Modules
 

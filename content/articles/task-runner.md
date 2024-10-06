@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-09-22T09:20:00+01:00"
+date = "2024-10-06T14:05:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -66,17 +66,52 @@ tasks:
 
 ## Installing Task
 
-Consider using a tool version manager like [mise](https://mise.jdx.dev/) or [asdf](https://asdf-vm.com) to install Task. For example, this command installs the latest version of Task with _mise_:
+You can install Task with [operating system packages](#installing-task-with-operating-system-packages). These packages only provide a single global copy of Task, which may be an older version.
+
+If possible, use a tool that enables you to specify which versions of Task to install and activate different versions of Task for different projects. These options enable you to specify a version of Task for a project:
+
+1. Tool version managers like [mise](#installing-task-with-mise)
+2. [Dev Containers](#adding-task-to-a-dev-container)
+3. [Installation script](#installing-task-with-a-script)
+
+Tool version managers and the installation script also enable you to install Task so that it is globally available for all of your work, not just a single project.
+
+If you install a global copy of Task then [you can integrate it with your shell](#integrating-task-with-your-shell).
+
+### Installing Task with mise
+
+This command installs the latest version of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
 
 ```shell
 mise use -gy task
 ```
 
-If you use Visual Studio Code and have a Dev Container configuration for a project, use the [go-task feature](https://github.com/devcontainers-contrib/features/blob/main/src/go-task/README.md), as shown in the section below.
+### Adding Task to a Dev Container
 
-To add Task to container images or systems without a tool version manager, see the section below for how to install Task with a script.
+If you are using a Dev Container with Visual Studio Code, you can add the feature [go-task](https://github.com/devcontainers-contrib/features/blob/main/src/go-task/README.md) to your _devcontainer.json_ file to download Task from GitHub:
 
-All of these methods enable you to specify a version of Task for each project that you work on, and ensure that the expected version of Task is present. If possible, avoid using operating system packages. A package installs a single shared copy of Task, and is likely to provide an older version.
+```json
+    "features": {
+        "ghcr.io/devcontainers-contrib/features/go-task:1": {
+            "version": "3.39.2"
+        }
+    }
+```
+
+Ensure that you also include the [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) and [task.vscode-task](https://marketplace.visualstudio.com/items?itemName=task.vscode-task) extensions in the _devcontainer.json_ file:
+
+```json
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "redhat.vscode-yaml",
+                "task.vscode-task"
+            ]
+        }
+    }
+```
+
+The _vscode-yaml_ extension enables YAML formatting and validation, and _vscode-task_ adds a graphical integration for running tasks.
 
 ### Installing Task with a Script
 
@@ -115,17 +150,7 @@ To install Task on Alpine Linux, you need to enable the _community_ package repo
 
 > _Alpine Linux installs Task as go-task._ This means that you need to use the name _go-task_ rather than _task_ on the command-line. For example _go-task --list_.
 
-### Enabling Visual Studio Code Integration
-
-To use Task with Visual Studio Code, install the [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) and [task.vscode-task](https://marketplace.visualstudio.com/items?itemName=task.vscode-task) extensions.
-
-The _vscode-yaml_ extension enables YAML formatting and validation, and _vscode-task_ adds a graphical integration for running tasks.
-
-> _You must install Task to use the vscode-task extension._
-
-### Enabling Integration with JetBrains IDEs
-
-To enable support for Task in JetBrains IDEs such as PyCharm, install the [Taskfile](https://plugins.jetbrains.com/plugin/17058-taskfile) plugin.
+## Integrating Task with Your Shell
 
 ### Enabling Autocompletion
 
@@ -136,33 +161,6 @@ task --completion fish | source
 ```
 
 The Task project currently provides completion support for Bash, zsh, fish and PowerShell.
-
-### Adding Task to a Dev Container
-
-If you are using a Dev Container with Visual Studio Code, you can add the feature [go-task](https://github.com/devcontainers-contrib/features/blob/main/src/go-task/README.md) to your _devcontainer.json_ file to download Task from GitHub:
-
-```json
-    "features": {
-        "ghcr.io/devcontainers-contrib/features/go-task:1": {
-            "version": "3.39.2"
-        }
-    }
-```
-
-Ensure that you also include the [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) and [task.vscode-task](https://marketplace.visualstudio.com/items?itemName=task.vscode-task) extensions in the _devcontainer.json_ file:
-
-```json
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "redhat.vscode-yaml",
-                "task.vscode-task"
-            ]
-        }
-    }
-```
-
-The _vscode-yaml_ extension enables YAML formatting and validation, and _vscode-task_ adds a graphical integration for running tasks.
 
 ## Creating a User Taskfile for Global Tasks
 
@@ -208,6 +206,20 @@ if command -s task > /dev/null
     abbr --add .t task -g
 end
 ```
+
+## Integrating Task with Other Tools
+
+### Enabling Visual Studio Code Integration
+
+To use Task with Visual Studio Code, install the [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) and [task.vscode-task](https://marketplace.visualstudio.com/items?itemName=task.vscode-task) extensions.
+
+The _vscode-yaml_ extension enables YAML formatting and validation, and _vscode-task_ adds a graphical integration for running tasks.
+
+> _You must install Task to use the vscode-task extension._
+
+### Enabling Integration with JetBrains IDEs
+
+To enable support for Task in JetBrains IDEs such as PyCharm, install the [Taskfile](https://plugins.jetbrains.com/plugin/17058-taskfile) plugin.
 
 ## Using Task in a Project
 
@@ -487,5 +499,5 @@ silent: false
 ## Resources
 
 - [Documentation for Task](https://taskfile.dev/)
-- [Using a task runner to help with context switching in software projects](https://www.caro.fyi/articles/just/)
+- [Using a task runner to help with context switching in software projects](https://www.caro.fyi/articles//)
 - [Video: Say Goodbye to Makefile - Use Taskfile to Manage Tasks in CI/CD Pipelines and Locally](https://www.youtube.com/watch?v=Z7EnwBaJzCk) (YouTube, 17 minutes long)
