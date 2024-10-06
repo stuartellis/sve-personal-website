@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-10-06T14:10:00+01:00"
+date = "2024-10-06T14:13:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -431,7 +431,7 @@ Add these lines to the _.pre-commit-config.yaml_ file in the root directory of y
 
 ```yaml
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: "0.29.1"
+  rev: "0.29.3"
   hooks:
     - id: check-taskfile
 - repo: https://github.com/adrienverge/yamllint.git
