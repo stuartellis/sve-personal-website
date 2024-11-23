@@ -1,7 +1,7 @@
 +++
 title = "Using the just Task Runner"
 slug = "just-task-runner"
-date = "2024-10-06T14:03:00+01:00"
+date = "2024-11-23T18:02:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -9,17 +9,19 @@ tags = ["automation", "devops"]
 
 The [just](https://just.systems) tool is a task runner. It provides a consistent framework for working with sets of tasks, which may be written in any scripting language and can run on multiple platforms.
 
+Consider using _just_ when you are writing task definitions that must run on many environments, especially when you do not manage the systems that the tasks are run on. The [backwards compatibility guarantee](#the-backwards-compatibility-guarantee) ensures that tasks can run correctly even when systems use different versions of _just_.
+
 ## How just Works
 
 Each copy of _just_ is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, about 5Mb for the 64-bit Linux version. It uses sets of tasks that are defined in plain-text files. You may write a task in any programming language that runs with an interpreter, such as UNIX shells, PowerShell, Python, JavaScript or Nu shell.
 
-This means that you can add _just_ to any environment and use whichever scripting languages are available. If you define [multiple implementations of a task](https://just.systems/man/en/chapter_32.html#enabling-and-disabling-recipes180), _just_ runs the correct implementation for the current platform. It also provides other features for you to customise the behavior of tasks for different environments.
+This means that you can add _just_ to any environment and use whichever scripting languages are available. If you define [multiple implementations of a task](https://just.systems/man/en/attributes.html?highlight=disabl#enabling-and-disabling-recipes180), _just_ runs the correct implementation for the current platform. It also provides other features for you to customise the behavior of tasks for different environments.
 
-For example, you may use built-in [functions for just](https://just.systems/man/en/chapter_32.html) in your tasks. These functions include identifying the host environment, reading environment variables, generating UUIDs, calculating file checksums and formatting string inputs. These enable you to get consistent inputs for your tasks across different platforms, even if the scripting language that you use does not have these features.
+For example, you may use built-in [functions for just](https://just.systems/man/en/functions.html) in your tasks. These functions include identifying the host environment, reading environment variables, generating UUIDs, calculating file checksums and formatting string inputs. These enable you to get consistent inputs for your tasks across different platforms, even if the scripting language that you use does not have these features.
 
 > **Terms:** In _just_, tasks are referred to as **recipes**. The text files that contain recipes are known as **justfiles**.
 
-You do not need to set up or configure _just_, because it only requires a copy of the executable, and has no configuration files apart from the files that contain the recipes. Here is an example of a _justfile_:
+You do not need to set up or configure _just_. It only requires a copy of the executable, and has no configuration files apart from the files that contain the recipes. Here is an example of a _justfile_:
 
 ```just
 # Recipes for Hugo
@@ -51,21 +53,21 @@ serve:
     @hugo server
 ```
 
-## The Backwards Compatibility Guarantee
+### The Backwards Compatibility Guarantee
 
-The behaviour of _just_ is covered by a [backwards compatibility guarantee](https://just.systems/man/en/chapter_9.html). To verify that new versions of _just_ do not break compatibility, the _just_ project maintain automation to test against _justfiles_ that are published as Open Source.
+The behaviour of _just_ is covered by a [backwards compatibility guarantee](https://just.systems/man/en/backwards-compatibility.html). To verify that new versions of _just_ do not break compatibility, the _just_ project maintain automation to test against _justfiles_ that are published as Open Source.
 
 This guarantee makes _just_ more suitable for public Open Source projects than other alternatives. The developers of the project simply need to specify the minimum version of _just_ that supports the features that they use. Tasks will work for contributors and users that have any version of _just_ that is the same or more recent than this minimum version.
 
 ## Installing just
 
-If possible, use a tool that enables you to specify which versions of _just_ to install. This means that you can install the most recent version of _just_ that is available. You can use the [packages for your programming language](#using-just-in-a-project), a tool version manager like [mise](#installing-just-with-mise), or [the feature for Dev Containers](#adding-just-to-a-dev-container).
+If possible, use a tool that enables you to specify which versions of _just_ to install. This means that you can install the most recent version of _just_ that is available. You can use [Python tools](#installing-just-for-a-user-with-python-tools), [Rust and Node.js packages](#adding-a-copy-of-just-to-a-project), a tool version manager like [mise](#installing-just-with-mise), or [the feature for Dev Containers](#adding-just-to-a-dev-container).
 
 If you do not wish to use a tool, see the section on [how to install _just_ with a script](#installing-just-with-a-script).
 
 These methods also enable you to add a copy of _just_ to a specific project, or install _just_ into a user account so that it is available for all of your work. If you install a copy of _just_ into a user account you can [integrate it with your shell](#integrating-just-with-your-shell).
 
-> If possible, use the Python or Rust tools to install _just_. The Python and Rust packages contain a copy of the _just_ executable. Other tools may download files from GitHub.
+> If possible, use the [Python](#installing-just-for-a-user-with-python-tools) or Rust tools to install _just_. The Python and Rust packages contain a copy of the _just_ executable. Other tools may download files from GitHub.
 
 You can also install _just_ with [operating system packages](#installing-just-with-operating-system-packages). These packages may provide older versions of _just_.
 
@@ -76,13 +78,13 @@ If you use Python, you can install _just_ into your user account with your exist
 To install _just_ with [uv](https://docs.astral.sh/uv/), run this command:
 
 ```shell
-uv tool install rust-just==1.36.0
+uv tool install rust-just==1.37.0
 ```
 
 To install _just_ with [pipx](https://pipx.pypa.io), run this command:
 
 ```shell
-pipx install rust-just==1.36.0
+pipx install rust-just==1.37.0
 ```
 
 ### Adding a Copy of just to a Project
@@ -112,14 +114,14 @@ If you are using a Visual Studio Code Dev Container, you can add the feature [gu
 ```json
     "features": {
         "ghcr.io/guiyomh/features/just:0": {
-            "version": "1.36.0"
+            "version": "1.37.0"
         }
     }
 ```
 
 ### Installing just with a Script
 
-The _just_ project provide a [script for downloading just from GitHub](https://just.systems/man/en/chapter_5.html). You may either fetch this installation script each time, as the documentation describes, or save it. To ensure that container image builds are consistent, use a saved copy of the script when you build Docker container images.
+The _just_ project provide a [script for downloading just from GitHub](https://just.systems/man/en/pre-built-binaries.html). You may either fetch this installation script each time, as the documentation describes, or save it. To ensure that container image builds are consistent, use a saved copy of the script when you build Docker container images.
 
 To save the installation script:
 
@@ -130,7 +132,7 @@ curl -L https://just.systems/install.sh > scripts/install-just.sh
 To use the installation script, call it with _--tag_ and _--to_ The _--tag_ specifies the version of _just_. The _--to_ specifies which directory to install it to:
 
 ```shell
-./scripts/install-just.sh --tag 1.36.0 --to $HOME/.local/bin
+./scripts/install-just.sh --tag 1.37.0 --to $HOME/.local/bin
 ```
 
 ### Installing just with Operating System Packages
@@ -149,7 +151,7 @@ To install _just_, you also need to enable the _community_ package repository fo
 
 Debian only includes [_just_ in the _testing_ distribution](https://packages.debian.org/trixie/just).
 
-> See [the package list page](https://just.systems/man/en/chapter_4.html) for a list of the available operating system packages.
+> See [the package list page](https://just.systems/man/en/packages.html) for a list of the available operating system packages.
 
 ## Integrating just with Your Shell
 
@@ -172,7 +174,7 @@ just --completions fish > ~/.config/fish/completions/just.fish
 Current versions of _just_ provide autocompletion for Bash, zsh, fish, PowerShell, elvish and Nu.
 
 {{< alert >}}
-**macOS and Homebrew:** If you install _just_ on macOS with Homebrew, follow [these instructions](https://just.systems/man/en/chapter_69.html) for autocompletion with zsh.
+**macOS and Homebrew:** If you install _just_ on macOS with Homebrew, follow [these instructions](https://just.systems/man/en/shell-completion-scripts.html?highlight=homebrew#shell-completion-scripts) for autocompletion with zsh.
 {{< /alert >}}
 
 ### Creating a User justfile for Global Tasks
@@ -284,13 +286,13 @@ just --unstable --fmt
 
 Follow these guidelines when writing recipes:
 
-- Use [parameters](https://just.systems/man/en/chapter_41.html) to get inputs for a recipe from the command-line.
-- Use [dotenv files](https://just.systems/man/en/chapter_27.html#dotenv-settings) to get configuration from files.
+- Use [parameters](https://just.systems/man/en/recipe-parameters.html) to get inputs for a recipe from the command-line.
+- Use [dotenv files](https://just.systems/man/en/settings.html#dotenv-settings) to get configuration from files.
 - Remember to use POSIX shell (_sh_) syntax for single-line recipes. By default, _just_ uses the _sh_ shell on the system.
-- When it is possible, use the [built-in functions](https://just.systems/man/en/chapter_32.html) instead of shell commands, because these will behave consistently across different environments.
-- Use [shebang recipes](https://just.systems/man/en/chapter_43.html) for multi-line shell recipes, as well as recipes in other languages.
-- If you need the features of a specific UNIX shell, use a shebang recipe. Set [error handling for recipes that use bash](https://just.systems/man/en/chapter_44.html).
-- Use [quotes around arguments](https://just.systems/man/en/chapter_61.html#quoting) to ensure that _just_ can identify mistakes.
+- When it is possible, use the [built-in functions](https://just.systems/man/en/functions.html) instead of shell commands, because these will behave consistently across different environments.
+- Use [shebang recipes](https://just.systems/man/en/shebang-recipes.html) for multi-line shell recipes, as well as recipes in other languages.
+- If you need the features of a specific UNIX shell, use a shebang recipe. Set [error handling for recipes that use bash](https://just.systems/man/en/safer-bash-shebang-recipes.html).
+- Use [quotes around arguments](https://just.systems/man/en/avoiding-argument-splitting.html?highlight=quoting#quoting) to ensure that _just_ can identify mistakes.
 
 ### More Examples of justfiles
 
@@ -304,13 +306,13 @@ To run a recipe in a _justfile_, enter _just_ followed by the name of the recipe
 just example-recipe
 ```
 
-If a recipe accepts [parameters](https://just.systems/man/en/chapter_41.html), add the value for the parameter to the command:
+If a recipe accepts [parameters](https://just.systems/man/en/recipe-parameters.html), add the value for the parameter to the command:
 
 ```shell
 just example-recipe my-parameter-value
 ```
 
-You may always [override a variable](https://just.systems/man/en/chapter_39.html) by specifying a value with the _just_ command:
+You may always [override a variable](https://just.systems/man/en/setting-variables-from-the-command-line.html) by specifying a value with the _just_ command:
 
 ```shell
 just example-recipe my-var=my-var-value
@@ -338,10 +340,10 @@ If you use multiple _justfiles_ in a project, consider following these guideline
 - Create the first recipe in the root _justfile_ with the name _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without the name of a recipe, it runs the first recipe in the _justfile_.
 - Create an extra _justfile_ in each subdirectory that should be a separate scope of operations. For example, if you have a monorepo, create a child _justfile_ in the main directory for each component.
 - Set _fallback_ to _true_ in each _justfile_ that is NOT in the root directory of the project. This enables _just_ to find recipes from the root _justfile_ as well as the _justfile_ in the current working directory.
-- If you have many recipes for a single _justfile_, consider putting the recipes into several _.just_ files and using [imports](https://just.systems/man/en/chapter_55.html) to combine them.
+- If you have many recipes for a single _justfile_, consider putting the recipes into several _.just_ files and using [imports](https://just.systems/man/en/imports.html) to combine them.
 - To ensure that you do not accidentally run a recipe from a user _justfile_, do NOT set _fallback_ to _true_ in a _justfile_ in the root directory of a project.
 - To create namespaces for recipes, decide a standard prefix for each group of recipes, and set the name of each recipe to start with that prefix, e.g. _sys-_.
-- Use the [no-cd attribute](https://just.systems/man/en/chapter_34.html#disabling-changing-directory190) to define recipes that may be executed in one of several different possible directories. By default _just_ sets the working directory to be the location of the _justfile_ that contains the recipe.
+- Use the [no-cd attribute](https://just.systems/man/en/working-directory.html) to define recipes that may be executed in one of several different possible directories. By default _just_ sets the working directory to be the location of the _justfile_ that contains the recipe.
 
 ## Using Modules
 
@@ -352,7 +354,7 @@ If you decide to use _just_ modules in your project, consider following these gu
 - Create an extra _.just_ file in the root directory for each tool that applies to the entire project, such as pre-commit.
 - Use the root _justfile_ to define standard tasks for the project. Each of these should call the relevant recipes in one or more modules. Avoid writing recipes in the _justfile_ that do anything other than running recipes that are defined in modules.
 - Remember that the first recipe in each _mod.just_ file is the default for the module. This means that the first recipe runs when a user types the module without specifying the name of the task.
-- Specify the [no-cd attribute](https://just.systems/man/en/chapter_34.html#disabling-changing-directory190) on each recipe in a module, so that the working directory of the recipe is the root directory of the project.
+- Specify the [no-cd attribute](https://just.systems/man/en/working-directory.html) on each recipe in a module, so that the working directory of the recipe is the root directory of the project.
 
 ### Example justfile for a Project with Modules
 
