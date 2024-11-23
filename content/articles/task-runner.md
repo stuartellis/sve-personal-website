@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-10-29T13:22:20+00:00"
+date = "2024-11-23T18:01:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -10,6 +10,8 @@ tags = ["automation", "devops"]
 [Task](https://taskfile.dev) is a task runner and build tool. It provides a consistent framework for sets of tasks, enabling you to run the same workflows on multiple platforms and environments.
 
 > Task is also known as go-task.
+
+Task uses a versioned schema for task definitions. This helps groups of developers to co-operate on writing task definitions, but means that the same version of Task should be used on every system. For projects where the version of the task runner cannot be centrally managed, consider using [just](https://www.stuartellis.name/articles/just-task-runner/) instead.
 
 ## How Task Works
 
@@ -93,7 +95,7 @@ If you are using a Dev Container with Visual Studio Code, you can add the featur
 ```json
     "features": {
         "ghcr.io/devcontainers-contrib/features/go-task:1": {
-            "version": "3.39.2"
+            "version": "3.40.0"
         }
     }
 ```
@@ -128,7 +130,7 @@ curl -L https://taskfile.dev/install.sh > install-task.sh
 To use the installation script, call it with the Git tag and the _-b_ option. The Git tag specifies the version of Task. The _-b_ option specifies which directory to install it to:
 
 ```shell
-./install-task.sh -b $HOME/.local/bin v3.39.2
+./install-task.sh -b $HOME/.local/bin v3.40.0
 ```
 
 {{< alert >}}
@@ -499,5 +501,5 @@ silent: false
 ## Resources
 
 - [Documentation for Task](https://taskfile.dev/)
-- [Using a task runner to help with context switching in software projects](https://www.caro.fyi/articles//)
+- [Using a task runner to help with context switching in software projects](https://www.caro.fyi/articles/just/)
 - [Video: Say Goodbye to Makefile - Use Taskfile to Manage Tasks in CI/CD Pipelines and Locally](https://www.youtube.com/watch?v=Z7EnwBaJzCk) (YouTube, 17 minutes long)
