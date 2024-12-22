@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-09-06T19:21:00+01:00"
+date = "2024-12-22T11:03:00+0:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -70,7 +70,7 @@ pipx install pre-commit
 
 ### Use a Project Tool
 
-If you use a project tool, it will follow [the best practices for Python projects](#best-practices-for-python-projects). Use either [PDM](https://pdm-project.org) or [uv](https://docs.astral.sh/uv/) to help you develop Python applications. [Hatch](https://hatch.pypa.io) is another well-known project tool, but it is most useful for developing Python libraries.
+If you use a project tool, it will follow [the best practices for Python projects](#best-practices-for-python-projects). Use either [uv](https://docs.astral.sh/uv/) or [PDM](https://pdm-project.org) to help you develop Python applications. [Hatch](https://hatch.pypa.io) is another well-known project tool, but it is most useful for developing Python libraries.
 
 Avoid using the [Poetry](https://python-poetry.org/) or [Rye](https://rye.astral.sh/) tools for new projects. Poetry uses non-standard implementations of key features. For example, it does not use the standard format in _pyproject.toml_ files, which may cause compatibility issues with other tools. Rye is for developing experimental features that may be implemented in _uv_ in future.
 
@@ -104,9 +104,11 @@ Always package the tools and code libraries that you would like to share with ot
 
 Use [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages for libraries. You can also use _wheel_ packages for development tools. If you publish your Python application as a _wheel_, other developers can run it with _uv_ or _pipx_. Remember that all _wheel_ packages require an existing installation of Python.
 
-In most cases, you should package an application in a format that enables you to include your code, the dependencies and a copy of the required version of Python. This ensures that your code runs with the expected version of Python, and has the correct version of each dependency.
+In most cases, you should package an application in a format that enables you to include a copy of the required version of Python as well as your code and the dependencies. This ensures that your code runs with the expected version of Python, and has the correct version of each dependency.
 
-Use container images to package applications that provide a network service, such as a Web application. Use [PyInstaller](https://pyinstaller.org/) to publish desktop and command-line applications as a single executable file. Each container image and PyInstaller file includes a copy of Python, along with your code and the required dependencies.
+Use OCI container images to package applications that provide a network service, such as a Web application. Use [PyInstaller](https://pyinstaller.org/) to publish desktop and command-line applications as a single executable file. Each container image and PyInstaller file includes a copy of Python, along with your code and the required dependencies.
+
+> _Requirements files:_ If you use requirements files to build or deploy projects then [include hashes](#ensure-that-requirements-files-include-hashes).
 
 ## Language Syntax
 
