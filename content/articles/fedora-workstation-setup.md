@@ -1,14 +1,14 @@
 +++
 title = "Setting Up Fedora Workstation for Software Development"
 slug = "fedora-workstation-setup"
-date = "2024-09-07T08:40:00+01:00"
+date = "2024-12-22T10:45:00+01:00"
 description = "Setting up a Fedora Workstation for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
 
 +++
 
-A guide to setting up [Fedora Workstation](https://fedoraproject.org/workstation/) for DevOps and software development. This is current for Fedora 40.
+A guide to setting up [Fedora Workstation](https://fedoraproject.org/workstation/) for DevOps and software development.
 
 ## Installation
 
@@ -219,15 +219,22 @@ brew update
 
 Avoid using the Fedora packages for programming languages. Instead, use version manager tools. These enable you to install the correct version of the required programming language and dependencies for each of your projects. Use Homebrew to install version manager tools.
 
-Use [pyenv](https://github.com/pyenv/pyenv) for Python and [rustup](https://rustup.rs/) for Rust. The standard _go_ tool [manages versions of Go](https://go.dev/doc/manage-install#installing-multiple). If you work with Terraform or OpenTofu, use [tenv](https://tofuutils.github.io/tenv/). Consider using the [mise](https://mise.jdx.dev/) version manager for JavaScript, as it provides a consistent set of features for managing many tools, including Node.js, Deno and Bun.
-
 Alternatively, Fedora Workstation includes [toolbx](https://containertoolbx.org/) to help you manage container environments for developing your projects. Container environments also enable you to have separate versions of software for each of your projects.
 
 ### Using Version Managers
 
-To install a version manager, use the process that the documentation for the product recommends.
+Consider using a specialized version manager for these programming languages:
 
-If you use a version manager, you will also need to install compiler tools for the C programming language. Installations of Python, Node.js and other languages use GCC to compile components that are written in C. To provide GCC use the Fedora packages for GCC:
+- [pyenv](https://github.com/pyenv/pyenv) for Python
+- [rustup](https://rustup.rs/) for Rust
+- The standard _go_ tool [manages versions of Go](https://go.dev/doc/manage-install#installing-multiple).
+- [tenv](https://tofuutils.github.io/tenv/) for Terraform or OpenTofu
+
+You can start using these version managers quickly. They require very little configuration.
+
+[mise](https://mise.jdx.dev/) is more powerful. It acts as a version manager for multiple programming languages. This is most useful for JavaScript, as it provides a consistent set of features for managing many tools, including Node.js, Deno and Bun.
+
+Use Homebrew to install the version managers that you need. If you use a version manager, you will also need to install compiler tools for the C programming language. Installations of Python, Node.js and other languages use GCC to compile components that are written in C. To provide GCC use the Fedora packages for GCC:
 
 ```shell
 sudo dnf install gcc
@@ -257,7 +264,7 @@ To use a graphical interface for working with containers, add [Podman Desktop](h
 
 To create container images, install [buildah](https://buildah.io). This command-line tool provides the same features as Docker for building container images.
 
-### Podman
+### Using Podman
 
 Podman replaces [Docker](https://www.docker.com/) for running container images, and also has additional features to integrate better with both the Linux operating system and Kubernetes. For example, [you can run Podman containers as standard system services](https://www.redhat.com/sysadmin/quadlet-podman).
 
