@@ -1,7 +1,7 @@
 +++
 title = "How to Set up an Apple Mac for Software Development"
 slug = "mac-setup"
-date = "2024-08-26T11:53:00+01:00"
+date = "2024-12-27T10:50:00+00:00"
 description = "Setting up an Apple Mac for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "macos", "golang", "java", "javascript", "python"]
@@ -10,7 +10,7 @@ tags = ["devops", "macos", "golang", "java", "javascript", "python"]
 
 A guide to setting up an Apple Mac for DevOps and software development.
 
-If you are thinking of switching to Linux, I also provide a [guide for setting up Fedora Workstation for development and DevOps](https://www.stuartellis.name/articles/fedora-workstation-setup/). Fedora is consistently the highest quality Linux desktop distribution.
+If you are thinking of switching to Linux, I also provide a [guide for setting up Fedora Workstation for development and DevOps](https://www.stuartellis.name/articles/fedora-workstation-setup/). Fedora is consistently one of the highest quality Linux desktop distributions.
 
 ## Do This First
 
@@ -258,7 +258,7 @@ To keep your projects tidy, I would recommend following these guidelines. They m
 slightly fussy, but they pay off when you have many projects, some of which are on
 different version control hosts.
 
-First create a top-level directory with a short, generic name like _repos_. For each repository host, create a subdirectory in _repos_. Add a subdirectory that matches your username. The final directory structure looks like this:
+First create a top-level directory with a short name like _repos_. For each repository host, create a subdirectory in _repos_. Add a subdirectory that matches your username. The final directory structure looks like this:
 
 ```text
 repos/
@@ -395,31 +395,6 @@ Use either [mise](https://mise.jdx.dev/) or the [jEnv](https://www.jenv.be/) ver
 
 Once you have installed a JDK, get the [Apache Maven](https://maven.apache.org) build tool. This is provided by the Maven project itself, and is not part of Temurin or the OpenJDK.
 
-#### Manual Set up of Eclipse Temurin
-
-To manually install a copy of the JDK:
-
-1. Download the version of the JDK that you need from Adoptium
-2. Unzip the download
-3. Copy the JDK directory to _/usr/local/lib_
-4. Edit your _~/.zshrc_ file to set environment variables. For example, to use jdk-11.0.3+7 as the Java version:
-
-```shell
-JAVA_HOME=/usr/local/lib/jdk-11.0.3+7/Contents/Home
-PATH=$PATH:/usr/local/lib/jdk-11.0.3+7/Contents/Home/bin
-```
-
-To manually install a copy of [Apache Maven](https://maven.apache.org):
-
-1. Download the latest version of Maven
-2. Unzip the download
-3. Copy the Maven directory to _/usr/local/lib/_
-4. Add _/usr/local/lib/MAVEN-DIRECTORY_ to your PATH environment variable
-
-Replace _MAVEN-DIRECTORY_ with the name of the directory that Maven uses, such as _apache-maven-3.6.0_.
-
-Maven is written in Java, which means that the project provides one package, which works on any operating system that has a supported version of Java.
-
 #### Setting up jEnv
 
 Run this command in a terminal window to install [jEnv](https://www.jenv.be/):
@@ -461,6 +436,31 @@ To see a list of the available commands, type _jenv_ in a terminal window:
 ```shell
 jenv
 ```
+
+#### Manual Set up of Eclipse Temurin
+
+To manually install a copy of the JDK:
+
+1. Download the version of the JDK that you need from Adoptium
+2. Unzip the download
+3. Copy the JDK directory to _/usr/local/lib_
+4. Edit your _~/.zshrc_ file to set environment variables. For example, to use jdk-11.0.3+7 as the Java version:
+
+```shell
+JAVA_HOME=/usr/local/lib/jdk-11.0.3+7/Contents/Home
+PATH=$PATH:/usr/local/lib/jdk-11.0.3+7/Contents/Home/bin
+```
+
+To manually install a copy of [Apache Maven](https://maven.apache.org):
+
+1. Download the latest version of Maven
+2. Unzip the download
+3. Copy the Maven directory to _/usr/local/lib/_
+4. Add _/usr/local/lib/MAVEN-DIRECTORY_ to your PATH environment variable
+
+Replace _MAVEN-DIRECTORY_ with the name of the directory that Maven uses, such as _apache-maven-3.6.0_.
+
+Maven is written in Java, which means that the project provides one package, which works on any operating system that has a supported version of Java.
 
 ### Terraform and OpenTofu
 
