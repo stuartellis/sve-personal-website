@@ -12,13 +12,13 @@
     },
     "ghcr.io/devcontainers/features/hugo:1": {
       "extended": true,
-      "version": "0.122.0"
+      "version": "0.140.1"
     },
     "ghcr.io/devcontainers-contrib/features/go-task:1": {
-      "version": "3.38.0"
+      "version": "3.40.1"
     },
     "ghcr.io/devcontainers-contrib/features/pre-commit:2": {
-      "version": "3.8.0"
+      "version": "4.0.1"
     }
   },
   "customizations": {

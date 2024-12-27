@@ -6,7 +6,7 @@
 #
 
 ARG VARIANT="bookworm"
-FROM mcr.microsoft.com/devcontainers/go:1-1.21-${VARIANT}
+FROM mcr.microsoft.com/devcontainers/go:1-1.23-${VARIANT}
 
 RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -qy --no-install-recommends apt-transport-https gnupg lsb-release \
