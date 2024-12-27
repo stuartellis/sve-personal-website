@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-12-22T11:03:00+0:00"
+date = "2024-12-27T11:18:00+00:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -108,7 +108,7 @@ In most cases, you should package an application in a format that enables you to
 
 Use OCI container images to package applications that provide a network service, such as a Web application. Use [PyInstaller](https://pyinstaller.org/) to publish desktop and command-line applications as a single executable file. Each container image and PyInstaller file includes a copy of Python, along with your code and the required dependencies.
 
-> _Requirements files:_ If you use requirements files to build or deploy projects then [include hashes](#ensure-that-requirements-files-include-hashes).
+> _Requirements files:_ If you use requirements files to build or deploy projects then configure your tools to [use hashes](#ensure-that-requirements-files-include-hashes).
 
 ## Language Syntax
 
@@ -320,7 +320,7 @@ python3 -m pip install --require-virtualenv -r requirements-macos-dev.txt
 
 ### Ensure That Requirements Files Include Hashes
 
-Some tools require extra configuration to include package hashes in the requirements files that they generate. For example, you must set the _generate-hashes_ option for the _pip-compile_ and _uv_ utilities to generate _requirements.txt_ files that include hashes. Add this option to the relevant section of the _pyproject.toml_ file.
+Python tools support [hash checking](https://pip.pypa.io/en/stable/topics/secure-installs/#hash-checking-mode) to ensure that packages are valid. Some tools require extra configuration to include package hashes in the requirements files that they generate. For example, you must set the _generate-hashes_ option for the _pip-compile_ and _uv_ utilities to generate _requirements.txt_ files that include hashes. Add this option to the relevant section of the _pyproject.toml_ file.
 
 For _pip-tools_, add the option to the _tool.pip-tools_ section:
 
