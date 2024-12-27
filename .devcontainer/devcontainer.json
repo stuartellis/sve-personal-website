@@ -12,7 +12,7 @@
     },
     "ghcr.io/devcontainers/features/hugo:1": {
       "extended": true,
-      "version": "0.140.1"
+      "version": "0.136.5"
     },
     "ghcr.io/devcontainers-contrib/features/go-task:1": {
       "version": "3.40.1"
