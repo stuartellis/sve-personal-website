@@ -264,7 +264,7 @@ The [next section](#multiple-justfiles-in-a-directory-structure) explains how to
 
 If you are starting a new project and can require a current version of _just_, consider using _just_ modules. Real-world projects often have multiple components with many tasks, and _just_ modules enable you to define clear namespaces for recipes. Modules also provide more flexibility for organizing the files that contain your recipes.
 
-> _Use just 1.31.0 or later with modules:_ The modules feature became available by default with  _just_ 1.31.0.
+> _Use just 1.31.0 or later with modules:_ The modules feature became available by default with _just_ 1.31.0.
 
 A [later section](#using-modules) in this article explains how to use modules.
 

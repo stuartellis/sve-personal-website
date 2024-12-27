@@ -16,7 +16,7 @@ Add the [Azure DevOps Team Calendar](https://marketplace.visualstudio.com/items?
 
 ## URL Format
 
-To access a calendar, you must build a URL that specifies your Azure DevOps *organization*, the *teamId* of the Team, and the *month* and *year* that are relevant for the operation:
+To access a calendar, you must build a URL that specifies your Azure DevOps _organization_, the _teamId_ of the Team, and the _month_ and _year_ that are relevant for the operation:
 
 ```text
 https://extmgmt.dev.azure.com/{organisation}/_apis/ExtensionManagement/InstalledExtensions/ms-devlabs/team-calendar/Data/Scopes/Default/Current/Collections/{teamId}.{monthNumber}.{year}/Documents
@@ -29,7 +29,7 @@ https://extmgmt.dev.azure.com/{organisation}/_apis/ExtensionManagement/Installed
 ```
 
 {{< alert >}}
-It seems that the API will accept any version, but the query string for *api-version* must include the string *-preview*.
+It seems that the API will accept any version, but the query string for _api-version_ must include the string _-preview_.
 {{< /alert >}}
 
 ## API Calls
@@ -48,18 +48,18 @@ This returns a document with this structure:
 
 ```json
 {
-    "count": 1,
-    "value": [
-        {
-            "category": "Uncategorized",
-            "description": "",
-            "endDate": "2021-02-03T00:00:00Z",
-            "startDate": "2021-02-03T00:00:00Z",
-            "title": "Example event 1",
-            "__etag": 1,
-            "id": "f14fd3ff-f39b-4d23-a353-6e3dfbf3af4a"
-        }
-    ]
+  "count": 1,
+  "value": [
+    {
+      "category": "Uncategorized",
+      "description": "",
+      "endDate": "2021-02-03T00:00:00Z",
+      "startDate": "2021-02-03T00:00:00Z",
+      "title": "Example event 1",
+      "__etag": 1,
+      "id": "f14fd3ff-f39b-4d23-a353-6e3dfbf3af4a"
+    }
+  ]
 }
 ```
 
@@ -67,8 +67,8 @@ A month with no events will return a document with this structure:
 
 ```json
 {
-    "count": 0,
-    "value": []
+  "count": 0,
+  "value": []
 }
 ```
 
@@ -78,11 +78,11 @@ Send a JSON document with this structure:
 
 ```json
 {
-    "category": "Uncategorized",
-    "description": "",
-    "endDate": "2021-03-01T00:00:00Z",
-    "startDate": "2021-03-01T00:00:00Z",
-    "title": "Example event 21"
+  "category": "Uncategorized",
+  "description": "",
+  "endDate": "2021-03-01T00:00:00Z",
+  "startDate": "2021-03-01T00:00:00Z",
+  "title": "Example event 21"
 }
 ```
 
@@ -92,17 +92,17 @@ To delete a calendar event, send a HTTP PUT request. This is the format of the J
 
 ```json
 {
-    "__etag": 3,
-    "id": "290d0223-0256-432d-9c18-a6fed6e8b5e3",
-    "category": "Uncategorized",
-    "description": "",
-    "endDate": "2021-02-01T00:00:00Z",
-    "startDate": "2021-02-01T00:00:00Z",
-    "title": "Example event 1"
+  "__etag": 3,
+  "id": "290d0223-0256-432d-9c18-a6fed6e8b5e3",
+  "category": "Uncategorized",
+  "description": "",
+  "endDate": "2021-02-01T00:00:00Z",
+  "startDate": "2021-02-01T00:00:00Z",
+  "title": "Example event 1"
 }
 ```
 
-Note that this includes the *id* of the calendar, and an *\__etag* value. Always set the *\__etag* value as the current *\__etag* value of the event, plus one. The [Data Storage](https://docs.microsoft.com/en-us/azure/devops/extend/develop/data-storage?view=azure-devops) that Team Calendar uses relies on the etag value for locking.
+Note that this includes the _id_ of the calendar, and an _\_\_etag_ value. Always set the _\_\_etag_ value as the current _\_\_etag_ value of the event, plus one. The [Data Storage](https://docs.microsoft.com/en-us/azure/devops/extend/develop/data-storage?view=azure-devops) that Team Calendar uses relies on the etag value for locking.
 
 ### DELETE Calendar Event
 
@@ -120,13 +120,13 @@ Errors return a JSON document with this structure:
 
 ```json
 {
-    "$id": "1",
-    "innerException": null,
-    "message": "%error=\"1660000\";%:The document already exists",
-    "typeName": "Microsoft.VisualStudio.Services.ExtensionManagement.WebApi.DocumentExistsException, Microsoft.VisualStudio.Services.ExtensionManagement.WebApi",
-    "typeKey": "DocumentExistsException",
-    "errorCode": 0,
-    "eventId": 3000
+  "$id": "1",
+  "innerException": null,
+  "message": "%error=\"1660000\";%:The document already exists",
+  "typeName": "Microsoft.VisualStudio.Services.ExtensionManagement.WebApi.DocumentExistsException, Microsoft.VisualStudio.Services.ExtensionManagement.WebApi",
+  "typeKey": "DocumentExistsException",
+  "errorCode": 0,
+  "eventId": 3000
 }
 ```
 

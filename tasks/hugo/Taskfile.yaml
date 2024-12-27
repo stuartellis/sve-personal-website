@@ -6,7 +6,7 @@
 #
 # https://gohugo.io/
 
-version: "3"
+version: '3'
 
 silent: true
 
@@ -27,7 +27,7 @@ tasks:
   clean:
     desc: Delete generated files
     cmds:
-      - for: [".hugo_build.lock", "public"]
+      - for: ['.hugo_build.lock', 'public']
         cmd: rm -fr {{.ITEM}}
 
   deploy:

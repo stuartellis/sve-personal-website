@@ -52,7 +52,7 @@ Select _System Settings \> Privacy & Security_.
 - Select _Analytics & Improvements_ and ensure that the options are not enabled.
 - Select _Apple Advertising_ and ensure that _Personalised Ads_ is set to _off_.
 - Ensure that _Allow accessories to connect_ is set to _Ask for New Accessories_.
-- Choose  _Advanced..._ and select _Require an administrator password to access systemwide settings_.
+- Choose _Advanced..._ and select _Require an administrator password to access systemwide settings_.
 
 ### Lock Screen
 

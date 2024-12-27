@@ -6,14 +6,13 @@
 #
 # https://taskfile.dev/
 
-version: "3"
+version: '3'
 
 silent: true
 
 tasks:
-
   clean:
     desc: Delete generated files
     cmds:
-      - for: ["tmp"]
+      - for: ['tmp']
         cmd: rm -fr {{.ITEM}}

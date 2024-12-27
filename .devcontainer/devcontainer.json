@@ -1,46 +1,44 @@
 {
-    "name": "devc-sve-personal-website",
-    "build": {
-		"dockerfile": "devcontainer.dockerfile",
-		"args": {
-			"VARIANT": "bookworm"
-		}
-	},
-    "features": {
-        "ghcr.io/devcontainers/features/aws-cli:1": {
-            "version": "latest"
-        },
-        "ghcr.io/devcontainers/features/hugo:1": {
-            "extended": true,
-            "version": "0.122.0"
-        },
-        "ghcr.io/devcontainers-contrib/features/go-task:1": {
-            "version": "3.38.0"
-        },
-        "ghcr.io/devcontainers-contrib/features/pre-commit:2": {
-            "version": "3.8.0"
-        }
+  "name": "devc-sve-personal-website",
+  "build": {
+    "dockerfile": "devcontainer.dockerfile",
+    "args": {
+      "VARIANT": "bookworm"
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/aws-cli:1": {
+      "version": "latest"
     },
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "AquaSecurityOfficial.trivy-vulnerability-scanner",
-                "davidanson.vscode-markdownlint",
-                "EditorConfig.EditorConfig",
-                "redhat.vscode-yaml",
-                "task.vscode-task",
-                "timonwong.shellcheck"
-            ]
-        }
+    "ghcr.io/devcontainers/features/hugo:1": {
+      "extended": true,
+      "version": "0.122.0"
     },
-    "containerUser": "vscode",
-    "postCreateCommand": "task bootstrap",
-    "runArgs": [
-        "--userns=keep-id",
-        "--env-file",
-        ".devcontainer/devcontainer.env"
-    ],
-    "mounts": [
-        "source=${env:HOME}/.aws,target=/home/vscode/.aws,type=bind"
-    ]
+    "ghcr.io/devcontainers-contrib/features/go-task:1": {
+      "version": "3.38.0"
+    },
+    "ghcr.io/devcontainers-contrib/features/pre-commit:2": {
+      "version": "3.8.0"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "AquaSecurityOfficial.trivy-vulnerability-scanner",
+        "davidanson.vscode-markdownlint",
+        "EditorConfig.EditorConfig",
+        "redhat.vscode-yaml",
+        "task.vscode-task",
+        "timonwong.shellcheck"
+      ]
+    }
+  },
+  "containerUser": "vscode",
+  "postCreateCommand": "task bootstrap",
+  "runArgs": [
+    "--userns=keep-id",
+    "--env-file",
+    ".devcontainer/devcontainer.env"
+  ],
+  "mounts": ["source=${env:HOME}/.aws,target=/home/vscode/.aws,type=bind"]
 }

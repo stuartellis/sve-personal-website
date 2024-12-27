@@ -8,4 +8,4 @@ categories = ["automation", "devops", "kubernetes"]
 tags = ["automation", "devops", "kubernetes"]
 +++
 
-[Kubernetes](https://kubernetes.io/) is now a standard framework for  operating applications on clusters, large and small.
+[Kubernetes](https://kubernetes.io/) is now a standard framework for operating applications on clusters, large and small.

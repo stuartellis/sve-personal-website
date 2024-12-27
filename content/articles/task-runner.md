@@ -30,7 +30,7 @@ Here is an example of a _Taskfile.yaml_, with a _build_ task that only runs when
 #
 # Hugo: https://gohugo.io
 
-version: "3"
+version: '3'
 
 silent: true
 
@@ -51,7 +51,7 @@ tasks:
   clean:
     desc: Delete generated files
     cmds:
-      - for: [".hugo_build.lock", "public"]
+      - for: ['.hugo_build.lock', 'public']
         cmd: rm -fr {{.ITEM}}
 
   deploy:
@@ -173,7 +173,7 @@ Create a task in the _Taskfile.yaml_ with the name _default_. When Task is invok
 This example user _Taskfile.yaml_ includes a _default_ task that lists the available tasks:
 
 ```yaml
-version: "3"
+version: '3'
 
 silent: true
 
@@ -190,8 +190,8 @@ tasks:
   system-info:
     desc: Display system information
     cmds:
-      - "echo CPU architecture: {{ARCH}}"
-      - "echo Operating system: {{OS}}"
+      - 'echo CPU architecture: {{ARCH}}'
+      - 'echo Operating system: {{OS}}'
 ```
 
 Use the option _-g_ to run the user _Taskfile.yaml_, rather than the nearest Taskfile:
@@ -275,7 +275,7 @@ This diagram shows the suggested directory structure for a project with task inc
 #
 # https://taskfile.dev
 
-version: "3"
+version: '3'
 
 silent: true
 
@@ -310,7 +310,7 @@ tasks:
     aliases: [format]
     cmds:
       - task: pre-commit:run
-        vars: { HOOK_ID: "ruff-format" }
+        vars: { HOOK_ID: 'ruff-format' }
 
   lint:
     desc: Run all checks
@@ -337,7 +337,7 @@ task
 #
 # https://pre-commit.com/
 
-version: "3"
+version: '3'
 
 silent: true
 
@@ -433,11 +433,11 @@ Add these lines to the _.pre-commit-config.yaml_ file in the root directory of y
 
 ```yaml
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: "0.29.4"
+  rev: '0.29.4'
   hooks:
     - id: check-taskfile
 - repo: https://github.com/adrienverge/yamllint.git
-  rev: "v1.35.1"
+  rev: 'v1.35.1'
   hooks:
     - id: yamllint
       args: [--strict]

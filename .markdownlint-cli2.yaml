@@ -7,6 +7,5 @@
 # See https://github.com/DavidAnson/markdownlint-cli2
 
 config:
-
   # Disable maximum line-length
   MD013: false
