@@ -1,7 +1,7 @@
 +++
 title = "Setting Up Fedora Workstation for Software Development"
 slug = "fedora-workstation-setup"
-date = "2024-12-22T10:45:00+01:00"
+date = "2025-01-05T11:43:00+00:00"
 description = "Setting up a Fedora Workstation for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
@@ -113,58 +113,7 @@ To enable colors in the output, which can be very helpful, enter this command:
 git config --global color.ui auto
 ```
 
-Add a GPG key to Git before you commit to shared projects. The next section explains how to do this.
-
-### Using a GPG Key
-
-Always use [GPG](https://gnupg.org/) to sign the commits that you make in code repositories, especially for shared projects like Open Source software. This means that each commit can be linked to the author.
-
-To create a GPG key, run the _gpg_ command in a terminal window. For example:
-
-```shell
-gpg --full-gen-key
-```
-
-GPG will prompt you for several options. Use these values:
-
-- Select the _RSA and RSA_ algorithm
-- Choose a key length of _4096_
-- Accept the default option to have no expiration date for your key
-- Enter the same email address that you will use for code hosting sites, such as Codeberg or GitHub
-
-Once you have created a GPG key, configure Git to use it.
-
-First get the ID of the key:
-
-```shell
-gpg --list-secret-keys --keyid-format=long
-```
-
-This displays an output like this:
-
-```shell
-pub   rsa4096/C36CB86CB86B3716 2022-01-18 [SC]
-      BF18AC2876178908D6E71267D36CB86CB86B3716
-uid                 [ultimate] Anne Example <anne@example.org>
-sub   rsa4096/B7BB94F0C9BA6CAA 2022-01-18 [E]
-```
-
-In this example, the key ID is _C36CB86CB86B3716_.
-
-Next, configure Git to use this key:
-
-```shell
-git config --global user.signingkey C36CB86CB86B3716
-git config --global commit.gpgsign true
-```
-
-Finally, add your GPG key to your accounts on code hosting services that you use:
-
-- [Codeberg](https://docs.codeberg.org/security/gpg-key/)
-- [GitLab](https://docs.gitlab.com/ee/user/project/repository/signed_commits/gpg.html#add-a-gpg-key-to-your-account)
-- [GitHub](https://docs.github.com/en/authentication/managing-commit-signature-verification/adding-a-gpg-key-to-your-github-account)
-
-If you use multiple code hosting services for your projects, use the same GPG key for all of them. This ensures that copies of the same commits can be verified everywhere.
+> Enable commit signing in Git before you work on shared projects. Follow the steps in [this article on signing code commits](https://www.stuartellis.name/articles/signing-code-commits/) to enable Git to sign your commits with a GPG key.
 
 ### Setting Up A Directory Structure for Projects
 
