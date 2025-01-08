@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2024-12-27T11:18:00+00:00"
+date = "2025-01-07T22:58:00+00:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -18,11 +18,11 @@ If your operating system includes a Python installation, avoid using it for your
 
 ### Install Python With Tools That Support Multiple Versions
 
-Use a tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv) to install copies of Python on your development systems, so that you can switch between different versions of Python for your projects. This enables you to upgrade each project to a new version of Python without interfering with other tools and projects that use Python.
+Instead of installing Python with packages from [the official Website](https://www.python.org/), use a tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv) to install copies of Python on your development systems. These version manager tools allow you to switch between different versions of Python. This means that you can upgrade each of your projects to new versions of Python later without interfering with other tools and projects that use Python.
 
-Alternatively, consider using [Development Containers](https://containers.dev/), which enable you to define an isolated environment for a software project. This also allows you to use a separate version of Python for each project.
+Alternatively, consider using [Development Containers](https://containers.dev/). These enable you to define an isolated environment for a software project, which also enables you to use a separate version of Python for each project.
 
-Ensure that the tool compiles Python, rather than downloading [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). These standalone builds are modified versions of Python that are maintained by a third-party. Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) automatically compile Python, but you must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation.
+Ensure that the installation tool compiles Python, rather than downloading [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). These standalone builds are modified versions of Python. Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) automatically compile Python, but you must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation.
 
 Only use the Python installation features of [uv](https://docs.astral.sh/uv/), [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) for experimental projects. These tools always download the third-party standalone builds when they manage versions of Python.
 
@@ -33,14 +33,14 @@ For new projects, choose the most recent stable version of Python 3. This ensure
 Upgrade your projects as new Python versions are released. The Python development team usually support each version for five years, but some Python libraries may only support each version of Python for a shorter period of time. If you use tools that support multiple versions of Python and automated testing, you can test your projects on new Python versions with little risk.
 
 {{< alert >}}
-_Avoid using Python 2._ It is not supported by the Python development team or by the developers of most popular Python libraries.
+_Avoid using Python 2._ Older operating systems include Python 2, but it is not supported by the Python development team or by the developers of most popular Python libraries.
 {{< /alert >}}
 
 ### Use a Helper to Run Python Tools
 
 Use either [uv](https://docs.astral.sh/uv/) or [pipx](https://pipx.pypa.io) to run Python tools on development systems, rather than installing these applications with _pip_ or another method. Both _uv_ and _pipx_ automatically put each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
 
-Use the [uvx](https://docs.astral.sh/uv/#tool-management) command of _uv_ or the [pipx run](https://pipx.pypa.io/stable/#walkthrough-running-an-application-in-a-temporary-virtual-environment) feature of _pipx_ for most applications. These download the application to a cache and run it. For example, these commands download and run the latest version of [bpytop](https://github.com/aristocratos/bpytop), a system monitoring tool:
+Use the [uvx](https://docs.astral.sh/uv/#tool-management) command of _uv_ or the [pipx run](https://pipx.pypa.io/stable/#walkthrough-running-an-application-in-a-temporary-virtual-environment) feature of _pipx_ for most Python applications. These download the application to a cache and run it. For example, these commands download and run the latest version of [bpytop](https://github.com/aristocratos/bpytop), a system monitoring tool:
 
 ```shell
 uvx bpytop
@@ -72,7 +72,7 @@ pipx install pre-commit
 
 If you use a project tool, it will follow [the best practices for Python projects](#best-practices-for-python-projects). Use either [uv](https://docs.astral.sh/uv/) or [PDM](https://pdm-project.org) to help you develop Python applications. [Hatch](https://hatch.pypa.io) is another well-known project tool, but it is most useful for developing Python libraries.
 
-Avoid using the [Poetry](https://python-poetry.org/) or [Rye](https://rye.astral.sh/) tools for new projects. Poetry uses non-standard implementations of key features. For example, it does not use the standard format in _pyproject.toml_ files, which may cause compatibility issues with other tools. Rye is for developing experimental features that may be implemented in _uv_ in future.
+Avoid using the [Poetry](https://python-poetry.org/) or [Rye](https://rye.astral.sh/) tools for new projects. Poetry uses non-standard implementations of some features. Rye is for experimental work that may be implemented in _uv_ in future.
 
 ### Format Your Code
 
@@ -100,13 +100,15 @@ To see how much of your code is covered by tests, add the [pytest-cov](https://p
 
 ### Package Your Projects
 
-Always package the tools and code libraries that you would like to share with other people. Packages enable people to use your code with the tools and systems that they prefer to work with, and select the version of your code that is best for them.
+Always package the tools and code libraries that you would like to share with other people. Packages enable people to use your code with the operating systems and tools that they prefer to work with, and also allow them to manage which version of your code they use.
 
-Use [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages for libraries. You can also use _wheel_ packages for development tools. If you publish your Python application as a _wheel_, other developers can run it with _uv_ or _pipx_. Remember that all _wheel_ packages require an existing installation of Python.
+In most cases, you should package a Python application in a format that enables you to include a copy of the required version of Python as well as your code and the dependencies. This ensures that your code runs with the expected version of Python, and has the correct version of each dependency.
 
-In most cases, you should package an application in a format that enables you to include a copy of the required version of Python as well as your code and the dependencies. This ensures that your code runs with the expected version of Python, and has the correct version of each dependency.
+Use OCI container images to package applications that provide a network service, such as a Web application. You can build container images with Docker, buildah and other tools. Consider using the [official Python](https://hub.docker.com/_/python) container image as the base when you build images for your application.
 
-Use OCI container images to package applications that provide a network service, such as a Web application. Use [PyInstaller](https://pyinstaller.org/) to publish desktop and command-line applications as a single executable file. Each container image and PyInstaller file includes a copy of Python, along with your code and the required dependencies.
+Use [PyInstaller](https://pyinstaller.org/) to publish desktop and command-line applications as a single executable file. Each PyInstaller file includes a copy of Python, along with your code and the required dependencies.
+
+Use [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages for libraries. You can also use _wheel_ packages for development tools. If you publish your Python application as a _wheel_, other developers can run it with _uv_ or _pipx_. All _wheel_ packages require an existing installation of Python.
 
 > _Requirements files:_ If you use requirements files to build or deploy projects then configure your tools to [use hashes](#ensure-that-requirements-files-include-hashes).
 
@@ -124,29 +126,25 @@ If you use [Pydantic](https://docs.pydantic.dev/) in your application, it can wo
 
 ### Create Data Classes for Custom Data Objects
 
-Python code frequently has classes for data objects, items that exist to store values, but do not carry out actions. If your application could have a number of classes for data objects, consider using either [Pydantic](https://docs.pydantic.dev/) or the built-in [data classes](https://docs.python.org/3/library/dataclasses.html) feature.
+Python code frequently has classes for _data objects_: items that exist to store values, but do not carry out actions. If you are creating classes for data objects in your Python code, consider using either [Pydantic](https://docs.pydantic.dev/) or the built-in [data classes](https://docs.python.org/3/library/dataclasses.html) feature.
 
 Pydantic provides validation, serialization and other features for data objects. You need to define the classes for Pydantic data objects with type hints.
 
-The built-in syntax for data classes just enables you to reduce the amount of code that you need to define data objects. It also provides some features, such as the ability to mark instances of a data class as [frozen](https://docs.python.org/3/library/dataclasses.html#frozen-instances). Each data class acts as a standard Python class, because syntax for data classes does not change the behavior of the classes that you define with it.
-
-Data classes were introduced in version 3.7 of Python.
+The built-in syntax for data classes offers fewer capabilities than Pydantic. The data class syntax enables you to reduce the amount of code that you need to define data objects, and data classes also provide a limited set of features, such as the ability to mark instances of a data class as [frozen](https://docs.python.org/3/library/dataclasses.html#frozen-instances). Each data class acts as a standard Python class, because the syntax for data classes does not change the behavior of the classes that you define with it.
 
 > [PEP 557](https://www.python.org/dev/peps/pep-0557/) describes data classes.
 
 ### Use enum or Named Tuples for Immutable Sets of Key-Value Pairs
 
-Use the _enum_ type in Python 3.4 or above for immutable collections of key-value pairs. Enums can use class inheritance.
+Use the _enum_ type for immutable collections of key-value pairs. Enums can use class inheritance.
 
-Python 3 also has _collections.namedtuple()_ for immutable key-value pairs. Named tuples do not use classes.
+Python also has _collections.namedtuple()_ for immutable key-value pairs. This feature was created before _enum_ types. Named tuples do not use classes.
 
 ### Format Strings with f-strings
 
 The new [f-string](https://docs.python.org/3/reference/lexical_analysis.html#f-strings) syntax is both more readable and has better performance than older methods. Use f-strings instead of _%_ formatting, _str.format()_ or _str.Template()_.
 
 The older features for formatting strings will not be removed, to avoid breaking backward compatibility.
-
-The f-strings feature was added in version 3.6 of Python. Alternate implementations of Python may include this specific feature, even when they do not support version 3.6 syntax.
 
 > [PEP 498](https://www.python.org/dev/peps/pep-0498/) explains f-strings in detail.
 
@@ -230,17 +228,13 @@ Use [pathlib](https://docs.python.org/3/library/pathlib.html) objects instead of
 
 Consider using the [the pathlib equivalents for os functions](https://docs.python.org/3/library/pathlib.html#correspondence-to-tools-in-the-os-module).
 
-The existing methods in the standard library have been updated to support Path objects.
-
-To list all of the the files in a directory, use either the _.iterdir()_ function of a Path object, or the _os.scandir()_ function.
+Methods in the standard library support Path objects. For example, to list all of the the files in a directory, you can use either the _.iterdir()_ function of a Path object, or the _os.scandir()_ function.
 
 This [RealPython article](https://realpython.com/working-with-files-in-python/#directory-listing-in-modern-python-versions) provides a full explanation of the different Python functions for working with files and directories.
 
-The _pathlib_ module was added to the standard library in Python 3.4, and other standard library functions were updated to support Path objects in version 3.5 of Python.
-
 ### Use os.scandir() Instead of os.listdir()
 
-The _os.scandir()_ function is significantly faster and more efficient than _os.listdir()_. Use _os.scandir()_ wherever you previously used the _os.listdir()_ function.
+The _os.scandir()_ function is significantly faster and more efficient than _os.listdir()_. If you previously used the _os.listdir()_ function, udate your code to use _os.scandir()_.
 
 This function provides an iterator, and works with a context manager:
 
@@ -268,9 +262,11 @@ The [subprocess](https://docs.python.org/3/library/subprocess.html) module provi
 
 ### Use httpx for Web Clients
 
-Use [httpx](https://www.python-httpx.org/) for Web client applications. It [supports HTTP/2](https://www.python-httpx.org/http2/), and [async](https://www.python-httpx.org/async/). The httpx package supersedes [requests](https://requests.readthedocs.io/en/latest/), which only supports HTTP 1.1.
+Use [httpx](https://www.python-httpx.org/) for Web client applications. Many Python applications include [requests](https://requests.readthedocs.io/en/latest/), but you should httpx for new projects.
 
-Avoid using _urllib.request_ from the Python standard library. It was designed as a low-level library, and lacks the features of httpx.
+The httpx package supersedes requests. It supports [HTTP/2](https://www.python-httpx.org/http2/) and [async](https://www.python-httpx.org/async/), which are not available with requests.
+
+Avoid using _urllib.request_ from the Python standard library. It was designed as a low-level library, and lacks the features of requests and httpx.
 
 ## Best Practices for Python Projects
 
