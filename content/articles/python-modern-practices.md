@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2025-01-07T22:58:00+00:00"
+date = "2025-02-18T07:15:00+00:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -70,9 +70,13 @@ pipx install pre-commit
 
 ### Use a Project Tool
 
-If you use a project tool, it will follow [the best practices for Python projects](#best-practices-for-python-projects). Use either [uv](https://docs.astral.sh/uv/) or [PDM](https://pdm-project.org) to help you develop Python applications. [Hatch](https://hatch.pypa.io) is another well-known project tool, but it is most useful for developing Python libraries.
+If you use a project tool, it will follow [the best practices for Python projects](#best-practices-for-python-projects). You can choose one of several tools for this.
 
-Avoid using the [Poetry](https://python-poetry.org/) or [Rye](https://rye.astral.sh/) tools for new projects. Poetry uses non-standard implementations of some features. Rye is for experimental work that may be implemented in _uv_ in future.
+[Poetry](https://python-poetry.org/) is currently the most popular tool for Python projects. Consider using [uv](https://docs.astral.sh/uv/) or [PDM](https://pdm-project.org) for new projects. These align more closely to Python standards.
+
+[Hatch](https://hatch.pypa.io) is another well-known project tool, but it is most useful for developing Python libraries.
+
+Avoid using [Rye](https://rye.astral.sh/). Rye is for experimental work that may be implemented in _uv_ in future.
 
 ### Format Your Code
 
