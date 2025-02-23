@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2025-02-18T07:15:00+00:00"
+date = "2025-02-23T15:44:00+00:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -10,33 +10,7 @@ tags = ["python"]
 
 [Python](https://www.python.org/) has a long history, and it has evolved over time. This article describes some agreed modern best practices.
 
-## Using Python
-
-### Avoid Using the Python Installation in Your Operating System
-
-If your operating system includes a Python installation, avoid using it for your projects. This Python installation is for operating system tools. It is likely to use an older version of Python, and may not include all of the standard features. An operating system copy of Python should be [marked](https://packaging.python.org/en/latest/specifications/externally-managed-environments/#externally-managed-environments) to prevent you from installing packages into it, but not all operating systems set the marker.
-
-### Install Python With Tools That Support Multiple Versions
-
-Instead of installing Python with packages from [the official Website](https://www.python.org/), use a tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv) to install copies of Python on your development systems. These version manager tools allow you to switch between different versions of Python. This means that you can upgrade each of your projects to new versions of Python later without interfering with other tools and projects that use Python.
-
-Alternatively, consider using [Development Containers](https://containers.dev/). These enable you to define an isolated environment for a software project, which also enables you to use a separate version of Python for each project.
-
-Ensure that the installation tool compiles Python, rather than downloading [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). These standalone builds are modified versions of Python. Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) automatically compile Python, but you must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation.
-
-Only use the Python installation features of [uv](https://docs.astral.sh/uv/), [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) for experimental projects. These tools always download the third-party standalone builds when they manage versions of Python.
-
-### Use the Most Recent Version of Python That You Can
-
-For new projects, choose the most recent stable version of Python 3. This ensures that you have the latest security fixes, as well as the fastest performance.
-
-Upgrade your projects as new Python versions are released. The Python development team usually support each version for five years, but some Python libraries may only support each version of Python for a shorter period of time. If you use tools that support multiple versions of Python and automated testing, you can test your projects on new Python versions with little risk.
-
-{{< alert >}}
-_Avoid using Python 2._ Older operating systems include Python 2, but it is not supported by the Python development team or by the developers of most popular Python libraries.
-{{< /alert >}}
-
-### Use a Helper to Run Python Tools
+## Use a Helper to Run Python Tools
 
 Use either [uv](https://docs.astral.sh/uv/) or [pipx](https://pipx.pypa.io) to run Python tools on development systems, rather than installing these applications with _pip_ or another method. Both _uv_ and _pipx_ automatically put each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
 
@@ -66,17 +40,45 @@ pipx install pre-commit
 
 > Always follow the instructions on the [pipx Website](https://pipx.pypa.io) for your specific operating system. This ensures that _pipx_ works with an appropriate Python installation.
 
-## Developing Python Projects
+## Using Python for Development
+
+### Avoid Using the Python Installation in Your Operating System
+
+If your operating system includes a Python installation, avoid using it for your projects. This Python installation is for system tools. It is likely to use an older version of Python, and may not include all of the standard features. An operating system copy of Python should be [marked](https://packaging.python.org/en/latest/specifications/externally-managed-environments/#externally-managed-environments) to prevent you from installing packages into it, but not all operating systems set the marker.
+
+### Install Python With Tools That Support Multiple Versions
+
+Instead of manually installing Python on to your development systems with packages from [the Python Website](https://www.python.org), use a version manager tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv). These tools allow you to switch between different versions of Python. This means that you can upgrade each of your projects to new versions of Python later without interfering with other tools and projects that use Python.
+
+Alternatively, consider using [Development Containers](https://containers.dev/), which are a feature of Visual Studio Code and Jetbrains IDEs. Development Containers enable you to define an isolated environment for a software project, which also enables you to use a separate version of Python for each project.
+
+Ensure that the installation tool compiles Python, rather than downloading [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). These standalone builds are modified versions of Python. Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) automatically compile Python, but you must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation.
+
+> Only use the Python installation features of [uv](https://docs.astral.sh/uv/), [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) for experimental projects. These project tools always download third-party standalone builds of Python when a user requests a Python version that is not already installed on the system.
 
 ### Use a Project Tool
 
-If you use a project tool, it will follow [the best practices for Python projects](#best-practices-for-python-projects). You can choose one of several tools for this.
+Choose a project tool to help you manage your project. There are several of these tools. The most important choice is to select one and use it from the beginning of your project. You can avoid many future issues with this decision. For example, any of these tools can generate a directory structure that follows best practices and will be compatible with other Python tooling.
 
-[Poetry](https://python-poetry.org/) is currently the most popular tool for Python projects. Consider using [uv](https://docs.astral.sh/uv/) or [PDM](https://pdm-project.org) for new projects. These align more closely to Python standards.
+[Poetry](https://python-poetry.org/) is currently the most popular tool for Python application projects. Consider using [uv](https://docs.astral.sh/uv/) or [PDM](https://pdm-project.org) for new application projects. PDM and _uv_ align more closely to the latest Python standards.
 
-[Hatch](https://hatch.pypa.io) is another well-known project tool, but it is most useful for developing Python libraries.
+If you are developing a Python library, [Hatch](https://hatch.pypa.io) is another option. Hatch provides a well-integrated set of features for building and testing Python packages.
 
 Avoid using [Rye](https://rye.astral.sh/). Rye is for experimental work that may be implemented in _uv_ in future.
+
+Some Python projects have specialized requirements that mean that you will decide to create a customised project, rather than using a popular project tool. In these cases, think carefully about the tools and directory structure that you will need, and ensure that you are familiar with the current [best practices for Python projects](#best-practices-for-python-projects).
+
+### Use the Most Recent Version of Python That You Can
+
+For new projects, choose the most recent stable version of Python 3. This ensures that you have the latest security fixes, as well as the fastest performance.
+
+Upgrade your projects as new Python versions are released. The Python development team usually support each version for five years, but some Python libraries may only support each version of Python for a shorter period of time. If you use tools that support multiple versions of Python and automated testing, you can test your projects on new Python versions with little risk.
+
+{{< alert >}}
+_Avoid using Python 2._ Older operating systems include Python 2, but it is not supported by the Python development team or by the developers of most popular Python libraries.
+{{< /alert >}}
+
+## Developing Python Projects
 
 ### Format Your Code
 
@@ -90,7 +92,7 @@ Use [pre-commit](https://pre-commit.com/) to run the formatting tool before each
 
 Use a code linting tool with a plugin to your editor, so that your code is automatically checked for issues.
 
-[flake8](https://flake8.pycqa.org/en/latest/) is currently the most popular linter for Python, but consider using [Ruff](https://docs.astral.sh/ruff/). Ruff includes the features of both flake8 itself and the most popular plugins for flake8.
+[flake8](https://flake8.pycqa.org/en/latest/) is currently the most popular linter for Python, but consider using [Ruff](https://docs.astral.sh/ruff/). Ruff includes the features of both flake8 and the most popular plugins for flake8, along with many other capabilities.
 
 Use [pre-commit](https://pre-commit.com/) to run the linting tool before each commit to source control. You should also run the linting tool with your CI system, so that it rejects any code that does not meet the standards for your project.
 
@@ -106,13 +108,15 @@ To see how much of your code is covered by tests, add the [pytest-cov](https://p
 
 Always package the tools and code libraries that you would like to share with other people. Packages enable people to use your code with the operating systems and tools that they prefer to work with, and also allow them to manage which version of your code they use.
 
-In most cases, you should package a Python application in a format that enables you to include a copy of the required version of Python as well as your code and the dependencies. This ensures that your code runs with the expected version of Python, and has the correct version of each dependency.
+Use [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages to distribute the Python libraries that you create. Read the [Python Packaging User Guide](https://packaging.python.org/en/latest/flow/) for an explanation of how to distribute software with wheel packages.
 
-Use OCI container images to package applications that provide a network service, such as a Web application. You can build container images with Docker, buildah and other tools. Consider using the [official Python](https://hub.docker.com/_/python) container image as the base when you build images for your application.
+You can also use _wheel_ packages to share development tools. If you publish your Python application as a _wheel_, other developers can run it with _uv_ or _pipx_. All _wheel_ packages require an existing installation of Python.
+
+Avoid using wheel packages for other cases. Instead, package your Python applications in a format that enables you to include a copy of the required version of Python as well as your code and the dependencies. This ensures that your code runs with the expected version of Python, and has the correct version of each dependency.
+
+Use OCI container images to package applications that provide a network service, such as a Web application. You can build container images with [buildah](https://buildah.io/), Docker and other tools. Consider using the [official Python container image](https://hub.docker.com/_/python) as the base when you build images for your application.
 
 Use [PyInstaller](https://pyinstaller.org/) to publish desktop and command-line applications as a single executable file. Each PyInstaller file includes a copy of Python, along with your code and the required dependencies.
-
-Use [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages for libraries. You can also use _wheel_ packages for development tools. If you publish your Python application as a _wheel_, other developers can run it with _uv_ or _pipx_. All _wheel_ packages require an existing installation of Python.
 
 > _Requirements files:_ If you use requirements files to build or deploy projects then configure your tools to [use hashes](#ensure-that-requirements-files-include-hashes).
 
