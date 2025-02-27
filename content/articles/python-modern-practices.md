@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2025-02-23T15:44:00+00:00"
+date = "2025-02-27T11:53:00+00:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -12,33 +12,33 @@ tags = ["python"]
 
 ## Use a Helper to Run Python Tools
 
-Use either [uv](https://docs.astral.sh/uv/) or [pipx](https://pipx.pypa.io) to run Python tools on development systems, rather than installing these applications with _pip_ or another method. Both _uv_ and _pipx_ automatically put each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
+Use either [pipx](https://pipx.pypa.io) or [uv](https://docs.astral.sh/uv/) to run Python tools on development systems, rather than installing these applications with _pip_ or another method. Both _pipx_ and _uv_ automatically put each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
 
-Use the [uvx](https://docs.astral.sh/uv/#tool-management) command of _uv_ or the [pipx run](https://pipx.pypa.io/stable/#walkthrough-running-an-application-in-a-temporary-virtual-environment) feature of _pipx_ for most Python applications. These download the application to a cache and run it. For example, these commands download and run the latest version of [bpytop](https://github.com/aristocratos/bpytop), a system monitoring tool:
+> If you use _pipx_, always follow the instructions on the [Website](https://pipx.pypa.io) to install it on your operating system. These ensure that _pipx_ works correctly with an appropriate Python installation.
 
-```shell
-uvx bpytop
-```
+Use the [pipx run](https://pipx.pypa.io/stable/#walkthrough-running-an-application-in-a-temporary-virtual-environment) feature of _pipx_ for most Python applications, or [uvx](https://docs.astral.sh/uv/#tool-management), which is the equivalent command for _uv_. These download the application to a cache and run it. For example, these commands download and run the latest version of [bpytop](https://github.com/aristocratos/bpytop), a system monitoring tool:
 
 ```shell
 pipx run bpytop
 ```
 
+```shell
+uvx bpytop
+```
+
 The _bpytop_ tool is cached after the first download, which means that the second use of it will run as quickly as an installed application.
 
-Use _uv tool install_ or _pipx install_ for tools that are essential for your development process. These options install the tool on to your system. This ensures that the tool is available if you have no Internet access, and that you keep the same version of the tool until you decide to upgrade it.
+Use _pipx install_ or _uv tool install_ for tools that are essential for your development process. These options install the tool on to your system. This ensures that the tool is available if you have no Internet access, and that you keep the same version of the tool until you decide to upgrade it.
 
-For example, install [pre-commit](https://pre-commit.com/), rather than use a temporary copy. The _pre-commit_ tool automatically runs every time that we commit a change to version control, so we want it to be consistent and always available. To install _pre-commit_, run the appropriate command for _uv_ or _pipx_:
-
-```shell
-uv tool install pre-commit
-```
+For example, install [pre-commit](https://pre-commit.com/), rather than use a temporary copy. The _pre-commit_ tool automatically runs every time that we commit a change to version control, so we want it to be consistent and always available. To install _pre-commit_, run the appropriate command for _pipx_ or _uv_:
 
 ```shell
 pipx install pre-commit
 ```
 
-> Always follow the instructions on the [pipx Website](https://pipx.pypa.io) for your specific operating system. This ensures that _pipx_ works with an appropriate Python installation.
+```shell
+uv tool install pre-commit
+```
 
 ## Using Python for Development
 
@@ -52,17 +52,19 @@ Instead of manually installing Python on to your development systems with packag
 
 Alternatively, consider using [Development Containers](https://containers.dev/), which are a feature of Visual Studio Code and Jetbrains IDEs. Development Containers enable you to define an isolated environment for a software project, which also enables you to use a separate version of Python for each project.
 
-Ensure that the installation tool compiles Python, rather than downloading [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). These standalone builds are modified versions of Python. Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) automatically compile Python, but you must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation.
+Whichever tool you use, ensure that it compiles Python, rather than downloading [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). These standalone builds are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project.
+
+Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) automatically compile Python, but you must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation.
 
 > Only use the Python installation features of [uv](https://docs.astral.sh/uv/), [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) for experimental projects. These project tools always download third-party standalone builds of Python when a user requests a Python version that is not already installed on the system.
 
 ### Use a Project Tool
 
-Choose a project tool to help you manage your project. There are several of these tools. The most important choice is to select one and use it from the beginning of your project. You can avoid many future issues with this decision. For example, any of these tools can generate a directory structure that follows best practices and will be compatible with other Python tooling.
+Choose a project tool to help you manage your project. There are several of these tools, each of which provides the essential features. For example, all of these tools can generate a directory structure that follows best practices and will be compatible with other Python tooling.
 
 [Poetry](https://python-poetry.org/) is currently the most popular tool for Python application projects. Consider using [uv](https://docs.astral.sh/uv/) or [PDM](https://pdm-project.org) for new application projects. PDM and _uv_ align more closely to the latest Python standards.
 
-If you are developing a Python library, [Hatch](https://hatch.pypa.io) is another option. Hatch provides a well-integrated set of features for building and testing Python packages.
+If you are developing a Python library, you may prefer to use [Hatch](https://hatch.pypa.io). Hatch provides a well-integrated set of features for building and testing Python packages.
 
 Avoid using [Rye](https://rye.astral.sh/). Rye is for experimental work that may be implemented in _uv_ in future.
 
