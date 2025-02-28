@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2025-02-27T11:53:00+00:00"
+date = "2025-02-28T16:55:00+00:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -68,7 +68,7 @@ If you are developing a Python library, you may prefer to use [Hatch](https://ha
 
 Avoid using [Rye](https://rye.astral.sh/). Rye is for experimental work that may be implemented in _uv_ in future.
 
-Some Python projects have specialized requirements that mean that you will decide to create a customised project, rather than using a popular project tool. In these cases, think carefully about the tools and directory structure that you will need, and ensure that you are familiar with the current [best practices for Python projects](#best-practices-for-python-projects).
+Some Python projects have specialized requirements that mean that you will decide to create a customised project, rather than using a popular project tool. In these cases, think carefully about the tools and directory structure that you will need, and ensure that you are familiar with the current [best practices for Python projects](https://www.stuartellis.name/articles/python-project-setup).
 
 ### Use the Most Recent Version of Python That You Can
 
@@ -86,7 +86,7 @@ _Avoid using Python 2._ Older operating systems include Python 2, but it is not 
 
 Use a formatting tool with a plugin to your editor, so that your code is automatically formatted to a consistent style.
 
-[Black](https://black.readthedocs.io/en/stable/) is a popular code formatting tool for Python, but consider using [Ruff](https://docs.astral.sh/ruff/). Ruff provides both code formatting and quality checks for Python code.
+Consider using [Ruff](https://docs.astral.sh/ruff/), which provides both code formatting and quality checks for Python code. [Black](https://black.readthedocs.io/en/stable/) was the most popular code formatting tool for Python before the release of Ruff.
 
 Use [pre-commit](https://pre-commit.com/) to run the formatting tool before each commit to source control. You should also run the formatting tool with your CI system, so that it rejects any code that does not match the format for your project.
 
@@ -94,9 +94,19 @@ Use [pre-commit](https://pre-commit.com/) to run the formatting tool before each
 
 Use a code linting tool with a plugin to your editor, so that your code is automatically checked for issues.
 
-[flake8](https://flake8.pycqa.org/en/latest/) is currently the most popular linter for Python, but consider using [Ruff](https://docs.astral.sh/ruff/). Ruff includes the features of both flake8 and the most popular plugins for flake8, along with many other capabilities.
+[flake8](https://flake8.pycqa.org/en/latest/) has been the most popular linter for Python, but consider using [Ruff](https://docs.astral.sh/ruff/). Ruff includes the features of both flake8 and the most popular plugins for flake8, along with many other capabilities.
 
 Use [pre-commit](https://pre-commit.com/) to run the linting tool before each commit to source control. You should also run the linting tool with your CI system, so that it rejects any code that does not meet the standards for your project.
+
+### Use Type Hinting
+
+Current versions of Python support type hinting. Consider using type hints in any critical application. If you develop a shared library, use type hints.
+
+Once you add type hints, type checkers like [mypy](http://www.mypy-lang.org/) can check your code as you develop it. Code editors can also read type hints to display information about the code that you are working with. You can also add a type checker to your pre-commit hooks and CI to validate that the code in your project is consistent.
+
+If you use [Pydantic](https://docs.pydantic.dev/) in your application, it can work with type hints. Use the [mypy plugin for Pydantic](https://docs.pydantic.dev/latest/integrations/mypy/) to improve the integration between mypy and Pydantic.
+
+> [PEP 484 - Type Hints](https://peps.python.org/pep-0484/) and [PEP 526 – Syntax for Variable Annotations](https://peps.python.org/pep-0526/) define the notation for type hinting.
 
 ### Test with pytest
 
@@ -122,17 +132,27 @@ Use [PyInstaller](https://pyinstaller.org/) to publish desktop and command-line 
 
 > _Requirements files:_ If you use requirements files to build or deploy projects then configure your tools to [use hashes](#ensure-that-requirements-files-include-hashes).
 
+### Ensure That Requirements Files Include Hashes
+
+Python tools support [hash checking](https://pip.pypa.io/en/stable/topics/secure-installs/#hash-checking-mode) to ensure that packages are valid. Some tools require extra configuration to include package hashes in the requirements files that they generate. For example, you must set the _generate-hashes_ option for the _pip-compile_ and _uv_ utilities to generate _requirements.txt_ files that include hashes. Add this option to the relevant section of the _pyproject.toml_ file.
+
+For _pip-tools_, add the option to the _tool.pip-tools_ section:
+
+```toml
+[tool.pip-tools]
+# Set generate-hashes for pip-compile
+generate-hashes = true
+```
+
+For _uv_, add the option to the _tool.uv.pip_ section:
+
+```toml
+[tool.uv.pip]
+# Set generate-hashes for uv
+generate-hashes = true
+```
+
 ## Language Syntax
-
-### Use Type Hinting
-
-Current versions of Python support type hinting. Consider using type hints in any critical application. If you develop a shared library, use type hints.
-
-Once you add type hints, the [mypy](http://www.mypy-lang.org/) tool can check your code as you develop it. Code editors can also read type hints to display information about the code that you are working with.
-
-If you use [Pydantic](https://docs.pydantic.dev/) in your application, it can work with type hints. Use the [mypy plugin for Pydantic](https://docs.pydantic.dev/latest/integrations/mypy/) to improve the integration between mypy and Pydantic.
-
-> [PEP 484 - Type Hints](https://peps.python.org/pep-0484/) and [PEP 526 – Syntax for Variable Annotations](https://peps.python.org/pep-0526/) define the notation for type hinting.
 
 ### Create Data Classes for Custom Data Objects
 
@@ -198,13 +218,13 @@ The [breakpoint()](https://docs.python.org/3/library/functions.html#breakpoint) 
 
 The built-in _print()_ statement is convenient for adding debugging information, but you should include logging in your scripts and applications. Use the [logging](https://docs.python.org/3/library/logging.html#logrecord-attributes) module in the standard library, or a third-party logging module.
 
-### Use the TOML Format for Configuration
+### File Formats: TOML for Configuration & JSON for Data
 
-Use [TOML](https://toml.io/) for data files that must be written or edited by human beings. Use the JSON format for data that is transferred between computer programs. Avoid using the INI or YAML formats.
+Use [TOML](https://toml.io/) for data files that must be written or edited by human beings. Use the JSON format for data that is transferred between computer programs. If neither of these are suitable, consider using [KDL](https://kdl.dev/), which is an emerging standard.
 
-Python 3.11 and above include _tomllib_ to read the TOML format. Use [tomli](https://pypi.org/project/tomli/) to add support for reading TOML to applications that run on older versions of Python.
+Current versions of Python include support for reading and creating JSON. Python 3.11 and above include _tomllib_ to read the TOML format. If your Python software will generate TOML, you need to add [Tomli-W](https://pypi.org/project/tomli-w/) to your project.
 
-If your Python software needs to generate TOML, add [Tomli-W](https://pypi.org/project/tomli-w/).
+Avoid using the INI or YAML formats for new projects. These formats are more difficult to validate with software, and human errors are also more likely.
 
 > [PEP 680 - tomllib: Support for Parsing TOML in the Standard Library](https://peps.python.org/pep-0680/) explains why TOML is now included with Python.
 
@@ -277,75 +297,3 @@ Use [httpx](https://www.python-httpx.org/) for Web client applications. Many Pyt
 The httpx package supersedes requests. It supports [HTTP/2](https://www.python-httpx.org/http2/) and [async](https://www.python-httpx.org/async/), which are not available with requests.
 
 Avoid using _urllib.request_ from the Python standard library. It was designed as a low-level library, and lacks the features of requests and httpx.
-
-## Best Practices for Python Projects
-
-Consider [using a project tool](#use-a-project-tool) to set up and develop your Python projects. If you decide not to use a project tool, set up your projects to follow the best practices in this section.
-
-### Use a pyproject.toml File
-
-Create a _pyproject.toml_ file in the root directory of each Python project. Use this file as the central place to store configuration information about the project and the tools that it uses. For example, you list [the dependencies of your project](https://www.pyopensci.org/python-package-guide/package-structure-code/declare-dependencies.html) in the _pyproject.toml_ file.
-
-Python project tools like PDM and Hatch automatically create and use a _pyproject.toml_ file.
-
-> The [pyOpenSci project documentation on pyproject.toml](https://www.pyopensci.org/python-package-guide/package-structure-code/pyproject-toml-python-package-metadata.html) provides an introduction to the file format. The various features of _pyproject.toml_ files are defined these PEPs: [PEP 517](https://peps.python.org/pep-0517/), [PEP 518](https://peps.python.org/pep-0518/), [PEP 621](https://peps.python.org/pep-0621/) and [PEP 660](https://peps.python.org/pep-0660/).
-
-### Create a Directory Structure That Uses the src Layout
-
-Python itself does not require a specific directory structure for your projects. The Python packaging documentation describes two popular directory structures: [the src layout and the flat layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/).
-The [pyOpenSci project documentation on directory structures](https://www.pyopensci.org/python-package-guide/package-structure-code/python-package-structure.html) explains the practical differences between the two.
-
-Use the src layout for a project that creates Python _wheel_ packages. This requires you to use [editable installs](https://setuptools.pypa.io/en/latest/userguide/development_mode.html) of the packages in your project. [PDM](https://pdm-project.org), [uv](https://docs.astral.sh/uv/) and [Hatch](https://hatch.pypa.io) support editable installs.
-
-> By default, uv will create a project with the flat layout. Use the _--lib_ flag to create a project with the src layout.
-
-### Use Virtual Environments for Development
-
-The [virtual environments](https://docs.python.org/3/tutorial/venv.html) feature enables you to define one or more separate sets of packages for each Python project, and switch between them. This ensures that a set of packages that you use for a specific purpose do not conflict with any other Python packages on the system. Always use Python virtual environments for your projects.
-
-Several tools automate virtual environments. The [mise](https://mise.jdx.dev) version manager includes [support for virtual environments](https://mise.jdx.dev/lang/python.html#automatic-virtualenv-activation). The [pyenv](https://github.com/pyenv/pyenv) version manager supports virtual environments with the [virtualenv plugin](https://github.com/pyenv/pyenv-virtualenv). If you use a tool like [uv](https://docs.astral.sh/uv/), [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io) to develop your projects, these also manage Python virtual environments for you.
-
-You can set up and use virtual environments with _venv_, which is part of the Python standard library. This is a manual process.
-
-### Use Requirements Files to Install Packages Into Environments
-
-Avoid using _pip_ commands to install individual packages into virtual environments. If you use [uv](https://docs.astral.sh/uv/), [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io) to develop your project, they can manage the contents of virtual environments for development and testing.
-
-For other cases, use [requirements files](https://pip.pypa.io/en/stable/reference/requirements-file-format/). A requirements file can specify the exact version and hash for each required package.
-
-You run a tool to read the dependencies in the _pyproject.toml_ file and generate a requirements file that lists the specific packages that are needed to provide those dependencies for the Python version and operating system. PDM, [pip-tools](https://pip-tools.readthedocs.io/en/stable/) and [uv](https://docs.astral.sh/uv/) include features to create requirements files.
-
-You can then use [pip-sync](https://pip-tools.readthedocs.io/en/stable/cli/pip-sync/) or the _sync_ feature of _uv_ to make the packages in a target virtual environment match the list in the requirements file. This process ensures that any extra packages are removed from the virtual environment.
-
-You can also run _pip install_ with a requirements file. This only attempts to install the specified packages. For example, these commands install the packages that are specified by the file _requirements-macos-dev.txt_ into the virtual environment _.venv-dev_:
-
-```shell
-source ./.venv-dev/bin/activate
-python3 -m pip install --require-virtualenv -r requirements-macos-dev.txt
-```
-
-### Ensure That Requirements Files Include Hashes
-
-Python tools support [hash checking](https://pip.pypa.io/en/stable/topics/secure-installs/#hash-checking-mode) to ensure that packages are valid. Some tools require extra configuration to include package hashes in the requirements files that they generate. For example, you must set the _generate-hashes_ option for the _pip-compile_ and _uv_ utilities to generate _requirements.txt_ files that include hashes. Add this option to the relevant section of the _pyproject.toml_ file.
-
-For _pip-tools_, add the option to the _tool.pip-tools_ section:
-
-```toml
-[tool.pip-tools]
-# Set generate-hashes for pip-compile
-generate-hashes = true
-```
-
-For _uv_, add the option to the _tool.uv.pip_ section:
-
-```toml
-[tool.uv.pip]
-# Set generate-hashes for uv
-generate-hashes = true
-```
-
-### pip-compile: Use the Correct Virtual Environment
-
-If you do not already have a tool that can create requirements files, you can use the [pip-compile](https://pip-tools.readthedocs.io/en/stable/cli/pip-compile/) utility that is provided by [pip-tools](https://pip-tools.readthedocs.io/en/stable/).
-
-To ensure that it calculates the correct requirements for your application, the _pip-compile_ tool must be run in a virtual environment that includes your application package. This means that you cannot use _pipx_ to install _pip-compile_.
