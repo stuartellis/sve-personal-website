@@ -1,7 +1,7 @@
 +++
 title = "Using the Task Tool"
 slug = "task-runner"
-date = "2024-11-23T18:01:00+01:00"
+date = "2025-03-08T21:34:00+00:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -455,7 +455,7 @@ rules:
   braces:
     forbid: false
     min-spaces-inside: 0
-    max-spaces-inside: 0
+    max-spaces-inside: 1
     min-spaces-inside-empty: 0
     max-spaces-inside-empty: 0
 
