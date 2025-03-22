@@ -1,7 +1,7 @@
 +++
 title = "Setting Up Fedora Workstation for Software Development"
 slug = "fedora-workstation-setup"
-date = "2025-01-05T11:43:00+00:00"
+date = "2025-03-22T09:18:00+00:00"
 description = "Setting up a Fedora Workstation for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
@@ -64,7 +64,9 @@ Useful software that you can install as Flatpaks include:
 Fedora includes the command-line editor [nano](https://www.nano-editor.org/) and a small version of [vim](http://www.vim.org/) with a limited set of features, as well as a
 desktop text editor with basic support for programming. Add the code editors or IDEs that you would prefer to use.
 
-If you do not have a preferred editor, consider using a version of [Visual Studio Code](https://code.visualstudio.com). To work with a modern Vim editor, install [Neovim](https://neovim.io).
+If you do not have a preferred editor, consider using [Zed](https://zed.dev/) or a version of [Visual Studio Code](https://code.visualstudio.com). Read the next section for more details on Visual Studio Code.
+
+To use a modern code editor that works like Vim, install [Neovim](https://neovim.io). The default configuration for Neovim follows best practices for Vim, but you can customise it as you wish.
 
 #### Visual Studio Code
 
@@ -166,40 +168,9 @@ brew update
 
 ## Working with Programming Languages
 
-Avoid using the Fedora packages for programming languages. Instead, use version manager tools. These enable you to install the correct version of the required programming language and dependencies for each of your projects. Use Homebrew to install version manager tools.
+Avoid using the Fedora packages for programming languages. Instead, use [version manager tools](https://www.stuartellis.name/articles/version-managers/). These enable you to install the correct version of the required programming language and dependencies for each of your projects. Use Homebrew to install version manager tools.
 
 Alternatively, Fedora Workstation includes [toolbx](https://containertoolbx.org/) to help you manage container environments for developing your projects. Container environments also enable you to have separate versions of software for each of your projects.
-
-### Using Version Managers
-
-Consider using a specialized version manager for these programming languages:
-
-- [pyenv](https://github.com/pyenv/pyenv) for Python
-- [rustup](https://rustup.rs/) for Rust
-- The standard _go_ tool [manages versions of Go](https://go.dev/doc/manage-install#installing-multiple).
-- [tenv](https://tofuutils.github.io/tenv/) for Terraform or OpenTofu
-
-You can start using these version managers quickly. They require very little configuration.
-
-[mise](https://mise.jdx.dev/) is more powerful. It acts as a version manager for multiple programming languages. This is most useful for JavaScript, as it provides a consistent set of features for managing many tools, including Node.js, Deno and Bun.
-
-Use Homebrew to install the version managers that you need. If you use a version manager, you will also need to install compiler tools for the C programming language. Installations of Python, Node.js and other languages use GCC to compile components that are written in C. To provide GCC use the Fedora packages for GCC:
-
-```shell
-sudo dnf install gcc
-```
-
-We use the GCC compiler for this purpose because it is compatible with the widest range of C code. If you are developing your own C code, consider using the [Clang](https://clang.llvm.org/) compiler for your project.
-
-### Terraform and OpenTofu
-
-Use the [tenv](https://tofuutils.github.io/tenv/) version manager to install versions of Terraform and OpenTofu. To install _tenv_ with Homebrew, run this command in a terminal window:
-
-```shell
-brew install tenv cosign
-```
-
-Always install _cosign_ along with _tenv_. If _cosign_ is present, _tenv_ automatically uses it to carry out signature verification on the binaries that it downloads.
 
 ### Avoid Using The System Python Installation
 

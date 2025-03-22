@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2025-02-28T16:55:00+00:00"
+date = "2025-03-22T09:22:00+00:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -48,7 +48,7 @@ If your operating system includes a Python installation, avoid using it for your
 
 ### Install Python With Tools That Support Multiple Versions
 
-Instead of manually installing Python on to your development systems with packages from [the Python Website](https://www.python.org), use a version manager tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv). These tools allow you to switch between different versions of Python. This means that you can upgrade each of your projects to new versions of Python later without interfering with other tools and projects that use Python.
+Instead of manually installing Python on to your development systems with packages from [the Python Website](https://www.python.org), use a version manager tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv). These tools allow you to switch between different versions of Python. This means that you can upgrade each of your projects to new versions of Python later without interfering with other tools and projects that use Python. I provide a separate [article on using version managers](https://www.stuartellis.name/articles/version-managers/).
 
 Alternatively, consider using [Development Containers](https://containers.dev/), which are a feature of Visual Studio Code and Jetbrains IDEs. Development Containers enable you to define an isolated environment for a software project, which also enables you to use a separate version of Python for each project.
 

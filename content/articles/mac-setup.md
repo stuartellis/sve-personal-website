@@ -1,7 +1,7 @@
 +++
 title = "How to Set up an Apple Mac for Software Development"
 slug = "mac-setup"
-date = "2025-01-05T11:41:00+00:00"
+date = "2025-03-22T09:17:00+00:00"
 description = "Setting up an Apple Mac for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "macos", "golang", "java", "javascript", "python"]
@@ -217,7 +217,7 @@ repos/
 
 Installations of macOS include a command-line version of [vim](http://www.vim.org/) and TextEdit, a desktop text editor. TextEdit is designed for light-weight word processing, and it has no support for programming. Add the code editors or IDEs that you would prefer to use.
 
-If you do not have a preferred editor, consider using a version of [Visual Studio Code](https://code.visualstudio.com). Read the next section for more details.
+If you do not have a preferred editor, consider using [Zed](https://zed.dev/) or a version of [Visual Studio Code](https://code.visualstudio.com). Read the next section for more details on Visual Studio Code.
 
 To use a modern code editor that works like Vim, install [Neovim](https://neovim.io). The default configuration for Neovim follows best practices for Vim, but you can customise it as you wish.
 
@@ -259,7 +259,7 @@ Create a separate SSH key for each set of systems that you access.
 
 ## Programming Languages
 
-Avoid using the installations of programming languages that are included in macOS. Instead, use version manager tools. These enable you to use the correct versions and dependencies for each project that you work on. Follow the advice in the sections below to install version managers for popular programming languages with Homebrew.
+Avoid using the installations of programming languages that are included in macOS. Instead, use [version manager tools](https://www.stuartellis.name/articles/version-managers/). These enable you to use the correct versions and dependencies for each project that you work on. Follow the advice in the sections below to install version managers for popular programming languages with Homebrew.
 
 If possible, avoid using Homebrew itself to install programming languages. Homebrew has limited support for working with multiple versions of the same programming language.
 
