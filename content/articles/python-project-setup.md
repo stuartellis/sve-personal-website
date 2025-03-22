@@ -12,6 +12,8 @@ If possible [use a project tool](https://www.stuartellis.name/articles/python-mo
 
 Some Python projects have specialized requirements that mean that you will decide to create a customised project, rather than using one of the popular project tools. If you decide not to use a project tool, set up your projects to follow the best practices in this article.
 
+For more details about modern Python tools and good practices, read [my article](https://www.stuartellis.name/articles/python-modern-practices).
+
 ## Use a pyproject.toml File
 
 Create a _pyproject.toml_ file in the root directory of each Python project. Use this file as the central place to store configuration information about the project and the tools that it uses. For example, you list [the dependencies of your project](https://www.pyopensci.org/python-package-guide/package-structure-code/declare-dependencies.html) in the _pyproject.toml_ file.
