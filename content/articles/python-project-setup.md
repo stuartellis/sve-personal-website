@@ -1,29 +1,33 @@
 +++
 title = "Project Setup with Python"
 slug = "python-project-setup"
-date = "2025-02-28T16:51:00+00:00"
+date = "2025-03-22T08:25:00+00:00"
 description = "Project conventions for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
 
 +++
 
-If possible [use a project tool](https://www.stuartellis.name/articles/python-modern-practices#use-a-project-tool) to set up and develop your Python projects. It will implement these concepts for you. If you decide not to use a project tool, set up your projects to follow the best practices in this article.
+If possible [use a project tool](https://www.stuartellis.name/articles/python-modern-practices#use-a-project-tool) to set up and develop your Python projects. It will implement these concepts for you.
+
+Some Python projects have specialized requirements that mean that you will decide to create a customised project, rather than using one of the popular project tools. If you decide not to use a project tool, set up your projects to follow the best practices in this article.
 
 ## Use a pyproject.toml File
 
 Create a _pyproject.toml_ file in the root directory of each Python project. Use this file as the central place to store configuration information about the project and the tools that it uses. For example, you list [the dependencies of your project](https://www.pyopensci.org/python-package-guide/package-structure-code/declare-dependencies.html) in the _pyproject.toml_ file.
 
-Python project tools like _uv_, PDM and Hatch automatically create and use a _pyproject.toml_ file.
+Python project tools like [PDM](https://pdm-project.org), [uv](https://docs.astral.sh/uv/) and [Hatch](https://hatch.pypa.io) automatically create and use a _pyproject.toml_ file.
 
 > The [pyOpenSci project documentation on pyproject.toml](https://www.pyopensci.org/python-package-guide/package-structure-code/pyproject-toml-python-package-metadata.html) provides an introduction to the file format. The various features of _pyproject.toml_ files are defined these PEPs: [PEP 517](https://peps.python.org/pep-0517/), [PEP 518](https://peps.python.org/pep-0518/), [PEP 621](https://peps.python.org/pep-0621/) and [PEP 660](https://peps.python.org/pep-0660/).
 
-## Libraries: Create a Directory Structure That Uses the src Layout
+## Use the Correct Directory Structure
 
 Python itself does not require a specific directory structure for your projects. The Python packaging documentation describes two popular directory structures: [the src layout and the flat layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/).
 The [pyOpenSci project documentation on directory structures](https://www.pyopensci.org/python-package-guide/package-structure-code/python-package-structure.html) explains the practical differences between the two.
 
 Use the src layout for a project that creates Python _wheel_ packages. This requires you to use [editable installs](https://setuptools.pypa.io/en/latest/userguide/development_mode.html) of the packages in your project. [PDM](https://pdm-project.org), [uv](https://docs.astral.sh/uv/) and [Hatch](https://hatch.pypa.io) support editable installs.
+
+Use the flat layout for applications, such as Web services and command-line tools.
 
 > By default, uv will create a project with the flat layout. Use the _--lib_ flag to create a project with the src layout.
 
@@ -51,6 +55,8 @@ You can also run _pip install_ with a requirements file. This only attempts to i
 source ./.venv-dev/bin/activate
 python3 -m pip install --require-virtualenv -r requirements-macos-dev.txt
 ```
+
+> _Requirements files:_ If you use requirements files to build or deploy projects then configure your tools to [use hashes](https://www.stuartellis.name/articles/python-modern-practices/#ensure-that-requirements-files-include-hashes).
 
 ## pip-compile: Use the Correct Virtual Environment
 
