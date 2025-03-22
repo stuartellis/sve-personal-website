@@ -1,14 +1,14 @@
 +++
 title = "Signing Code Commits"
 slug = "signing-code-commits"
-date = "2025-03-22T08:15:00+00:00"
+date = "2025-03-22T08:40:00+00:00"
 description = "Signing Code Commits"
 categories = ["devops", "programming"]
 tags = ["devops"]
 
 +++
 
-We should always sign the commits that we make in source code repositories, especially for shared projects like Open Source software. This means that each commit can be linked to the author. I have written this article to explain how to set up [GnuPG](https://gnupg.org/) without any dependency on a repository hosting service. The process explained here uses GnuPG, which is the current standard Open Source tool for signing commits.
+We should always sign the commits that we make in source code repositories, especially for shared projects like Open Source software. This means that each commit can be linked to the author. I have written this article to explain how to set up [GnuPG](https://gnupg.org/) without any dependency on a repository hosting service. GnuPG is the current standard Open Source tool for signing commits.
 
 > _GPG_: This article refers to GnuPG as _GPG_. The command-line tool is called _gpg_, and many other documents use the term _GPG_ instead of _GnuPG_.
 
