@@ -1,7 +1,7 @@
 +++
 title = "Version Managers"
 slug = "version-managers"
-date = "2025-03-23T01:59:00+00:00"
+date = "2025-03-23T02:54:00+00:00"
 description = "Using version managers"
 categories = ["automation", "devops", "programming", "python"]
 tags = ["automation", "devops", "golang", "linux", "macos", "javascript", "python"]
@@ -12,13 +12,13 @@ Avoid installing stand-alone packages for tools and programming languages. Inste
 
 ## mise-en-place
 
-[mise-en-place](https://mise.jdx.dev/) (_mise_) is one of the most powerful version managers. It supports a wide range of popular programming languages and tools, along with options to integrate it with your environments.
+[mise-en-place](https://mise.jdx.dev/) (_mise_) is one of the most powerful version managers. It supports a wide range of popular programming languages and tools. This means that you can set the expected versions of all of the languages and tools for a project through a single mise configuration file.
 
-In fact, mise is a tool for managing your projects. It can work with [environment variables](https://mise.jdx.dev/environments/) and act as a [task runner](https://mise.jdx.dev/tasks/) as well as handling tool versions. Current versions also include experimental support for [managing pre-commit hooks](https://mise.jdx.dev/cli/generate/git-pre-commit.html).
+In fact, mise is a tool for managing your projects. It can also define [environment variables](https://mise.jdx.dev/environments/) and act as a [task runner](https://mise.jdx.dev/tasks/) as well as handling tool versions for a project. In addition, current versions of mise include experimental support for [managing Git pre-commit hooks](https://mise.jdx.dev/cli/generate/git-pre-commit.html).
 
-If you work in a team, you may find other version managers are more suitable for your projects. Contributors to your projects may prefer to use tools that they are already familiar with, or certain tools and processes may be required by the policies of your organization.
+If you work in a team, you may decide that other version managers are more suitable for your projects. Contributors to your projects may prefer to use tools that they are already familiar with, or certain tools and processes may be required by the policies of your organization.
 
-You may also decide not to use mise in environments where security is an important concern. It uses a range of plugins to install and update tools, including [asdf plugins](https://mise.jdx.dev/dev-tools/backends/asdf.html). The mise project is migrating away from asdf plugins, but you might choose to avoid the tool until this work is complete.
+You may also decide not to use mise in environments where security is an important concern. It uses a range of plugins to install and update tools, including [plugins for asdf](https://mise.jdx.dev/dev-tools/backends/asdf.html). The mise project is migrating away from asdf plugins, but you might choose to avoid the tool until this work is complete.
 
 If you decide not to use mise, later sections explain other version managers that are available for [programming languages](#version-managers-for-programming-languages) and [OpenTofu or Terraform](#tenv-version-manager-for-terraform-and-opentofu).
 
@@ -42,13 +42,17 @@ brew upgrade
 
 > Avoid using Homebrew itself to install programming languages. Homebrew has limited support for working with multiple versions of the same programming language.
 
+If you need to use Microsoft Windows, check the documentation of a version manager before you install it. Some version managers only support UNIX-based systems, or have features that cannot work on Microsoft Windows.
+
 ### Installation Options for mise-en-place
 
 The mise project offers [many installation options](https://mise.jdx.dev/installing-mise.html), including Homebrew and packages for most popular operating systems. Consider using Homebrew for macOS and Linux development systems, and Scoop or Winget for Windows development systems.
 
-The mise tool itself is a single executable file that is written in Rust. This means that you can install and update it in any environment. The project provides specific support for adding mise to [continuous integration systems](https://mise.jdx.dev/continuous-integration.html). If necessary, you can use [a script](https://mise.jdx.dev/installing-mise.html#https-mise-run) to install it on development environments.
+The mise tool itself is a single executable file that is written in Rust. This means that you can use it in any environment. The project provides specific support for adding mise to [continuous integration systems](https://mise.jdx.dev/continuous-integration.html). If necessary, you can use [a shell script](https://mise.jdx.dev/installing-mise.html#https-mise-run) to install it on Linux and macOS systems.
 
-> Regardless of how you install it, [mise requires extra tools to verify downloads](https://mise.jdx.dev/tips-and-tricks.html#software-verification). Install GPG with the same method that you use to install mise, and then use mise to install _cosign_ and _slsa-verifier_.
+> Some mise plugins and features require a UNIX-based system, which means that they will not work on Microsoft Windows. Where possible, mise provides cross-platform alternatives.
+
+Regardless of how you install it, [mise requires extra tools to verify downloads](https://mise.jdx.dev/tips-and-tricks.html#software-verification). Install GPG with the same method that you use to install mise, and then use mise to install _cosign_ and _slsa-verifier_.
 
 Consider using the [paranoid](https://mise.jdx.dev/paranoid.html) mode when you set up mise on development systems. This reduces the risk of a developer adding unsafe values to the mise configuration for a project.
 
@@ -74,7 +78,7 @@ sudo dnf install gcc
 
 ## Version Managers for Programming Languages
 
-These are the most popular specialized version managers for programming languages:
+These are popular specialized version managers for programming languages:
 
 - The standard _go_ tool [manages versions of Go](https://go.dev/doc/manage-install#installing-multiple).
 - [jEnv](https://www.jenv.be/) for Java
@@ -83,6 +87,8 @@ These are the most popular specialized version managers for programming language
 - [rustup](https://rustup.rs/) for Rust
 
 I suggest using [mise](https://mise.jdx.dev/) when you work with JavaScript if possible, as it provides a consistent set of features for managing many JavaScript tools, including Node.js, Deno and Bun.
+
+If you do not want to use mise, consider [Volta](https://volta.sh/) as an alternative to nvm for Node.js. Volta is a cross-platform tool, whilst nvm is a Bash shell script for UNIX-based systems.
 
 The [Ruby on Rails Guides](https://guides.rubyonrails.org/) recommend mise for Rails projects.
 
