@@ -1,7 +1,7 @@
 +++
 title = "Version Managers"
 slug = "version-managers"
-date = "2025-03-23T00:23:00+00:00"
+date = "2025-03-23T00:25:00+00:00"
 description = "Using version managers"
 categories = ["devops", "programming"]
 tags = ["devops", "linux", "macos", "javascript", "python"]
@@ -20,7 +20,7 @@ If you work in a team, you may find other version managers are more suitable for
 
 You may also decide not to use mise in environments where security is an important concern. It uses a range of plugins to install and update tools, including [asdf plugins](https://mise.jdx.dev/dev-tools/backends/asdf.html). The mise project is migrating away from asdf plugins, but you might choose to avoid the tool until this work is complete.
 
-If you decide not to use mise, later section explain other version managers that are available for [programming languages](#version-managers-for-programming-languages) and [Terraform](#tenv-version-manager-for-terraform-and-opentofu).
+If you decide not to use mise, later sections explain other version managers that are available for [programming languages](#version-managers-for-programming-languages) and [Terraform](#tenv-version-manager-for-terraform-and-opentofu).
 
 ## Setting Up Version Managers
 
