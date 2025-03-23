@@ -1,7 +1,7 @@
 +++
 title = "Version Managers"
 slug = "version-managers"
-date = "2025-03-23T01:23:00+00:00"
+date = "2025-03-23T01:59:00+00:00"
 description = "Using version managers"
 categories = ["automation", "devops", "programming", "python"]
 tags = ["automation", "devops", "golang", "linux", "macos", "javascript", "python"]
@@ -24,11 +24,23 @@ If you decide not to use mise, later sections explain other version managers tha
 
 ## Setting Up Version Managers
 
-Consider using [Homebrew](http://brew.sh/) to install version manager tools on your development systems for macOS and Linux. Homebrew enables you to update all of the version managers and other development tools on the system with minimal effort.
+Consider using [Homebrew](http://brew.sh/) to install version manager tools on your development systems for macOS and Linux. Homebrew enables you to update the version managers and other development tools on the system with minimal effort.
 
-> Update your version managers regularly, to ensure that they can access the latest versions of the tools that they manage.
+For example, to install the [rustup](https://rustup.rs/) version manager for Rust and the [pyenv](https://github.com/pyenv/pyenv) version manager for Python with Homebrew, run these commands in a terminal window:
 
-Avoid using Homebrew itself to install programming languages. Homebrew has limited support for working with multiple versions of the same programming language.
+```shell
+brew install rustup
+brew install pyenv
+```
+
+Update your version managers regularly, to ensure that they can access the latest versions of the tools that they manage. If you install version managers with Homebrew, you can update all of the version managers and other tools that you use at the same time, rather than needing to upgrade each one separately. These commands will upgrade all of the tools that Homebrew manages:
+
+```shell
+brew update
+brew upgrade
+```
+
+> Avoid using Homebrew itself to install programming languages. Homebrew has limited support for working with multiple versions of the same programming language.
 
 ### Installation Options for mise-en-place
 
@@ -78,7 +90,7 @@ The [Ruby on Rails Guides](https://guides.rubyonrails.org/) recommend mise for R
 
 ### Installing Python with a Version Manager
 
-Whichever version manager tool you use, ensure that it compiles each Python that it installs, rather than downloading [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). These standalone builds are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project.
+Whichever version manager tool you use, ensure that it compiles each version of Python that it installs, rather than downloading [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). These standalone builds are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project.
 
 Both pyenv and mise use [python-build](https://github.com/pyenv/pyenv/tree/master/plugins/python-build) to compile Python. This means that you can use either tool. The pyenv tool automatically compiles Python, but you must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation.
 
