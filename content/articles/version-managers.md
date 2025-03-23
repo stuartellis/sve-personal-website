@@ -1,7 +1,7 @@
 +++
 title = "Version Managers"
 slug = "version-managers"
-date = "2025-03-23T00:25:00+00:00"
+date = "2025-03-23T00:33:00+00:00"
 description = "Using version managers"
 categories = ["devops", "programming"]
 tags = ["devops", "linux", "macos", "javascript", "python"]
@@ -20,7 +20,7 @@ If you work in a team, you may find other version managers are more suitable for
 
 You may also decide not to use mise in environments where security is an important concern. It uses a range of plugins to install and update tools, including [asdf plugins](https://mise.jdx.dev/dev-tools/backends/asdf.html). The mise project is migrating away from asdf plugins, but you might choose to avoid the tool until this work is complete.
 
-If you decide not to use mise, later sections explain other version managers that are available for [programming languages](#version-managers-for-programming-languages) and [Terraform](#tenv-version-manager-for-terraform-and-opentofu).
+If you decide not to use mise, later sections explain other version managers that are available for [programming languages](#version-managers-for-programming-languages) and [OpenTofu or Terraform](#tenv-version-manager-for-terraform-and-opentofu).
 
 ## Setting Up Version Managers
 
@@ -92,11 +92,13 @@ Both pyenv and mise also support automatic switching between Python virtual envi
 
 Only use the version manager to handle Python virtual environments if you are not using a project tool. Otherwise, use your chosen Python project tool to handle virtual environments.
 
-Current versions of mise can integrate with [uv](https://mise.jdx.dev/mise-cookbook/python.html#mise-uv), so that there are no conflicts between the tools.
+Current versions of mise can [integrate with uv](https://mise.jdx.dev/mise-cookbook/python.html#mise-uv), so that there are no conflicts between the tools.
 
 ## tenv: Version Manager for Terraform and OpenTofu
 
-Use the [tenv](https://tofuutils.github.io/tenv/) version manager to install versions of Terraform and OpenTofu. To install _tenv_ with Homebrew, run this command in a terminal window:
+Use the [tenv](https://tofuutils.github.io/tenv/) version manager to install versions of [OpenTofu](https://opentofu.org/) and [Terraform](https://www.terraform.io/). It can also manage [Atmos](https://atmos.tools/) and [Terragrunt](https://terragrunt.gruntwork.io/).
+
+To install _tenv_ with Homebrew, run this command in a terminal window:
 
 ```shell
 brew install tenv cosign
