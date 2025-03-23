@@ -1,10 +1,10 @@
 +++
 title = "Version Managers"
 slug = "version-managers"
-date = "2025-03-23T00:33:00+00:00"
+date = "2025-03-23T01:23:00+00:00"
 description = "Using version managers"
-categories = ["devops", "programming"]
-tags = ["devops", "linux", "macos", "javascript", "python"]
+categories = ["automation", "devops", "programming", "python"]
+tags = ["automation", "devops", "golang", "linux", "macos", "javascript", "python"]
 
 +++
 
