@@ -1,7 +1,7 @@
 +++
 title = "Using Version Managers for Your Tools"
 slug = "version-managers"
-date = "2025-03-24T17:52:00+00:00"
+date = "2025-03-24T18:05:00+00:00"
 description = "Using version managers"
 categories = ["automation", "devops", "programming", "python"]
 tags = ["automation", "devops", "golang", "linux", "macos", "javascript", "python"]
@@ -54,13 +54,13 @@ Consider using [Homebrew](http://brew.sh/) to install version manager tools on y
 
 ### Setting Up mise-en-place on Developer Systems
 
-The mise project offers [many installation options](https://mise.jdx.dev/installing-mise.html), including Homebrew and packages for most popular operating systems. If necessary, you can use [a shell script](https://mise.jdx.dev/installing-mise.html#https-mise-run) to install it on Linux and macOS systems.
+The mise project offers [many installation options](https://mise.jdx.dev/installing-mise.html), including Homebrew, Scoop, WinGet and packages for most popular Linux distributions. If necessary, you can use [a shell script](https://mise.jdx.dev/installing-mise.html#https-mise-run) to install it on Linux and macOS systems.
 
 > Some mise plugins and features require a UNIX-based system, which means that they will not work on Microsoft Windows. Where possible, mise provides cross-platform alternatives.
 
-Regardless of how you install it, [mise requires extra tools to verify downloads](https://mise.jdx.dev/tips-and-tricks.html#software-verification). Linux systems include GPG. To install GPG on other operating systems, use the same method that you use to install mise. Then use mise to install _cosign_ and _slsa-verifier_.
+Regardless of how you install it, [mise requires extra tools to verify downloads](https://mise.jdx.dev/tips-and-tricks.html#software-verification). Linux systems often include the GPG tool. To install GPG on other operating systems, use the same method that you use to install mise. You can then use mise to install _cosign_ and _slsa-verifier_.
 
-For example, enter this command in a terminal window to install mise with Homebrew on macOS:
+For example, if you have Homebrew on macOS, enter these commands in a terminal window to install mise:
 
 ```shell
 brew install mise gnupg
@@ -70,8 +70,6 @@ mise use -g cosign slsa-verifier
 Once you have installed mise, [enable the shell integration](https://mise.jdx.dev/installing-mise.html#shells) and [install the plugin for your text editor](https://mise.jdx.dev/ide-integration.html).
 
 Consider using the [paranoid](https://mise.jdx.dev/paranoid.html) mode when you set up mise on development systems. This reduces the risk of a developer adding unsafe values to the mise configuration for a project.
-
-> If you added mise to a development system without using Homebrew or a package manager, use the [self-update feature](https://mise.jdx.dev/cli/self-update.html#mise-self-update) to upgrade it.
 
 ### Installing Other Version Managers with Homebrew
 
@@ -107,14 +105,22 @@ Run this command to install just GCC on Red Hat-based distributions, such as Fed
 sudo dnf install gcc
 ```
 
-## Updating Version Managers with Homebrew
+## Updating Version Managers
 
-Update your version managers regularly, to ensure that they can access the latest versions of the tools that they manage. If you install version managers with Homebrew, you can update all of the version managers and other tools that you use at the same time, rather than needing to upgrade each one separately. These commands will upgrade all of the tools that Homebrew manages:
+Update your version managers regularly, to ensure that they can access the latest versions of the tools that they manage.
+
+### Updating Version Managers with Homebrew
+
+If you install version managers with Homebrew, you can update all of the version managers and other tools that you use at the same time, rather than needing to upgrade each one separately. These commands will upgrade all of the tools that Homebrew manages:
 
 ```shell
 brew update
 brew upgrade
 ```
+
+### Updating mise
+
+If you installed mise with Homebrew or a package manager, use the same method to upgrade it. If you added mise to a system without using Homebrew or a package manager, use the [self-update feature](https://mise.jdx.dev/cli/self-update.html#mise-self-update) to upgrade.
 
 ## Version Managers and Python
 
