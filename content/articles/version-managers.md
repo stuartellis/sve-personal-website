@@ -1,70 +1,101 @@
 +++
-title = "Version Managers"
+title = "Using Version Managers for Your Tools"
 slug = "version-managers"
-date = "2025-03-23T02:54:00+00:00"
+date = "2025-03-24T17:52:00+00:00"
 description = "Using version managers"
 categories = ["automation", "devops", "programming", "python"]
 tags = ["automation", "devops", "golang", "linux", "macos", "javascript", "python"]
 
 +++
 
-Avoid installing stand-alone packages for tools and programming languages. Instead, use version manager tools. These enable you to use the correct version of the required tools and dependencies for each of your projects. The version manager can download all of the versions of a product that your projects need, and switch the active version as you move between projects.
+Avoid installing stand-alone packages for tools and programming languages. Instead, use version manager tools. These enable you to use the correct version of the required tools and dependencies for each of your projects. A version manager can download all of the versions of a product that your projects need, and switch the active version as you move between projects, as well as providing a default version.
 
-## mise-en-place
+[mise-en-place](https://mise.jdx.dev/) (_mise_) supports wide range of popular programming languages and tools. This means that you can set the expected versions of all of the languages and tools for a project through a single mise configuration file. Alternatively, you can use a [specialized version manager for each programming language](#version-managers-for-programming-languages).
 
-[mise-en-place](https://mise.jdx.dev/) (_mise_) is one of the most powerful version managers. It supports a wide range of popular programming languages and tools. This means that you can set the expected versions of all of the languages and tools for a project through a single mise configuration file.
+## More About mise-en-place
 
-In fact, mise is a tool for managing your projects. It can also define [environment variables](https://mise.jdx.dev/environments/) and act as a [task runner](https://mise.jdx.dev/tasks/) as well as handling tool versions for a project. In addition, current versions of mise include experimental support for [managing Git pre-commit hooks](https://mise.jdx.dev/cli/generate/git-pre-commit.html).
+The mise tool provides a framework for managing your projects. It can define [environment variables](https://mise.jdx.dev/environments/) and act as a [task runner](https://mise.jdx.dev/tasks/) as well as handling tool versions.
 
-If you work in a team, you may decide that other version managers are more suitable for your projects. Contributors to your projects may prefer to use tools that they are already familiar with, or certain tools and processes may be required by the policies of your organization.
+The mise tool itself is a single executable file that is written in Rust. This enables you to use mise in any environment, including [continuous integration systems](https://mise.jdx.dev/continuous-integration.html) like GitHub Actions. You can also include a [lockfile](https://mise.jdx.dev/configuration/settings.html#lockfile) with your projects to pin the exact versions of the tools that it installs. These features mean that your developer systems and continuous integration jobs can all work with exactly the same set of languages and tools, and can share a common set of reusable tasks.
 
-You may also decide not to use mise in environments where security is an important concern. It uses a range of plugins to install and update tools, including [plugins for asdf](https://mise.jdx.dev/dev-tools/backends/asdf.html). The mise project is migrating away from asdf plugins, but you might choose to avoid the tool until this work is complete.
+Even though mise uses the safest installation method that is available for each case, you may decide to avoid adding it to restricted environments. By design, mise can download and install a very wide range of software, and it uses public Internet services. These services include a plugin registry for mise that is hosted on GitHub and a version checker for the mise tool.
 
-If you decide not to use mise, later sections explain other version managers that are available for [programming languages](#version-managers-for-programming-languages) and [OpenTofu or Terraform](#tenv-version-manager-for-terraform-and-opentofu).
+> mise is designed to replace [asdf](https://asdf-vm.com/), an older version manager tool. It addresses [security and performance issues with the design of asdf](https://mise.jdx.dev/dev-tools/comparison-to-asdf.html).
 
-## Setting Up Version Managers
+## Specialized Version Managers
+
+### Version Managers for Programming Languages
+
+These are popular specialized version managers for programming languages:
+
+- The standard _go_ tool [manages versions of Go](https://go.dev/doc/manage-install#installing-multiple).
+- [jEnv](https://www.jenv.be/) for Java
+- [nvm](https://github.com/nvm-sh/nvm) for Node.js
+- [pyenv](https://github.com/pyenv/pyenv) for Python
+- [rustup](https://rustup.rs/) for Rust
+
+> See the [section on Python](#version-managers-and-python) for more details about using version managers with Python.
+
+I suggest using [mise](https://mise.jdx.dev/) when you work with JavaScript if possible, as it provides a consistent set of features for managing many JavaScript tools, including Node.js, Deno and Bun. If you do not want to use mise, consider [Volta](https://volta.sh/) as an alternative to nvm for Node.js. Volta is a cross-platform tool, whilst nvm is a Bash shell script for UNIX-based systems.
+
+If you are a Ruby on Rails developer, you may already use mise. The [Ruby on Rails Guides](https://guides.rubyonrails.org/) now recommend mise for Rails projects.
+
+### tenv: Version Manager for Terraform and OpenTofu
+
+If you do not want to use mise, use [tenv](https://tofuutils.github.io/tenv/) to install versions of [OpenTofu](https://opentofu.org/) and [Terraform](https://www.terraform.io/). The tenv version manager also supports [Atmos](https://atmos.tools/) and [Terragrunt](https://terragrunt.gruntwork.io/).
+
+> Always install _cosign_ on systems that use _tenv_. If _cosign_ is present, _tenv_ automatically uses it to carry out signature verification on the binaries that it downloads.
+
+## Setting Up Version Managers on Developer Systems
 
 Consider using [Homebrew](http://brew.sh/) to install version manager tools on your development systems for macOS and Linux. Homebrew enables you to update the version managers and other development tools on the system with minimal effort.
 
-For example, to install the [rustup](https://rustup.rs/) version manager for Rust and the [pyenv](https://github.com/pyenv/pyenv) version manager for Python with Homebrew, run these commands in a terminal window:
+[Scoop](https://scoop.sh/) and [WinGet](https://learn.microsoft.com/en-us/windows/package-manager/winget/) provide the equivalent of Homebrew for Microsoft Windows. If you need to use Microsoft Windows, check the documentation of a version manager before you install it. Some version managers only support UNIX-based systems, or have features that cannot work on Microsoft Windows.
 
-```shell
-brew install rustup
-brew install pyenv
-```
+### Setting Up mise-en-place on Developer Systems
 
-Update your version managers regularly, to ensure that they can access the latest versions of the tools that they manage. If you install version managers with Homebrew, you can update all of the version managers and other tools that you use at the same time, rather than needing to upgrade each one separately. These commands will upgrade all of the tools that Homebrew manages:
-
-```shell
-brew update
-brew upgrade
-```
-
-> Avoid using Homebrew itself to install programming languages. Homebrew has limited support for working with multiple versions of the same programming language.
-
-If you need to use Microsoft Windows, check the documentation of a version manager before you install it. Some version managers only support UNIX-based systems, or have features that cannot work on Microsoft Windows.
-
-### Installation Options for mise-en-place
-
-The mise project offers [many installation options](https://mise.jdx.dev/installing-mise.html), including Homebrew and packages for most popular operating systems. Consider using Homebrew for macOS and Linux development systems, and Scoop or Winget for Windows development systems.
-
-The mise tool itself is a single executable file that is written in Rust. This means that you can use it in any environment. The project provides specific support for adding mise to [continuous integration systems](https://mise.jdx.dev/continuous-integration.html). If necessary, you can use [a shell script](https://mise.jdx.dev/installing-mise.html#https-mise-run) to install it on Linux and macOS systems.
+The mise project offers [many installation options](https://mise.jdx.dev/installing-mise.html), including Homebrew and packages for most popular operating systems. If necessary, you can use [a shell script](https://mise.jdx.dev/installing-mise.html#https-mise-run) to install it on Linux and macOS systems.
 
 > Some mise plugins and features require a UNIX-based system, which means that they will not work on Microsoft Windows. Where possible, mise provides cross-platform alternatives.
 
-Regardless of how you install it, [mise requires extra tools to verify downloads](https://mise.jdx.dev/tips-and-tricks.html#software-verification). Install GPG with the same method that you use to install mise, and then use mise to install _cosign_ and _slsa-verifier_.
+Regardless of how you install it, [mise requires extra tools to verify downloads](https://mise.jdx.dev/tips-and-tricks.html#software-verification). Linux systems include GPG. To install GPG on other operating systems, use the same method that you use to install mise. Then use mise to install _cosign_ and _slsa-verifier_.
+
+For example, enter this command in a terminal window to install mise with Homebrew on macOS:
+
+```shell
+brew install mise gnupg
+mise use -g cosign slsa-verifier
+```
+
+Once you have installed mise, [enable the shell integration](https://mise.jdx.dev/installing-mise.html#shells) and [install the plugin for your text editor](https://mise.jdx.dev/ide-integration.html).
 
 Consider using the [paranoid](https://mise.jdx.dev/paranoid.html) mode when you set up mise on development systems. This reduces the risk of a developer adding unsafe values to the mise configuration for a project.
 
 > If you added mise to a development system without using Homebrew or a package manager, use the [self-update feature](https://mise.jdx.dev/cli/self-update.html#mise-self-update) to upgrade it.
 
+### Installing Other Version Managers with Homebrew
+
+Homebrew can install all of the popular version manager tools. For example, to install the [rustup](https://rustup.rs/) version manager for Rust and the [pyenv](https://github.com/pyenv/pyenv) version manager for Python, run these commands in a terminal window:
+
+```shell
+brew install pyenv rustup
+```
+
+You can also use Homebrew to install other tools that version managers work with. For example, we should install _cosign_ on systems that use _tenv_. If _cosign_ is present, _tenv_ automatically uses it to carry out signature verification on the binaries that it downloads. This command uses Homebrew to install both _tenv_ and _cosign_:
+
+```shell
+brew install tenv cosign
+```
+
+> Avoid using Homebrew itself to install programming languages. Homebrew has limited support for working with multiple versions of the same programming language.
+
 ### Other Requirements for Version Managers
 
-When you use a version manager for Python or JavaScript, you also need to install compiler tools for the C programming language. Installations of Python, Node.js and other interpreted languages compile components that are written in C.
+When you use any version manager for Python or JavaScript, you may also need to install compiler tools for the C programming language. Installations of Python, Node.js and other interpreted languages use components that are written in C. Python tools fetch compiled versions of these components when they are available. For other cases, you need to have a compiler on your own system to build working components from the C source code.
 
-To install a compiler on macOS, use the Command-line Tools package for [Xcode](https://developer.apple.com/xcode/resources/). On Linux, we use the GCC compiler, because it is compatible with the widest range of C code. If you are developing your own C code on Linux, consider using the [Clang](https://clang.llvm.org/) compiler for your project.
+To install a C compiler on macOS, use the Command-line Tools package for [Xcode](https://developer.apple.com/xcode/resources/). On Linux, use the system package manager to install a C compiler. Use GCC, because components may not be tested with other compilers.
 
-Run this command to install GCC and other compiler tools on Debian-based distributions, such as Ubuntu:
+Run this command to install GCC and other C compiler tools on Debian-based distributions, such as Ubuntu:
 
 ```shell
 sudo apt install build-essential
@@ -76,21 +107,14 @@ Run this command to install just GCC on Red Hat-based distributions, such as Fed
 sudo dnf install gcc
 ```
 
-## Version Managers for Programming Languages
+## Updating Version Managers with Homebrew
 
-These are popular specialized version managers for programming languages:
+Update your version managers regularly, to ensure that they can access the latest versions of the tools that they manage. If you install version managers with Homebrew, you can update all of the version managers and other tools that you use at the same time, rather than needing to upgrade each one separately. These commands will upgrade all of the tools that Homebrew manages:
 
-- The standard _go_ tool [manages versions of Go](https://go.dev/doc/manage-install#installing-multiple).
-- [jEnv](https://www.jenv.be/) for Java
-- [nvm](https://github.com/nvm-sh/nvm) for Node.js
-- [pyenv](https://github.com/pyenv/pyenv) for Python
-- [rustup](https://rustup.rs/) for Rust
-
-I suggest using [mise](https://mise.jdx.dev/) when you work with JavaScript if possible, as it provides a consistent set of features for managing many JavaScript tools, including Node.js, Deno and Bun.
-
-If you do not want to use mise, consider [Volta](https://volta.sh/) as an alternative to nvm for Node.js. Volta is a cross-platform tool, whilst nvm is a Bash shell script for UNIX-based systems.
-
-The [Ruby on Rails Guides](https://guides.rubyonrails.org/) recommend mise for Rails projects.
+```shell
+brew update
+brew upgrade
+```
 
 ## Version Managers and Python
 
@@ -111,15 +135,3 @@ Both pyenv and mise also support automatic switching between Python virtual envi
 Only use the version manager to handle Python virtual environments if you are not using a project tool. Otherwise, use your chosen Python project tool to handle virtual environments.
 
 Current versions of mise can [integrate with uv](https://mise.jdx.dev/mise-cookbook/python.html#mise-uv), so that there are no conflicts between the tools.
-
-## tenv: Version Manager for Terraform and OpenTofu
-
-Use the [tenv](https://tofuutils.github.io/tenv/) version manager to install versions of [OpenTofu](https://opentofu.org/) and [Terraform](https://www.terraform.io/). It can also manage [Atmos](https://atmos.tools/) and [Terragrunt](https://terragrunt.gruntwork.io/).
-
-To install _tenv_ with Homebrew, run this command in a terminal window:
-
-```shell
-brew install tenv cosign
-```
-
-Always install _cosign_ along with _tenv_. If _cosign_ is present, _tenv_ automatically uses it to carry out signature verification on the binaries that it downloads.
