@@ -1,14 +1,14 @@
 +++
 title = "Signing Code Commits"
 slug = "signing-code-commits"
-date = "2025-03-22T08:40:00+00:00"
+date = "2025-03-26T08:04:00+00:00"
 description = "Signing Code Commits"
 categories = ["devops", "programming"]
 tags = ["devops"]
 
 +++
 
-We should always sign the commits that we make in source code repositories, especially for shared projects like Open Source software. This means that each commit can be linked to the author. I have written this article to explain how to set up [GnuPG](https://gnupg.org/) without any dependency on a repository hosting service. GnuPG is the current standard Open Source tool for signing commits.
+We should always sign the commits that we make in source code repositories, especially for shared projects like Open Source software. This means that each commit can be linked to the author. Since I use multiple repository hosting services, I have written this article on how to set up commit signing in a way that works across services. This method uses [GnuPG](https://gnupg.org/), the current standard Open Source tool for signing code commits.
 
 > _GPG_: This article refers to GnuPG as _GPG_. The command-line tool is called _gpg_, and many other documents use the term _GPG_ instead of _GnuPG_.
 
@@ -16,9 +16,9 @@ We should always sign the commits that we make in source code repositories, espe
 
 ## How Commit Signing Works
 
-If you use a repository hosting service like [Codeberg](https://codeberg.org/), [GitHub](https://github.com/) or an instance of [GitLab](https://about.gitlab.com/), you will see that commits are marked as _Verified_. This means that there is proof that the commit actually came from the author. These services use various methods to verify the commits.
+If you use a repository hosting service like [Codeberg](https://codeberg.org/), [GitHub](https://github.com/) or an instance of [GitLab](https://about.gitlab.com/), you will see that commits are marked as _Verified_. This means that there is proof that the commit actually came from the author. These services use various methods to verify the commits. For example, GitHub and GitLab allow you to use SSH keys.
 
-Use GPG to sign your Git commits and register the same GPG key for all of the services that you use. This ensures that copies of the same commits can be verified everywhere.
+Use GPG to sign your Git commits as you create them, and register the same GPG key for all of the services that you use. This ensures that copies of the same commits can be verified everywhere.
 
 To do this, create a keypair with GPG, configure Git to use it, and then register the public key with the hosting services that you use. The rest of this article leads you through the process to enable commit signing.
 
