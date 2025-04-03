@@ -30,6 +30,22 @@ We delegate control of resources to controllers in the cluster so that the syste
 
 You do not need to use Helm for your custom configuration. Helm charts provide a format for projects to give users reusable sets of Kubernetes configuration. FluxCD supports deploying templated configuration with Kustomize, as well as deploying Helm charts.
 
+### Naming Conventions
+
+Every instance of a resource in cloud infrastructure must have a unique identifier, such as a name. Avoid assuming that you will only deploy one instance of a resource in the same context. For example, TF test generates and destroys resources on each test run. Similarly, the workspaces feature of TF enables you to deploy multiple instances of resources for development.
+
+In general, cloud resource names should be valid in DNS, so that you can use the same name consistently. This means that names should start with a lowercase letter and should only contain:
+
+- Lowercase letters
+- Numbers
+- Hyphens (dashes)
+
+To ensure that resource identifiers are unique, the TF code always constructs names as _locals_. These constructed names always include a _variant_ string. The _variant_ string is either the name of the TF workspace, or a random identifier for TF test runs.
+
+> If you do not specify a TF workspace, it uses the _default_ workspace.
+
+AWS provides tags to allow you to identify sets of resources. The TF code in this project sets tags on all AWS resources.
+
 ### Out of Scope
 
 This article does not cover how to set up container registries or maintain container images. These will be specific to the applications that you run on your cluster.
