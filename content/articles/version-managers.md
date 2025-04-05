@@ -1,7 +1,7 @@
 +++
 title = "Using Version Managers for Your Tools"
 slug = "version-managers"
-date = "2025-03-25T07:18:00+00:00"
+date = "2025-04-05T22:00:00+01:00"
 description = "Using version managers"
 categories = ["automation", "devops", "programming", "python"]
 tags = ["automation", "devops", "golang", "linux", "macos", "javascript", "python"]
@@ -16,9 +16,9 @@ Avoid installing stand-alone packages for tools and programming languages. Inste
 
 The mise tool provides a framework for managing your projects. It can define [environment variables](https://mise.jdx.dev/environments/) and act as a [task runner](https://mise.jdx.dev/tasks/) as well as handling tool versions.
 
-The mise tool itself is a single executable file that is written in Rust. This enables you to use mise in any environment, including [continuous integration systems](https://mise.jdx.dev/continuous-integration.html) like GitHub Actions. You can also include a [lockfile](https://mise.jdx.dev/configuration/settings.html#lockfile) with your projects to pin the exact versions of the tools that it installs. These features mean that your developer systems and continuous integration jobs can all work with the same set of languages and tools, and can share a common set of reusable tasks.
+Importantly, mise is a single executable file that is written in Rust. This enables you to use mise in any environment, including [continuous integration systems](https://mise.jdx.dev/continuous-integration.html) like GitHub Actions. You can also include a [lockfile](https://mise.jdx.dev/configuration/settings.html#lockfile) with your projects to pin the exact versions of the tools that it installs. These features mean that your developer systems and continuous integration jobs can all work with the same set of languages and tools, and can share a common set of reusable tasks.
 
-mise is designed to replace [asdf](https://asdf-vm.com/), an older version manager tool. It addresses [security and usability issues with the design of asdf](https://mise.jdx.dev/dev-tools/comparison-to-asdf.html). It also [supports Microsoft Windows](https://mise.jdx.dev/faq.html#windows-support), unlike asdf.
+The mise tool is designed to replace [asdf](https://asdf-vm.com/), an older version manager. It addresses [security and usability issues with the design of asdf](https://mise.jdx.dev/dev-tools/comparison-to-asdf.html). It also [supports Microsoft Windows](https://mise.jdx.dev/faq.html#windows-support), unlike asdf.
 
 Where possible, mise uses [secure installation methods](https://mise.jdx.dev/registry.html#backends) for tools and verifies the content of downloads. Unfortunately, some software can only be supported with legacy asdf plugins. These plugins only run on UNIX-based systems, and may not support verifying downloads.
 
@@ -44,11 +44,11 @@ I suggest using [mise](https://mise.jdx.dev/) when you work with JavaScript, as 
 
 If you are a Ruby developer, you may already use mise. The [Ruby on Rails Guides](https://guides.rubyonrails.org/) now recommend mise for Rails projects.
 
-Some packages for JavaScript, Python and Ruby use Rust or C code. To support these packages, you may need to [install a compiler](#other-requirements-for-version-managers).
+Some packages for JavaScript, Python and Ruby use Rust or C code. To support these packages, you may need to [install a compiler](#extra-requirements-for-version-managers).
 
 ### tenv: Version Manager for Terraform and OpenTofu
 
-If you do not want to use mise, use [tenv](https://tofuutils.github.io/tenv/) to install versions of [OpenTofu](https://opentofu.org/) and [Terraform](https://www.terraform.io/). The tenv version manager also supports [Atmos](https://atmos.tools/) and [Terragrunt](https://terragrunt.gruntwork.io/).
+If you do not want to use mise, consider using [tenv](https://tofuutils.github.io/tenv/) to install versions of [OpenTofu](https://opentofu.org/) and [Terraform](https://www.terraform.io/). The tenv version manager also supports [Atmos](https://atmos.tools/) and [Terragrunt](https://terragrunt.gruntwork.io/).
 
 > Always install _cosign_ on systems that use _tenv_. If _cosign_ is present, _tenv_ automatically uses it to carry out signature verification on the binaries that it downloads.
 
@@ -99,7 +99,7 @@ brew install tenv cosign
 
 > Avoid using Homebrew itself to install programming languages. Homebrew has limited support for working with multiple versions of the same programming language.
 
-### Other Requirements for Version Managers
+### Extra Requirements for Version Managers
 
 When you use any version manager for Python, JavaScript or Ruby, you may also need to install compiler tools for the C programming language. Packages for interpreted languages use components that are written in C or Rust. Python tools fetch compiled versions of these components when they are available. For other cases, you need to have a compiler on your own system to build working components from the source code.
 
