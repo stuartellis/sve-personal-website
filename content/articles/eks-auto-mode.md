@@ -8,7 +8,7 @@ categories = ["automation", "aws", "devops", "kubernetes"]
 tags = ["automation", "aws", "devops", "kubernetes"]
 +++
 
-[Kubernetes](https://kubernetes.io/) is now a standard framework for operating applications on clusters. This article explains how to set up a Kubernetes cluster on AWS EKS with Infrastructure as Code. The EKS cluster will use Auto Mode for maintenance and the cluster configuration will be managed by [Flux](https://fluxcd.io/).
+[Kubernetes](https://kubernetes.io/) is now a standard framework for operating applications on clusters. This article explains how to set up a Kubernetes cluster on [Amazon EKS](https://docs.aws.amazon.com/eks/) with Infrastructure as Code. The EKS cluster will use [Auto Mode](https://docs.aws.amazon.com/eks/latest/userguide/automode.html) for maintenance and the cluster configuration will be managed by [Flux](https://fluxcd.io/).
 
 > See GitHub for [the example project](https://github.com/stuartellis/eks-auto-example).
 
