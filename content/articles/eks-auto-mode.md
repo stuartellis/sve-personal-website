@@ -1,7 +1,7 @@
 +++
 title = "Low Maintenance Kubernetes with EKS Auto Mode"
 slug = "eks-auto-mode"
-date = "2025-05-05T17:12:00+01:00"
+date = "2025-05-05T17:41:00+01:00"
 description = "Using EKS with Auto Mode"
 categories = ["automation", "aws", "devops", "kubernetes"]
 tags = ["automation", "aws", "devops", "kubernetes"]
@@ -68,13 +68,13 @@ This example uses [GitLab](https://gitlab.com/) as the provider for Git hosting 
 
 You will require at least one AWS account to host an EKS cluster and other resources. I recommend that the AWS account that hosts the live cluster is not used to store user accounts, backups or TF remote state.
 
-You will need these AWS resources to deploy an EKS cluster:
+You will need these AWS resources to deploy an EKS cluster with TF:
 
 - An S3 bucket for remote state
 - An IAM role for Terraform
 - An IAM role for human administrators
 
-The S3 bucket should be in the same AWS region as the EKS cluster.
+The S3 bucket should be in the same AWS region as the EKS clusters.
 
 You can use these resources for multiple EKS clusters. The example code defines a _dev_ and _prod_ configuration, so that you can have separate development and production clusters. These copies can be in the same or separate AWS accounts.
 
@@ -92,20 +92,26 @@ Each subnet should be a _/24_ or larger CIDR block. By default, every instance o
 
 I recommend that you define a separate Route 53 zone for each cluster. Create these as child zones for a DNS domain that you own. This enables you to configure the ExternalDNS controller on a cluster to manage DNS records for applications on that cluster without enabling it to manage records on the parent DNS zone.
 
-## One: Customise Configuration
+## One: Prepare Your Repository
 
-You will need to clone or fork the example repository and change the configuration for your own infrastructure:
+Clone or fork the example project to your own Git repository. To use the provided Flux configuration, use GitLab as the Git hosting provider.
 
-- AWS region
-- IAM role for TF
-- IAM role for human system administrators
-- S3 bucket for TF remote state
+## Two: Customise Configuration
 
-The IAM principal that creates an EKS cluster is automatically granted _system:masters_ in that cluster. In our example code, this principal is the IAM role that TF uses. The TF code also enables administrator access on the cluster to the IAM role for human system administrators.
+Next, change the configuration for your own infrastructure.
 
-> For simplicity, this example allows the TF module for EKS to create a KMS key that is unique to the cluster. If you want to use an existing KMS key, you will need to edit the TF code in the _amc_ module.
+The relevant directories for configuration are:
 
-## Two: Set Credentials
+- _flux/apps/dev/_ - Flux configuration for _development_ clusters
+- _flux/apps/prod/_ - Flux configuration for _production_ clusters
+- _tf/contexts/dev/_ - TF configuration for _development_ clusters
+- _tf/contexts/prod/_ - TF configuration for _production_ clusters
+
+Set the TF backend in the `context.json` file for each context. Change each value that is marked as _Required_.
+
+> The IAM principal that creates an EKS cluster is automatically granted _system:masters_ in that cluster. In our example code, this principal is the IAM role that TF uses. The TF code also enables administrator access on the cluster to the IAM role for human system administrators.
+
+## Three: Set Credentials
 
 > This process needs access to both AWS and your Git hosting provider. Set an access token for GitLab as the environment variable `GITLAB_TOKEN` before you run this command.
 
@@ -117,7 +123,7 @@ If you are running the TF deployment from your own system, first ensure that you
 eval $(aws configure export-credentials --format env --profile your-aws-profile)
 ```
 
-## Three: Deploy the Infrastructure with TF
+## Four: Deploy the Infrastructure with TF
 
 Run the tasks to initialise, plan and apply the TF code for each module. For example:
 
@@ -135,7 +141,7 @@ Apply the modules in this order:
 
 > The `apply` to create a cluster on EKS will take several minutes to complete.
 
-## Four: Register Your Cluster with Kubernetes Tools
+## Five: Register Your Cluster with Kubernetes Tools
 
 Use the AWS command-line tool to register the new cluster with your kubectl configuration.
 
@@ -157,7 +163,7 @@ To set this cluster as the default context for your Kubernetes tools, run this c
 kubectl config set-context $EKS-CLUSTER-ARN
 ```
 
-## Five: Test Your Cluster
+## Six: Test Your Cluster
 
 To test the connection to the API endpoint for the cluster, first assume the IAM role for operators. Run this command to get the credentials:
 
