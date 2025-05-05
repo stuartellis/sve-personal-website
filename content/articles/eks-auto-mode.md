@@ -1,7 +1,7 @@
 +++
 title = "Low Maintenance Kubernetes with EKS Auto Mode"
 slug = "eks-auto-mode"
-date = "2025-05-05T16:51:00+01:00"
+date = "2025-05-05T17:12:00+01:00"
 description = "Using EKS with Auto Mode"
 categories = ["automation", "aws", "devops", "kubernetes"]
 tags = ["automation", "aws", "devops", "kubernetes"]
@@ -13,9 +13,7 @@ tags = ["automation", "aws", "devops", "kubernetes"]
 
 The code for this project is published on both [GitHub](https://github.com/stuartellis/eks-auto-example) and [GitLab](https://gitlab.com/sve-projects/eks-auto-example).
 
-This project uses a specific set of tools and patterns to set up and maintain your clusters. Each of these has been chosen because it is well-known and well-supported. If you have non-standard requirements then you might deliberately decide to replace some of these choices.
-
-For example, the project includes tasks for the [Task](https://taskfile.dev) runner. The tasks for TF are provided by [my template for a TF project](https://github.com/stuartellis/tf-tasks). Like this article, these tasks are opinionated, and are designed to minimise maintenance.
+The project uses a specific set of tools and patterns to set up and maintain your clusters. Each of these has been chosen because it is well-known and well-supported. The main technologies are [Terraform](https://www.terraform.io/) (_TF_) and [Flux](https://fluxcd.io/). The project also includes tasks for the [Task](https://taskfile.dev) runner. The tasks for TF are provided by [my template for a TF project](https://github.com/stuartellis/tf-tasks). Like this article, these tasks are opinionated, and are designed to minimise maintenance.
 
 > I refer to Terraform and OpenTofu as _TF_. The two tools work identically for the purposes of this article.
 
