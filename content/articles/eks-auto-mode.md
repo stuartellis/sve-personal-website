@@ -1,7 +1,7 @@
 +++
 title = "Low Maintenance Kubernetes with EKS Auto Mode"
 slug = "eks-auto-mode"
-date = "2025-05-06T07:41:00+01:00"
+date = "2025-05-06T07:44:00+01:00"
 description = "Using EKS with Auto Mode"
 categories = ["automation", "aws", "devops", "kubernetes"]
 tags = ["automation", "aws", "devops", "kubernetes"]
@@ -198,15 +198,17 @@ Once you can successfully connect to a cluster, use the _flux_ command-line tool
 task flux:status
 ```
 
-## Six: Going Further
+## Seven: Going Further
 
 The code in the example project is a minimal configuration for an EKS Auto Mode cluster, along with a simple example Web application that is managed by Flux and Helm. You can use [EKS add-ons](https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html) or Flux to deploy additional applications and services on the clusters. Flux also provides a range of management capabilities, including [automated update of container images](https://fluxcd.io/flux/components/image/) and [notifications](https://fluxcd.io/flux/monitoring/alerts/).
 
-The current configuration is designed to work with minimal tuning. To harden the systems:
+The initial configuration is designed to work with minimal tuning. To harden the systems:
 
 1. Replace the generated IAM policies that are provided with custom policies.
 2. Disable private access to the cluster endpoint.
 3. Deploy the EKS clusters to private subnets and deploy the load balancers to public subnets.
+
+The current version of this project does not include continuous integration with GitLab. If you decide to use GitLab to manage changes, consider installing the [GitLab cluster agent](https://docs.gitlab.com/user/clusters/agent/).
 
 ## Extra: How the TF Code Works
 
