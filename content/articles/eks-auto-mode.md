@@ -1,13 +1,13 @@
 +++
 title = "Low Maintenance Kubernetes with EKS Auto Mode"
 slug = "eks-auto-mode"
-date = "2025-05-05T17:41:00+01:00"
+date = "2025-05-06T07:41:00+01:00"
 description = "Using EKS with Auto Mode"
 categories = ["automation", "aws", "devops", "kubernetes"]
 tags = ["automation", "aws", "devops", "kubernetes"]
 +++
 
-[Kubernetes](https://kubernetes.io/) is now a standard technology for high-availability clusters. This article explains an approach for setting up Kubernetes clusters on [Amazon EKS](https://docs.aws.amazon.com/eks/) with Infrastructure as Code. The EKS clusters use [Auto Mode](https://docs.aws.amazon.com/eks/latest/userguide/automode.html), and cluster configuration is managed by [Flux](https://fluxcd.io/).
+[Kubernetes](https://kubernetes.io/) is now a standard technology for high-availability clusters. This article explains an approach for setting up Kubernetes clusters on [Amazon EKS](https://docs.aws.amazon.com/eks/) with Infrastructure as Code. The EKS clusters use [Auto Mode](https://docs.aws.amazon.com/eks/latest/userguide/automode.html), which automates the deployment and update of nodes, and manages several components in the cluster. The configuration is managed by [Terraform](https://www.terraform.io/) and [Flux](https://fluxcd.io/).
 
 ## More About This Project
 
@@ -28,6 +28,7 @@ To make it a working example, the project deploys a Web application to each clus
 - Use an Infrastructure as Code tool to manage AWS resources for the cluster itself
 - Delegate control of AWS resources for the applications on the cluster to automation that also runs on the cluster
 - Use a [GitOps](https://www.gitops.tech/) tool to manage application configuration
+- Use a configuration that can be quickly deployed. The code can be customised to add features or enhance security.
 
 ### Out of Scope
 
@@ -54,7 +55,7 @@ The required command-line tools are:
 - [Task](https://taskfile.dev) - `brew install go-task`
 - [Terraform](https://www.terraform.io/) - Use [these installation instructions](https://developer.hashicorp.com/terraform/install#darwin)
 
-Flux uses [Helm](https://helm.sh/) to manage packages on your clusters, but you do not need to install the Helm command-line tool.
+Flux can use [Helm](https://helm.sh/) to manage packages on your clusters, but you do not need to install the Helm command-line tool.
 
 ### Version Control and Continuous Integration
 
@@ -197,7 +198,17 @@ Once you can successfully connect to a cluster, use the _flux_ command-line tool
 task flux:status
 ```
 
-## How the TF Code Works
+## Six: Going Further
+
+The code in the example project is a minimal configuration for an EKS Auto Mode cluster, along with a simple example Web application that is managed by Flux and Helm. You can use [EKS add-ons](https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html) or Flux to deploy additional applications and services on the clusters. Flux also provides a range of management capabilities, including [automated update of container images](https://fluxcd.io/flux/components/image/) and [notifications](https://fluxcd.io/flux/monitoring/alerts/).
+
+The current configuration is designed to work with minimal tuning. To harden the systems:
+
+1. Replace the generated IAM policies that are provided with custom policies.
+2. Disable private access to the cluster endpoint.
+3. Deploy the EKS clusters to private subnets and deploy the load balancers to public subnets.
+
+## Extra: How the TF Code Works
 
 The tasks for TF are provided by [my template for a TF project](https://github.com/stuartellis/tf-tasks).
 
@@ -206,8 +217,8 @@ I have made several decisions in the example TF code for this project:
 - The example code uses the [EKS module](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest) from the [terraform-modules](https://registry.terraform.io/namespaces/terraform-aws-modules) project. This module enables you to deploy an EKS cluster by setting a relatively small number of values.
 - We use a setting in the TF provider for AWS to apply tags on all AWS resources. This ensures that resources have a consistent set of tags with minimal code.
 - To ensure that resource identifiers are unique, the TF code always constructs resource names in _locals_. The code for resources then uses these locals.
-- The code supports [TF test](https://opentofu.org/docs/cli/commands/test/), the built-in testing framework for TF. You may decide to use other testing frameworks. TF test lacks features to output formatted test results.
-- The constructed names of resources always include a _variant_, which is set as a tfvar. The _variant_ is either the name of the current TF workspace, or a random identifier for TF test runs.
+- The code supports [TF test](https://opentofu.org/docs/cli/commands/test/), the built-in testing framework for TF. You may decide to use other testing frameworks.
+- The constructed names of AWS resources include a _variant_, which is set as a tfvar. The _variant_ is either the name of the current TF workspace, or a random identifier for TF test runs.
 
 ## Resources
 
