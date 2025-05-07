@@ -1,13 +1,13 @@
 +++
 title = "Low Maintenance Kubernetes with EKS Auto Mode"
 slug = "eks-auto-mode"
-date = "2025-05-06T07:44:00+01:00"
+date = "2025-05-07T07:19:00+01:00"
 description = "Using EKS with Auto Mode"
 categories = ["automation", "aws", "devops", "kubernetes"]
 tags = ["automation", "aws", "devops", "kubernetes"]
 +++
 
-[Kubernetes](https://kubernetes.io/) is now a standard technology for high-availability clusters. This article explains an approach for setting up Kubernetes clusters on [Amazon EKS](https://docs.aws.amazon.com/eks/) with Infrastructure as Code. The EKS clusters use [Auto Mode](https://docs.aws.amazon.com/eks/latest/userguide/automode.html), which automates the deployment and update of nodes, and manages several components in the cluster. The configuration is managed by [Terraform](https://www.terraform.io/) and [Flux](https://fluxcd.io/).
+[Kubernetes](https://kubernetes.io/) is now a standard technology for high-availability clusters. This article explains an approach for setting up Kubernetes clusters on [Amazon EKS](https://docs.aws.amazon.com/eks/) with Infrastructure as Code. The EKS clusters use [Auto Mode](https://docs.aws.amazon.com/eks/latest/userguide/automode.html), which automates the scaling and update of nodes, manages several components in the cluster, and simplifies cluster upgrades. The configuration is managed by [Terraform](https://www.terraform.io/) and [Flux](https://fluxcd.io/).
 
 ## More About This Project
 
@@ -27,18 +27,16 @@ To make it a working example, the project deploys a Web application to each clus
 - Support separate development and production clusters
 - Use an Infrastructure as Code tool to manage AWS resources for the cluster itself
 - Delegate control of AWS resources for the applications on the cluster to automation that also runs on the cluster
-- Use a [GitOps](https://www.gitops.tech/) tool to manage application configuration
-- Use a configuration that can be quickly deployed. The code can be customised to add features or enhance security.
+- Use a [GitOps](https://www.gitops.tech/) tool to manage application configuration. GitOps means that the configuration is synchronized with source control.
+- Use a configuration that can be quickly deployed with minimal changes. The code can be customised to add features or enhance security.
 
 ### Out of Scope
 
 This article does not cover how to set up container registries or maintain container images. These will be specific to the applications that you run on your cluster.
 
-This article also does not cover how to set up the requirements to run TF. You should always use remote state storage with these tools, but you should decide how to host the remote state.
+This article also does not cover how to set up the requirements to run TF. You should always use remote state storage with TF, but you should decide how to host the remote state. The example code uses S3 for remote state.
 
-If you use S3 for remote state storage, define an IAM role specifically for access to the remote state. This role should be different and more limited than the roles that your TF code use to manage resources.
-
-I highly recommend that you host the remote state for TF outside of the AWS account(s) that contains the resources that are being managed. For example, you could use S3 buckets that are in a different AWS account to store remote state.
+> I recommend that you store TF remote state outside of the cloud accounts that you use for working systems. When you use S3 for TF remote state, use a separate AWS account.
 
 ## Requirements
 
@@ -61,23 +59,20 @@ Flux can use [Helm](https://helm.sh/) to manage packages on your clusters, but y
 
 To automate operations, you need a Git repository that is available to your development workstation, the resources on your AWS accounts and your continuous integration system.
 
-Flux causes the configuration of the cluster to update from this Git repository. This means that you do not need continuous integration to deploy changes. However, you should use continuous integration to test configurations before they are merged to the _main_ branch of the repository and applied to the cluster by Flux.
+Flux updates the configuration of the cluster from this Git repository. This means that you do not need continuous integration to deploy changes. However, you should use continuous integration to test configurations before they are merged to the _main_ branch of the repository and applied to the production cluster by Flux.
 
-This example uses [GitLab](https://gitlab.com/) as the provider for Git hosting and continuous integration. You can use [GitHub or other services](https://fluxcd.io/flux/installation/bootstrap/) instead of GitLab.
+This example uses [GitLab](https://gitlab.com/) as the provider for Git hosting. GitLab also provides continuous integration services. You can use [GitHub or other services](https://fluxcd.io/flux/installation/bootstrap/) for hosting and continuous integration instead of GitLab.
 
 ### AWS Requirements
 
-You will require at least one AWS account to host an EKS cluster and other resources. I recommend that the AWS account that hosts the live cluster is not used to store user accounts, backups or TF remote state.
+You will require at least one AWS account to host an EKS cluster and other resources. I recommend that you store user accounts, backups and TF remote state in separate AWS accounts to the clusters.
 
-You will need these AWS resources to deploy an EKS cluster with TF:
+You will need two IAM roles to deploy an EKS cluster with TF:
 
-- An S3 bucket for remote state
 - An IAM role for Terraform
 - An IAM role for human administrators
 
-The S3 bucket should be in the same AWS region as the EKS clusters.
-
-You can use these resources for multiple EKS clusters. The example code defines a _dev_ and _prod_ configuration, so that you can have separate development and production clusters. These copies can be in the same or separate AWS accounts.
+The example code defines a _dev_ and _prod_ configuration, so that you can have separate development and production clusters. These copies can be in the same or separate AWS accounts.
 
 ### AWS Requirements for Each EKS Cluster
 
@@ -93,11 +88,13 @@ Each subnet should be a _/24_ or larger CIDR block. By default, every instance o
 
 I recommend that you define a separate Route 53 zone for each cluster. Create these as child zones for a DNS domain that you own. This enables you to configure the ExternalDNS controller on a cluster to manage DNS records for applications on that cluster without enabling it to manage records on the parent DNS zone.
 
-## One: Prepare Your Repository
+## 1: Prepare Your Repository
 
 Clone or fork the example project to your own Git repository. To use the provided Flux configuration, use GitLab as the Git hosting provider.
 
-## Two: Customise Configuration
+Create a _dev_ branch on the repository. The Flux configuration on _development_ clusters will synchronize from this _dev_ branch. The Flux configuration on _production_ clusters will synchronize from the _main_ branch.
+
+## 2: Customise Configuration
 
 Next, change the configuration for your own infrastructure.
 
@@ -108,11 +105,11 @@ The relevant directories for configuration are:
 - _tf/contexts/dev/_ - TF configuration for _development_ clusters
 - _tf/contexts/prod/_ - TF configuration for _production_ clusters
 
-Set the TF backend in the `context.json` file for each context. Change each value that is marked as _Required_.
+Change each value that is marked as _Required_. In addition, specify the settings for the TF backend in the `tf/contexts/context.json` file for _dev_ and _prod_.
 
 > The IAM principal that creates an EKS cluster is automatically granted _system:masters_ in that cluster. In our example code, this principal is the IAM role that TF uses. The TF code also enables administrator access on the cluster to the IAM role for human system administrators.
 
-## Three: Set Credentials
+## 3: Set Credentials
 
 > This process needs access to both AWS and your Git hosting provider. Set an access token for GitLab as the environment variable `GITLAB_TOKEN` before you run this command.
 
@@ -124,7 +121,7 @@ If you are running the TF deployment from your own system, first ensure that you
 eval $(aws configure export-credentials --format env --profile your-aws-profile)
 ```
 
-## Four: Deploy the Infrastructure with TF
+## 4: Deploy the Infrastructure with TF
 
 Run the tasks to initialise, plan and apply the TF code for each module. For example:
 
@@ -142,7 +139,7 @@ Apply the modules in this order:
 
 > The `apply` to create a cluster on EKS will take several minutes to complete.
 
-## Five: Register Your Cluster with Kubernetes Tools
+## 5: Register Your Cluster with Kubernetes Tools
 
 Use the AWS command-line tool to register the new cluster with your kubectl configuration.
 
@@ -164,7 +161,7 @@ To set this cluster as the default context for your Kubernetes tools, run this c
 kubectl config set-context $EKS-CLUSTER-ARN
 ```
 
-## Six: Test Your Cluster
+## 6: Test Your Cluster
 
 To test the connection to the API endpoint for the cluster, first assume the IAM role for operators. Run this command to get the credentials:
 
@@ -198,7 +195,7 @@ Once you can successfully connect to a cluster, use the _flux_ command-line tool
 task flux:status
 ```
 
-## Seven: Going Further
+## 7: Going Further
 
 The code in the example project is a minimal configuration for an EKS Auto Mode cluster, along with a simple example Web application that is managed by Flux and Helm. You can use [EKS add-ons](https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html) or Flux to deploy additional applications and services on the clusters. Flux also provides a range of management capabilities, including [automated update of container images](https://fluxcd.io/flux/components/image/) and [notifications](https://fluxcd.io/flux/monitoring/alerts/).
 
