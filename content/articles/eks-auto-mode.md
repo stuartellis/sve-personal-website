@@ -1,13 +1,29 @@
 +++
 title = "Low Maintenance Kubernetes with EKS Auto Mode"
 slug = "eks-auto-mode"
-date = "2025-05-07T07:19:00+01:00"
+date = "2025-05-11T09:48:00+01:00"
 description = "Using EKS with Auto Mode"
 categories = ["automation", "aws", "devops", "kubernetes"]
 tags = ["automation", "aws", "devops", "kubernetes"]
 +++
 
 [Kubernetes](https://kubernetes.io/) is now a standard technology for high-availability clusters. This article explains an approach for setting up Kubernetes clusters on [Amazon EKS](https://docs.aws.amazon.com/eks/) with Infrastructure as Code. The EKS clusters use [Auto Mode](https://docs.aws.amazon.com/eks/latest/userguide/automode.html), which automates the scaling and update of nodes, manages several components in the cluster, and simplifies cluster upgrades. The configuration is managed by [Terraform](https://www.terraform.io/) and [Flux](https://fluxcd.io/).
+
+## Components of EKS Auto Mode
+
+[EKS Auto Mode](https://docs.aws.amazon.com/eks/latest/userguide/automode.html) configures Kubernetes clusters on EKS with a number of recommended components.
+
+The most important of these manage the EC2 instances that the cluster uses as nodes. [Karpenter](https://karpenter.sh/docs/) reads the cluster configuration and automatically launches EC2 instances as needed. To ensure that security updates are applied, Karpenter automatically replaces nodes after a maximum lifespan. EKS Auto Mode uses the [node monitoring agent](https://docs.aws.amazon.com/eks/latest/userguide/node-health.html) to detect when to reboot or replace nodes.
+
+> You can customise the behaviour of Karpenter by deploying configuration into the Kubernetes cluster.
+
+The Karpenter configuration for EKS Auto Mode always uses [Bottlerocket](https://bottlerocket.dev/en/) as the operating system for nodes. Bottlerocket is a minimal, locked-down Linux operating system that is specifically designed to be used for container host nodes.
+
+EKS Auto Mode provides components to integrate the clusters with AWS, such as the [Application Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/) and [AWS VPC CNI](https://github.com/aws/amazon-vpc-cni-k8s). It includes [CoreDNS](https://coredns.io/) for name resolution, but you must provide a method to register your applications on the cluster with DNS. EKS Auto Mode uses [IAM roles](https://docs.aws.amazon.com/eks/latest/userguide/automode.html) to enable AWS access for identities in the Kubernetes cluster and supports the newer EKS Pod Identities, as well as IAM Roles for Service Accounts (IRSA).
+
+> [This document explains the differences between IRSA and Pod Identities](https://docs.aws.amazon.com/eks/latest/userguide/service-accounts.html#service-accounts-iam).
+
+EKS Auto Mode does not provide observability components, so that you can install the logging and monitoring that is appropriate to your needs. For example, you can install Prometheus and Grafana on the cluster itself, deploy the Datadog operator so that the cluster is monitored as part of a Datadog enterprise account, or use [Amazon CloudWatch Observability](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Observability-EKS-addon.html) to integrate the cluster with AWS monitoring services.
 
 ## More About This Project
 
@@ -21,14 +37,24 @@ To make it a working example, the project deploys a Web application to each clus
 
 ### Design Decisions
 
+The general principles for this project are:
+
 - Use one repository for all of the code
+- Provide a configuration that can be quickly deployed with minimal changes. The code can be customised to add features or enhance security.
 - Choose well-known and well-supported tools
+- Support the deployment of multiple clusters for development and production
 - Use AWS services wherever possible
-- Support separate development and production clusters
-- Use an Infrastructure as Code tool to manage AWS resources for the cluster itself
-- Delegate control of AWS resources for the applications on the cluster to automation that also runs on the cluster
-- Use a [GitOps](https://www.gitops.tech/) tool to manage application configuration. GitOps means that the configuration is synchronized with source control.
-- Use a configuration that can be quickly deployed with minimal changes. The code can be customised to add features or enhance security.
+- Use an Infrastructure as Code tool to manage the AWS resources that are needed to run each cluster
+- Delegate control of AWS resources that are used by the applications on the cluster to automation on the same cluster, so that there is a single point of control for applications.
+- Use [GitOps](https://www.gitops.tech/) to manage application configuration.
+
+The combination of delegated control and GitOps means that the live configurations for applications are automatically synchronized with the copy in source control and matching AWS resources are created and updated as needed.
+
+The design principles lead to these specific technical choices:
+
+- Integrate Kubernetes and AWS identities with the established IAM Roles for Service Accounts (IRSA) method, rather than the newer EKS Pod Identities. [This document explains the differences](https://docs.aws.amazon.com/eks/latest/userguide/service-accounts.html#service-accounts-iam).
+- Use [Amazon CloudWatch Observability](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Observability-EKS-addon.html) for the clusters. This automatically adds [Fluent Bit](https://fluentbit.io/) for log capture.
+- Use [Flux](https://fluxcd.io/flux/) for [GitOps](https://www.gitops.tech/)
 
 ### Out of Scope
 
@@ -63,7 +89,7 @@ Flux updates the configuration of the cluster from this Git repository. This mea
 
 This example uses [GitLab](https://gitlab.com/) as the provider for Git hosting. GitLab also provides continuous integration services. You can use [GitHub or other services](https://fluxcd.io/flux/installation/bootstrap/) for hosting and continuous integration instead of GitLab.
 
-### AWS Requirements
+### AWS Account Requirements
 
 You will require at least one AWS account to host an EKS cluster and other resources. I recommend that you store user accounts, backups and TF remote state in separate AWS accounts to the clusters.
 
@@ -90,7 +116,7 @@ I recommend that you define a separate Route 53 zone for each cluster. Create th
 
 ## 1: Prepare Your Repository
 
-Clone or fork the example project to your own Git repository. To use the provided Flux configuration, use GitLab as the Git hosting provider.
+Clone or fork the example project to your own Git repository. To use the provided Flux configuration, use GitLab as the Git hosting provider. The example code for this project is published on both [GitLab](https://gitlab.com/sve-projects/eks-auto-example) and [GitHub](https://github.com/stuartellis/eks-auto-example).
 
 Create a _dev_ branch on the repository. The Flux configuration on _development_ clusters will synchronize from this _dev_ branch. The Flux configuration on _production_ clusters will synchronize from the _main_ branch.
 
@@ -146,7 +172,7 @@ Use the AWS command-line tool to register the new cluster with your kubectl conf
 If you are running the TF deployment from your own system, first ensure that you have AWS credentials in your shell session:
 
 ```shell
-eval $(aws configure export-credentials --format env --profile your-aws-profile)
+eval $(aws configure export-credentials --format env --profile $AWS-PROFILE)
 ```
 
 Run this command to add the cluster to your kubectl configuration:
@@ -202,7 +228,7 @@ The code in the example project is a minimal configuration for an EKS Auto Mode 
 The initial configuration is designed to work with minimal tuning. To harden the systems:
 
 1. Replace the generated IAM policies that are provided with custom policies.
-2. Disable private access to the cluster endpoint.
+2. Disable public access to the cluster endpoint.
 3. Deploy the EKS clusters to private subnets and deploy the load balancers to public subnets.
 
 The current version of this project does not include continuous integration with GitLab. If you decide to use GitLab to manage changes, consider installing the [GitLab cluster agent](https://docs.gitlab.com/user/clusters/agent/).
