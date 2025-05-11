@@ -1,13 +1,13 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-05-11T12:21:00+01:00"
+date = "2025-05-11T17:10:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 +++
 
-This article describes an opinionated approach to low-maintenance [tooling for using Terraform and OpenTofu in a monorepo](https://github.com/stuartellis/tf-tasks). The main tooling is a single [Task](https://taskfile.dev) file that generates and runs commands that you add to your own projects. This specifically does not include code in a programming language like Python or Go, and is not tied to particular versions of [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/). These features mean that it runs on any UNIX-based system, including CI/CD environments, has few dependencies and does not require regular updates. It uses [Copier](https://copier.readthedocs.io/en/stable/) to synchronize projects with newer [versions](https://github.com/stuartellis/tf-tasks/releases) as needed.
+This article describes an opinionated approach to low-maintenance [tooling for using Terraform and OpenTofu in a monorepo](https://github.com/stuartellis/tf-tasks). The main tooling is a single [Task](https://taskfile.dev) file that generates and runs commands that you add to your own projects. Unlike other Terraform wrappers, this does not include code in a programming language like Python or Go, and is not tied to particular versions of [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/). These features mean that it runs on any UNIX-based system, including CI/CD environments, has few dependencies and does not require regular updates. It uses [Copier](https://copier.readthedocs.io/en/stable/) to synchronize projects with newer [versions](https://github.com/stuartellis/tf-tasks/releases) as needed.
 
 > This article uses the identifier _TF_ or _tf_ for Terraform and OpenTofu. Both tools accept the same commands and have the same behavior. The tooling itself is just called `tft` in the documentation and code.
 
@@ -32,9 +32,15 @@ TFT_CONTEXT=dev TFT_STACK=my-app task tft:apply
 
 ## More About This Tooling
 
-The tooling is a [Copier](https://copier.readthedocs.io/en/stable/) template that provides a directory structure and a [Task](https://taskfile.dev) file. The file defines tasks that generate and run commands. Copier to enable you to create new projects that include the tooling, add the files and directories to any existing project and also synchronize them with newer [versions](https://github.com/stuartellis/tf-tasks/releases) as needed. [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) accept the same commands and have the same behavior, so the same tooling can support both of them with minimal effort.
+The tooling is a [Copier](https://copier.readthedocs.io/en/stable/) template that provides a directory structure and files for [Task](https://taskfile.dev). The file defines tasks that generate and run commands. Copier to enable you to create new projects that include the tooling, add the files and directories to any existing project and also synchronize them with newer [versions](https://github.com/stuartellis/tf-tasks/releases) as needed. [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) accept the same commands and have the same behavior, so the same tooling can support both of them with minimal effort.
 
-The combination of Task and Copier means that we do not need to use a programming language like Python or Go. It also avoids dependencies on particular versions of Terraform or OpenTofu. The tooling:
+The tasks provide an opinionated configuration for Terraform and OpenTofu, which is described in this article. This configuration enables projects to use built-in features of these tools to support:
+
+- Multiple TF components ([root modules](https://opentofu.org/docs/language/modules/)) in the same code repository, as self-contained [stacks](#stacks)
+- Multiple instances of the same TF component with different configurations
+- Temporary instances of a TF component for testing or development with [workspaces](https://opentofu.org/docs/language/state/workspaces/).
+
+The combination of Task and Copier means that we do not need to maintain a script or an application. It also avoids dependencies on particular versions of Terraform or OpenTofu. The tooling:
 
 - Runs on any UNIX-based system, including CI/CD environments
 - Works with any version of Terraform or OpenTofu that you provide
@@ -42,12 +48,6 @@ The combination of Task and Copier means that we do not need to use a programmin
 - Avoids conflicts with other technologies. You can use it on a new project, or to add it to an existing project.
 - Does not require regular updates
 - Has a well-defined update process, because it is just a [Copier](https://copier.readthedocs.io/en/stable/) template
-
-The tasks provide an opinionated configuration for Terraform and OpenTofu, which is described in this article. This configuration enables projects to use built-in features of these tools to support:
-
-- Multiple TF components ([root modules](https://opentofu.org/docs/language/modules/)) in the same code repository, as self-contained [stacks](#stacks)
-- Multiple instances of the same TF component with different configurations
-- Temporary instances of a TF component for testing or development with [workspaces](https://opentofu.org/docs/language/state/workspaces/).
 
 > This tooling was built for my personal use. I will consider suggestions and Pull Requests, but I may decline anything that makes it less useful for my needs. You are welcome to fork [the project](https://github.com/stuartellis/tf-tasks).
 
