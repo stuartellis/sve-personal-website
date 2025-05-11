@@ -1,7 +1,7 @@
 +++
-title = "Low Maintenance Kubernetes with EKS Auto Mode"
+title = "Low-Maintenance Kubernetes with EKS Auto Mode"
 slug = "eks-auto-mode"
-date = "2025-05-11T09:48:00+01:00"
+date = "2025-05-11T13:45:00+01:00"
 description = "Using EKS with Auto Mode"
 categories = ["automation", "aws", "devops", "kubernetes"]
 tags = ["automation", "aws", "devops", "kubernetes"]
@@ -11,15 +11,13 @@ tags = ["automation", "aws", "devops", "kubernetes"]
 
 ## Components of EKS Auto Mode
 
-[EKS Auto Mode](https://docs.aws.amazon.com/eks/latest/userguide/automode.html) configures Kubernetes clusters on EKS with a number of recommended components.
+[EKS Auto Mode](https://docs.aws.amazon.com/eks/latest/userguide/automode.html) adds a number of components for maintenance and AWS integration to each cluster. Each of these components is installed and updated on EKS cluster by AWS, so that you can customize the configurations but do not need to carry out any work to use their features.
 
-The most important of these manage the EC2 instances that the cluster uses as nodes. [Karpenter](https://karpenter.sh/docs/) reads the cluster configuration and automatically launches EC2 instances as needed. To ensure that security updates are applied, Karpenter automatically replaces nodes after a maximum lifespan. EKS Auto Mode uses the [node monitoring agent](https://docs.aws.amazon.com/eks/latest/userguide/node-health.html) to detect when to reboot or replace nodes.
+The most important components relate to the cluster nodes. EKS Auto Mode always uses [Bottlerocket](https://bottlerocket.dev), a minimal Linux-based operating system that is specifically designed to be used for nodes. [Karpenter](https://karpenter.sh/docs/) reads the cluster configuration and automatically launches EC2 instances as needed. To ensure that security issues are resolved, Karpenter also automatically replaces older nodes. The [node monitoring agent](https://docs.aws.amazon.com/eks/latest/userguide/node-health.html) detects unhealthy nodes, so that they can be rebooted or replaced.
 
 > You can customise the behaviour of Karpenter by deploying configuration into the Kubernetes cluster.
 
-The Karpenter configuration for EKS Auto Mode always uses [Bottlerocket](https://bottlerocket.dev/en/) as the operating system for nodes. Bottlerocket is a minimal, locked-down Linux operating system that is specifically designed to be used for container host nodes.
-
-EKS Auto Mode provides components to integrate the clusters with AWS, such as the [Application Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/) and [AWS VPC CNI](https://github.com/aws/amazon-vpc-cni-k8s). It includes [CoreDNS](https://coredns.io/) for name resolution, but you must provide a method to register your applications on the cluster with DNS. EKS Auto Mode uses [IAM roles](https://docs.aws.amazon.com/eks/latest/userguide/automode.html) to enable AWS access for identities in the Kubernetes cluster and supports the newer EKS Pod Identities, as well as IAM Roles for Service Accounts (IRSA).
+EKS Auto Mode also provides components to integrate the clusters with AWS, such as the [Application Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/) and [AWS VPC CNI](https://github.com/aws/amazon-vpc-cni-k8s). It includes [CoreDNS](https://coredns.io/) for name resolution, but you must provide a method to register your cluster applications with DNS, such as [ExternalDNS](https://kubernetes-sigs.github.io/external-dns/latest/). EKS Auto Mode uses [IAM roles](https://docs.aws.amazon.com/eks/latest/userguide/automode.html) to enable AWS access for identities in the Kubernetes cluster and supports the newer EKS Pod Identities, as well as IAM Roles for Service Accounts (IRSA).
 
 > [This document explains the differences between IRSA and Pod Identities](https://docs.aws.amazon.com/eks/latest/userguide/service-accounts.html#service-accounts-iam).
 
@@ -29,7 +27,7 @@ EKS Auto Mode does not provide observability components, so that you can install
 
 The code for this project is published on both [GitHub](https://github.com/stuartellis/eks-auto-example) and [GitLab](https://gitlab.com/sve-projects/eks-auto-example).
 
-The project uses a specific set of tools and patterns to set up and maintain your clusters. Each of these has been chosen because it is well-known and well-supported. The main technologies are [Terraform](https://www.terraform.io/) (_TF_) and [Flux](https://fluxcd.io/). The project also includes tasks for the [Task](https://taskfile.dev) runner. The tasks for TF are provided by [my template for a TF project](https://github.com/stuartellis/tf-tasks). Like this article, these tasks are opinionated, and are designed to minimise maintenance.
+The project uses a specific set of tools and patterns to set up and maintain your clusters. The main technologies are [Terraform](https://www.terraform.io/) (_TF_) and [Flux](https://fluxcd.io/). The project also includes tasks for the [Task](https://taskfile.dev) runner. The tasks for TF are provided by [my tooling for TF](https://www.stuartellis.name/articles/tf-monorepo-tooling/). Like this article, these tasks are opinionated, and are designed to minimise maintenance.
 
 > I refer to Terraform and OpenTofu as _TF_. The two tools work identically for the purposes of this article.
 
@@ -45,7 +43,7 @@ The general principles for this project are:
 - Support the deployment of multiple clusters for development and production
 - Use AWS services wherever possible
 - Use an Infrastructure as Code tool to manage the AWS resources that are needed to run each cluster
-- Delegate control of AWS resources that are used by the applications on the cluster to automation on the same cluster, so that there is a single point of control for applications.
+- Use automation on the cluster to control AWS resources that are used by the applications, so that there is a single point of control.
 - Use [GitOps](https://www.gitops.tech/) to manage application configuration.
 
 The combination of delegated control and GitOps means that the live configurations for applications are automatically synchronized with the copy in source control and matching AWS resources are created and updated as needed.
@@ -54,13 +52,13 @@ The design principles lead to these specific technical choices:
 
 - Integrate Kubernetes and AWS identities with the established IAM Roles for Service Accounts (IRSA) method, rather than the newer EKS Pod Identities. [This document explains the differences](https://docs.aws.amazon.com/eks/latest/userguide/service-accounts.html#service-accounts-iam).
 - Use [Amazon CloudWatch Observability](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Observability-EKS-addon.html) for the clusters. This automatically adds [Fluent Bit](https://fluentbit.io/) for log capture.
-- Use [Flux](https://fluxcd.io/flux/) for [GitOps](https://www.gitops.tech/)
+- Use [Flux](https://fluxcd.io/flux/) for manage application configuration on the cluster
 
 ### Out of Scope
 
 This article does not cover how to set up container registries or maintain container images. These will be specific to the applications that you run on your cluster.
 
-This article also does not cover how to set up the requirements to run TF. You should always use remote state storage with TF, but you should decide how to host the remote state. The example code uses S3 for remote state.
+This article also does not cover how to set up the requirements to run TF. You should always use remote state storage with TF, but you should decide how to host the remote state. By default, the example code uses S3 for [remote state](https://opentofu.org/docs/language/state/remote/). You can switch to [local TF state](https://opentofu.org/docs/language/settings/backends/local/). Local state means that the cloud resources can only be managed from a computer that has access to the state files.
 
 > I recommend that you store TF remote state outside of the cloud accounts that you use for working systems. When you use S3 for TF remote state, use a separate AWS account.
 
@@ -139,12 +137,18 @@ Change each value that is marked as _Required_. In addition, specify the setting
 
 > This process needs access to both AWS and your Git hosting provider. Set an access token for GitLab as the environment variable `GITLAB_TOKEN` before you run this command.
 
-This example configures Flux to use a GitLab deploy key. This means that the Kubernetes cluster must have SSH access to the GitLab repository for the project.
+The example project configures Flux to use a GitLab deploy key. This means that the Kubernetes cluster must have SSH access to the GitLab repository for the project.
 
 If you are running the TF deployment from your own system, first ensure that you have AWS credentials in your shell session:
 
 ```shell
 eval $(aws configure export-credentials --format env --profile your-aws-profile)
+```
+
+If you want to use [local TF state](https://opentofu.org/docs/language/settings/backends/local/), set the environment variable `TFT_REMOTE_BACKEND` to `false`:
+
+```shell
+TFT_REMOTE_BACKEND=false
 ```
 
 ## 4: Deploy the Infrastructure with TF
@@ -235,7 +239,7 @@ The current version of this project does not include continuous integration with
 
 ## Extra: How the TF Code Works
 
-The tasks for TF are provided by [my template for a TF project](https://github.com/stuartellis/tf-tasks).
+The tasks for TF are provided by [my tooling template](https://github.com/stuartellis/tf-tasks).
 
 I have made several decisions in the example TF code for this project:
 
