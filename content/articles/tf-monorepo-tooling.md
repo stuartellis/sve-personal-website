@@ -1,13 +1,15 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-05-11T17:10:00+01:00"
+date = "2025-05-11T22:03:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 +++
 
-This article describes an opinionated approach to low-maintenance [tooling for using Terraform and OpenTofu in a monorepo](https://github.com/stuartellis/tf-tasks). The main tooling is a single [Task](https://taskfile.dev) file that generates and runs commands that you add to your own projects. Unlike other Terraform wrappers, this does not include code in a programming language like Python or Go, and is not tied to particular versions of [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/). These features mean that it runs on any UNIX-based system, including CI/CD environments, has few dependencies and does not require regular updates. It uses [Copier](https://copier.readthedocs.io/en/stable/) to synchronize projects with newer [versions](https://github.com/stuartellis/tf-tasks/releases) as needed.
+This article describes an opinionated approach to low-maintenance tooling for using Terraform and OpenTofu in a monorepo. The main tooling is a single [Task](https://taskfile.dev) file that generates and runs commands that you add to your own projects. The tooling uses [Copier](https://copier.readthedocs.io/en/stable/) to synchronize projects with newer [versions](https://github.com/stuartellis/tf-tasks/releases) as needed.
+
+Unlike other Terraform wrappers, this tooling does not include code in a programming language like Python or Go, and is not tied to particular versions of [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/). These features mean that it runs on any UNIX-based system, including CI/CD environments, has few dependencies and does not require regular updates.
 
 > This article uses the identifier _TF_ or _tf_ for Terraform and OpenTofu. Both tools accept the same commands and have the same behavior. The tooling itself is just called `tft` in the documentation and code.
 
@@ -32,7 +34,7 @@ TFT_CONTEXT=dev TFT_STACK=my-app task tft:apply
 
 ## More About This Tooling
 
-The tooling is a [Copier](https://copier.readthedocs.io/en/stable/) template that provides a directory structure and files for [Task](https://taskfile.dev). The file defines tasks that generate and run commands. Copier to enable you to create new projects that include the tooling, add the files and directories to any existing project and also synchronize them with newer [versions](https://github.com/stuartellis/tf-tasks/releases) as needed. [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) accept the same commands and have the same behavior, so the same tooling can support both of them with minimal effort.
+[The tooling](https://github.com/stuartellis/tf-tasks) is a [Copier](https://copier.readthedocs.io/en/stable/) template that provides a directory structure and files for [Task](https://taskfile.dev). The main file defines tasks that generate and run commands. Copier to enable you to create new projects that include the tooling, add the files and directories to any existing project and also synchronize them with newer [versions](https://github.com/stuartellis/tf-tasks/releases) as needed. [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) accept the same commands and have the same behavior, so the same tooling can support both of them with minimal effort.
 
 The tasks provide an opinionated configuration for Terraform and OpenTofu, which is described in this article. This configuration enables projects to use built-in features of these tools to support:
 
@@ -203,54 +205,6 @@ TFT_CONTEXT=dev TFT_STACK=my-app task tft:apply
 
 > You will see a warning when you run `init` with a current version of Terraform. This is because Hashicorp are [deprecating the use of DynamoDB with S3 remote state](https://developer.hashicorp.com/terraform/language/backend/s3#state-locking). To support older versions of Terraform, this tooling will continue to use DynamoDB for a period of time.
 
-### Updating TF Tasks
-
-To update projects with the latest version of this template, use the [update feature of Copier](https://copier.readthedocs.io/en/stable/updating/):
-
-```shell
-cd my-project
-uvx copier update -A -a .copier-answers-tf-task.yaml .
-```
-
-This synchronizes the files in your project that the template manages with the latest release of the template.
-
-> Copier only changes the files and directories that are managed by the template.
-
-### Optional: Using Variants
-
-Use the variants feature to deploy extra copies of stacks for development and testing. Each variant of a stack uses the same configuration as other instances with the specified context.
-
-Specify `TFT_VARIANT` to create a variant:
-
-```shell
-TFT_CONTEXT=dev TFT_STACK=my-app TFT_VARIANT=feature1 task tft:plan
-TFT_CONTEXT=dev TFT_STACK=my-app TFT_VARIANT=feature1 task tft:apply
-```
-
-The tooling automatically sets the value of the tfvar `variant` to match `TFT_VARIANT`. This ensures that every variant has a unique identifier that can be used in TF code.
-
-Only set `TFT_VARIANT` when you want to create an alternate version of a stack. If you do not specify a variant name, TF uses the default workspace for state, and the value of the tfvar `variant` is `default`.
-
-The [test](https://opentofu.org/docs/cli/commands/test/) feature of TF creates and then immediately destroys resources without storing the state. To ensure that temporary test copies of stacks do not conflict with other copies, the test in the stack template includes code to set the value of `variant` to a random string with the prefix `tt`.
-
-### Optional: Using Local TF State
-
-This tooling currently uses [remote state](https://opentofu.org/docs/language/state/remote/) by default. Set `TFT_REMOTE_BACKEND` to `false` to use [local TF state](https://opentofu.org/docs/language/settings/backends/local/):
-
-```shell
-TFT_REMOTE_BACKEND=false
-```
-
-> I highly recommend that you only use TF local state for prototyping. Local state means that the resources can only be managed from a computer that has access to the state files.
-
-### Optional: Using OpenTofu
-
-By default, this tooling uses Terraform. To use OpenTofu, set `TFT_CLI_EXE` as an environment variable, with the value `tofu`:
-
-```shell
-TFT_CLI_EXE=tofu
-```
-
 ### The `tft` Tasks
 
 | Name          | Description                                                                                       |
@@ -287,3 +241,51 @@ Set these variables to override the defaults:
 - `TFT_CLI_EXE` - The Terraform or OpenTofu executable to use
 - `TFT_VARIANT` - See the section on [variants](#variants)
 - `TFT_REMOTE_BACKEND` - Enables a remote TF backend
+
+### Updating TF Tasks
+
+To update projects with the latest version of this template, use the [update feature of Copier](https://copier.readthedocs.io/en/stable/updating/):
+
+```shell
+cd my-project
+uvx copier update -A -a .copier-answers-tf-task.yaml .
+```
+
+This synchronizes the files in your project that the template manages with the latest release of the template.
+
+> Copier only changes the files and directories that are managed by the template.
+
+### Using Variants
+
+Use the variants feature to deploy extra copies of stacks for development and testing. Each variant of a stack uses the same configuration as other instances with the specified context.
+
+Specify `TFT_VARIANT` to create a variant:
+
+```shell
+TFT_CONTEXT=dev TFT_STACK=my-app TFT_VARIANT=feature1 task tft:plan
+TFT_CONTEXT=dev TFT_STACK=my-app TFT_VARIANT=feature1 task tft:apply
+```
+
+The tooling automatically sets the value of the tfvar `variant` to match `TFT_VARIANT`. This ensures that every variant has a unique identifier that can be used in TF code.
+
+Only set `TFT_VARIANT` when you want to create an alternate version of a stack. If you do not specify a variant name, TF uses the default workspace for state, and the value of the tfvar `variant` is `default`.
+
+The [test](https://opentofu.org/docs/cli/commands/test/) feature of TF creates and then immediately destroys resources without storing the state. To ensure that temporary test copies of stacks do not conflict with other copies, the test in the stack template includes code to set the value of `variant` to a random string with the prefix `tt`.
+
+### Using Local TF State
+
+This tooling currently uses [remote state](https://opentofu.org/docs/language/state/remote/) by default. Set `TFT_REMOTE_BACKEND` to `false` to use [local TF state](https://opentofu.org/docs/language/settings/backends/local/):
+
+```shell
+TFT_REMOTE_BACKEND=false
+```
+
+> I highly recommend that you only use TF local state for prototyping. Local state means that the resources can only be managed from a computer that has access to the state files.
+
+### Using OpenTofu
+
+By default, this tooling uses Terraform. To use OpenTofu, set `TFT_CLI_EXE` as an environment variable, with the value `tofu`:
+
+```shell
+TFT_CLI_EXE=tofu
+```
