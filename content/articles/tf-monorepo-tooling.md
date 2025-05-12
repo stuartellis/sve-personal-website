@@ -1,15 +1,22 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-05-12T07:34:00+01:00"
+date = "2025-05-12T22:57:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 +++
 
-This article describes an opinionated approach to low-maintenance tooling for using Terraform and OpenTofu in a monorepo, so that multiple Terraform modules can be maintained in the same project, alongside other code. This tooling is built around a single [Task](https://taskfile.dev) file that you add to your own projects. It uses [Copier](https://copier.readthedocs.io/en/stable/) to synchronize projects with newer [versions](https://github.com/stuartellis/tf-tasks/releases) as needed.
+This article describes an opinionated approach to low-maintenance tooling for using Terraform and OpenTofu in a monorepo, so that infrastructure definitions can be maintained in the same project, alongside other code. The tooling also enables projects to support:
 
-Unlike other Terraform wrappers, this tooling does not include code in a programming language like Python or Go, and is not tied to particular versions of [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/). These features mean that it runs on any UNIX-based system, including CI/CD environments, has few dependencies and does not require regular updates.
+- Multiple separate infrastructure components ([root modules](https://opentofu.org/docs/language/modules/)) in the same code repository, as self-contained [stacks](#stacks)
+- Multiple instances of the same component with different configurations
+- Temporary instances of a component for testing or development with [workspaces](https://opentofu.org/docs/language/state/workspaces/).
+- [Switching between Terraform and OpenTofu](#using-opentofu). Use the same tasks for both.
+
+This tooling is built around a single [Task](https://taskfile.dev) file that you add to your own projects. Unlike other Terraform wrappers, it does not include code in a programming language like Python or Go, and is not tied to particular versions of [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/). These features mean that it runs on any UNIX-based system, including CI/CD environments, and does not require regular updates.
+
+The tooling is provided as a [Copier](https://copier.readthedocs.io/en/stable/) template. Copier enables you to create new projects that include the tooling, and add the tooling to any existing project. You also use it to synchronize the copies in your projects with newer [versions](https://github.com/stuartellis/tf-tasks/releases) as needed.
 
 > This article uses the identifier _TF_ or _tf_ for Terraform and OpenTofu. Both tools accept the same commands and have the same behavior. The tooling itself is just called `tft` in the documentation and code.
 
@@ -33,30 +40,6 @@ TFT_CONTEXT=dev TFT_STACK=my-app task tft:init
 TFT_CONTEXT=dev TFT_STACK=my-app task tft:plan
 TFT_CONTEXT=dev TFT_STACK=my-app task tft:apply
 ```
-
-## More About This Tooling
-
-[The tooling](https://github.com/stuartellis/tf-tasks) is a [Copier](https://copier.readthedocs.io/en/stable/) template that provides a directory structure and files for [Task](https://taskfile.dev). The main file defines tasks that generate and run commands. Copier enables you to either create new projects that include the tooling or add the files and directories to any existing project. It also synchronize copies of the tooling with newer [versions](https://github.com/stuartellis/tf-tasks/releases) as needed.
-
-The tasks provide an opinionated configuration for Terraform and OpenTofu, which is described in this article. This configuration enables projects to use built-in features of these tools to support:
-
-- Multiple TF components ([root modules](https://opentofu.org/docs/language/modules/)) in the same code repository, as self-contained [stacks](#stacks)
-- Multiple instances of the same TF component with different configurations
-- Temporary instances of a TF component for testing or development with [workspaces](https://opentofu.org/docs/language/state/workspaces/).
-- Switching between [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/). Both accept the same commands and have the same behavior.
-
-The combination of Task and Copier means that we do not need to maintain a script or an application. It also avoids dependencies on particular versions of Terraform or OpenTofu. The tooling:
-
-- Runs on any UNIX-based system, including CI/CD environments
-- Works with any version of Terraform or OpenTofu that you provide
-- Has few dependencies: it requires Git, Task and a UNIX shell to run. Python and Copier are only required to update projects
-- Avoids conflicts with other technologies. You can use it on a new project, or to add it to an existing project.
-- Does not require regular updates
-- Has a well-defined update process, because it is just a [Copier](https://copier.readthedocs.io/en/stable/) template
-
-> This tooling was built for my personal use. I will consider suggestions and Pull Requests, but I may decline anything that makes it less useful for my needs. You are welcome to fork [the project](https://github.com/stuartellis/tf-tasks).
-
-For more details about how to work with Task, see [my article](https://www.stuartellis.name/articles/task-runner/).
 
 ## How It Works
 
@@ -125,6 +108,24 @@ This tooling uses _contexts_ to provide profiles for TF. Contexts enable you to 
 
 Each `context.json` file specifies two items of metadata: `description` and `environment`. The `description` is deliberately not used by the tooling, so that you may use it however you wish. The `environment` is a string that is automatically provided as a tfvar. You may use the `environment` tfvar in whatever way is appropriate for the project. For example, you could define multiple contexts with the same environment.
 
+Here is an example of a `context.json` file:
+
+```json
+{
+  "metadata": {
+    "description": "Cloud development environment",
+    "environment": "dev"
+  },
+  "backend_s3": {
+    "tfstate_bucket": "789000123456-tf-state-dev-eu-west-2",
+    "tfstate_ddb_table": "789000123456-tf-lock-dev-eu-west-2",
+    "tfstate_dir": "dev",
+    "region": "eu-west-2",
+    "role_arn": "arn:aws:iam::789000123456:role/my-tf-state-role"
+  }
+}
+```
+
 To enable you to share common tfvars across all of the contexts for a stack, the directory `tf/contexts/all/` contains one `.tfvars` file for each stack. The `.tfvars` file for a stack in the `all` directory is always used, along with `.tfvars` for the current context.
 
 The tooling creates each new context as a copy of files in `tf/contexts/template/`. It uses `standard.tfvars` to create the tfvars files that are created for new stacks.
@@ -167,8 +168,8 @@ I recommend that you use a tool version manager to install copies of Terraform a
 
 To use the tasks in a generated project you need:
 
-- [Git](https://git-scm.com/)
 - A UNIX shell, such as Bash or Fish
+- [Git](https://git-scm.com/)
 - [Task](https://taskfile.dev)
 - [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/)
 
@@ -294,3 +295,9 @@ By default, this tooling uses Terraform. To use OpenTofu, set `TFT_CLI_EXE` as a
 ```shell
 TFT_CLI_EXE=tofu
 ```
+
+### Developing the Tooling
+
+This tooling was built for my personal use. I will consider suggestions and Pull Requests, but I may decline anything that makes it less useful for my needs. You are welcome to fork [the project](https://github.com/stuartellis/tf-tasks).
+
+For more details about how to work with Task and develop your own tasks, see [my article](https://www.stuartellis.name/articles/task-runner/).
