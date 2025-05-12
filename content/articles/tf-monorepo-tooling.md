@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-05-11T22:03:00+01:00"
+date = "2025-05-12T07:21:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -24,7 +24,9 @@ TFT_CONTEXT=dev task tft:context:new
 TFT_STACK=my-app task tft:new
 ```
 
-Add the settings for remote state storage to the [context](#contexts). You can then start working with your stacks:
+The `tft:new` task creates a stack, a self-contained Terraform module. The stack includes code for AWS, so that it will work immediately once the tfvar `tf_exec_role_arn` is set to the IAM role that TF will use. Enable remote state storage by adding the settings to the [context](#contexts), or use [local state](#using-local-tf-state).
+
+You can then start working with your stack:
 
 ```shell
 TFT_CONTEXT=dev TFT_STACK=my-app task tft:init
@@ -279,6 +281,8 @@ This tooling currently uses [remote state](https://opentofu.org/docs/language/st
 ```shell
 TFT_REMOTE_BACKEND=false
 ```
+
+If you use the default TF code for a stack, you will also need to comment out the `backend "s3" {}` block in the `main.tf` file.
 
 > I highly recommend that you only use TF local state for prototyping. Local state means that the resources can only be managed from a computer that has access to the state files.
 
