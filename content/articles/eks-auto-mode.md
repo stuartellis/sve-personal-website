@@ -7,7 +7,7 @@ categories = ["automation", "aws", "devops", "kubernetes"]
 tags = ["automation", "aws", "devops", "kubernetes"]
 +++
 
-[Kubernetes](https://kubernetes.io/) is now a standard technology for high-availability clusters. This article explains an approach for setting up Kubernetes clusters on [Amazon EKS](https://docs.aws.amazon.com/eks/) with Infrastructure as Code. The EKS clusters use [Auto Mode](https://docs.aws.amazon.com/eks/latest/userguide/automode.html), which automates the scaling and update of nodes, manages several components in the cluster, and simplifies cluster upgrades. The configuration is managed by [Terraform](https://www.terraform.io/) and [Flux](https://fluxcd.io/).
+[Kubernetes](https://kubernetes.io/) is now a standard technology for high-availability clusters. This article steps you through an example project for setting up Kubernetes clusters on [Amazon EKS](https://docs.aws.amazon.com/eks/) with Infrastructure as Code. The EKS clusters use [Auto Mode](https://docs.aws.amazon.com/eks/latest/userguide/automode.html), which automates the scaling and update of nodes, manages several components in the cluster, and simplifies cluster upgrades. The configuration is managed by [Terraform](https://www.terraform.io/) and [Flux](https://fluxcd.io/).
 
 ## Components of EKS Auto Mode
 
@@ -58,9 +58,9 @@ The design principles lead to these specific technical choices:
 
 This article does not cover how to set up container registries or maintain container images. These will be specific to the applications that you run on your cluster.
 
-This article also does not cover how to set up the requirements to run TF. You should always use remote state storage with TF, but you should decide how to host the remote state. By default, the example code uses S3 for [remote state](https://opentofu.org/docs/language/state/remote/). You can switch to [local TF state](https://opentofu.org/docs/language/settings/backends/local/). Local state means that the cloud resources can only be managed from a computer that has access to the state files.
+This article also does not cover how to set up the requirements to run TF. You should always use remote state storage with TF, but you should decide how to host the remote state. By default, the example code uses S3 for [remote state](https://opentofu.org/docs/language/state/remote/). I recommend that you store TF remote state outside of the cloud accounts that you use for working systems. When you use S3 for TF remote state, use a separate AWS account.
 
-> I recommend that you store TF remote state outside of the cloud accounts that you use for working systems. When you use S3 for TF remote state, use a separate AWS account.
+> The TF tooling enables you to use [local files for state](https://opentofu.org/docs/language/settings/backends/local/) as well as remote storage. Only use local state for testing. Local state means that the cloud resources can only be managed from a computer that has access to the state files.
 
 ## Requirements
 
