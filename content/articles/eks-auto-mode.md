@@ -1,13 +1,18 @@
 +++
 title = "Low-Maintenance Kubernetes with EKS Auto Mode"
 slug = "eks-auto-mode"
-date = "2025-05-11T13:45:00+01:00"
+date = "2025-05-19T03:04:00+01:00"
 description = "Using EKS with Auto Mode"
 categories = ["automation", "aws", "devops", "kubernetes"]
 tags = ["automation", "aws", "devops", "kubernetes"]
 +++
 
 [Kubernetes](https://kubernetes.io/) is now a standard technology for high-availability clusters. This article steps you through an example project for setting up Kubernetes clusters on [Amazon EKS](https://docs.aws.amazon.com/eks/) with Infrastructure as Code. The EKS clusters use [Auto Mode](https://docs.aws.amazon.com/eks/latest/userguide/automode.html), which automates the scaling and update of nodes, manages several components in the cluster, and simplifies cluster upgrades. The configuration is managed by [Terraform](https://www.terraform.io/) and [Flux](https://fluxcd.io/).
+
+The code for this project is published on both GitLab and GitHub:
+
+- [GitLab: sve-projects/eks-auto-example](https://gitlab.com/sve-projects/eks-auto-example)
+- [GitHub: stuartellis/eks-auto-example](https://github.com/stuartellis/eks-auto-example)
 
 ## Components of EKS Auto Mode
 
@@ -21,11 +26,9 @@ EKS Auto Mode also provides components to integrate the clusters with AWS, such 
 
 > [This document explains the differences between IRSA and Pod Identities](https://docs.aws.amazon.com/eks/latest/userguide/service-accounts.html#service-accounts-iam).
 
-EKS Auto Mode does not provide observability components, so that you can install the logging and monitoring that is appropriate to your needs. For example, you can install Prometheus and Grafana on the cluster itself, deploy the Datadog operator so that the cluster is monitored as part of a Datadog enterprise account, or use [Amazon CloudWatch Observability](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Observability-EKS-addon.html) to integrate the cluster with AWS monitoring services.
+EKS Auto Mode does not provide observability components, so that you can install the logging and monitoring that is appropriate to your needs. For example, you can install Prometheus and Grafana on the cluster itself, or deploy the Datadog operator so that the cluster is monitored as part of a Datadog enterprise account, or use [Amazon CloudWatch Observability](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Observability-EKS-addon.html) to integrate the cluster with AWS monitoring services.
 
 ## More About This Project
-
-The code for this project is published on both [GitHub](https://github.com/stuartellis/eks-auto-example) and [GitLab](https://gitlab.com/sve-projects/eks-auto-example).
 
 The project uses a specific set of tools and patterns to set up and maintain your clusters. The main technologies are [Terraform](https://www.terraform.io/) (_TF_) and [Flux](https://fluxcd.io/). The project also includes tasks for the [Task](https://taskfile.dev) runner. The tasks for TF are provided by [my tooling for TF](https://www.stuartellis.name/articles/tf-monorepo-tooling/). Like this article, these tasks are opinionated, and are designed to minimise maintenance.
 
@@ -60,7 +63,7 @@ This article does not cover how to set up container registries or maintain conta
 
 This article also does not cover how to set up the requirements to run TF. You should always use remote state storage with TF, but you should decide how to host the remote state. By default, the example code uses S3 for [remote state](https://opentofu.org/docs/language/state/remote/). I recommend that you store TF remote state outside of the cloud accounts that you use for working systems. When you use S3 for TF remote state, use a separate AWS account.
 
-> The TF tooling enables you to use [local files for state](https://opentofu.org/docs/language/settings/backends/local/) as well as remote storage. Only use local state for testing. Local state means that the cloud resources can only be managed from a computer that has access to the state files.
+> The TF tooling enables you to use [local files for state](https://opentofu.org/docs/language/settings/backends/local/) instead of remote storage. Only use local state for testing. Local state means that the cloud resources can only be managed from a computer that has access to the state files.
 
 ## Requirements
 
@@ -131,21 +134,21 @@ The relevant directories for configuration are:
 
 Change each value that is marked as _Required_. In addition, specify the settings for the TF backend in the `tf/contexts/context.json` file for _dev_ and _prod_.
 
-> The IAM principal that creates an EKS cluster is automatically granted _system:masters_ in that cluster. In our example code, this principal is the IAM role that TF uses. The TF code also enables administrator access on the cluster to the IAM role for human system administrators.
+> The IAM principal that creates an EKS cluster is automatically granted membership of the _system:masters_ group in that cluster. In our example code, this principal is the IAM role that TF uses. The TF code also enables administrator access on the cluster to the IAM role for human system administrators.
 
 ## 3: Set Credentials
 
-> This process needs access to both AWS and your Git hosting provider. Set an access token for GitLab as the environment variable `GITLAB_TOKEN` before you run this command.
+This process needs access to both AWS and your Git hosting provider.
 
-The example project configures Flux to use a GitLab deploy key. This means that the Kubernetes cluster must have SSH access to the GitLab repository for the project.
+To work with GitLab, set an [access token](https://docs.gitlab.com/user/profile/personal_access_tokens/) as the environment variable `GITLAB_TOKEN`.
 
-If you are running the TF deployment from your own system, first ensure that you have AWS credentials in your shell session:
+If you are running the TF deployment from your own system, ensure that you have AWS credentials in your shell session:
 
 ```shell
 eval $(aws configure export-credentials --format env --profile your-aws-profile)
 ```
 
-If you want to use [local TF state](https://opentofu.org/docs/language/settings/backends/local/), set the environment variable `TFT_REMOTE_BACKEND` to `false`:
+If you want to use [local TF state](https://opentofu.org/docs/language/settings/backends/local/), you also need to set the environment variable `TFT_REMOTE_BACKEND` as `false`:
 
 ```shell
 TFT_REMOTE_BACKEND=false
@@ -165,7 +168,7 @@ Apply the modules in this order:
 
 1. _amc-gitlab_ - Creates a deploy key on GitLab for Flux
 2. _amc_ - Deploys a Kubernetes cluster on Amazon EKS
-3. _amc-flux_ - Adds Flux to a Kubernetes Cluster
+3. _amc-flux_ - Adds Flux to a Kubernetes Cluster with the GitLab deploy key
 
 > The `apply` to create a cluster on EKS will take several minutes to complete.
 
@@ -193,7 +196,7 @@ kubectl config set-context $EKS-CLUSTER-ARN
 
 ## 6: Test Your Cluster
 
-To test the connection to the API endpoint for the cluster, first assume the IAM role for operators. Run this command to get the credentials:
+To test the connection to the API endpoint for the cluster, first assume the IAM role for human operators. Run this command to get the credentials:
 
 ```shell
 aws sts assume-role --role-arn $HUMAN-OPS-ROLE-ARN --role-session-name human-ops-session
@@ -219,10 +222,18 @@ Kustomize Version: v5.5.0
 Server Version: v1.32.3-eks-bcf3d70
 ```
 
-Once you can successfully connect to a cluster, use the _flux_ command-line tool to check the status of Flux management:
+Once you can successfully connect to a cluster, you can use the _flux_ command-line tool to work with Flux on that cluster. The example project provides tasks for this.
+
+To check the current status of Flux on the cluster:
 
 ```shell
 task flux:status
+```
+
+Flux checks the Git branches and applies changes to the cluster every few minutes. Use this task to trigger Flux on the cluster, rather than waiting for a scheduled run:
+
+```shell
+task flux:apply
 ```
 
 ## 7: Going Further
