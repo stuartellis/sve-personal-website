@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Kubernetes with EKS Auto Mode"
 slug = "eks-auto-mode"
-date = "2025-05-19T03:04:00+01:00"
+date = "2025-05-21T22:07:00+01:00"
 description = "Using EKS with Auto Mode"
 categories = ["automation", "aws", "devops", "kubernetes"]
 tags = ["automation", "aws", "devops", "kubernetes"]
@@ -61,7 +61,7 @@ The design principles lead to these specific technical choices:
 
 This article does not cover how to set up container registries or maintain container images. These will be specific to the applications that you run on your cluster.
 
-This article also does not cover how to set up the requirements to run TF. You should always use remote state storage with TF, but you should decide how to host the remote state. By default, the example code uses S3 for [remote state](https://opentofu.org/docs/language/state/remote/). I recommend that you store TF remote state outside of the cloud accounts that you use for working systems. When you use S3 for TF remote state, use a separate AWS account.
+This article also does not cover how to set up the requirements to run TF. You should always use [remote TF state storage](https://opentofu.org/docs/language/state/remote/) for live systems. By default, the example code uses S3 for remote state. I recommend that you store TF remote state outside of the cloud accounts that you use for working systems. When you use S3 for TF remote state, use a separate AWS account.
 
 > The TF tooling enables you to use [local files for state](https://opentofu.org/docs/language/settings/backends/local/) instead of remote storage. Only use local state for testing. Local state means that the cloud resources can only be managed from a computer that has access to the state files.
 
@@ -159,9 +159,7 @@ TFT_REMOTE_BACKEND=false
 Run the tasks to initialise, plan and apply the TF code for each module. For example:
 
 ```shell
-TFT_STACK=amc-gitlab TFT_CONTEXT=dev task tft:init
-TFT_STACK=amc-gitlab TFT_CONTEXT=dev task tft:plan
-TFT_STACK=amc-gitlab TFT_CONTEXT=dev task tft:apply
+TFT_STACK=amc-gitlab TFT_CONTEXT=dev task tft:init && task tft:plan && task tft:apply
 ```
 
 Apply the modules in this order:
