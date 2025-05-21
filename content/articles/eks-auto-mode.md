@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Kubernetes with EKS Auto Mode"
 slug = "eks-auto-mode"
-date = "2025-05-21T22:07:00+01:00"
+date = "2025-05-21T22:45:00+01:00"
 description = "Using EKS with Auto Mode"
 categories = ["automation", "aws", "devops", "kubernetes"]
 tags = ["automation", "aws", "devops", "kubernetes"]
@@ -159,7 +159,7 @@ TFT_REMOTE_BACKEND=false
 Run the tasks to initialise, plan and apply the TF code for each module. For example:
 
 ```shell
-TFT_STACK=amc-gitlab TFT_CONTEXT=dev task tft:init && task tft:plan && task tft:apply
+TFT_STACK=amc TFT_CONTEXT=dev task tft:init && task tft:plan && task tft:apply
 ```
 
 Apply the modules in this order:
@@ -177,19 +177,19 @@ Use the AWS command-line tool to register the new cluster with your kubectl conf
 If you are running the TF deployment from your own system, first ensure that you have AWS credentials in your shell session:
 
 ```shell
-eval $(aws configure export-credentials --format env --profile $AWS-PROFILE)
+eval $(aws configure export-credentials --format env --profile your-aws-profile)
 ```
 
 Run this command to add the cluster to your kubectl configuration:
 
 ```shell
-aws eks update-kubeconfig --name $EKS_CLUSTER_NAME
+aws eks update-kubeconfig --name your-eks-cluster-name
 ```
 
 To set this cluster as the default context for your Kubernetes tools, run this command:
 
 ```shell
-kubectl config set-context $EKS-CLUSTER-ARN
+kubectl config set-context your-eks-cluster-arn
 ```
 
 ## 6: Test Your Cluster
@@ -197,7 +197,7 @@ kubectl config set-context $EKS-CLUSTER-ARN
 To test the connection to the API endpoint for the cluster, first assume the IAM role for human operators. Run this command to get the credentials:
 
 ```shell
-aws sts assume-role --role-arn $HUMAN-OPS-ROLE-ARN --role-session-name human-ops-session
+aws sts assume-role --role-arn your-human-ops-role-arn --role-session-name human-ops-session
 ```
 
 Set these values as environment variables:
