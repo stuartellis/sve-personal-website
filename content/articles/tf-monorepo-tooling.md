@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-05-12T22:57:00+01:00"
+date = "2025-05-21T22:04:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -10,7 +10,7 @@ tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 This article describes an opinionated approach to low-maintenance tooling for using Terraform and OpenTofu in a monorepo, so that infrastructure definitions can be maintained in the same project, alongside other code. The tooling also enables projects to support:
 
 - Multiple separate infrastructure components ([root modules](https://opentofu.org/docs/language/modules/)) in the same code repository, as self-contained [stacks](#stacks)
-- Multiple instances of the same component with different configurations
+- Multiple instances of the same component with different configurations with [contexts](#contexts)
 - Temporary instances of a component for testing or development with [workspaces](https://opentofu.org/docs/language/state/workspaces/).
 - [Switching between Terraform and OpenTofu](#using-opentofu). Use the same tasks for both.
 
@@ -36,9 +36,10 @@ The `tft:new` task creates a stack, a self-contained Terraform module. The stack
 You can then start working with your stack:
 
 ```shell
-TFT_CONTEXT=dev TFT_STACK=my-app task tft:init
-TFT_CONTEXT=dev TFT_STACK=my-app task tft:plan
-TFT_CONTEXT=dev TFT_STACK=my-app task tft:apply
+export TFT_CONTEXT=dev TFT_STACK=my-app
+task tft:init
+task tft:plan
+task tft:apply
 ```
 
 ## How It Works
@@ -99,6 +100,13 @@ The tasks:
 You define each set of infrastructure code as a separate component. Each of the infrastructure components in the project is a separate TF root [module](https://opentofu.org/docs/language/modules/). This tooling refers to these TF root modules as _stacks_. Each TF stack is a subdirectory in the directory `tf/definitions/`.
 
 The tooling creates each new stack as a copy of the files in `tf/stacks/template/`. This means that a new stack works immediately.
+
+You are free to change the stack as you need. The tooling only requires that the stack is a valid TF module with these tfvars:
+
+- `environment_name` (string)
+- `product_name` (string)
+- `stack_name` (string)
+- `variant` (string)
 
 > This tooling does not explicitly conflict with the [stacks feature of Terraform](https://developer.hashicorp.com/terraform/language/stacks). However, I do not currently use HCP Terraform to test with the stacks feature that it provides. It is unclear when this feature will be finalised, if it will be able to be used without a HCP Terraform account, or if an equivalent will be implemented by OpenTofu.
 
@@ -202,9 +210,10 @@ TFT_STACK=my-app task tft:new
 Use `TFT_CONTEXT` and `TFT_STACK` to create a deployment of the stack with the configuration from the specified context:
 
 ```shell
-TFT_CONTEXT=dev TFT_STACK=my-app task tft:init
-TFT_CONTEXT=dev TFT_STACK=my-app task tft:plan
-TFT_CONTEXT=dev TFT_STACK=my-app task tft:apply
+export TFT_CONTEXT=dev TFT_STACK=my-app
+task tft:init
+task tft:plan
+task tft:apply
 ```
 
 > You will see a warning when you run `init` with a current version of Terraform. This is because Hashicorp are [deprecating the use of DynamoDB with S3 remote state](https://developer.hashicorp.com/terraform/language/backend/s3#state-locking). To support older versions of Terraform, this tooling will continue to use DynamoDB for a period of time.
@@ -266,8 +275,9 @@ Use the variants feature to deploy extra copies of stacks for development and te
 Specify `TFT_VARIANT` to create a variant:
 
 ```shell
-TFT_CONTEXT=dev TFT_STACK=my-app TFT_VARIANT=feature1 task tft:plan
-TFT_CONTEXT=dev TFT_STACK=my-app TFT_VARIANT=feature1 task tft:apply
+export TFT_CONTEXT=dev TFT_STACK=my-app TFT_VARIANT=feature1
+task tft:plan
+task tft:apply
 ```
 
 The tooling automatically sets the value of the tfvar `variant` to match `TFT_VARIANT`. This ensures that every variant has a unique identifier that can be used in TF code.
