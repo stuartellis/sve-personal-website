@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-05-21T22:04:00+01:00"
+date = "2025-05-22T12:04:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -31,15 +31,23 @@ TFT_CONTEXT=dev task tft:context:new
 TFT_STACK=my-app task tft:new
 ```
 
-The `tft:new` task creates a stack, a self-contained Terraform module. The stack includes code for AWS, so that it will work immediately once the tfvar `tf_exec_role_arn` is set to the IAM role that TF will use. Enable remote state storage by adding the settings to the [context](#contexts), or use [local state](#using-local-tf-state).
+The `tft:new` task creates a stack, a self-contained Terraform module. The stack includes code for AWS, so that it will work immediately once the tfvar `tf_exec_role_arn` for the context is set to the IAM role that TF will use. Enable remote state storage by adding the settings to the [context](#contexts), or use [local state](#using-local-tf-state).
 
 You can then start working with your stack:
 
 ```shell
+# Set a default context and stack
 export TFT_CONTEXT=dev TFT_STACK=my-app
+
+# Run tasks on the stack with the configuration from the context
 task tft:init
 task tft:plan
 task tft:apply
+```
+
+```shell
+# Specifically set the stack and context for one task
+TFT_CONTEXT=dev TFT_STACK=my-app task tft:fmt
 ```
 
 ## How It Works
@@ -99,9 +107,15 @@ The tasks:
 
 You define each set of infrastructure code as a separate component. Each of the infrastructure components in the project is a separate TF root [module](https://opentofu.org/docs/language/modules/). This tooling refers to these TF root modules as _stacks_. Each TF stack is a subdirectory in the directory `tf/definitions/`.
 
-The tooling creates each new stack as a copy of the files in `tf/stacks/template/`. This means that a new stack works immediately.
+To create a new stack, use the `tft:new` task:
 
-You are free to change the stack as you need. The tooling only requires that the stack is a valid TF module with these tfvars:
+```shell
+TFT_STACK=my-app task tft:new
+```
+
+The tooling creates each new stack as a copy of the files in `tf/stacks/template/`. The template directory contains a complete, working TF module for AWS resources. This means that each new stack is immediately ready to use.
+
+You are free to change stacks as you need. For example, you can completely remove the AWS resources. The tooling only requires that a stack is a valid TF module with these tfvars:
 
 - `environment_name` (string)
 - `product_name` (string)
@@ -112,9 +126,22 @@ You are free to change the stack as you need. The tooling only requires that the
 
 ### Contexts
 
-This tooling uses _contexts_ to provide profiles for TF. Contexts enable you to deploy multiple instances of the same stack with different configurations. Each context is a subdirectory in the directory `tf/contexts/` that contains a `context.json` file and one `.tfvars` file per stack. The `context.json` file is the configuration file for the context. It specifies metadata and settings for TF [remote state](https://opentofu.org/docs/language/state/remote/).
+This tooling uses _contexts_ to provide profiles for TF. Contexts enable you to deploy multiple instances of the same stack with different configurations.
 
-Each `context.json` file specifies two items of metadata: `description` and `environment`. The `description` is deliberately not used by the tooling, so that you may use it however you wish. The `environment` is a string that is automatically provided as a tfvar. You may use the `environment` tfvar in whatever way is appropriate for the project. For example, you could define multiple contexts with the same environment.
+To create a new context, use the `tft:context:new` task:
+
+```shell
+TFT_CONTEXT=dev task tft:context:new
+```
+
+Each context is a subdirectory in the directory `tf/contexts/` that contains a `context.json` file and one `.tfvars` file per stack.
+
+The `context.json` file is the configuration file for the context. It specifies metadata and settings for TF [remote state](https://opentofu.org/docs/language/state/remote/). Each `context.json` file specifies two items of metadata:
+
+- `description`
+- `environment`
+
+The `description` is deliberately not used by the tooling, so that you may use it however you wish. The `environment` is a string that is automatically provided to TF as the tfvar `environment_name`. You may use this tfvar in whatever way is appropriate for the project. For example, you could define multiple contexts with the same environment.
 
 Here is an example of a `context.json` file:
 
