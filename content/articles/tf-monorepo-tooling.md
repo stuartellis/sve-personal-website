@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-05-26T09:12:00+01:00"
+date = "2025-05-26T12:08:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -9,7 +9,7 @@ tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 
 This article describes an opinionated approach to low-maintenance tooling for using [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) in a monorepo, so that infrastructure definitions can be maintained in the same project, alongside other code. The tooling also enables projects to support:
 
-- Multiple separate infrastructure components ([root modules](https://opentofu.org/docs/language/modules/)) in the same code repository, as self-contained [units](#units)
+- Multiple infrastructure components ([root modules](https://opentofu.org/docs/language/modules/)) in the same code repository, as separate [units](#units)
 - Multiple instances of the same component with different configurations with [contexts](#contexts)
 - Temporary instances of a component for testing or development with [workspaces](https://opentofu.org/docs/language/state/workspaces/).
 - [Integration testing](#testing) for every component.
@@ -32,7 +32,7 @@ TFT_CONTEXT=dev task tft:context:new
 TFT_UNIT=my-app task tft:new
 ```
 
-The `tft:new` task creates a unit, a self-contained Terraform root module. The unit includes code for AWS, so that it will work immediately once the tfvar `tf_exec_role_arn` for the context is set to the IAM role that TF will use. Enable remote state storage by adding the settings to the [context](#contexts), or use [local state](#using-local-tf-state).
+The `tft:new` task creates a unit, a complete Terraform root module. This root module includes code for AWS, so that it will work immediately once the tfvar `tf_exec_role_arn` for the context is set to the AWS IAM role that TF will use. Enable remote state storage by adding the settings to the [context](#contexts), or use [local state](#using-local-tf-state).
 
 You can then start working with your TF module:
 
@@ -116,12 +116,16 @@ TFT_UNIT=my-app task tft:new
 
 The tooling creates each new unit as a copy of the files in `tf/units/template/`. The template directory contains a complete, working TF root module for AWS resources. This means that each new unit is immediately ready to use.
 
-You are free to change units as you need. For example, you can completely remove the AWS resources. The tooling only requires that a unit is a valid TF module with these tfvars:
+You are free to change the code in units as you need. For example, you can completely remove the AWS resources. The tooling only requires that a unit is a valid TF module with these tfvars:
 
 - `environment_name` (string)
 - `product_name` (string)
 - `unit_name` (string)
 - `variant` (string)
+
+To avoid compatibility issues, I recommend that you use names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining environment and variant names that are longer than 7 characters, and other names that are longer than 12 characters.
+
+> If you amend a module to not use AWS, ensure that you change the tests.
 
 ### Contexts
 
@@ -174,9 +178,16 @@ The variants feature creates extra copies of units for development and testing. 
 
 Use the `environment`, `unit_name` and `variant` tfvars in your TF code to define resource names that are unique for each instance of the resource. This avoids conflicts.
 
-The code in the unit template includes the local `standard_prefix` to help you set unique names for resources.
+For convenience, the code in the unit template includes locals and outputs to help with this:
 
-> The test in the unit template includes code to set the value of `variant` to a random string with the prefix `tt`. This ensures that test copies of resources do not conflict with existing copies.
+- `tft_handle` - Normalizes the `unit_name` to the first 12 characters, in lowercase
+- `tft_standard_prefix` - Combines `environment`, `unit_name`, `variant` and `tft_handle`, separated by hyphens
+
+To avoid compatibility issues, I recommend that you use names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining environment and variant names that are longer than 7 characters, and other names that are longer than 12 characters.
+
+To ensure that the template code is compatible with older versions of Terraform, it currently does not use validations on the tfvars.
+
+> The test in the unit template includes code to set the value of `variant` to a random string with the prefix `tt`. If you use the `variant` in resource names, this ensures that test copies of resources do not conflict with existing resources that were deployed with the same TF module.
 
 ### Shared Modules
 
