@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-05-26T12:08:00+01:00"
+date = "2025-05-26T13:43:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -123,7 +123,7 @@ You are free to change the code in units as you need. For example, you can compl
 - `unit_name` (string)
 - `variant` (string)
 
-To avoid compatibility issues, I recommend that you use names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining environment and variant names that are longer than 7 characters, and other names that are longer than 12 characters.
+To avoid compatibility issues, I recommend that you use names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining environment and variant names that are longer than 7 characters, and unit names that are longer than 12 characters.
 
 > If you amend a module to not use AWS, ensure that you change the tests.
 
@@ -168,6 +168,10 @@ To enable you to share common tfvars across all of the contexts for a unit, the 
 
 The tooling creates each new context as a copy of files in `tf/contexts/template/`. It uses `standard.tfvars` to create the tfvars files that are created for new units.
 
+To avoid issues, I recommend that you use context names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining context names that are longer than 12 characters.
+
+> Contexts exist to configure TF. To avoid coupling live resources directly to individual contexts, the tooling does not pass the name of the active context to the TF code, only the `environment` name that it specifies.
+
 ### Variants
 
 The variants feature creates extra copies of units for development and testing. A variant is a separate instance of a unit. Each variant of a unit uses the same configuration as other instances with the specified context, but has a unique identifier. Every variant is a TF [workspace](https://opentofu.org/docs/language/state/workspaces), so has separate state.
@@ -183,7 +187,7 @@ For convenience, the code in the unit template includes locals and outputs to he
 - `tft_handle` - Normalizes the `unit_name` to the first 12 characters, in lowercase
 - `tft_standard_prefix` - Combines `environment`, `unit_name`, `variant` and `tft_handle`, separated by hyphens
 
-To avoid compatibility issues, I recommend that you use names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining environment and variant names that are longer than 7 characters, and other names that are longer than 12 characters.
+To avoid compatibility issues, I recommend that you use names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining environment and variant names that are longer than 7 characters, and unit names that are longer than 12 characters.
 
 To ensure that the template code is compatible with older versions of Terraform, it currently does not use validations on the tfvars.
 
