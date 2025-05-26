@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Kubernetes with EKS Auto Mode"
 slug = "eks-auto-mode"
-date = "2025-05-21T22:45:00+01:00"
+date = "2025-05-26T22:58:00+01:00"
 description = "Using EKS with Auto Mode"
 categories = ["automation", "aws", "devops", "kubernetes"]
 tags = ["automation", "aws", "devops", "kubernetes"]
@@ -11,7 +11,7 @@ tags = ["automation", "aws", "devops", "kubernetes"]
 
 The code for this project is published on both GitLab and GitHub:
 
-- [GitLab: sve-projects/eks-auto-example](https://gitlab.com/sve-projects/eks-auto-example)
+- [GitLab: sve-projects/examples/eks-auto-example](https://gitlab.com/sve-projects/examples/eks-auto-example)
 - [GitHub: stuartellis/eks-auto-example](https://github.com/stuartellis/eks-auto-example)
 
 ## Components of EKS Auto Mode
@@ -55,7 +55,7 @@ The design principles lead to these specific technical choices:
 
 - Integrate Kubernetes and AWS identities with the established IAM Roles for Service Accounts (IRSA) method, rather than the newer EKS Pod Identities. [This document explains the differences](https://docs.aws.amazon.com/eks/latest/userguide/service-accounts.html#service-accounts-iam).
 - Use [Amazon CloudWatch Observability](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Observability-EKS-addon.html) for the clusters. This automatically adds [Fluent Bit](https://fluentbit.io/) for log capture.
-- Use [Flux](https://fluxcd.io/flux/) for manage application configuration on the cluster
+- Use [Flux](https://fluxcd.io/flux/) to manage application configuration on the clusters
 
 ### Out of Scope
 
@@ -148,27 +148,23 @@ If you are running the TF deployment from your own system, ensure that you have 
 eval $(aws configure export-credentials --format env --profile your-aws-profile)
 ```
 
-If you want to use [local TF state](https://opentofu.org/docs/language/settings/backends/local/), you also need to set the environment variable `TFT_REMOTE_BACKEND` as `false`:
-
-```shell
-TFT_REMOTE_BACKEND=false
-```
-
 ## 4: Deploy the Infrastructure with TF
 
-Run the tasks to initialise, plan and apply the TF code for each module. For example:
+Run the tasks to initialise, plan and apply the TF code for each root module. For example:
 
 ```shell
-TFT_STACK=amc TFT_CONTEXT=dev task tft:init && task tft:plan && task tft:apply
+TFT_UNIT=amc TFT_CONTEXT=dev task tft:init && task tft:plan && task tft:apply
 ```
 
 Apply the modules in this order:
 
-1. _amc-gitlab_ - Creates a deploy key on GitLab for Flux
+1. _gitlab-access_ - Creates a deploy key on GitLab for Flux
 2. _amc_ - Deploys a Kubernetes cluster on Amazon EKS
-3. _amc-flux_ - Adds Flux to a Kubernetes Cluster with the GitLab deploy key
+3. _eks-flux_ - Adds Flux to an EKS Kubernetes Cluster with the GitLab deploy key
 
 > The `apply` to create a cluster on EKS will take several minutes to complete.
+
+To use local TF state, you need to comment out the `backend "s3" {}` block in the `main.tf` file in each of the three TF root modules. You then use the task `tft:init:local`, rather than `tft:init`.
 
 ## 5: Register Your Cluster with Kubernetes Tools
 
