@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-05-26T13:43:00+01:00"
+date = "2025-06-01T00:40:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -13,6 +13,7 @@ This article describes an opinionated approach to low-maintenance tooling for us
 - Multiple instances of the same component with different configurations with [contexts](#contexts)
 - Temporary instances of a component for testing or development with [workspaces](https://opentofu.org/docs/language/state/workspaces/).
 - [Integration testing](#testing) for every component.
+- Building and running container images that include the tooling along with the project code and the required tools.
 - [Switching between Terraform and OpenTofu](#using-opentofu). Use the same tasks for both.
 
 This tooling is built around a single [Task](https://taskfile.dev) file that you add to your own projects. Unlike other Terraform wrappers, it does not include code in a programming language like Python or Go, and is not tied to particular versions of [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/). These features mean that it runs on any UNIX-based system, including CI/CD environments, and does not require regular updates.
@@ -58,9 +59,17 @@ First, you use [Copier](https://copier.readthedocs.io/en/stable/) to either gene
 The tooling uses specific files and directories:
 
 ```shell
+|- containers/
+|   |
+|   |- tft/
+|   |   |- Containerfile
+|
 |- tasks/
 |   |
 |   |- tft/
+|   |   |- Taskfile.yaml
+|   |
+|   |- tft-image/
 |       |- Taskfile.yaml
 |
 |- tf/
@@ -95,7 +104,9 @@ The Copier template:
 
 - Adds a `.gitignore` file and a `Taskfile.yaml` file to the root directory of the project, if these do not already exist.
 - Provides a `.terraform-version` file.
-- Provides the file `tasks/tft/Taskfile.yaml` to the project. This file contains the task definitions.
+- Provides the file `tasks/tft/Taskfile.yaml` to the project. This file contains the main task definitions.
+- Provides the file `tasks/tft-image/Taskfile.yaml` to the project. This file contains the task definitions for working with container images.
+- Provides the file `containers/tft/Containerfile` to the project. This is the default build file for container images.
 - Provides a `tf/` directory structure for TF files and configuration.
 
 The tasks:
@@ -103,6 +114,8 @@ The tasks:
 - Generate a `tmp/tf/` directory for artifacts.
 - Only change the contents of the `tf/` and `tmp/tf/` directories.
 - Copy the contents of the `template/` directories to new units and contexts. These provide consistent structures for each component.
+
+The `tft:image` tasks enable you to create and use container images that include the contents of a project along with the tooling and the software that you need to run it.
 
 ### Units
 
@@ -296,12 +309,22 @@ task tft:apply
 | tft:init:local | _terraform init_ for a unit, with local state.            |
 | tft:init:s3    | _terraform init_ for a unit, with Amazon S3 remote state. |
 
+### The `tft:image` Tasks
+
+| Name              | Description                                          |
+| ----------------- | ---------------------------------------------------- |
+| tft:image:build   | Build a container image for tft.                     |
+| tft:image:rebuild | Force a complete rebuild of the tft container image. |
+| tft:image:run     | Run Task in the container image for tft.             |
+| tft:image:shell   | Open a shell in the tft container image.             |
+
 ### Settings for Features
 
 Set these variables to override the defaults:
 
 - `TFT_PRODUCT_NAME` - The name of the project
-- `TFT_CLI_EXE` - The Terraform or OpenTofu executable to use
+- `TFT_CLI_EXE` - The Terraform or OpenTofu executable to use. This can be either the name of the executable file or a full path.
+- `TFT_CONTAINER_EXE` - The Docker or Podman executable to use. This can be either the name of the executable file or a full path.
 - `TFT_VARIANT` - See the section on [variants](#variants)
 - `TFT_REMOTE_BACKEND` - Set to _false_ to force the use of local TF state
 
