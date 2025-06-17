@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-06-17T01:43:00+01:00"
+date = "2025-06-17T07:34:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -21,22 +21,49 @@ In this case, the wrapper implements design patterns for monorepos where the inf
 
 The tooling itself is built around a single [Task](https://taskfile.dev) file that you add to your own projects. It does not include code in a programming language like Python or Go, and is not tied to particular versions of [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/). These choices mean that it runs on any UNIX-based system, including CI/CD environments, and does not require regular updates.
 
-This tooling is delivered as a [Copier](https://copier.readthedocs.io/en/stable/) template. Copier enables you to create new projects that include the tooling, and add the tooling to any existing project. You also use Copier to synchronize the copies in your projects with newer versions as needed.
+This tooling is delivered as a [Copier](https://copier.readthedocs.io/en/stable/) template. Copier enables us to create new projects that include the tooling, and add the tooling to any existing project. We also use Copier to synchronize the copies in your projects with newer versions as needed.
 
-The code is here:
+The code for the project is available on GitHub:
 
 - [https://github.com/stuartellis/tf-tasks](https://github.com/stuartellis/tf-tasks)
 
-You can fork this GitHub repository and modify it for your own needs.
-
 > This article uses the identifier _TF_ or _tf_ for Terraform and OpenTofu. Both tools accept the same commands and have the same behavior. The tooling itself is just called `tft` in the documentation and code.
+
+## Requirements
+
+This project uses several command-line tools. We can install all of these tools on Linux or macOS with [Homebrew](https://brew.sh/):
+
+- [Git](https://git-scm.com/) - `brew install git`
+- [Task](https://taskfile.dev) - `brew install go-task`
+- [pipx](https://pipx.pypa.io/) OR [uv](https://docs.astral.sh/uv/) - `brew install pipx` OR `brew install uv`
+
+The helpers [uv](https://docs.astral.sh/uv/) and [pipx](https://pipx.pypa.io/) enable us to run [Copier](https://copier.readthedocs.io/en/stable/) without installing it:
+
+```shell
+uvx copier copy git+https://github.com/stuartellis/tf-tasks my-project
+```
+
+```shell
+pipx run copier copy git+https://github.com/stuartellis/tf-tasks my-project
+```
+
+You can provide Terraform or OpenTofu any way that you wish. I recommend that you use [tenv](https://tofuutils.github.io/tenv/). The `tenv` tool automatically installs and uses the required version of Terraform or OpenTofu for the project. If _cosign_ is present, _tenv_ automatically uses it to carry out signature verification on the binaries that it downloads.
+
+```shell
+# Install tenv with cosign
+brew install tenv cosign
+```
+
+The tasks do not use Python or Copier. They only need a UNIX shell, Git, Task and Terraform or OpenTofu. This means that they can be run in a restricted environment, such as a continuous integration job. We can use tenv to install Terraform or OpenTofu in any environment.
+
+> Task includes support for [shell completions](https://taskfile.dev/installation/#setup-completions) in bash, zsh, fish and PowerShell.
 
 ## Quick Examples
 
 To start a new project:
 
 ```shell
-copier copy git+https://github.com/stuartellis/tf-tasks my-project
+uvx copier copy git+https://github.com/stuartellis/tf-tasks my-project
 cd my-project
 TFT_CONTEXT=dev task tft:context:new
 TFT_UNIT=my-app task tft:new
@@ -56,7 +83,7 @@ task tft:plan
 task tft:apply
 ```
 
-You can also specifically set the unit and context for one task. This example runs the [integration tests](#testing) for a module:
+You can also specifically set the unit and context for one task. This example runs the [integration tests](#testing) for the module:
 
 ```shell
 TFT_CONTEXT=dev TFT_UNIT=my-app task tft:test
@@ -65,16 +92,26 @@ TFT_CONTEXT=dev TFT_UNIT=my-app task tft:test
 To create a disposable copy of the resources for a module, use the [tracks](#tracks) feature:
 
 ```shell
-# Create a disposable copy of my-app
-TFT_CONTEXT=dev TFT_UNIT=my-app TFT_TRACK=copy2 task tft:plan
-TFT_CONTEXT=dev TFT_UNIT=my-app TFT_TRACK=copy2 task tft:apply
+export TFT_CONTEXT=dev TFT_UNIT=my-app
 
-# Destroy the copy of my-app
-TFT_CONTEXT=dev TFT_UNIT=my-app TFT_TRACK=copy2 task tft:destroy
+# Create a disposable copy of my-app
+TFT_TRACK=copy2 task tft:plan
+TFT_TRACK=copy2 task tft:apply
+
+# Destroy the extra copy of my-app
+TFT_TRACK=copy2 task tft:destroy
 
 # Clean-up: Delete the remote TF state for the copy of my-app
-TFT_CONTEXT=dev TFT_UNIT=my-app TFT_TRACK=copy2 task tft:forget
+TFT_TRACK=copy2 task tft:forget
 ```
+
+To see a list of all of the available tasks in a project, enter _task_ in a terminal window:
+
+```shell
+task
+```
+
+If you have autocompletion for Task, this will show you commands as you type.
 
 ## How It Works
 
@@ -248,21 +285,9 @@ The generated projects include a `.terraform-version` file so that your tool ver
 
 > This tooling can [switch between Terraform and OpenTofu](#using-opentofu). This is specifically to help you migrate projects from one of these tools to the other.
 
-## Setting Up a Project
-
-You need [Git](https://git-scm.com/) and [Copier](https://copier.readthedocs.io/en/stable/) to add this template to a project. Use [uv](https://docs.astral.sh/uv/) or [pipx](https://pipx.pypa.io/) to run Copier. These tools enable you to use Copier without installing it.
-
-You can either create a new project with this template or add the template to an existing project. Use the same _copy_ sub-command of Copier for both cases. Run Copier with the _uvx_ or _pipx run_ commands, which download and cache software packages as needed. For example:
-
-```shell
-uvx copier copy git+https://github.com/stuartellis/tf-tasks my-project
-```
-
-The generated project includes a `.terraform-version` file so that your tool version managers can immediately install and use the Terraform version that you specify.
-
 ## Usage
 
-To use the tasks in a generated project you need:
+To use the tasks in a generated project you always need:
 
 - A UNIX shell, such as Bash or Fish
 - [Git](https://git-scm.com/)
