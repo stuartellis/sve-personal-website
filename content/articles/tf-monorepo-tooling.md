@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-06-17T13:44:00+01:00"
+date = "2025-06-17T14:05:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -238,13 +238,13 @@ To avoid issues, I recommend that you use context names that only include lowerc
 
 ### Tracks
 
-The tracks feature creates extra copies of infrastructure for development and testing. Each track of a unit has an identical configuration as the other instances of the unit that use the same context, apart from the tfvar `track`. The tooling automatically sets the value of the tfvar `track` to match the variable `TFT_TRACK`.
+The tracks feature creates extra copies of infrastructure for development and testing. Each track has an identical configuration as the other instances of the unit that use the same context, apart from the tfvar `track`. The tooling automatically sets the value of the tfvar `track` to match the variable `TFT_TRACK`.
 
-This ensures that every track has a unique identifier that can be used in the TF code. Use the `track` identifier in the resource names to avoid conflicts between the copies of a unit.
+This ensures that every track has a unique identifier that can be used in the TF code. Use the `track` identifier in the resource names to avoid conflicts between the copies of a unit. The template TF code includes locals that you can use to create unique resource names.
 
-Every track is also a separate TF [workspace](https://opentofu.org/docs/language/state/workspaces), so it has a separate state. The tracks feature uses TF workspaces in a standard way, and only adds a convention to ensure that every copy has the separate identifier as the tfvar `track`.
+A track is a TF [workspace](https://opentofu.org/docs/language/state/workspaces). This means that each track has a separate state from every other copy of the infrastructure for that unit. The tracks feature uses TF workspaces in a standard way: a track is just a workspace which is guaranteed to know its own name.
 
-This combination of a unique identifier and a separate TF workspace enables us to run multiple sets of infrastructure from the same TF module. Each set of infrastructure may use the same version of the module, or different versions of the TF module from different versions in source control. For example, use this feature to deploy copies of the infrastructure from different feature branches of the project.
+The combination of a unique identifier and a separate TF workspace enables us to run multiple sets of infrastructure from the same TF module. Each set of infrastructure may use the same version of the module, or different versions of the TF module from different versions in source control. For example, use this feature to deploy copies of the infrastructure from different feature branches of the project.
 
 These alternate copies can be kept as long as is needed, and updated just like the main deployments from a module. Once a copy is no longer required, you can destroy it without affecting any of the other copies.
 
