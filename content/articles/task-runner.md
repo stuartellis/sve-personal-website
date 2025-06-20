@@ -1,7 +1,7 @@
 +++
-title = "Using the Task Tool"
+title = "Shared Project Tooling with Task"
 slug = "task-runner"
-date = "2025-03-08T21:34:00+00:00"
+date = "2025-06-21T07:45:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -11,17 +11,19 @@ tags = ["automation", "devops"]
 
 > Task is also known as go-task.
 
-Task uses a versioned schema for task definitions. This helps groups of developers to co-operate on writing task definitions, but means that the same version of Task should be used on every system. For projects where the version of the task runner cannot be centrally managed, consider using [just](https://www.stuartellis.name/articles/just-task-runner/) instead.
+Task is very useful for enabling teams of developers to co-operate, using and writing task definitions for their projects. We write the task definitions in YAML, and there is [a published and versioned schema for this Task YAML](#checking-taskfiles). Task provides a standard environment, so that we do not need to write our tasks to work with the various shells that might be installed on systems. It also includes many convenient features to simplify tasks, and it is regularly updated.
+
+However, these things mean that it works best if all of the developers that work on the projects run the same version of Task, and do not need to write task definitions as code in other programming languages, such as blocks of script for specific shells. If you are maintaining a project for a wide audience, consider using [just](https://www.stuartellis.name/articles/just-task-runner/) instead.
 
 ## How Task Works
 
-Each copy of Task is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, being about 8Mb for the 64-bit Linux version. It uses sets of tasks that are defined in YAML files, and includes a shell interpreter, so that you can use the same syntax for tasks on any platform.
+Each copy of Task is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, being about 8Mb for the 64-bit Linux version. The tasks are run with a shell interpreter that is built into Task itself, rather than using whatever shell is on the system.
 
-This means that you can use Task in any environment. It only requires a copy of the Task executable, and has no configuration files apart from the YAML files that contain the tasks.
+This means that you can use Task in any environment. It only requires a copy of the Task executable, and uses no configuration files apart from the YAML files that contain the tasks. The built-in shell interpreter that you can use the same syntax for your tasks on any platform.
 
-It also provides features for you to customise the behavior of your tasks for the different environments that you might use. The built-in [template functions](https://taskfile.dev/reference/templating/#functions) enable you to get consistent inputs for your tasks across different platforms. When needed, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfiles), so that Task uses the specific implementation for the current platform.
+It does provide features for you to customise the behavior of your tasks for the different environments that you might use. The built-in [template functions](https://taskfile.dev/reference/templating/#functions) enable you to get consistent inputs for your tasks across different platforms. When needed, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfiles), so that Task uses the specific implementation for the current platform.
 
-Task includes two other key features: [conditional execution of tasks](https://taskfile.dev/usage/#prevent-unnecessary-work) and [running tasks on file changes](https://taskfile.dev/usage/#watch-tasks). These features are designed to be usable with any type of software development.
+Task also includes two other key features: [conditional execution of tasks](https://taskfile.dev/usage/#prevent-unnecessary-work) and [running tasks on file changes](https://taskfile.dev/usage/#watch-tasks). These features are designed to be usable with any type of software development.
 
 Here is an example of a _Taskfile.yaml_, with a _build_ task that only runs when the _sources_ change:
 
@@ -32,7 +34,7 @@ Here is an example of a _Taskfile.yaml_, with a _build_ task that only runs when
 
 version: '3'
 
-silent: true
+set: [pipefail]
 
 tasks:
   default:
@@ -95,7 +97,7 @@ If you are using a Dev Container with Visual Studio Code, you can add the featur
 ```json
     "features": {
         "ghcr.io/devcontainers-contrib/features/go-task:1": {
-            "version": "3.40.0"
+            "version": "3.44.0"
         }
     }
 ```
@@ -130,7 +132,7 @@ curl -L https://taskfile.dev/install.sh > install-task.sh
 To use the installation script, call it with the Git tag and the _-b_ option. The Git tag specifies the version of Task. The _-b_ option specifies which directory to install it to:
 
 ```shell
-./install-task.sh -b $HOME/.local/bin v3.40.0
+./install-task.sh -b $HOME/.local/bin v3.44.0
 ```
 
 {{< alert >}}
@@ -144,11 +146,16 @@ If you do need to install Task with an operating system package manager, it is a
 ```shell
 winget install Task.Task  # winget on Microsoft Windows
 brew install go-task      # Homebrew on macOS
-doas apk add go-task      # apk on Alpine Linux
 sudo dnf install go-task  # dnf on Fedora Linux
 ```
 
-To install Task on Alpine Linux, you need to enable the _community_ package repository.
+To install Task on Alpine Linux, you need to use the _community_ package repository:
+
+```shell
+doas apk add go-task --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community/
+```
+
+Since the Alpine package only contains the single binary file for Task, we can always use the _edge_ version of _community_ to get the most recent available release.
 
 > _Alpine Linux installs Task as go-task._ This means that you need to use the name _go-task_ rather than _task_ on the command-line. For example _go-task --list_.
 
@@ -175,7 +182,7 @@ This example user _Taskfile.yaml_ includes a _default_ task that lists the avail
 ```yaml
 version: '3'
 
-silent: true
+set: [pipefail]
 
 tasks:
   default:
@@ -185,7 +192,7 @@ tasks:
   list:
     desc: List available tasks
     cmds:
-      - task --list
+      - '{{.TASK_EXE}} --list'
 
   system-info:
     desc: Display system information
@@ -277,7 +284,7 @@ This diagram shows the suggested directory structure for a project with task inc
 
 version: '3'
 
-silent: true
+set: [pipefail]
 
 # Namespaces
 includes:
@@ -321,7 +328,7 @@ tasks:
   list:
     desc: List available tasks
     cmds:
-      - task --list
+      - '{{.TASK_EXE}} --list'
 ```
 
 The _default_ task runs the _list_ task, so this command displays a list of all of the available tasks, including the tasks in the namespaces:
@@ -338,8 +345,6 @@ task
 # https://pre-commit.com/
 
 version: '3'
-
-silent: true
 
 tasks:
   default:
@@ -362,6 +367,11 @@ tasks:
     desc: Setup pre-commit for use
     cmds:
       - pre-commit install
+
+  update:
+    desc: Update pre-commit hooks to current versions
+    cmds:
+      - pre-commit autoupdate
 ```
 
 The _default_ task in this file runs _check_, so this command runs the _check_ task:
@@ -381,7 +391,8 @@ task pre-commit:check
 Follow [the style guidelines](https://taskfile.dev/styleguide/) when writing tasks. Here are some extra suggestions:
 
 - Use a YAML formatter to format your Task files. The [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension adds support for formatting YAML files to Visual Studio Code. The [Prettier](https://prettier.io/) tool formats YAML files, and can be used in any environment.
-- Always put a _desc_ attribute for each task. The description appears next to the task in the output of _task --list_.
+- Write _set: [pipefail]_ at the beginning of top-level Taskfiles to enable failing on the first error. This is a [shell option](https://taskfile.dev/usage/#set-and-shopt).
+- Always put a _desc_ attribute for each task. The description appears next to the task in the output of _--list_.
 - Consider adding a [summary](https://taskfile.dev/usage/#display-summary-of-task) attribute for each task. The summary appears in the output of _task --summary TASK-NAME_.
 - Use [argument forwarding](https://taskfile.dev/usage/#forwarding-cli-arguments-to-commands) or [wildcard task names](https://taskfile.dev/usage/#wildcard-arguments) to get inputs for a task from the command-line.
 - Specify the [requires](https://taskfile.dev/usage/#ensuring-required-variables-are-set) attribute for each task that uses a variable. This ensures that the task has the necessary variables.
@@ -433,11 +444,11 @@ Add these lines to the _.pre-commit-config.yaml_ file in the root directory of y
 
 ```yaml
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: '0.29.4'
+  rev: '0.33.0'
   hooks:
     - id: check-taskfile
 - repo: https://github.com/adrienverge/yamllint.git
-  rev: 'v1.35.1'
+  rev: 'v1.37.1'
   hooks:
     - id: yamllint
       args: [--strict]
