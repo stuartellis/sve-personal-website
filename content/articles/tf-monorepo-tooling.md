@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-06-20T07:43:00+01:00"
+date = "2025-06-20T21:08:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -17,11 +17,11 @@ This article describes an opinionated approach to low-maintenance tooling for us
 
 It is simply a wrapper for Terraform and OpenTofu. This means that it generates commands and sends them to the Terraform or OpenTofu executable for you. This is a common approach and there are a number of wrappers available. These wrappers are built with a variety of technologies and programming languages. Since Terraform and OpenTofu are extremely flexible, each wrapper implements specific design choices.
 
-In this case, the wrapper is designed for monorepos where the infrastructure components are clearly defined and are deployed to multiple environments. It also specifically designed so that you can use it alongside other tools, or stop using it at any time. The components are standard [root modules](#units). The tooling only requires that these root modules accept four specific tfvars.
+In this case, the wrapper is designed for monorepos where the infrastructure components are clearly defined and are deployed to multiple environments. It is also specifically designed so that you can use it alongside other tools, or stop using it at any time. The components are standard [root modules](#units). The tooling only requires that these root modules accept four specific tfvars.
 
 The tooling itself is built around a single [Task](https://taskfile.dev) file that you add to your own projects. It does not include code in a programming language like Python or Go, and is not tied to particular versions of [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/). These choices mean that it runs on any UNIX-based system, including CI/CD environments, and does not require regular updates.
 
-This tooling is delivered as a [Copier](https://copier.readthedocs.io/en/stable/) template. Copier enables us to create new projects that include the tooling, and add the tooling to any existing project. We also use Copier to synchronize the copies in your projects with newer versions as needed.
+This tooling is delivered as a [Copier](https://copier.readthedocs.io/en/stable/) template. Copier enables us to create new projects that include the tooling, and add the tooling to any existing project. We also use Copier to synchronize the copies in our projects with newer versions of the tooling as needed.
 
 The code for the project is available on GitHub:
 
@@ -39,7 +39,7 @@ This project uses several command-line tools. We can install all of these tools 
 
 > Set up [shell completions](https://taskfile.dev/installation/#setup-completions) for Task after you install it. Task supports bash, zsh, fish and PowerShell.
 
-The helpers [uv](https://docs.astral.sh/uv/) and [pipx](https://pipx.pypa.io/) enable us to run [Copier](https://copier.readthedocs.io/en/stable/) without installing it:
+The helpers [pipx](https://pipx.pypa.io/) and [uv](https://docs.astral.sh/uv/) enable us to run [Copier](https://copier.readthedocs.io/en/stable/) without installing it:
 
 ```shell
 pipx run copier copy git+https://github.com/stuartellis/tf-tasks my-project
@@ -95,14 +95,14 @@ To create a disposable copy of the resources for a module, just set an identifie
 export TFT_CONTEXT=dev TFT_UNIT=my-app
 
 # Create a disposable copy of my-app
-TFT_TRACK=copy2 task tft:plan
-TFT_TRACK=copy2 task tft:apply
+TFT_EDITION=copy2 task tft:plan
+TFT_EDITION=copy2 task tft:apply
 
 # Destroy the extra copy of my-app
-TFT_TRACK=copy2 task tft:destroy
+TFT_EDITION=copy2 task tft:destroy
 
 # Clean-up: Delete the remote TF state for the extra copy of my-app
-TFT_TRACK=copy2 task tft:forget
+TFT_EDITION=copy2 task tft:forget
 ```
 
 To see a list of all of the available tasks in a project, enter _task_ in a terminal window:
@@ -185,9 +185,9 @@ The tooling only requires that each unit is a valid TF module with these tfvars:
 - `environment_name` (string)
 - `product_name` (string)
 - `unit_name` (string)
-- `track` (string)
+- `edition` (string)
 
-To avoid compatibility issues, I recommend that you use names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining environment and track names that are longer than 7 characters, and unit names that are longer than 12 characters.
+To avoid compatibility issues, I recommend that you use names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining environment and edition names that are longer than 7 characters, and unit names that are longer than 12 characters.
 
 > If you amend a module to not use AWS, ensure that you change the tests.
 
@@ -246,30 +246,30 @@ Workspaces means that TF creates a new, separate state for the extra copy, so th
 
 However, if you try to create multiple instances of the same infrastructure from the same root module with the same configuration then it will probably fail. TF will try to create new resources that use exactly the same attributes as the resources for the first copy. The provider will then receive requests from TF to create resources that have the same names as existing resources, and it is likely to handle the problem by refusing to create these new resources.
 
-This tooling implements both TF test and workspaces features with a consistent means of ensuring that every copy of infrastructure can have unique names. It simply defines that every module has a tfvar called `track`.
+This tooling implements both TF test and workspaces features with a consistent means of ensuring that every copy of infrastructure can have unique names. It simply defines that every module has a tfvar called `edition`.
 
-This ensures that every instance has an identifier that you can use in your TF code. You include the `track` identifier in resource names to avoid conflicts between copies. For convenience, the template TF code provides locals that you can use to create unique resource names. The [next section](#managing-resource-names) has more details about resource names.
+This ensures that every instance has an identifier that you can use in your TF code. You include the `edition` identifier in resource names to avoid conflicts between copies. For convenience, the template TF code provides locals that you can use to create unique resource names. The [next section](#managing-resource-names) has more details about resource names.
 
-For workspaces, the tooling automatically sets the value of the tfvar `track` to match the variable `TFT_TRACK`. Set this variable in any way that you want. For example, you can configure your CI system to set the variable to match branch names. If you do not specify a track identifier, TF uses the default workspace for state, and the value of the tfvar `track` is `default`.
+For workspaces, the tooling automatically sets the value of the tfvar `edition` to match the variable `TFT_EDITION`. Set this variable in any way that you want. For example, you can configure your CI system to set the variable to match branch names. If you do not specify a edition identifier, TF uses the default workspace for state, and the value of the tfvar `edition` is `default`.
 
-For tests, we should use a unique identifier per test run. The test in the unit template includes code to set the value of `track` to a random string with the prefix `tt`, so that every test copy of infrastructure will have a unique value for the `track` tfvar.
+For tests, we should use a unique identifier per test run. The test in the unit template includes code to set the value of `edition` to a random string with the prefix `tt`, so that every test copy of infrastructure will have a unique value for the `edition` tfvar.
 
-If you follow this example in your own test code and have used the tfvar `track` in resource names then you can run tests and create multiple extra instances of infrastructure in parallel without issues.
+If you follow this example in your own test code and have used the tfvar `edition` in resource names then you can run tests and create multiple extra instances of infrastructure in parallel without issues.
 
 ### Managing Resource Names
 
-Use the `environment`, `unit_name` and `track` tfvars in your TF code to define resource names that are both meaningful to humans and unique for each instance of the resource. This avoids conflicts between copies of infrastructure.
+Use the `environment`, `unit_name` and `edition` tfvars in your TF code to define resource names that are both meaningful to humans and unique for each instance of the resource. This avoids conflicts between copies of infrastructure.
 
 For convenience, the code in the unit template includes locals and outputs to help with this:
 
 - `tft_handle` - Normalizes the `unit_name` to the first 12 characters, in lowercase
-- `tft_standard_prefix` - Combines `environment`, `track` and `tft_handle`, separated by hyphens
+- `tft_standard_prefix` - Combines `environment`, `edition` and `tft_handle`, separated by hyphens
 
-To avoid compatibility issues, I recommend that you use names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining environment and track names that are longer than 7 characters, and unit names that are longer than 12 characters.
+To avoid compatibility issues, I recommend that you use names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining environment and edition names that are longer than 7 characters, and unit names that are longer than 12 characters.
 
 To ensure that the template code is compatible with older versions of Terraform, it currently does not use validations on the tfvars.
 
-> The test in the unit template includes code to set the value of the tfvar `track` to a random string with the prefix `tt`. If you use the `track` in resource names, this ensures that test copies of resources do not conflict with existing resources that were deployed with the same TF module.
+> The test in the unit template includes code to set the value of the tfvar `edition` to a random string with the prefix `tt`. If you use the `edition` in resource names, this ensures that test copies of resources do not conflict with existing resources that were deployed with the same TF module.
 
 ### Shared Modules
 
@@ -384,7 +384,7 @@ Set these variables to override the defaults:
 - `TFT_PRODUCT_NAME` - The name of the project
 - `TFT_CLI_EXE` - The Terraform or OpenTofu executable to use
 - `TFT_REMOTE_BACKEND` - Set to _false_ to force the use of local TF state
-- `TFT_TRACK` - See the section on [extra instances](#extra-instances)
+- `TFT_EDITION` - See the section on [extra instances](#extra-instances)
 
 ### Updating TF Tasks
 
@@ -401,22 +401,22 @@ This synchronizes the files in your project that the template manages with the l
 
 ### Using Extra Instances
 
-Specify `TFT_TRACK` to create an [extra instance](#extra-instances) of a unit:
+Specify `TFT_EDITION` to create an [extra instance](#extra-instances) of a unit:
 
 ```shell
-export TFT_CONTEXT=dev TFT_UNIT=my-app TFT_TRACK=feature1
+export TFT_CONTEXT=dev TFT_UNIT=my-app TFT_EDITION=feature1
 task tft:plan
 task tft:apply
 ```
 
-Each instance of a unit has an identical configuration as other instances that use the specified context, apart from the tfvar `track`. The tooling automatically sets the value of the tfvar `track` to match `TFT_TRACK`. This ensures that every track has a unique identifier that can be used in TF code.
+Each instance of a unit has an identical configuration as other instances that use the specified context, apart from the tfvar `edition`. The tooling automatically sets the value of the tfvar `edition` to match `TFT_EDITION`. This ensures that every edition has a unique identifier that can be used in TF code.
 
-Only set `TFT_TRACK` when you want to create an extra copy of a unit. If you do not specify a track identifier, TF uses the default workspace for state, and the value of the tfvar `track` is `default`.
+Only set `TFT_EDITION` when you want to create an extra copy of a unit. If you do not specify a edition identifier, TF uses the default workspace for state, and the value of the tfvar `edition` is `default`.
 
 Once you no longer need the extra instance, run `tft:destroy` to delete the resources, and then run `tft:forget` to delete the TF remote state for the extra instance:
 
 ```shell
-export TFT_CONTEXT=dev TFT_UNIT=my-app TFT_TRACK=copy2
+export TFT_CONTEXT=dev TFT_UNIT=my-app TFT_EDITION=copy2
 task tft:destroy
 task tft:forget
 ```
@@ -425,7 +425,7 @@ task tft:forget
 
 This tooling supports the [validate](https://opentofu.org/docs/cli/commands/validate/) and [test](https://opentofu.org/docs/cli/commands/test/) features of TF. Each unit includes a minimum test configuration, so that you can run immediately run tests on the module as soon as it is created.
 
-A test creates and then immediately destroys resources without storing the state. To ensure that temporary test copies of units do not conflict with other copies of the resources, the test in the unit template includes code to set the value of `track` to a random string with the prefix `tt`.
+A test creates and then immediately destroys resources without storing the state. To ensure that temporary test copies of units do not conflict with other copies of the resources, the test in the unit template includes code to set the value of `edition` to a random string with the prefix `tt`.
 
 To validate a unit before any resources are deployed, use the `tft:validate` task:
 
