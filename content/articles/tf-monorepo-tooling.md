@@ -1,13 +1,13 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-06-21T20:43:00+01:00"
+date = "2025-06-21T22:35:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 +++
 
-This article describes an example of an approach to low-maintenance tooling for using [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) in a [monorepo](https://en.wikipedia.org/wiki/Monorepo). This enables infrastructure definitions to be maintained in the same project, alongside other code. This design also enables projects to support:
+This article describes an example of an approach to low-maintenance tooling for using [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) in a [monorepo](https://en.wikipedia.org/wiki/Monorepo). This enables infrastructure definitions to be maintained in the same project, alongside other code. The design also enables projects to support:
 
 - Multiple infrastructure components in the same code repository. Each [unit](#units) is a complete [root module](https://opentofu.org/docs/language/modules/).
 - Multiple instances of the same component with [different configurations](#contexts)
@@ -15,19 +15,19 @@ This article describes an example of an approach to low-maintenance tooling for 
 - [Integration testing](#testing) for every component.
 - [Migrating from Terraform to OpenTofu](#using-opentofu). You use the same tasks for both.
 
-The basic approach is simply to create a wrapper for Terraform and OpenTofu. This means that it generates commands and sends them to the Terraform or OpenTofu executable for you. This is a common idea, so there are a number of wrappers available, which have been written with a variety of technologies and programming languages. Since Terraform and OpenTofu are extremely flexible, each wrapper implements specific design choices.
+The basic approach is simply to create a wrapper for Terraform and OpenTofu. This means that a tool that generates commands and sends them to the Terraform or OpenTofu executable for you. Wrapping is a common idea, and wrappers have been written with a variety of technologies and programming languages. Since Terraform and OpenTofu are extremely flexible, each wrapper implements specific design choices.
 
 In this example, the wrapper is designed for monorepos where the infrastructure components are clearly defined and are deployed to multiple environments. It is also specifically designed so that you can use it alongside other tools, or stop using it at any time. The components are standard [root modules](#units). The tooling only requires that these root modules accept [four specific tfvars](#units).
 
-The tooling itself is a single [Task](https://taskfile.dev) file that you add to your own projects. It does not include code in a programming language like Python or Go, and it is not tied to particular versions of [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/). These choices mean that it runs on any UNIX-based system, including CI/CD environments, and does not require regular updates.
+The wrapper itself is a single [Task](https://taskfile.dev) file that you add to your own projects. It does not include code in a programming language like Python or Go, and it is not tied to particular versions of [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/). These choices mean that it runs on any UNIX-based system, including CI/CD environments, and it does not require regular updates.
 
-This tooling is built to be distributed as a [Copier](https://copier.readthedocs.io/en/stable/) template. Copier enables us to create new projects that include the tooling, and add the tooling to any existing project. We can also use Copier to synchronize the copies in our projects with newer versions of the tooling as needed.
+This tooling is built to be distributed as a [Copier](https://copier.readthedocs.io/en/stable/) template. Copier enables us to create new projects that include the tooling, and add the tooling to any existing project. We can also use Copier to synchronize the copies in our projects with newer versions of the tooling as needed. Copier uses Git with Git tags to track releases, so a Copier template can be made available through any code hosting service.
 
 The code for this example tooling is available on GitHub:
 
 - [https://github.com/stuartellis/tf-tasks](https://github.com/stuartellis/tf-tasks)
 
-> This article uses the identifier _TF_ or _tf_ for Terraform and OpenTofu. Both tools accept the same commands and have the same behavior. The tooling itself is just called `tft` in the documentation and code.
+> This article uses the identifier _TF_ or _tf_ for Terraform and OpenTofu. Both tools accept the same commands and have the same behavior. The tooling itself is just called `tft`, which is an acronym of _TF Tasks_.
 
 ## Requirements
 
@@ -56,7 +56,7 @@ You can install Terraform or OpenTofu with any method. If you do not have a pref
 brew install tenv cosign
 ```
 
-We only need Python and Copier to create and update projects. The tasks do not use Python or Copier. They only need a UNIX shell, Git, Task and Terraform or OpenTofu. This means that they can be run in a restricted environment, such as a continuous integration runner or an Alpine Linux container. Again, we can [add tenv to any environment](https://tofuutils.github.io/tenv/#installation) and then use it to install the versions of Terraform or OpenTofu that we need.
+Python and Copier are only needed on systems that create and update projects. The tasks do not use Python or Copier, and only need a UNIX shell, Git, Task and Terraform or OpenTofu. This means that tasks can be run in a restricted environment, such as a continuous integration runner or an Alpine Linux container. Again, we can [add tenv to any environment](https://tofuutils.github.io/tenv/#installation) and then use it to install the versions of Terraform or OpenTofu that we need.
 
 ## Quick Examples
 
@@ -186,7 +186,7 @@ This tooling refers to these modules as _units_. The tooling only requires that 
 - `unit_name` (string)
 - `edition` (string)
 
-There are no limitations on how your code uses these tfvars. You might only use them to [set resource names](#managing-resource-names). To avoid compatibility issues, we should use values that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. To avoid limits on the length of resource names, unit names should be no longer than 12 characters. For usability, we should avoid environment and edition names that are longer than 7 characters.
+There are no limitations on how your code uses these tfvars. You might only use them to [set resource names](#managing-resource-names). To avoid compatibility issues, we should use values that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. To avoid limits on the length of resource names, unit names should be no longer than about 12 characters. For usability, we should avoid environment and edition names that are longer than 7 characters.
 
 To create a new unit, use the `tft:new` task:
 
@@ -266,7 +266,7 @@ If you specify a _workspace_ then TF creates a new, separate state for this work
 
 In every case, if you try to create multiple instances of the same infrastructure from the same root module with the same configuration then the operation will probably fail. TF will try to create new resources that use exactly the same attributes as the resources for the first copy. The provider will then receive requests from TF to create resources that have the same names as existing resources, and it is likely to handle the problem by refusing to create these new resources.
 
-This tooling ensures that every copy of a set of infrastructure can have a unique identifier, regardless of how the copy was created. This identifier is called the `edition`. Every unit has a tfvar called `edition` to use this identifier. The `edition` is set to the value _default_, unless you run a test or decide to create extra instances.
+This tooling ensures that every copy of a set of infrastructure can have a unique identifier, regardless of how the copy was created. This identifier is called the `edition`. Every unit has a tfvar called `edition` to use this identifier. The `edition` is set to the value _default_, unless you [run a test](#testing) or decide to [create extra instances](#using-extra-instances).
 
 The `edition` tfvar means that every instance of a root module has an identifier that you can use in your TF code. You include the `edition` identifier in resource names to avoid conflicts between copies. The template TF code provides locals that you can use to create unique resource names, but you will also need to define your own locals that meet the needs of your project. The [next section](#managing-resource-names) has more details about resource names.
 
@@ -274,7 +274,7 @@ To use a named workspace, set the variable `TFT_EDITION`. the tooling automatica
 
 For tests, we need to have a pattern for `edition` that lets us identify test copies of infrastructure, but we need to have a unique value for every test run. The test in the unit template includes code to set the value of `edition` to a random string with the prefix `tt`. You may decide to use a different format in the `edition` identifier for your tests.
 
-If you use the tfvar `edition` in resource names and generate `edition` identifiers in your test code then you can run tests and create multiple extra instances of infrastructure on the same account in parallel without conflicts. This is useful where only one person is developing the infrastructure, but even more important when teams of developers need to work on different aspects of the same project.
+If you use the tfvar `edition` in resource names and generate `edition` identifiers in your test code then you can run tests and create multiple extra instances of infrastructure on the same account in parallel without conflicts. This is useful where only one person is developing the infrastructure, but it becomes even more important when teams of developers need to work on different aspects of the same project.
 
 ### Managing Resource Names
 
@@ -359,6 +359,15 @@ task tft:apply
 
 > You will see a warning when you run `init` with a current version of Terraform. This is because Hashicorp are [deprecating the use of DynamoDB with S3 remote state](https://developer.hashicorp.com/terraform/language/backend/s3#state-locking). To support older versions of Terraform, this tooling will continue to use DynamoDB for a period of time.
 
+### Settings for Features
+
+Set these variables to override the defaults:
+
+- `TFT_PRODUCT_NAME` - The name of the project
+- `TFT_CLI_EXE` - The Terraform or OpenTofu executable to use
+- `TFT_REMOTE_BACKEND` - Set to _false_ to force the use of local TF state
+- `TFT_EDITION` - See the section on [extra instances](#extra-instances)
+
 ### The `tft` Tasks
 
 | Name          | Description                                                                                |
@@ -396,28 +405,6 @@ task tft:apply
 | tft:init       | _terraform init_ for a unit. An alias for `tft:init:s3`.  |
 | tft:init:local | _terraform init_ for a unit, with local state.            |
 | tft:init:s3    | _terraform init_ for a unit, with Amazon S3 remote state. |
-
-### Settings for Features
-
-Set these variables to override the defaults:
-
-- `TFT_PRODUCT_NAME` - The name of the project
-- `TFT_CLI_EXE` - The Terraform or OpenTofu executable to use
-- `TFT_REMOTE_BACKEND` - Set to _false_ to force the use of local TF state
-- `TFT_EDITION` - See the section on [extra instances](#extra-instances)
-
-### Updating TF Tasks
-
-To update projects with the latest version of this template, use the [update feature of Copier](https://copier.readthedocs.io/en/stable/updating/):
-
-```shell
-cd my-project
-uvx copier update -A -a .copier-answers-tf-task.yaml .
-```
-
-This synchronizes the files in your project that the template manages with the latest release of the template.
-
-> Copier only changes the files and directories that are managed by the template.
 
 ### Using Extra Instances
 
@@ -489,8 +476,26 @@ To specify which version of OpenTofu to use, create a `.opentofu-version` file. 
 
 > Remember that if you switch between Terraform and OpenTofu, you will need to initialise your unit again, and when you run `apply` it will migrate the TF state. The OpenTofu Website provides [migration guides](https://opentofu.org/docs/intro/migration/), which includes information about code changes that you may need to make.
 
+### Updating TF Tasks
+
+To update a project with the latest version of the template, we use the [update feature of Copier](https://copier.readthedocs.io/en/stable/updating/). We can use either [pipx](https://pipx.pypa.io/) or [uv](https://docs.astral.sh/uv/) to run Copier:
+
+```shell
+cd my-project
+pipx run copier update -A -a .copier-answers-tf-task.yaml .
+```
+
+```shell
+cd my-project
+uvx copier update -A -a .copier-answers-tf-task.yaml .
+```
+
+Copier `update` synchronizes the files in the project that the template manages with the latest release of the template.
+
+> Copier only changes the files and directories that are managed by the template.
+
 ## Going Further
 
-This tooling was built for my personal use. I will consider suggestions, but I may decline anything that makes it less useful for my needs. You are welcome to use this as a basis for your own wrappers.
+This tooling was built for my personal use. I am happy to consider feedback and suggestions, but I may decline to implement anything that makes it less useful for my needs. You are welcome to use this work as a basis for your own wrappers.
 
 For more details about how to work with Task and develop your own tasks, see [my article](https://www.stuartellis.name/articles/task-runner/).
