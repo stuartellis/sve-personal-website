@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-06-21T13:01:00+01:00"
+date = "2025-06-21T17:43:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -11,7 +11,7 @@ This article describes an opinionated approach to low-maintenance tooling for us
 
 - Multiple infrastructure components in the same code repository. Each [unit](#units) is a complete [root module](https://opentofu.org/docs/language/modules/).
 - Multiple instances of the same component with [different configurations](#contexts)
-- [Disposable instances](#extra-instances) of a component for development and testing. Use this to create instances for the branches of your code as you need them.
+- [Extra instances](#extra-instances) of a component for development and testing. Use this to create disposable instances for the branches of your code as you need them.
 - [Integration testing](#testing) for every component.
 - [Migrating from Terraform to OpenTofu](#using-opentofu). You use the same tasks for both.
 
@@ -74,7 +74,7 @@ TFT_CONTEXT=dev task tft:context:new
 TFT_UNIT=my-app task tft:new
 ```
 
-The `tft:new` task creates a unit, a complete Terraform root module. This root module includes code for AWS, so that it can work immediately. You only need to set:
+The `tft:new` task creates a [unit](#units), a complete Terraform root module. This root module includes code for AWS, so that it can work immediately. You only need to set:
 
 - A name for the `environment` in the [context](#contexts)
 - Either remote state storage settings in the [context](#contexts), OR use [local state](#using-local-tf-state)
@@ -98,7 +98,7 @@ You can also specifically set the unit and context for one task. This example ru
 TFT_CONTEXT=dev TFT_UNIT=my-app task tft:test
 ```
 
-To create a disposable copy of the resources for a module, just set an identifier for the extra copy:
+To create [an extra copy](#extra-instances) of the resources for a module, just set the variable `TFT_EDITION` with a unique name for the copy. This example will deploy an extra instance called `copy2` alongside the main set of resources:
 
 ```shell
 export TFT_CONTEXT=dev TFT_UNIT=my-app
@@ -186,7 +186,7 @@ This tooling refers to these modules as _units_. The tooling only requires that 
 - `unit_name` (string)
 - `edition` (string)
 
-There are no limitations on how your code uses these tfvars. You might only use them to [set resource names](#managing-resource-names). To avoid compatibility issues, I recommend that you use values that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining environment and edition names that are longer than 7 characters, and unit names that are longer than 12 characters.
+There are no limitations on how your code uses these tfvars. You might only use them to [set resource names](#managing-resource-names). To avoid compatibility issues, I recommend that you use values that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Use unit names that are no longer than 12 characters. Avoid defining environment and edition names that are longer than 7 characters.
 
 To create a new unit, use the `tft:new` task:
 
@@ -213,7 +213,7 @@ The tooling sets the values of the required tfvars when it runs TF commands on a
 
 ### Contexts
 
-This tooling has _contexts_ to provide profiles for TF. Contexts enable you to deploy multiple instances of the same unit with different configurations, instead of needing to maintain separate sets of code for different instances.
+Contexts enable you to define named configurations for TF. You can then use these to deploy multiple instances of the same unit with different configurations, instead of needing to maintain separate sets of code for different instances. For example, if you have separate AWS accounts for development and production then you can define these as separate contexts.
 
 To create a new context, use the `tft:context:new` task:
 
@@ -248,41 +248,39 @@ Here is an example of a `context.json` file:
 }
 ```
 
-To enable you to share common tfvars across all of the contexts for a unit, the directory `tf/contexts/all/` contains one `.tfvars` file for each unit. The `.tfvars` file for a unit in the `all` directory is always used, along with `.tfvars` for the current context.
+To enable you to have tfvars for a unit that apply for every context, the directory `tf/contexts/all/` contains one `.tfvars` file for each unit. The `.tfvars` file for a unit in the `tf/contexts/all/` directory is always used, along with `.tfvars` for the current context.
 
 The tooling creates each new context as a copy of files in `tf/contexts/template/`. It copies the `standard.tfvars` file to create the tfvars files for new units. You can actually create and edit the contexts with any method. The tooling will automatically find all of the contexts in the directory `tf/contexts/`.
 
-To avoid compatibility issues between systems, I recommend that you use context and environment names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining context names that are longer than 12 characters, and environment names that are longer than 7 characters.
+To avoid compatibility issues between systems, I recommend that you use context and environment names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining context names that are longer than 12 characters. Use environment names that are 7 characters or less.
 
-> Contexts exist to configure TF. To avoid coupling live resources directly to individual contexts, the tooling does not pass the name of the active context to the TF code, only the `environment` name that the context specifies.
+> Contexts exist to provide configurations for TF. To avoid coupling live resources directly to contexts, the tooling does not pass the name of the active context to the TF code, only the `environment` name that the context specifies.
 
 ### Extra Instances
 
 TF has two different ways to create extra copies of the same infrastructure from a root module: the [test](https://opentofu.org/docs/cli/commands/test/) feature and [workspaces](https://opentofu.org/docs/language/state/workspaces/).
 
-The test feature destroys the resources at the end of each test run. The state information about the resources is only held in the memory of the system. This means that it is not stored and no existing state data is updated.
+The _test_ feature creates new resources and destroys them at the end of each test run. The state information about these temporary resources is only held in the memory of the system, and is not stored elsewhere. No existing state data is updated by a test.
 
-Workspaces means that TF creates a new, separate state for the extra copy, so that you can maintain and update an extra copy for as long as you need it. We often use workspaces to deploy separate copies of infrastructure for development and testing, with different copies from different branches of the project.
+If you specify a _workspace_ then TF creates a new, separate state for this workspace, so that you can maintain and update a new copy of the resources for as long as you need it. We often use workspaces to deploy separate copies of infrastructure for development and testing, with different copies from different branches of the project. The main set of state for a root module is always the `default` workspace.
 
-However, if you try to create multiple instances of the same infrastructure from the same root module with the same configuration then it will probably fail. TF will try to create new resources that use exactly the same attributes as the resources for the first copy. The provider will then receive requests from TF to create resources that have the same names as existing resources, and it is likely to handle the problem by refusing to create these new resources.
+In every case, if you try to create multiple instances of the same infrastructure from the same root module with the same configuration then the operation will probably fail. TF will try to create new resources that use exactly the same attributes as the resources for the first copy. The provider will then receive requests from TF to create resources that have the same names as existing resources, and it is likely to handle the problem by refusing to create these new resources.
 
-This tooling implements both TF test and workspaces features with a consistent means of ensuring that every copy of infrastructure can have unique names. It simply defines that every module has a tfvar called `edition`.
+This tooling ensures that every copy of a set of infrastructure can have a unique identifier, regardless of how the copy was created. This identifier is called the `edition`. Every unit has a tfvar called `edition` to use this identifier. The `edition` is set to the value _default_, unless you run a test or decide to create extra instances.
 
-This ensures that every instance has an identifier that you can use in your TF code. You include the `edition` identifier in resource names to avoid conflicts between copies. For convenience, the template TF code provides locals that you can use to create unique resource names. The [next section](#managing-resource-names) has more details about resource names.
+The `edition` tfvar means that every instance of a root module has an identifier that you can use in your TF code. You include the `edition` identifier in resource names to avoid conflicts between copies. The template TF code provides locals that you can use to create unique resource names, but you will also need to define your own locals that meet the needs of your project. The [next section](#managing-resource-names) has more details about resource names.
 
-For workspaces, the tooling automatically sets the value of the tfvar `edition` to match the variable `TFT_EDITION`. To use a named workspace, set this variable. For example, you can configure your CI system to set the variable to match branch names.
+To use a named workspace, set the variable `TFT_EDITION`. the tooling automatically sets the value of the tfvar `edition` to match the variable `TFT_EDITION`. For example, you can configure your CI system to set the variable `TFT_EDITION` with values that are based on branch names.
 
-> If you do not specify a edition identifier, TF uses the default workspace for state, and the value of the tfvar `edition` is `default`.
+For tests, we need to have a pattern for `edition` that lets us identify test copies of infrastructure, but we need to have a unique value for every test run. The test in the unit template includes code to set the value of `edition` to a random string with the prefix `tt`. You may decide to use a different format in the `edition` identifier for your tests.
 
-For tests, we should use a unique identifier per test run. The test in the unit template includes code to set the value of `edition` to a random string with the prefix `tt`, so that every test copy of infrastructure will have a unique value for the `edition` tfvar.
-
-If you follow this example in your own test code and have used the tfvar `edition` in resource names then you can run tests and create multiple extra instances of infrastructure in parallel without issues.
+If you use the tfvar `edition` in resource names and generate `edition` identifiers in your test code then you can run tests and create multiple extra instances of infrastructure on the same account in parallel without conflicts. This is useful where only one person is developing the infrastructure, but even more important when teams of developers need to work on different aspects of the same project.
 
 ### Managing Resource Names
 
-Use the `environment`, `unit_name` and `edition` tfvars in your TF code to define resource names that are both meaningful to humans and unique for each instance of the resource. This avoids conflicts between copies of infrastructure.
+Use the `product_name`, `environment`, `unit_name` and `edition` tfvars in your TF code to define resource names that are both meaningful to humans and unique for each instance of the resource. This avoids conflicts between copies of infrastructure.
 
-Every type of cloud resource may have a different set of rules about acceptable names. For the best compatibility across systems, I recommend that you use values that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining environment and edition names that are longer than 7 characters, and unit names that are longer than 12 characters.
+Every type of cloud resource may have a different set of rules about acceptable names. For the best compatibility across systems, I recommend that you use values that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Create product and unit names that are no longer than 12 characters. Avoid defining environment and edition names that are longer than 7 characters.
 
 For convenience, the code in the unit template includes locals and outputs to help with this:
 
@@ -299,7 +297,7 @@ To share modules between projects, [publish them to a registry](https://opentofu
 
 ### Dependencies Between Units
 
-By design, this tooling does not specify or enforce any dependencies between infrastructure components. You are free to run operations on separate components in parallel whenever you beleive that this is safe. If you need to execute changes in a particular order, specify that order in whichever system you use to carry out deployments.
+By design, this tooling does not specify or enforce any dependencies between infrastructure components. You are free to run operations on separate components in parallel whenever you believe that this is safe. If you need to execute changes in a particular order, specify that order in whichever system you use to carry out deployments.
 
 Similarly, you can run any tasks on multiple units by using any method that can call Task several times with the required variables. For example, you can create your own Taskfiles that call the supplied tasks, write a script, or define jobs for your CI system.
 
