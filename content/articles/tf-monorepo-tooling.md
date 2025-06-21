@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-06-21T22:35:00+01:00"
+date = "2025-06-21T23:03:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -262,7 +262,7 @@ TF has two different ways to create extra copies of the same infrastructure from
 
 The _test_ feature creates new resources and destroys them at the end of each test run. The state information about these temporary resources is only held in the memory of the system, and is not stored elsewhere. No existing state data is updated by a test.
 
-If you specify a _workspace_ then TF creates a new, separate state for this workspace, so that you can maintain and update a new copy of the resources for as long as you need it. We often use workspaces to deploy separate copies of infrastructure for development and testing, with different copies from different branches of a project. The main set of state for a root module is always the `default` workspace.
+If you specify a _workspace_ then TF makes an extra separate state for the root module, so that you can create and update another copy of the resources for as long as you need it, alongside the main copy. We often use workspaces to deploy separate copies of infrastructure for development and testing, with different copies from different branches of a project. The main set of state for a root module is always the `default` workspace.
 
 In every case, if you try to create multiple instances of the same infrastructure from the same root module with the same configuration then the operation will probably fail. TF will try to create new resources that use exactly the same attributes as the resources for the first copy. The provider will then receive requests from TF to create resources that have the same names as existing resources, and it is likely to handle the problem by refusing to create these new resources.
 
@@ -270,11 +270,11 @@ This tooling ensures that every copy of a set of infrastructure can have a uniqu
 
 The `edition` tfvar means that every instance of a root module has an identifier that you can use in your TF code. You include the `edition` identifier in resource names to avoid conflicts between copies. The template TF code provides locals that you can use to create unique resource names, but you will also need to define your own locals that meet the needs of your project. The [next section](#managing-resource-names) has more details about resource names.
 
-To use a named workspace, set the variable `TFT_EDITION`. the tooling automatically sets the value of the tfvar `edition` to match the variable `TFT_EDITION`. For example, you can configure your CI system to set the variable `TFT_EDITION` with values that are based on branch names.
+To use a named workspace, set the variable `TFT_EDITION`. The tooling automatically sets the value of the tfvar `edition` to match the variable `TFT_EDITION`. For example, you can configure your CI system to set the variable `TFT_EDITION` with values that are based on branch names.
 
 For tests, we need to have a pattern for `edition` that lets us identify test copies of infrastructure, but we need to have a unique value for every test run. The test in the unit template includes code to set the value of `edition` to a random string with the prefix `tt`. You may decide to use a different format in the `edition` identifier for your tests.
 
-If you use the tfvar `edition` in resource names and generate `edition` identifiers in your test code then you can run tests and create multiple extra instances of infrastructure on the same account in parallel without conflicts. This is useful where only one person is developing the infrastructure, but it becomes even more important when teams of developers need to work on different aspects of the same project.
+If you use the tfvar `edition` in resource names and generate `edition` identifiers in your test code then you can run multiple instances of infrastructure on the same account in parallel without conflicts. Tests and extra instances are useful when only one person is developing the infrastructure, but they become even more important when teams of developers need to work on different aspects of the same project.
 
 ### Managing Resource Names
 
