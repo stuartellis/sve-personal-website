@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-06-21T07:45:00+01:00"
+date = "2025-06-21T13:01:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -17,9 +17,9 @@ This article describes an opinionated approach to low-maintenance tooling for us
 
 It is simply a wrapper for Terraform and OpenTofu. This means that it generates commands and sends them to the Terraform or OpenTofu executable for you. This is a common approach, so there are a number of wrappers available, which have been written with a variety of technologies and programming languages. Since Terraform and OpenTofu are extremely flexible, each wrapper implements specific design choices.
 
-In this case, the wrapper is designed for monorepos where the infrastructure components are clearly defined and are deployed to multiple environments. It is also specifically designed so that you can use it alongside other tools, or stop using it at any time. The components are standard [root modules](#units). The tooling only requires that these root modules accept four specific tfvars.
+In this case, the wrapper is designed for monorepos where the infrastructure components are clearly defined and are deployed to multiple environments. It is also specifically designed so that you can use it alongside other tools, or stop using it at any time. The components are standard [root modules](#units). The tooling only requires that these root modules accept [four specific tfvars](#units).
 
-The tooling itself is a single [Task](https://taskfile.dev) file that you add to your own projects. It does not include code in a programming language like Python or Go, and is not tied to particular versions of [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/). These choices mean that it runs on any UNIX-based system, including CI/CD environments, and does not require regular updates.
+The tooling itself is a single [Task](https://taskfile.dev) file that you add to your own projects. It does not include code in a programming language like Python or Go, and it is not tied to particular versions of [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/). These choices mean that it runs on any UNIX-based system, including CI/CD environments, and does not require regular updates.
 
 This tooling is delivered as a [Copier](https://copier.readthedocs.io/en/stable/) template. Copier enables us to create new projects that include the tooling, and add the tooling to any existing project. We also use Copier to synchronize the copies in our projects with newer versions of the tooling as needed.
 
@@ -39,7 +39,7 @@ This project uses several command-line tools. We can install all of these tools 
 
 > Set up [shell completions](https://taskfile.dev/installation/#setup-completions) for Task after you install it. Task supports bash, zsh, fish and PowerShell.
 
-The helpers [pipx](https://pipx.pypa.io/) and [uv](https://docs.astral.sh/uv/) enable us to run [Copier](https://copier.readthedocs.io/en/stable/) without installing it:
+Use a Python helper to run [Copier](https://copier.readthedocs.io/en/stable/) without installing it. We can use either [pipx](https://pipx.pypa.io/) or [uv](https://docs.astral.sh/uv/) to do this:
 
 ```shell
 pipx run copier copy git+https://github.com/stuartellis/tf-tasks my-project
@@ -49,14 +49,14 @@ pipx run copier copy git+https://github.com/stuartellis/tf-tasks my-project
 uvx copier copy git+https://github.com/stuartellis/tf-tasks my-project
 ```
 
-You can install Terraform or OpenTofu any way that you wish. I recommend that you use [tenv](https://tofuutils.github.io/tenv/). The `tenv` tool automatically installs and uses the required version of Terraform or OpenTofu for the project. If _cosign_ is present, _tenv_ uses it to carry out signature verification on OpenTofu binaries.
+You can install Terraform or OpenTofu with any method. If you do not have a preference, I recommend that you use [tenv](https://tofuutils.github.io/tenv/). The `tenv` tool automatically installs and uses the required version of Terraform or OpenTofu for the project. If _cosign_ is present, _tenv_ uses it to carry out signature verification on OpenTofu binaries.
 
 ```shell
 # Install tenv with cosign
 brew install tenv cosign
 ```
 
-The tasks do not use Python or Copier. They only need a UNIX shell, Git, Task and Terraform or OpenTofu. This means that they can be run in a restricted environment, such as a continuous integration job. We can [add tenv to any environment](https://tofuutils.github.io/tenv/#installation) and then use it to install Terraform or OpenTofu.
+We only need Python and Copier to create and update projects. The tasks do not use Python or Copier. They only need a UNIX shell, Git, Task and Terraform or OpenTofu. This means that they can be run in a restricted environment, such as a continuous integration runner or an Alpine Linux container. Again, we can [add tenv to any environment](https://tofuutils.github.io/tenv/#installation) and then use it to install the versions of Terraform or OpenTofu that we need.
 
 ## Quick Examples
 
@@ -74,7 +74,11 @@ TFT_CONTEXT=dev task tft:context:new
 TFT_UNIT=my-app task tft:new
 ```
 
-The `tft:new` task creates a unit, a complete Terraform root module. This root module includes code for AWS, so that it can work immediately. Enable remote state storage by adding the settings to the [context](#contexts), or use [local state](#using-local-tf-state). Set the AWS IAM role for TF with the tfvar `tf_exec_role_arn`.
+The `tft:new` task creates a unit, a complete Terraform root module. This root module includes code for AWS, so that it can work immediately. You only need to set:
+
+- A name for the `environment` in the [context](#contexts)
+- Either remote state storage settings in the [context](#contexts), OR use [local state](#using-local-tf-state)
+- The AWS IAM role for TF, with the tfvar `tf_exec_role_arn`
 
 You can then start working with your TF module:
 
@@ -116,7 +120,7 @@ To see a list of all of the available tasks in a project, enter _task_ in a term
 task
 ```
 
-If you have autocompletion for Task, this will show you commands as you type.
+If you have set up autocompletion for Task, you will see you this work as you type.
 
 ## How It Works
 
@@ -175,12 +179,14 @@ The tasks:
 
 You define a set of infrastructure code as a component. Each of the infrastructure components in a project is a separate TF root [module](https://opentofu.org/docs/language/modules/), so that it can be created, tested, updated or destroyed independently of the others.
 
-This tooling refers to these modules as _units_. The tooling only requires that each unit is a valid TF root module with these tfvars:
+This tooling refers to these modules as _units_. The tooling only requires that each unit is a valid TF root module that accepts these tfvars:
 
-- `environment_name` (string)
 - `product_name` (string)
+- `environment_name` (string)
 - `unit_name` (string)
 - `edition` (string)
+
+There are no limitations on how your code uses these tfvars. You might only use them to [set resource names](#managing-resource-names). To avoid compatibility issues, I recommend that you use values that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining environment and edition names that are longer than 7 characters, and unit names that are longer than 12 characters.
 
 To create a new unit, use the `tft:new` task:
 
@@ -188,13 +194,22 @@ To create a new unit, use the `tft:new` task:
 TFT_UNIT=my-app task tft:new
 ```
 
-The units are created as subdirectories in the directory `tf/units/`. For your convenience, the tooling creates each new unit as a copy of the files in `tf/units/template/`.
+The units are created as subdirectories in the directory `tf/units/`.
 
-The template directory has a complete, working TF module for AWS resources with the required tfvars. This means that each new unit has a complete set of code and is immediately ready to use. You can change the code for units as you need, because the tooling only requires that a module accepts the four tfvars that are listed above. For example, you can completely remove the AWS resources from a unit. Since each unit is a separate module, you can have different versions of the same providers in separate units.
+For convenience, the tooling creates each new unit as a copy of the files in `tf/units/template/`. The template directory provides a working TF module for AWS resources with the required tfvars. This means that each new unit has a complete set of code and is immediately ready to use. You can completely remove the AWS resources from a new unit if you are not using AWS.
 
-To avoid compatibility issues, I recommend that you use names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining environment and edition names that are longer than 7 characters, and unit names that are longer than 12 characters.
+> When a unit does not use AWS, ensure that you change the supplied tests to use resources that are relevant for the cloud provider.
 
-> If you amend a unit to not use AWS, ensure that you change the tests.
+You can actually create the units any way that you wish, and there are no limitations on the TF code in them. The tooling automatically finds all of the modules in the directory `tf/units/`. It only requires that each module is a valid TF root module and accepts the four tfvars that are listed above.
+
+> Since each unit is a separate module, you can have different versions of the same providers in separate units.
+
+The tooling sets the values of the required tfvars when it runs TF commands on a unit:
+
+- `product_name` - Defaults to the name of the project, but you can [override this](#settings-for-features)
+- `environment_name` - Provided by the current [context](#contexts)
+- `unit_name` - The name of the unit itself
+- `edition` - Set as the value `default`, except when using an [extra instance](#extra-instances) or running [tests](#testing)
 
 ### Contexts
 
@@ -213,7 +228,7 @@ The `context.json` file is the configuration file for the context. It specifies 
 - `description`
 - `environment`
 
-The `description` is deliberately not used by the tooling, so that you can leave it empty, or do whatever you wish with it. The `environment` is a string that is automatically provided to TF as the tfvar `environment_name`. There are no limitations on how your code uses this tfvar.
+The `description` is deliberately not used by the tooling, so that you can leave it empty, or do whatever you wish with it. The `environment` is a string that is automatically provided to TF as the tfvar `environment_name`.
 
 Here is an example of a `context.json` file:
 
@@ -235,11 +250,11 @@ Here is an example of a `context.json` file:
 
 To enable you to share common tfvars across all of the contexts for a unit, the directory `tf/contexts/all/` contains one `.tfvars` file for each unit. The `.tfvars` file for a unit in the `all` directory is always used, along with `.tfvars` for the current context.
 
-The tooling creates each new context as a copy of files in `tf/contexts/template/`. It copies the `standard.tfvars` file to create the tfvars files that are created for new units.
+The tooling creates each new context as a copy of files in `tf/contexts/template/`. It copies the `standard.tfvars` file to create the tfvars files for new units. You can actually create and edit the contexts with any method. The tooling will automatically find all of the contexts in the directory `tf/contexts/`.
 
-To avoid issues, I recommend that you use context names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining context names that are longer than 12 characters.
+To avoid compatibility issues between systems, I recommend that you use context and environment names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining context names that are longer than 12 characters, and environment names that are longer than 7 characters.
 
-> Contexts exist to configure TF. To avoid coupling live resources directly to individual contexts, the tooling does not pass the name of the active context to the TF code, only the `environment` name that it specifies.
+> Contexts exist to configure TF. To avoid coupling live resources directly to individual contexts, the tooling does not pass the name of the active context to the TF code, only the `environment` name that the context specifies.
 
 ### Extra Instances
 
@@ -247,7 +262,7 @@ TF has two different ways to create extra copies of the same infrastructure from
 
 The test feature destroys the resources at the end of each test run. The state information about the resources is only held in the memory of the system. This means that it is not stored and no existing state data is updated.
 
-Workspaces means that TF creates a new, separate state for the extra copy, so that you can maintain and update an extra copy for as long as you need it. We often use workspaces to deploy separate copies of infrastructure for development and testing, with different copies from features branches of the same code.
+Workspaces means that TF creates a new, separate state for the extra copy, so that you can maintain and update an extra copy for as long as you need it. We often use workspaces to deploy separate copies of infrastructure for development and testing, with different copies from different branches of the project.
 
 However, if you try to create multiple instances of the same infrastructure from the same root module with the same configuration then it will probably fail. TF will try to create new resources that use exactly the same attributes as the resources for the first copy. The provider will then receive requests from TF to create resources that have the same names as existing resources, and it is likely to handle the problem by refusing to create these new resources.
 
@@ -255,7 +270,9 @@ This tooling implements both TF test and workspaces features with a consistent m
 
 This ensures that every instance has an identifier that you can use in your TF code. You include the `edition` identifier in resource names to avoid conflicts between copies. For convenience, the template TF code provides locals that you can use to create unique resource names. The [next section](#managing-resource-names) has more details about resource names.
 
-For workspaces, the tooling automatically sets the value of the tfvar `edition` to match the variable `TFT_EDITION`. Set this variable in any way that you want. For example, you can configure your CI system to set the variable to match branch names. If you do not specify a edition identifier, TF uses the default workspace for state, and the value of the tfvar `edition` is `default`.
+For workspaces, the tooling automatically sets the value of the tfvar `edition` to match the variable `TFT_EDITION`. To use a named workspace, set this variable. For example, you can configure your CI system to set the variable to match branch names.
+
+> If you do not specify a edition identifier, TF uses the default workspace for state, and the value of the tfvar `edition` is `default`.
 
 For tests, we should use a unique identifier per test run. The test in the unit template includes code to set the value of `edition` to a random string with the prefix `tt`, so that every test copy of infrastructure will have a unique value for the `edition` tfvar.
 
@@ -265,14 +282,12 @@ If you follow this example in your own test code and have used the tfvar `editio
 
 Use the `environment`, `unit_name` and `edition` tfvars in your TF code to define resource names that are both meaningful to humans and unique for each instance of the resource. This avoids conflicts between copies of infrastructure.
 
+Every type of cloud resource may have a different set of rules about acceptable names. For the best compatibility across systems, I recommend that you use values that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining environment and edition names that are longer than 7 characters, and unit names that are longer than 12 characters.
+
 For convenience, the code in the unit template includes locals and outputs to help with this:
 
 - `tft_handle` - Normalizes the `unit_name` to the first 12 characters, in lowercase
 - `tft_standard_prefix` - Combines `environment`, `edition` and `tft_handle`, separated by hyphens
-
-To avoid compatibility issues, I recommend that you use names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining environment and edition names that are longer than 7 characters, and unit names that are longer than 12 characters.
-
-To ensure that the template code is compatible with older versions of Terraform, it currently does not use validations on the tfvars.
 
 > The test in the unit template includes code to set the value of the tfvar `edition` to a random string with the prefix `tt`. If you use the `edition` in resource names, this ensures that test copies of resources do not conflict with existing resources that were deployed with the same TF module.
 
@@ -284,9 +299,9 @@ To share modules between projects, [publish them to a registry](https://opentofu
 
 ### Dependencies Between Units
 
-By design, this tooling does not specify or enforce any dependencies between infrastructure components. If you need to execute changes in a particular order, specify that order in whichever system you use to carry out deployments.
+By design, this tooling does not specify or enforce any dependencies between infrastructure components. You are free to run operations on separate components in parallel whenever you beleive that this is safe. If you need to execute changes in a particular order, specify that order in whichever system you use to carry out deployments.
 
-Similarly, you can run any tasks on multiple units by using any method that can call Task multiple times with the required variables. For example, you could create your own Taskfiles that call the supplied tasks, write a script or define jobs for your CI system.
+Similarly, you can run any tasks on multiple units by using any method that can call Task several times with the required variables. For example, you can create your own Taskfiles that call the supplied tasks, write a script, or define jobs for your CI system.
 
 > This tooling does not explicitly support or conflict with the [stacks feature of Terraform](https://developer.hashicorp.com/terraform/language/stacks). I do not currently test with the stacks feature. It is unclear when this feature will be finalised, or if an equivalent will be implemented by OpenTofu.
 
@@ -304,12 +319,12 @@ The generated projects include a `.terraform-version` file so that your tool ver
 
 To use the tasks in a generated project you always need:
 
-- A UNIX shell, such as Bash or Fish
+- A UNIX shell
 - [Git](https://git-scm.com/)
 - [Task](https://taskfile.dev)
 - [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/)
 
-The TF tasks in the template do not use Python or Copier. This means that they can be run in a restricted environment, such as a continuous integration job.
+The TF tasks in the template do not use Python or Copier. This means that they can be run in a restricted environment, such as a continuous integration system.
 
 To see a list of the available tasks in a project, enter _task_ in a terminal window:
 
