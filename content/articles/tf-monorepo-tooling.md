@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-06-20T21:08:00+01:00"
+date = "2025-06-21T07:45:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -15,11 +15,11 @@ This article describes an opinionated approach to low-maintenance tooling for us
 - [Integration testing](#testing) for every component.
 - [Migrating from Terraform to OpenTofu](#using-opentofu). You use the same tasks for both.
 
-It is simply a wrapper for Terraform and OpenTofu. This means that it generates commands and sends them to the Terraform or OpenTofu executable for you. This is a common approach and there are a number of wrappers available. These wrappers are built with a variety of technologies and programming languages. Since Terraform and OpenTofu are extremely flexible, each wrapper implements specific design choices.
+It is simply a wrapper for Terraform and OpenTofu. This means that it generates commands and sends them to the Terraform or OpenTofu executable for you. This is a common approach, so there are a number of wrappers available, which have been written with a variety of technologies and programming languages. Since Terraform and OpenTofu are extremely flexible, each wrapper implements specific design choices.
 
 In this case, the wrapper is designed for monorepos where the infrastructure components are clearly defined and are deployed to multiple environments. It is also specifically designed so that you can use it alongside other tools, or stop using it at any time. The components are standard [root modules](#units). The tooling only requires that these root modules accept four specific tfvars.
 
-The tooling itself is built around a single [Task](https://taskfile.dev) file that you add to your own projects. It does not include code in a programming language like Python or Go, and is not tied to particular versions of [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/). These choices mean that it runs on any UNIX-based system, including CI/CD environments, and does not require regular updates.
+The tooling itself is a single [Task](https://taskfile.dev) file that you add to your own projects. It does not include code in a programming language like Python or Go, and is not tied to particular versions of [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/). These choices mean that it runs on any UNIX-based system, including CI/CD environments, and does not require regular updates.
 
 This tooling is delivered as a [Copier](https://copier.readthedocs.io/en/stable/) template. Copier enables us to create new projects that include the tooling, and add the tooling to any existing project. We also use Copier to synchronize the copies in our projects with newer versions of the tooling as needed.
 
@@ -63,13 +63,18 @@ The tasks do not use Python or Copier. They only need a UNIX shell, Git, Task an
 To start a new project:
 
 ```shell
+# Run Copier with uv to create a new project
 uvx copier copy git+https://github.com/stuartellis/tf-tasks my-project
+
+# Go to the working directory for the project
 cd my-project
+
+# Create a context and a root module for the project
 TFT_CONTEXT=dev task tft:context:new
 TFT_UNIT=my-app task tft:new
 ```
 
-The `tft:new` task creates a unit, a complete Terraform root module. This root module includes code for AWS, so that it can work immediately. Enable remote state storage by adding the settings to the [context](#contexts), or use [local state](#using-local-tf-state). Set to the AWS IAM role for TF with the tfvar `tf_exec_role_arn`.
+The `tft:new` task creates a unit, a complete Terraform root module. This root module includes code for AWS, so that it can work immediately. Enable remote state storage by adding the settings to the [context](#contexts), or use [local state](#using-local-tf-state). Set the AWS IAM role for TF with the tfvar `tf_exec_role_arn`.
 
 You can then start working with your TF module:
 
@@ -170,7 +175,12 @@ The tasks:
 
 You define a set of infrastructure code as a component. Each of the infrastructure components in a project is a separate TF root [module](https://opentofu.org/docs/language/modules/), so that it can be created, tested, updated or destroyed independently of the others.
 
-This tooling refers to these TF root modules as _units_. Each TF unit is a subdirectory in the directory `tf/units/`.
+This tooling refers to these modules as _units_. The tooling only requires that each unit is a valid TF root module with these tfvars:
+
+- `environment_name` (string)
+- `product_name` (string)
+- `unit_name` (string)
+- `edition` (string)
 
 To create a new unit, use the `tft:new` task:
 
@@ -178,18 +188,13 @@ To create a new unit, use the `tft:new` task:
 TFT_UNIT=my-app task tft:new
 ```
 
-The tooling creates each new unit as a copy of the files in `tf/units/template/`. The template directory contains a complete and working TF module for AWS resources. This means that each new unit is immediately ready to use. You are free to change units as you need. For example, you can completely remove the AWS resources from a unit, or have different versions of the same providers in separate units.
+The units are created as subdirectories in the directory `tf/units/`. For your convenience, the tooling creates each new unit as a copy of the files in `tf/units/template/`.
 
-The tooling only requires that each unit is a valid TF module with these tfvars:
-
-- `environment_name` (string)
-- `product_name` (string)
-- `unit_name` (string)
-- `edition` (string)
+The template directory has a complete, working TF module for AWS resources with the required tfvars. This means that each new unit has a complete set of code and is immediately ready to use. You can change the code for units as you need, because the tooling only requires that a module accepts the four tfvars that are listed above. For example, you can completely remove the AWS resources from a unit. Since each unit is a separate module, you can have different versions of the same providers in separate units.
 
 To avoid compatibility issues, I recommend that you use names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. Avoid defining environment and edition names that are longer than 7 characters, and unit names that are longer than 12 characters.
 
-> If you amend a module to not use AWS, ensure that you change the tests.
+> If you amend a unit to not use AWS, ensure that you change the tests.
 
 ### Contexts
 
@@ -281,13 +286,15 @@ To share modules between projects, [publish them to a registry](https://opentofu
 
 By design, this tooling does not specify or enforce any dependencies between infrastructure components. If you need to execute changes in a particular order, specify that order in whichever system you use to carry out deployments.
 
+Similarly, you can run any tasks on multiple units by using any method that can call Task multiple times with the required variables. For example, you could create your own Taskfiles that call the supplied tasks, write a script or define jobs for your CI system.
+
 > This tooling does not explicitly support or conflict with the [stacks feature of Terraform](https://developer.hashicorp.com/terraform/language/stacks). I do not currently test with the stacks feature. It is unclear when this feature will be finalised, or if an equivalent will be implemented by OpenTofu.
 
 ### Working with TF Versions
 
 By design, this tooling uses the copy of Terraform or OpenTofu that you provide. It does not install or manage copies of Terraform and OpenTofu, and it is not dependent on specific versions of these tools.
 
-You will need to use different versions of Terraform and OpenTofu for different projects. To handle this, use a tool version manager. The version manager will install the versions that you need and automatically switch between them as needed. Consider using [tenv](https://tofuutils.github.io/tenv/), which is a version manager that is specifically designed for TF tools. For projects that use multiple technologies, consider using [mise](https://mise.jdx.dev/), which can manage versions of many tools and programming languages.
+You will need to use different versions of Terraform and OpenTofu for different projects. To handle this, use a tool version manager. The version manager will install the versions that you need and automatically switch between them as needed. Consider using [tenv](https://tofuutils.github.io/tenv/), which is a version manager that is specifically designed for TF tools. Alternatively, you could decide to manage your project with [mise](https://mise.jdx.dev/), which handles all of the tools that the project needs.
 
 The generated projects include a `.terraform-version` file so that your tool version manager installs and use the Terraform version that you specify. To use OpenTofu, add an `.opentofu-version` file to enable your tool version manager to install and use the OpenTofu version that you specify.
 
@@ -439,7 +446,7 @@ To run tests on a unit, use the `tft:test` task:
 TFT_CONTEXT=dev TFT_UNIT=my-app task tft:test
 ```
 
-The tests create and destroy temporary copies of resources on the cloud services that being managed. Check the expected behaviour of the resources, because cloud services may not immediately remove some types of resources.
+> Your tests create and destroy copies of resources on the cloud services that being managed. Check the expected behaviour of the types of resources that you are managing before you run tests, because cloud services may not immediately remove some resources.
 
 ### Using Local TF State
 
