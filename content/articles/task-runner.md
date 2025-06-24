@@ -1,7 +1,7 @@
 +++
 title = "Shared Project Tooling with Task"
 slug = "task-runner"
-date = "2025-06-21T07:45:00+01:00"
+date = "2025-06-24T21:51:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -11,15 +11,11 @@ tags = ["automation", "devops"]
 
 > Task is also known as go-task.
 
-Task is very useful for enabling teams of developers to co-operate, using and writing task definitions for their projects. We write the task definitions in YAML, and there is [a published and versioned schema for this Task YAML](#checking-taskfiles). Task provides a standard environment, so that we do not need to write our tasks to work with the various shells that might be installed on systems. It also includes many convenient features to simplify tasks, and it is regularly updated.
-
-However, these things mean that it works best if all of the developers that work on the projects run the same version of Task, and do not need to write task definitions as code in other programming languages, such as blocks of script for specific shells. If you are maintaining a project for a wide audience, consider using [just](https://www.stuartellis.name/articles/just-task-runner/) instead.
-
 ## How Task Works
 
-Each copy of Task is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, being about 8Mb for the 64-bit Linux version. The tasks are run with a shell interpreter that is built into Task itself, rather than using whatever shell is on the system.
+Each copy of Task is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, being about 8Mb for the 64-bit Linux version. The tasks are run with a UNIX shell script interpreter that is built into Task itself, rather than trying to using a shell that is part of the system.
 
-This means that you can use Task in any environment. It only requires a copy of the Task executable, and uses no configuration files apart from the YAML files that contain the tasks. The built-in shell interpreter that you can use the same syntax for your tasks on any platform.
+This means that you can use Task in any environment. It only requires a copy of the Task executable. The built-in shell interpreter enables you to use the same syntax for your tasks on any platform. Task uses no configuration files apart from the YAML files that contain the tasks.
 
 It does provide features for you to customise the behavior of your tasks for the different environments that you might use. The built-in [template functions](https://taskfile.dev/reference/templating/#functions) enable you to get consistent inputs for your tasks across different platforms. When needed, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfiles), so that Task uses the specific implementation for the current platform.
 
@@ -67,6 +63,8 @@ tasks:
     cmds:
       - hugo server
 ```
+
+Task uses a [versioned and published schema](#checking-taskfiles) for these YAML files. However, this does not guarantee that Taskfiles will be compatible across different major versions of Task. To avoid issues, try to use the same versions of Task across your systems. If you are maintaining a project for a wide audience, consider using [just](https://www.stuartellis.name/articles/just-task-runner/) instead, which is specifically designed to maintain backward compatibility between versions.
 
 ## Installing Task
 
