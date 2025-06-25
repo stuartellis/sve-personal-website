@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-06-24T21:18:00+01:00"
+date = "2025-06-25T06:29:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -21,9 +21,9 @@ In this example, the tooling is designed for monorepos. This means that each pro
 
 To achieve these goals, the tooling follows three specific rules:
 
-- Each component is a [root module](#units)
-- The tooling only requires that each root module implements a small number of [specific tfvars](#units).
-- The tooling does not impose any limitations on the code within the modules
+1. Each [component](#units) is a root module
+2. The tooling only requires that each root module implements a small number of [specific tfvars](#units).
+3. The tooling does not impose any limitations on the code within the modules
 
 The wrapper itself is a single [Task](https://taskfile.dev) file that you add to your own projects. It does not include code in a programming language like Python or Go. These decisions mean that the wrapper will run on any UNIX-based system, including CI/CD environments. It is also not tied to particular versions of [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/).
 
@@ -270,19 +270,19 @@ TF has two different ways to create extra copies of the same infrastructure from
 
 The _test_ feature creates new resources and destroys them at the end of each test run. The state information about these temporary resources is only held in the memory of the system, and is not stored elsewhere. No existing state data is updated by a test.
 
-If you specify a _workspace_ then TF makes an extra separate state for the root module, so that you can create and update another copy of the resources for as long as you need it, alongside the main copy. We often use workspaces to deploy separate copies of infrastructure for development and testing, with different copies from different branches of a project. The main set of state for a root module is always the `default` workspace.
+If you specify a _workspace_ then TF makes an extra set of state for the root module. You can use this workspace to create and update another copy of the resources for as long as you need it, alongside the main copy. We can have many workspaces for the same root module at the same time. This enables us to deploy separate copies of infrastructure for development and testing, with different copies from different branches of a project.
 
-In every case, if you try to create multiple instances of the same infrastructure from the same root module with the same configuration then the operation will probably fail. TF will try to create new resources that use exactly the same attributes as the resources for the first copy. The provider will then receive requests from TF to create resources that have the same names as existing resources, and it is likely to handle the problem by refusing to create these new resources.
+> The workspace for the main set of state for a root module is always called `default`.
 
-This tooling ensures that every copy of a set of infrastructure can have a unique identifier, regardless of how the copy was created. This identifier is called the `edition`. Every unit has a tfvar called `edition` to use this identifier. The `edition` is set to the value _default_, unless you [run a test](#testing) or decide to [create extra instances](#using-extra-instances).
+Since TF could attempt to create multiple copies of resources with the same name, this tooling allows every copy of a set of infrastructure to have a unique identifier, regardless of how the copy was created. This identifier is called the _edition_. Every unit has a tfvar called `edition` to use this identifier. The `edition` is set to the value _default_, unless you [run a test](#testing) or decide to [create extra instances](#using-extra-instances).
 
-The `edition` tfvar means that every instance of a root module has an identifier that you can use in your TF code. You include the `edition` identifier in resource names to avoid conflicts between copies. The template TF code provides locals that you can use to create unique resource names, but you will also need to define your own locals that meet the needs of your project. The [next section](#managing-resource-names) has more details about resource names.
+To avoid conflicts between copies, include this `edition` identifier in the names that you define for resources. The template TF code provides locals that you can use to create unique resource names, but you will also need to define your own locals that meet the needs of your project. The [next section](#managing-resource-names) has more details about resource names.
 
-To use a workspace, set the variable `TFT_EDITION`. The tooling automatically sets the value of the tfvar `edition` to match the variable `TFT_EDITION`. For example, you can configure your CI system to set the variable `TFT_EDITION` with values that are based on branch names.
+If you do not specify a workspace, changes affect the main copy of the resources, because TF uses the `default` workspace. Whenever you want to use another workspace, set the variable `TFT_EDITION`. The tooling then sets the active workspace to match the variable `TFT_EDITION` and sets the tfvar `edition` to the same value. If a workspace with that name does not already exist, it will automatically be created. To remove a workspace, first run the `destroy` task to terminate the copy of the resources that it manages, and then run the `forget` task to delete the stored state.
 
-For tests, we need to have a pattern for `edition` that lets us identify all of the test copies of infrastructure, but has a unique value for every test run. The test in the unit template includes code to set the value of `edition` to a random string with the prefix `tt`. You may decide to use a different format in the `edition` identifier for your tests.
+You can set the variable `TFT_EDITION` to any string. For example, you can configure your CI system to set the variable `TFT_EDITION` with values that are based on branch names.
 
-When we use the tfvar `edition` in resource names and generate `edition` identifiers in our test code we can safely run multiple instances of infrastructure on the same cloud account. Temporary extra instances are useful when only one person is developing the infrastructure, but they become essential when teams of developers need to work on different aspects of the same project.
+Tests never use workspaces, because every test run uses its own state. For tests, we need to use a pattern for `edition` that lets us identify all of the test copies of infrastructure, but has a unique value for every test run. The example test in the unit template includes code to set the value of `edition` to a random string with the prefix `tt`. You may decide to use a different format in the `edition` identifier for your tests.
 
 ### Managing Resource Names
 
@@ -460,7 +460,7 @@ To run tests on a unit, use the `tft:test` task:
 TFT_CONTEXT=dev TFT_UNIT=my-app task tft:test
 ```
 
-> Your tests create and destroy copies of resources on the cloud services that being managed. Check the expected behaviour of the types of resources that you are managing before you run tests, because cloud services may not immediately remove some resources.
+> Unless you set a test to only _plan_, it will create and destroy copies of resources. Check the expected behaviour of the types of resources that you are managing before you run tests, because cloud services may not immediately remove some resources.
 
 ### Using Local TF State
 
