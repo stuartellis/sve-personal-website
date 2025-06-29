@@ -1,7 +1,7 @@
 +++
-title = "Shared Project Tooling for Diverse Systems with just"
+title = "Shared Tooling for Diverse Systems with just"
 slug = "just-task-runner"
-date = "2025-06-29T09:22:00+01:00"
+date = "2025-06-29T09:57:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
