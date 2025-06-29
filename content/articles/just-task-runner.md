@@ -1,7 +1,7 @@
 +++
-title = "Using the just Task Runner"
+title = "Shared Tasks for Diverse Systems with just"
 slug = "just-task-runner"
-date = "2024-12-05T18:16:00+01:00"
+date = "2025-06-29T08:37:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -9,11 +9,13 @@ tags = ["automation", "devops"]
 
 The [just](https://just.systems) tool is a task runner. It provides a consistent framework for working with sets of tasks, which may be written in any scripting language and can run on multiple platforms.
 
-Consider using _just_ when you are writing task definitions that must run on many environments, especially when you do not manage the systems that the tasks are run on. The [backwards compatibility guarantee](#the-backwards-compatibility-guarantee) ensures that tasks can run correctly even when systems use different versions of _just_.
+Add _just_ to your projects when you need to write task definitions that must run on a diverse range of environments, especially when you do not manage the systems that the tasks are run on. The users can install _just_ with a [wide range of methods](#installing-just), including the package managers for popular programming languages. The [backwards compatibility guarantee](#the-backwards-compatibility-guarantee) ensures that tasks can run correctly even when systems use different versions of _just_.
+
+If you are maintaining project tooling for internal teams, consider using [Task](https://www.stuartellis.name/articles/task-runner/) instead. Task runs tasks through a built-in shell interpreter and uses a published YAML schema for the task definitions. These features enable you to manage and validate the task definitions with standard tools and ensure that they have consistent behavior on each system. However, they also mean that you need to manage the versions of Task that are in use.
 
 ## How just Works
 
-Each copy of _just_ is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, about 5Mb for the 64-bit Linux version. It uses sets of tasks that are defined in plain-text files. You may write a task in any programming language that runs with an interpreter, such as UNIX shells, PowerShell, Python, JavaScript or Nu shell.
+Each copy of _just_ is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, about 5Mb for the 64-bit Linux version. It uses sets of tasks that are defined in plain-text files. You may write each task in any programming language that runs with an interpreter, such as UNIX shells, PowerShell, Python, JavaScript or Nu shell.
 
 This means that you can add _just_ to any environment and use whichever scripting languages are available. If you define [multiple implementations of a task](https://just.systems/man/en/attributes.html?highlight=disabl#enabling-and-disabling-recipes180), _just_ runs the correct implementation for the current platform. It also provides other features for you to customise the behavior of tasks for different environments.
 
@@ -80,13 +82,13 @@ If you use Python, you can install _just_ into your user account with your exist
 To install _just_ with [uv](https://docs.astral.sh/uv/), run this command:
 
 ```shell
-uv tool install rust-just==1.37.0
+uv tool install rust-just==1.40.0
 ```
 
 To install _just_ with [pipx](https://pipx.pypa.io), run this command:
 
 ```shell
-pipx install rust-just==1.37.0
+pipx install rust-just==1.40.0
 ```
 
 ### Adding a Copy of just to a Project
@@ -116,7 +118,7 @@ If you are using a Visual Studio Code Dev Container, you can add the feature [gu
 ```json
     "features": {
         "ghcr.io/guiyomh/features/just:0": {
-            "version": "1.37.0"
+            "version": "1.40.0"
         }
     }
 ```
@@ -134,7 +136,7 @@ curl -L https://just.systems/install.sh > scripts/install-just.sh
 To use the installation script, call it with _--tag_ and _--to_ The _--tag_ specifies the version of _just_. The _--to_ specifies which directory to install it to:
 
 ```shell
-./scripts/install-just.sh --tag 1.37.0 --to $HOME/.local/bin
+./scripts/install-just.sh --tag 1.40.0 --to $HOME/.local/bin
 ```
 
 ### Installing just with Operating System Packages
@@ -144,12 +146,17 @@ You can install _just_ with an operating system package manager, if necessary. F
 ```shell
 winget install --id Casey.Just --exact  # winget on Microsoft Windows
 brew install just                       # Homebrew on macOS
-doas apk add just                       # apk on Alpine Linux
 sudo dnf install just                   # dnf on Fedora Linux
 sudo apt install just                   # apt on Ubuntu
 ```
 
-To install _just_, you also need to enable the _community_ package repository for Alpine Linux, and _universe_ on Ubuntu 24.04 LTS or later.
+To install Task on Alpine Linux, you need to use the _community_ package repository:
+
+```shell
+doas apk add just --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community/
+```
+
+Since the Alpine package only contains the single binary file for _just_, we can use the _edge_ version of _community_ to get the most recent available release.
 
 Debian only includes [_just_ in the _testing_ distribution](https://packages.debian.org/trixie/just).
 
