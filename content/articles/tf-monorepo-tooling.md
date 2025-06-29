@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-06-29T10:47:00+01:00"
+date = "2025-06-29T10:55:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -105,7 +105,7 @@ The tooling is designed so that we can use it alongside other tools, and that we
 2. The tooling only requires that each root module implements a small number of [specific tfvars](#units).
 3. The tooling does not impose any limitations on the code within the modules. The generated code for new modules can be completely replaced.
 
-The wrapper itself is a single [Task](https://www.stuartellis.name/articles/task-runner/) file. A Task file is a YAML document that defines templates for shell commands as _tasks_. The tasks use Git and standard UNIX commands, and they do not include any code in a programming language, such as Python or Go. Since the command-line interfaces of [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) are stable, the tasks are not tied to particular versions of these tools, and they do not need updates as new versions are released.
+The wrapper itself is a single [Task](https://www.stuartellis.name/articles/task-runner/) file. A Task file is a YAML document that defines templates for shell commands as _tasks_. It uses a versioned and published schema so that we can [validate Task files](https://www.stuartellis.name/articles/task-runner/#checking-taskfiles). The tasks use Git and standard UNIX commands, and they do not include any code in a programming language, such as Python or Go. Since the command-line interfaces of [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) are stable, the tasks are not tied to particular versions of these tools, and they do not need updates as new versions are released.
 
 The tooling is built as a [Copier](https://copier.readthedocs.io/en/stable/) template that includes the Task file. Copier enables us to create new projects that include the tooling, add the tooling to any existing project, and synchronize the copies of the tooling in our projects with newer versions as needed. Copier uses Git and tracks releases by tags, which means that Copier templates can be distributed through any code hosting service.
 
