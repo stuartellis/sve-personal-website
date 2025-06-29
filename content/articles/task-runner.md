@@ -1,7 +1,7 @@
 +++
-title = "Shared Project Tooling with Task"
+title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2025-06-29T08:06:00+01:00"
+date = "2025-06-29T09:58:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -62,7 +62,9 @@ tasks:
       - hugo server
 ```
 
-Task uses a [versioned and published schema](#checking-taskfiles) for these YAML files. However, this does not guarantee that Taskfiles will be compatible across different major versions of Task. To avoid issues, try to use the same versions of Task across your systems. If you are maintaining a project for a wide audience, consider using [just](https://www.stuartellis.name/articles/just-task-runner/) instead, which is specifically designed to maintain backward compatibility between versions.
+Task uses a [versioned and published schema](#checking-taskfiles) for these YAML files, so that they can be managed and validated with standard tools. However, this does not guarantee that Taskfiles will be compatible across different major versions of Task. To avoid issues, try to use the same versions of Task across your systems.
+
+> If you are maintaining a project for a wide audience, consider using [just](https://www.stuartellis.name/articles/just-task-runner/) instead, which is specifically designed to maintain backward compatibility between versions.
 
 ## Installing Task
 
