@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-06-29T10:21:00+01:00"
+date = "2025-06-29T10:47:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -61,7 +61,7 @@ task tft:plan
 task tft:apply
 ```
 
-You can specifically set the unit and context for one task. This example runs the [integration tests](#testing) for the module:
+You can always specifically set the unit and context for a task. This example runs the [integration tests](#testing) for the module:
 
 ```shell
 TFT_CONTEXT=dev TFT_UNIT=my-app task tft:test
@@ -89,7 +89,7 @@ To see a list of all of the available tasks in a project, enter _task_ in a term
 task
 ```
 
-If you have set up autocompletion for Task, you will see you suggestions as you type.
+If you set up [shell completions](https://taskfile.dev/installation/#setup-completions) for Task, you will see you suggestions as you type.
 
 ## Design Decisions
 
@@ -97,15 +97,15 @@ This tooling uses a wrapper for Terraform and OpenTofu. A wrapper is a tool that
 
 In this example, the tooling is specifically for monorepos. This means that each project repository may contain the code for both the infrastructure and the applications. The infrastructure is defined as one or more named components. Each infrastructure component can be deployed to multiple environments.
 
-To ensure that we can continue to maintain these copies of the infrastructure over time, the tooling is designed to ensure that we can use it alongside other tools, and that we can stop using it at any time.
+To ensure that we can continue to maintain these copies of the infrastructure over time, I have made specific choices for the tooling and the wrapper.
 
-To achieve these goals, the tooling follows three specific rules:
+The tooling is designed so that we can use it alongside other tools, and that we can stop using it at any time. To achieve these goals, it follows three specific rules:
 
 1. Each [component](#units) is a complete and valid TF root module
 2. The tooling only requires that each root module implements a small number of [specific tfvars](#units).
 3. The tooling does not impose any limitations on the code within the modules. The generated code for new modules can be completely replaced.
 
-The wrapper itself is a single [Task](https://www.stuartellis.name/articles/task-runner/) file. A Task file is a YAML document that defines templates for shell commands as _tasks_. The tasks do not include any code in a programming language like Python or Go. Since the command-line interfaces of [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) are stable, tasks are not tied to particular versions of these tools, and do not need updates as new versions are released.
+The wrapper itself is a single [Task](https://www.stuartellis.name/articles/task-runner/) file. A Task file is a YAML document that defines templates for shell commands as _tasks_. The tasks use Git and standard UNIX commands, and they do not include any code in a programming language, such as Python or Go. Since the command-line interfaces of [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) are stable, the tasks are not tied to particular versions of these tools, and they do not need updates as new versions are released.
 
 The tooling is built as a [Copier](https://copier.readthedocs.io/en/stable/) template that includes the Task file. Copier enables us to create new projects that include the tooling, add the tooling to any existing project, and synchronize the copies of the tooling in our projects with newer versions as needed. Copier uses Git and tracks releases by tags, which means that Copier templates can be distributed through any code hosting service.
 
