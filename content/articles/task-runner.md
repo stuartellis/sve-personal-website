@@ -1,7 +1,7 @@
 +++
 title = "Shared Project Tooling with Task"
 slug = "task-runner"
-date = "2025-06-24T21:51:00+01:00"
+date = "2025-06-29T08:06:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -9,19 +9,17 @@ tags = ["automation", "devops"]
 
 [Task](https://taskfile.dev) is a task runner and build tool. It provides a consistent framework for sets of tasks, enabling you to run the same workflows on multiple platforms and environments.
 
-> Task is also known as go-task.
+> Task is also known as _go-task_.
 
 ## How Task Works
 
-Each copy of Task is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, being about 8Mb for the 64-bit Linux version. The tasks are run with a UNIX shell script interpreter that is built into Task itself, rather than trying to using a shell that is part of the system.
+Each copy of Task is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, being about 8Mb for the 64-bit Linux version. The tasks are run with a UNIX shell script interpreter that is built into Task itself, rather than using shells that are already installed on your systems.
 
-This means that you can use Task in any environment. It only requires a copy of the Task executable. The built-in shell interpreter enables you to use the same syntax for your tasks on any platform. Task uses no configuration files apart from the YAML files that contain the tasks.
-
-It does provide features for you to customise the behavior of your tasks for the different environments that you might use. The built-in [template functions](https://taskfile.dev/reference/templating/#functions) enable you to get consistent inputs for your tasks across different platforms. When needed, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfiles), so that Task uses the specific implementation for the current platform.
+This means that you can use Task in any environment. It only requires a copy of the Task executable, and the built-in shell interpreter enables you to use the same syntax for your tasks on any platform. The [template functions](https://taskfile.dev/reference/templating/#functions) enable you to get consistent inputs for your tasks across different platforms. When needed, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfiles), so that Task uses the specific implementation for the current platform.
 
 Task also includes two other key features: [conditional execution of tasks](https://taskfile.dev/usage/#prevent-unnecessary-work) and [running tasks on file changes](https://taskfile.dev/usage/#watch-tasks). These features are designed to be usable with any type of software development.
 
-Here is an example of a _Taskfile.yaml_, with a _build_ task that only runs when the _sources_ change:
+Task uses no configuration files apart from the YAML files that contain the tasks. Here is an example of a _Taskfile.yaml_, with a _build_ task that only runs when the _sources_ change:
 
 ```yaml
 # Tasks for a Hugo static website project
