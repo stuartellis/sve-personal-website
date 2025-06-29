@@ -1,7 +1,7 @@
 +++
 title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-06-29T09:59:00+01:00"
+date = "2025-06-29T10:13:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -279,7 +279,7 @@ To avoid compatibility issues between systems, we should use context and environ
 
 TF has two different ways to create extra copies of the same infrastructure from a root module: [workspaces](https://opentofu.org/docs/language/state/workspaces/) and [tests](https://opentofu.org/docs/cli/commands/test/).
 
-If you specify a _workspace_ then TF makes an extra set of state for the root module. You can use this workspace to create and update another copy of the resources for as long as you need it, alongside the main copy. We can have many workspaces for the same root module at the same time. This enables us to deploy separate copies of infrastructure for development and testing, with different copies from different branches of a project.
+If you specify a _workspace_ then TF makes an extra set of state for the root module. You can use this workspace to create and update another copy of the resources for as long as you need it, alongside the main copy. We can have many workspaces for the same root module at the same time. This enables us to deploy separate copies of infrastructure for development and testing. These copies might be from different branches of the code repository for the project.
 
 > The workspace for the main set of state for a root module is always called `default`.
 
