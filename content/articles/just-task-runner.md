@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Diverse Systems with just"
 slug = "just-task-runner"
-date = "2025-06-29T09:57:00+01:00"
+date = "2025-07-04T06:08:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -65,41 +65,31 @@ To verify that new versions of _just_ do not break compatibility, the _just_ pro
 
 ## Installing just
 
-If possible, use a tool that enables you to specify which versions of _just_ to install. This means that you can install the most recent version of _just_ that is available. You can use [Python tools](#installing-just-for-a-user-with-python-tools), [Rust and Node.js packages](#adding-a-copy-of-just-to-a-project), a tool version manager like [mise](#installing-just-with-mise), or [the feature for Dev Containers](#adding-just-to-a-dev-container).
+If possible, use a tool that enables you to specify which versions of _just_ to install. This means that you can install the most recent version of _just_ that is available. You can use [Python tools](#installing-just-with-python-tools), [Rust and Node.js packages](#adding-a-copy-of-just-to-a-project), a tool version manager like [mise](#installing-just-with-mise), or [the feature for Dev Containers](#adding-just-to-a-dev-container).
 
 If you do not wish to use a tool, see the section on [how to install _just_ with a script](#installing-just-with-a-script).
 
-These methods also enable you to add a copy of _just_ to a specific project, or install _just_ into a user account so that it is available for all of your work. If you install a copy of _just_ into a user account you can [integrate it with your shell](#integrating-just-with-your-shell).
+These methods also enable you to either add a copy of _just_ to a specific project, or install _just_ into a user account so that it is available for all of your work. If you install a copy of _just_ into a user account you can [integrate it with your shell](#integrating-just-with-your-shell).
 
-> If possible, use the [Python](#installing-just-for-a-user-with-python-tools) or Rust tools to install _just_. The Python and Rust packages contain a copy of the _just_ executable. Other tools may download files from GitHub.
+> If possible, use the [Python](#installing-just-with-python-tools) or Rust tools to install _just_. The Python and Rust packages contain a copy of the _just_ executable. Other tools may download files from GitHub.
 
 You can also install _just_ with [operating system packages](#installing-just-with-operating-system-packages). These packages may provide older versions of _just_.
 
-### Installing just for a User with Python Tools
+### Installing just with Python Tools
 
 If you use Python, you can install _just_ into your user account with your existing tools. It is available on the Python Package Index as [rust-just](https://pypi.org/project/rust-just/).
 
 To install _just_ with [uv](https://docs.astral.sh/uv/), run this command:
 
 ```shell
-uv tool install rust-just==1.40.0
+uv tool install rust-just==1.41.0
 ```
 
 To install _just_ with [pipx](https://pipx.pypa.io), run this command:
 
 ```shell
-pipx install rust-just==1.40.0
+pipx install rust-just==1.41.0
 ```
-
-### Adding a Copy of just to a Project
-
-Python, Rust and Node.js projects may use packages for _just_:
-
-- Node.js: Use the [just-install](https://www.npmjs.com/package/just-install) npm package
-- Python: Use the [rust-just](https://pypi.org/project/rust-just/) package
-- Rust: To include _just_ in a Rust project, add [just](https://crates.io/crates/just) as a package in Cargo.
-
-If necessary, you can use the [installation script](#installing-just-with-a-script) to download a copy of _just_ into a directory within the project. If you do this, remember to exclude the path of the _just_ executable file from version control.
 
 ### Installing just with mise
 
@@ -118,10 +108,20 @@ If you are using a Visual Studio Code Dev Container, you can add the feature [gu
 ```json
     "features": {
         "ghcr.io/guiyomh/features/just:0": {
-            "version": "1.40.0"
+            "version": "1.41.0"
         }
     }
 ```
+
+### Adding a Copy of just to a Project
+
+Python, Rust and Node.js projects may use packages for _just_:
+
+- Node.js: Use the [just-install](https://www.npmjs.com/package/just-install) npm package
+- Python: Use the [rust-just](https://pypi.org/project/rust-just/) package
+- Rust: To include _just_ in a Rust project, add [just](https://crates.io/crates/just) as a package in Cargo.
+
+If necessary, you can use the [installation script](#installing-just-with-a-script) to download a copy of _just_ into a directory within the project. If you do this, remember to exclude the path of the _just_ executable file from version control.
 
 ### Installing just with a Script
 
@@ -136,7 +136,7 @@ curl -L https://just.systems/install.sh > scripts/install-just.sh
 To use the installation script, call it with _--tag_ and _--to_ The _--tag_ specifies the version of _just_. The _--to_ specifies which directory to install it to:
 
 ```shell
-./scripts/install-just.sh --tag 1.40.0 --to $HOME/.local/bin
+./scripts/install-just.sh --tag 1.41.0 --to $HOME/.local/bin
 ```
 
 ### Installing just with Operating System Packages
