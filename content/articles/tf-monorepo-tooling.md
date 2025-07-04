@@ -1,7 +1,7 @@
 +++
-title = "Low-Maintenance Tooling for Terraform & OpenTofu in Monorepos"
+title = "Effective Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-06-29T10:55:00+01:00"
+date = "2025-07-04T07:19:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -277,25 +277,27 @@ To avoid compatibility issues between systems, we should use context and environ
 
 ### Extra Instances
 
-TF has two different ways to create extra copies of the same infrastructure from a root module: [workspaces](https://opentofu.org/docs/language/state/workspaces/) and [tests](https://opentofu.org/docs/cli/commands/test/).
+TF has two different ways to create extra copies of the same infrastructure from a root module: [workspaces](https://opentofu.org/docs/language/state/workspaces/) and [tests](https://opentofu.org/docs/cli/commands/test/). We use workspaces to have multiple sets of resources that are associated with the same root module. These copies might be from different branches of the code repository for the project. The test feature uses _apply_ to create new copies of resources and then automatically runs _destroy_ to remove them at the end of each test run.
 
-If you specify a _workspace_ then TF makes an extra set of state for the root module. You can use this workspace to create and update another copy of the resources for as long as you need it, alongside the main copy. We can have many workspaces for a root module at the same time, so that we have multiple sets of resources that are associated with the same root module. These copies might be from different branches of the code repository for the project.
+The extra copies of resources for workspaces and tests create a problem. If you run the same code with the same inputs TF could attempt to create multiple copies of resources with the same name. Cloud services often refuse to allow you to have multiple resources with identical names. They may also keep deleted resources for a period of time, which prevents you from creating new resources that have the same names as other resources that you have deleted.
 
-> The workspace for the main set of state for a root module is always called `default`.
+To solve this problem, the tooling allows every copy of a set of infrastructure to have a [unique identifier](#ensuring-unique-identifiers-for-instances), regardless of how the copy was created.
 
-The _test_ feature uses _apply_ to create new copies of resources and then automatically runs _destroy_ to remove them at the end of each test run. The state information about these temporary resources is only held in the memory of the system, and it is not stored elsewhere. No existing state data is updated by a test.
+#### Ensuring Unique Identifiers for Instances
 
-The extra copies of resources for workspaces and tests can become a problem. If you run the same code with the same inputs TF could attempt to create multiple copies of resources with the same name. Cloud services often refuse to allow you to have multiple resources with the same name. They may also keep deleted resources for a period of time, which prevents you from creating new resources that have the same names as other resources that you have deleted.
+This tooling allows every copy of a set of infrastructure to have a unique identifier, which is called the _edition_. This `edition` identifier is always set to the value _default_, unless you [run a test](#testing) or decide to [use an extra instance](#using-extra-instances).
 
-This tooling allows every copy of a set of infrastructure to have a unique identifier, regardless of how the copy was created. This identifier is called the _edition_. Every unit has a tfvar called `edition` to use this identifier. The `edition` is set to the value _default_, unless you [run a test](#testing) or decide to [create extra instances](#using-extra-instances).
+Every unit has a tfvar called `edition` to use this identifier. You include the `edition` identifier in the locals that you use to define names for resources. The template TF code provides locals to help create unique resource names, but you also need to define your own locals that meet the needs of your project. The [next section](#managing-resource-names) has more details about resource names.
 
-To avoid conflicts between copies, include this `edition` identifier in the names that you define for resources. The template TF code provides locals that you can use to create unique resource names, but you will also need to define your own locals that meet the needs of your project. The [next section](#managing-resource-names) has more details about resource names.
+#### Working with Extra Instances
 
-If you do not specify a workspace, changes affect the main copy of the resources, because TF uses the `default` workspace. Whenever you want to use another workspace, set the variable `TFT_EDITION`. The tooling then sets the active workspace to match the variable `TFT_EDITION` and sets the tfvar `edition` to the same value. If a workspace with that name does not already exist, it will automatically be created. To remove a workspace, first run the `destroy` task to terminate the copy of the resources that it manages, and then run the `forget` task to delete the stored state.
+By default, TF works with the main copy of the resources for a module. This means that it uses the `default` workspace.
+
+To work with another copy of the resources, set the variable `TFT_EDITION`. The tooling then sets the active workspace to match the variable `TFT_EDITION` and sets the tfvar `edition` to the same value. If a workspace with that name does not already exist, it will automatically be created. To remove a workspace, first run the `destroy` task to terminate the copy of the resources that it manages, and then run the `forget` task to delete the stored state.
 
 You can set the variable `TFT_EDITION` to any string. For example, you can configure your CI system to set the variable `TFT_EDITION` with values that are based on branch names.
 
-Tests never use workspaces, because every test run uses its own state. For tests, we need to use a pattern for `edition` that lets us identify all of the test copies of infrastructure, but has a unique value for every test run. The example test in the unit template includes code to set the value of `edition` to a random string with the prefix `tt`. You may decide to use a different format in the `edition` identifier for your tests.
+You do not set `TFT_EDITION` for tests. The example test in the unit template includes code to automatically set the value of `edition` to a random string with the prefix `tt`. This is because we need to use a pattern for `edition` that guarantees a unique value for every test run. You can change this to use a different format in the `edition` identifier for your tests.
 
 ### Managing Resource Names
 
@@ -325,7 +327,7 @@ To share modules between projects, [publish them to a registry](https://opentofu
 
 By design, this tooling does not specify or enforce any dependencies between infrastructure components. You are free to run operations on separate components in parallel whenever you believe that this is safe. If you need to execute changes in a particular order, specify that order in whichever system you use to carry out deployments.
 
-Similarly, you can run tasks on multiple units by using any method that can call Task several times with the required variables. For example, you can create your own Taskfiles that call the supplied tasks, write a script, or define jobs for your CI system.
+Similarly, there are no restrictions on how you can run tasks on multiple units. You can use any method that can call Task several times with the required variables. For example, you can create your own Taskfiles that call the supplied tasks, write a script, or define jobs for your CI system.
 
 > This tooling does not explicitly support or conflict with the [stacks feature of Terraform](https://developer.hashicorp.com/terraform/language/stacks). I do not currently test with the stacks feature. It is unclear when this feature will be finalised, or if an equivalent will be implemented by OpenTofu.
 
