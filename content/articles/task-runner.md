@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2025-06-29T09:58:00+01:00"
+date = "2025-07-04T06:51:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -62,13 +62,13 @@ tasks:
       - hugo server
 ```
 
-Task uses a [versioned and published schema](#checking-taskfiles) for these YAML files, so that they can be managed and validated with standard tools. However, this does not guarantee that Taskfiles will be compatible across different major versions of Task. To avoid issues, try to use the same versions of Task across your systems.
+Task uses a [versioned and published schema](#checking-taskfiles) for these YAML files, so that they can be managed and validated with standard tools. However, this does not guarantee that Taskfiles will be compatible across different versions of Task. Minor releases of Task add new features, and the schema may change with major versions. To avoid issues, use installation methods that enable you to use the same version of Task across your systems.
 
 > If you are maintaining a project for a wide audience, consider using [just](https://www.stuartellis.name/articles/just-task-runner/) instead, which is specifically designed to maintain backward compatibility between versions.
 
 ## Installing Task
 
-You can install Task with [operating system packages](#installing-task-with-operating-system-packages). These packages only provide a single global copy of Task, which may be an older version.
+You can install Task with [operating system packages](#installing-task-with-operating-system-packages). These packages only provide a single global copy of Task, and only allow you to install the versions that are available for that release of the operating system.
 
 If possible, use a tool that enables you to specify which versions of Task to install and activate different versions of Task for different projects. These options enable you to specify a version of Task for a project:
 
@@ -80,12 +80,14 @@ Tool version managers and the installation script also enable you to install Tas
 
 If you install a global copy of Task then [you can integrate it with your shell](#integrating-task-with-your-shell).
 
+> If your organization has private package repositories, then you can use these to distribute the versions of Task that you want projects to use.
+
 ### Installing Task with mise
 
-This command installs the latest version of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
+This command installs version 3.44.0 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
 
 ```shell
-mise use -gy task
+mise use -gy task@3.44.0
 ```
 
 ### Adding Task to a Dev Container
@@ -432,7 +434,7 @@ Visual Studio Code will both validate and format Task files when the [redhat.vsc
 
 To validate Task files on the command-line, use [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/index.html). The _check-jsonschema_ tool automatically includes the schema for Task files. The [yamllint](https://yamllint.readthedocs.io) command-line tool provides format and quality checks for all types of YAML file.
 
-The _check-jsonschema_ and _yamllint_ projects also provide hooks for [pre-commit](https://pre-commit.com), so that files are automatically checked before changes are committed to source control.
+The _check-jsonschema_ and _yamllint_ projects also provide hooks for [pre-commit](https://pre-commit.com). The next section files explains how to configure `pre-commit` so that Task files are automatically checked before changes are committed to source control.
 
 ### Validating Task files with pre-commit
 
