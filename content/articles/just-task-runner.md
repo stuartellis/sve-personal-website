@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Diverse Systems with just"
 slug = "just-task-runner"
-date = "2025-07-04T06:08:00+01:00"
+date = "2025-07-04T08:20:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -93,13 +93,13 @@ pipx install rust-just==1.41.0
 
 ### Installing just with mise
 
-This command installs the latest version of _just_ with [mise](https://mise.jdx.dev/) and makes it available to your user account:
+This command installs version 1.41.0 of _just_ with [mise](https://mise.jdx.dev/) and makes it available to your user account:
 
 ```shell
-mise use -gy just
+mise use -gy just@1.41.0
 ```
 
-You can also use _mise_ to specify alternate versions of _just_ for specific projects in the same ways that it manages other tools.
+You can also use _mise_ to specify alternate versions of _just_ for specific projects, in the same ways that it manages other tools.
 
 ### Adding just to a Dev Container
 
@@ -190,14 +190,14 @@ Current versions of _just_ provide autocompletion for Bash, zsh, fish, PowerShel
 
 If you install _just_ into a user account, you can define a set of recipes that are available at any time. Create a file with the name _.user.justfile_ in your home directory to store these recipes.
 
-Add the first recipe in the root _justfile_ with the name _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without the name of a recipe, it runs the first recipe in the _justfile_.
+Add the first recipe in the root _justfile_ with the name _help_. Write _@{{just_executable()}} --list_ in the body of the recipe. When _just_ is invoked without the name of a recipe, it runs the first recipe in the _justfile_.
 
 Here is an example of a user justfile:
 
 ```just
 # List available recipes
 help:
-    @just --list -f "{{ home_directory() }}/.user.justfile"
+    @{{just_executable()}} --list -f "{{ justfile() }}"
 
 # Display system information
 system-info:
@@ -282,7 +282,7 @@ A [later section](#using-modules) in this article explains how to use modules.
 Follow these guidelines when writing _justfiles_ and _mod.just_ modules:
 
 - Use 4 spaces for indentation. The built-in formatting command sets indentation as 4 spaces.
-- Always put a comment in the line above each recipe. These comments appear next to the recipe in _just --list_.
+- Always put a comment in the line above each recipe. These comments appear next to the recipe in the output of _--list_.
 - Use **--fmt** to format your _justfiles_. To use this option, run this command in the same directory as the _justfile_ that you want to format:
 
 ```shell
@@ -346,7 +346,7 @@ You may also use these two options to check the behavior of _just_:
 
 If you use multiple _justfiles_ in a project, consider following these guidelines:
 
-- Create the first recipe in the root _justfile_ with the name _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without the name of a recipe, it runs the first recipe in the _justfile_.
+- Create the first recipe in the root _justfile_ with the name _help_. Write _@{{just_executable()}} --list_ in the body of the recipe. When _just_ is invoked without the name of a recipe, it runs the first recipe in the _justfile_.
 - Create an extra _justfile_ in each subdirectory that should be a separate scope of operations. For example, if you have a monorepo, create a child _justfile_ in the main directory for each component.
 - Set _fallback_ to _true_ in each _justfile_ that is NOT in the root directory of the project. This enables _just_ to find recipes from the root _justfile_ as well as the _justfile_ in the current working directory.
 - If you have many recipes for a single _justfile_, consider putting the recipes into several _.just_ files and using [imports](https://just.systems/man/en/imports.html) to combine them.
@@ -358,7 +358,7 @@ If you use multiple _justfiles_ in a project, consider following these guideline
 
 If you decide to use _just_ modules in your project, consider following these guidelines:
 
-- Create the first recipe in the root _justfile_ with the name _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without a module or recipe name, it runs the first recipe in the _justfile_.
+- Create the first recipe in the root _justfile_ with the name _help_. Write _@{{just_executable()}} --list_ in the body of the recipe. When _just_ is invoked without a module or recipe name, it runs the first recipe in the _justfile_.
 - Create an extra _mod.just_ file in each subdirectory that relates to a specific component or type of work. You may not need a separate module for every main subdirectory in the project.
 - Create an extra _.just_ file in the root directory for each tool that applies to the entire project, such as pre-commit.
 - Use the root _justfile_ to define standard tasks for the project. Each of these should call the relevant recipes in one or more modules. Avoid writing recipes in the _justfile_ that do anything other than running recipes that are defined in modules.
@@ -373,7 +373,7 @@ mod python  # Defined by mod.just file in python/ directory
 
 # List available recipes
 help:
-    @just --list
+    @{{just_executable()}} --list
 
 # Install tools and dependencies, then set up environment for development
 bootstrap:
