@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2025-07-04T06:51:00+01:00"
+date = "2025-07-04T17:41:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -80,7 +80,7 @@ Tool version managers and the installation script also enable you to install Tas
 
 If you install a global copy of Task then [you can integrate it with your shell](#integrating-task-with-your-shell).
 
-> If your organization has private package repositories, then you can use these to distribute the versions of Task that you want projects to use.
+> If your organization has private package repositories, then you can distribute packages for Task through these. This ensures that your preferred versions of Task are available.
 
 ### Installing Task with mise
 
@@ -152,10 +152,8 @@ sudo dnf install go-task  # dnf on Fedora Linux
 To install Task on Alpine Linux, you need to use the _community_ package repository:
 
 ```shell
-doas apk add go-task --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community/
+doas apk add go-task --repository=http://dl-cdn.alpinelinux.org/alpine/latest-stable/community/
 ```
-
-Since the Alpine package only contains the single binary file for Task, we can always use the _edge_ version of _community_ to get the most recent available release.
 
 > _Alpine Linux installs Task as go-task._ This means that you need to use the name _go-task_ rather than _task_ on the command-line. For example _go-task --list_.
 

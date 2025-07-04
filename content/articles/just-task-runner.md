@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Diverse Systems with just"
 slug = "just-task-runner"
-date = "2025-07-04T08:20:00+01:00"
+date = "2025-07-04T17:41:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -9,9 +9,9 @@ tags = ["automation", "devops"]
 
 The [just](https://just.systems) tool is a task runner. It provides a consistent framework for working with sets of tasks, which may be written in any scripting language and can run on multiple platforms.
 
-Add _just_ to your projects when you need to write task definitions that must run on a diverse range of environments, especially when you do not manage the systems that the tasks are run on. The users can install _just_ with a [wide range of methods](#installing-just), including the package managers for popular programming languages. The [backwards compatibility guarantee](#the-backwards-compatibility-guarantee) ensures that tasks can run correctly even when systems use different versions of _just_.
+Add _just_ to your projects when you need to write task definitions that must run on a diverse range of environments, especially when you do not manage the systems that the tasks are run on. The users can install _just_ with a [wide range of methods](#installing-just), including the package managers for popular programming languages. The support for multiple languages and the [backwards compatibility guarantee](#the-backwards-compatibility-guarantee) allow you to support systems that have a wide range of capabilities and use different versions of _just_.
 
-If you are maintaining project tooling for internal teams, consider using [Task](https://www.stuartellis.name/articles/task-runner/) instead. Task runs tasks through a built-in shell interpreter and uses a published YAML schema for the task definitions. These features enable you to manage and validate the task definitions with standard tools and ensure that they have consistent behavior on each system. However, they also mean that you need to manage the versions of Task that are in use.
+If you are maintaining project tooling for internal teams, consider [Task](https://www.stuartellis.name/articles/task-runner/) as an alternative. Task runs tasks with a built-in shell interpreter and uses a published YAML schema for the task definitions. These features enable you to maintain and validate tasks with standard tools, and also ensure that they have consistent behavior on each system. However, they also mean that you need to manage the versions of Task that are in use.
 
 ## How just Works
 
@@ -57,11 +57,9 @@ serve:
 
 ### The Backwards Compatibility Guarantee
 
-The behaviour of _just_ is covered by a [backwards compatibility guarantee](https://just.systems/man/en/backwards-compatibility.html). This means that new versions of _just_ will not introduce backwards incompatible changes that break existing _justfiles_.
+The behaviour of _just_ is covered by a [backwards compatibility guarantee](https://just.systems/man/en/backwards-compatibility.html). This means that new versions of _just_ will not introduce backwards incompatible changes that break existing _justfiles_. To verify that new versions of _just_ do not break compatibility, the _just_ project maintain automation to test against _justfiles_ that are published as Open Source.
 
-This guarantee makes _just_ more suitable for projects with a larger set of contributors, such as Open Source projects. The maintainers of the project simply need to specify the minimum version of _just_ that supports the features that they use. Recipes then work for contributors and users that have any version of _just_ that is the same or more recent than this minimum version.
-
-To verify that new versions of _just_ do not break compatibility, the _just_ project maintain automation to test against _justfiles_ that are published as Open Source.
+This enables _just_ to be an evergreen tool. Users can install and update their copies of _just_ with whatever method they prefer, as long as it provides a version that is more recent than the minimum version that is required by the project.
 
 ## Installing just
 
@@ -71,7 +69,7 @@ If you do not wish to use a tool, see the section on [how to install _just_ with
 
 These methods also enable you to either add a copy of _just_ to a specific project, or install _just_ into a user account so that it is available for all of your work. If you install a copy of _just_ into a user account you can [integrate it with your shell](#integrating-just-with-your-shell).
 
-> If possible, use the [Python](#installing-just-with-python-tools) or Rust tools to install _just_. The Python and Rust packages contain a copy of the _just_ executable. Other tools may download files from GitHub.
+> Consider using the [Python](#installing-just-with-python-tools) or Rust tools to install _just_. The Python and Rust packages contain a copy of the _just_ executable. Other tools may download files from GitHub.
 
 You can also install _just_ with [operating system packages](#installing-just-with-operating-system-packages). These packages may provide older versions of _just_.
 
@@ -153,10 +151,8 @@ sudo apt install just                   # apt on Ubuntu
 To install Task on Alpine Linux, you need to use the _community_ package repository:
 
 ```shell
-doas apk add just --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community/
+doas apk add go-task --repository=http://dl-cdn.alpinelinux.org/alpine/latest-stable/community/
 ```
-
-Since the Alpine package only contains the single binary file for _just_, we can use the _edge_ version of _community_ to get the most recent available release.
 
 Debian only includes [_just_ in the _testing_ distribution](https://packages.debian.org/trixie/just).
 
@@ -190,14 +186,14 @@ Current versions of _just_ provide autocompletion for Bash, zsh, fish, PowerShel
 
 If you install _just_ into a user account, you can define a set of recipes that are available at any time. Create a file with the name _.user.justfile_ in your home directory to store these recipes.
 
-Add the first recipe in the root _justfile_ with the name _help_. Write _@{{just_executable()}} --list_ in the body of the recipe. When _just_ is invoked without the name of a recipe, it runs the first recipe in the _justfile_.
+Add the first recipe in the root _justfile_ with the name _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without the name of a recipe, it runs the first recipe in the _justfile_.
 
 Here is an example of a user justfile:
 
 ```just
 # List available recipes
 help:
-    @{{just_executable()}} --list -f "{{ justfile() }}"
+    @just --list -f "{{ justfile() }}"
 
 # Display system information
 system-info:
@@ -258,22 +254,18 @@ indent_size = 4
 
 ### Multiple justfiles in a Project
 
-You have two ways to organize the other _justfiles_ in a project:
+When you need to have multiple _justfiles_ in a project, you have two ways to organize them:
 
-1. [Directory structure](#multiple-justfiles-in-a-directory-structure)
-2. [Modules](#using-modules)
+1. [Modules](#using-modules)
+2. [Directory structure](#multiple-justfiles-in-a-directory-structure)
 
 You can combine these approaches, but few projects will be complex enough to need to do this.
 
-The project directory structure approach is to create a _justfile_ in the root directory of the project, and then create an extra _justfile_ in each sub-directory that relates to a separate area of work. You then enable _fallback_ in the _justfiles_ in subdirectories. Users change working directories to get different recipes from the nearest _justfile_, and if they specify a recipe that is not defined in the nearest _justfile_, then _just_ will try _justfiles_ in parent directories.
-
-The [next section](#multiple-justfiles-in-a-directory-structure) explains how to use multiple _justfiles_ in a directory structure.
-
-If you are starting a new project and can require a current version of _just_, consider using _just_ modules. Real-world projects often have multiple components with many tasks, and _just_ modules enable you to define clear namespaces for recipes. Modules also provide more flexibility for organizing the files that contain your recipes.
+If you are starting a new project and can require a current version of _just_, consider using _just_ modules. Real-world projects often have multiple components with many tasks, and _just_ modules enable you to define clear namespaces for recipes. Modules also provide more flexibility for organizing the files that contain your recipes. A [later section](#using-modules) in this article explains how to use modules.
 
 > _Use just 1.31.0 or later with modules:_ The modules feature became available by default with _just_ 1.31.0.
 
-A [later section](#using-modules) in this article explains how to use modules.
+The project directory structure approach is to create a _justfile_ in the root directory of the project, and then create an extra _justfile_ in each sub-directory that relates to a separate area of work. You then enable _fallback_ in the _justfiles_ in subdirectories. Users change working directories to get different recipes from the nearest _justfile_, and if they specify a recipe that is not defined in the nearest _justfile_, then _just_ will try _justfiles_ in parent directories. The [section on directory structures](#multiple-justfiles-in-a-directory-structure) explains how to use multiple _justfiles_ in a directory structure.
 
 ## Writing justfiles
 
@@ -342,23 +334,11 @@ You may also use these two options to check the behavior of _just_:
 - **-n, --dry-run** - Prints what _just_ would do without doing it
 - **--evaluate** - Evaluates and prints all of the variables. If a variable name is given as an argument, it only prints the value of that variable.
 
-## Multiple justfiles in a Directory Structure
-
-If you use multiple _justfiles_ in a project, consider following these guidelines:
-
-- Create the first recipe in the root _justfile_ with the name _help_. Write _@{{just_executable()}} --list_ in the body of the recipe. When _just_ is invoked without the name of a recipe, it runs the first recipe in the _justfile_.
-- Create an extra _justfile_ in each subdirectory that should be a separate scope of operations. For example, if you have a monorepo, create a child _justfile_ in the main directory for each component.
-- Set _fallback_ to _true_ in each _justfile_ that is NOT in the root directory of the project. This enables _just_ to find recipes from the root _justfile_ as well as the _justfile_ in the current working directory.
-- If you have many recipes for a single _justfile_, consider putting the recipes into several _.just_ files and using [imports](https://just.systems/man/en/imports.html) to combine them.
-- To ensure that you do not accidentally run a recipe from a user _justfile_, do NOT set _fallback_ to _true_ in a _justfile_ in the root directory of a project.
-- To create namespaces for recipes, decide a standard prefix for each group of recipes, and set the name of each recipe to start with that prefix, e.g. _sys-_.
-- Use the [no-cd attribute](https://just.systems/man/en/working-directory.html) to define recipes that may be executed in one of several different possible directories. By default _just_ sets the working directory to be the location of the _justfile_ that contains the recipe.
-
 ## Using Modules
 
 If you decide to use _just_ modules in your project, consider following these guidelines:
 
-- Create the first recipe in the root _justfile_ with the name _help_. Write _@{{just_executable()}} --list_ in the body of the recipe. When _just_ is invoked without a module or recipe name, it runs the first recipe in the _justfile_.
+- Create the first recipe in the root _justfile_ with the name _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without a module or recipe name, it runs the first recipe in the _justfile_.
 - Create an extra _mod.just_ file in each subdirectory that relates to a specific component or type of work. You may not need a separate module for every main subdirectory in the project.
 - Create an extra _.just_ file in the root directory for each tool that applies to the entire project, such as pre-commit.
 - Use the root _justfile_ to define standard tasks for the project. Each of these should call the relevant recipes in one or more modules. Avoid writing recipes in the _justfile_ that do anything other than running recipes that are defined in modules.
@@ -373,7 +353,7 @@ mod python  # Defined by mod.just file in python/ directory
 
 # List available recipes
 help:
-    @{{just_executable()}} --list
+    @just --list
 
 # Install tools and dependencies, then set up environment for development
 bootstrap:
@@ -425,6 +405,18 @@ Note that the first recipe in this file is _check_, so this command runs that re
 ```shell
 just pre-commit
 ```
+
+## Multiple justfiles in a Directory Structure
+
+If you use multiple _justfiles_ in a project, consider following these guidelines:
+
+- Create the first recipe in the root _justfile_ with the name _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without the name of a recipe, it runs the first recipe in the _justfile_.
+- Create an extra _justfile_ in each subdirectory that should be a separate scope of operations. For example, if you have a monorepo, create a child _justfile_ in the main directory for each component.
+- Set _fallback_ to _true_ in each _justfile_ that is NOT in the root directory of the project. This enables _just_ to find recipes from the root _justfile_ as well as the _justfile_ in the current working directory.
+- If you have many recipes for a single _justfile_, consider putting the recipes into several _.just_ files and using [imports](https://just.systems/man/en/imports.html) to combine them.
+- To ensure that you do not accidentally run a recipe from a user _justfile_, do NOT set _fallback_ to _true_ in a _justfile_ in the root directory of a project.
+- To create namespaces for recipes, decide a standard prefix for each group of recipes, and set the name of each recipe to start with that prefix, e.g. _sys-_.
+- Use the [no-cd attribute](https://just.systems/man/en/working-directory.html) to define recipes that may be executed in one of several different possible directories. By default _just_ sets the working directory to be the location of the _justfile_ that contains the recipe.
 
 ## Resources
 
