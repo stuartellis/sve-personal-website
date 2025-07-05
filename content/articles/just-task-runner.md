@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Diverse Systems with just"
 slug = "just-task-runner"
-date = "2025-07-04T17:41:00+01:00"
+date = "2025-07-05T10:16:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -9,13 +9,13 @@ tags = ["automation", "devops"]
 
 The [just](https://just.systems) tool is a task runner. It provides a consistent framework for working with sets of tasks, which may be written in any scripting language and can run on multiple platforms.
 
-Add _just_ to your projects when you need to write task definitions that must run on a diverse range of environments, especially when you do not manage the systems that the tasks are run on. The users can install _just_ with a [wide range of methods](#installing-just), including the package managers for popular programming languages. The support for multiple languages and the [backwards compatibility guarantee](#the-backwards-compatibility-guarantee) allow you to support systems that have a wide range of capabilities and use different versions of _just_.
+Add _just_ to your projects when you need to provide task definitions that must run on a diverse range of environments, especially when you do not manage the systems that the tasks are run on. The [wide range of installation methods](#installing-just), support for multiple languages and the [backwards compatibility guarantee](#the-backwards-compatibility-guarantee) allow you to support large numbers of very different systems.
 
-If you are maintaining project tooling for internal teams, consider [Task](https://www.stuartellis.name/articles/task-runner/) as an alternative. Task runs tasks with a built-in shell interpreter and uses a published YAML schema for the task definitions. These features enable you to maintain and validate tasks with standard tools, and also ensure that they have consistent behavior on each system. However, they also mean that you need to manage the versions of Task that are in use.
+If you are maintaining project tooling for internal teams, consider [Task](https://www.stuartellis.name/articles/task-runner/) as an alternative. Task runs tasks with a built-in shell interpreter and uses a published YAML schema for the task definitions. These features enable you to maintain and validate tasks with standard tools, and also ensure that the tasks have consistent behavior on each system. However, they also mean that you need to manage the versions of Task that are in use.
 
 ## How just Works
 
-Each copy of _just_ is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, about 5Mb for the 64-bit Linux version. It uses sets of tasks that are defined in plain-text files. You may write each task in any programming language that runs with an interpreter, such as UNIX shells, PowerShell, Python, JavaScript or Nu shell.
+Each copy of _just_ is a single executable file, with versions for Linux, macOS, Windows and FreeBSD. This executable is relatively small, about 5Mb for the 64-bit Linux version. It uses sets of tasks that are defined in plain-text files. You may write each task in any programming language that runs with an interpreter, such as UNIX shells, PowerShell, Python, JavaScript or Nu shell.
 
 This means that you can add _just_ to any environment and use whichever scripting languages are available. If you define [multiple implementations of a task](https://just.systems/man/en/attributes.html?highlight=disabl#enabling-and-disabling-recipes180), _just_ runs the correct implementation for the current platform. It also provides other features for you to customise the behavior of tasks for different environments.
 
@@ -59,7 +59,7 @@ serve:
 
 The behaviour of _just_ is covered by a [backwards compatibility guarantee](https://just.systems/man/en/backwards-compatibility.html). This means that new versions of _just_ will not introduce backwards incompatible changes that break existing _justfiles_. To verify that new versions of _just_ do not break compatibility, the _just_ project maintain automation to test against _justfiles_ that are published as Open Source.
 
-This enables _just_ to be an evergreen tool. Users can install and update their copies of _just_ with whatever method they prefer, as long as it provides a version that is more recent than the minimum version that is required by the project.
+This enables _just_ to be an evergreen tool. Project maintainers simply decide the minimum version of _just_ that they will require. Users can install and update their copies of _just_ with whatever method they prefer, as long as it provides versions that is more recent than the minimum version that is required by the project.
 
 ## Installing just
 
@@ -69,7 +69,7 @@ If you do not wish to use a tool, see the section on [how to install _just_ with
 
 These methods also enable you to either add a copy of _just_ to a specific project, or install _just_ into a user account so that it is available for all of your work. If you install a copy of _just_ into a user account you can [integrate it with your shell](#integrating-just-with-your-shell).
 
-> Consider using the [Python](#installing-just-with-python-tools) or Rust tools to install _just_. The Python and Rust packages contain a copy of the _just_ executable. Other tools may download files from GitHub.
+> Consider using the [Python](#installing-just-with-python-tools) or Rust tools to install _just_. The Python and Rust packages contain a copy of the _just_ executable, and can be distributed from private package repositories. Other tools may download files from GitHub.
 
 You can also install _just_ with [operating system packages](#installing-just-with-operating-system-packages). These packages may provide older versions of _just_.
 
