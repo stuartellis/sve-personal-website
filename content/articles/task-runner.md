@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2025-07-04T17:41:00+01:00"
+date = "2025-07-05T10:52:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -139,13 +139,22 @@ To use the installation script, call it with the Git tag and the _-b_ option. Th
 _Exclude the path for the Task executable file from version control._ If you use the script to download a copy of Task into a development project, make sure that the _.gitignore_ (or equivalent) excludes it from version control.
 {{< /alert >}}
 
+### Installing Task with Homebrew
+
+You can install Task with Homebrew on macOS and Linux. This command installs Task with [Homebrew](https://brew.sh/) and makes it available to your user account:
+
+```shell
+brew install go-task
+```
+
+This will install the most recent version of Task that is known to Homebrew.
+
 ### Installing Task with Operating System Packages
 
-If you do need to install Task with an operating system package manager, it is available for several popular systems. For example, these commands install Task:
+If you do need to install Task with an operating system package manager, versions are available for several popular systems. For example, these commands install Task:
 
 ```shell
 winget install Task.Task  # winget on Microsoft Windows
-brew install go-task      # Homebrew on macOS
 sudo dnf install go-task  # dnf on Fedora Linux
 ```
 
