@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Diverse Systems with just"
 slug = "just-task-runner"
-date = "2025-07-05T10:16:00+01:00"
+date = "2025-07-05T10:51:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -11,7 +11,7 @@ The [just](https://just.systems) tool is a task runner. It provides a consistent
 
 Add _just_ to your projects when you need to provide task definitions that must run on a diverse range of environments, especially when you do not manage the systems that the tasks are run on. The [wide range of installation methods](#installing-just), support for multiple languages and the [backwards compatibility guarantee](#the-backwards-compatibility-guarantee) allow you to support large numbers of very different systems.
 
-If you are maintaining project tooling for internal teams, consider [Task](https://www.stuartellis.name/articles/task-runner/) as an alternative. Task runs tasks with a built-in shell interpreter and uses a published YAML schema for the task definitions. These features enable you to maintain and validate tasks with standard tools, and also ensure that the tasks have consistent behavior on each system. However, they also mean that you need to manage the versions of Task that are in use.
+If you are maintaining project tooling for teams within an organization, consider [Task](https://www.stuartellis.name/articles/task-runner/) as an alternative. Task runs tasks with a built-in shell interpreter and uses a published YAML schema for the task definitions. These features enable you to maintain and validate tasks with standard tools, and also ensure that the tasks have consistent behavior on each system. However, they also mean that you need to manage the versions of Task that are in use.
 
 ## How just Works
 
@@ -137,13 +137,22 @@ To use the installation script, call it with _--tag_ and _--to_ The _--tag_ spec
 ./scripts/install-just.sh --tag 1.41.0 --to $HOME/.local/bin
 ```
 
+### Installing just with Homebrew
+
+You can install _just_ with Homebrew on macOS and Linux. This command installs _just_ with [Homebrew](https://brew.sh/) and makes it available to your user account:
+
+```shell
+brew install just
+```
+
+This will install the most recent version of _just_ that is known to Homebrew.
+
 ### Installing just with Operating System Packages
 
 You can install _just_ with an operating system package manager, if necessary. For example, these commands install _just_:
 
 ```shell
 winget install --id Casey.Just --exact  # winget on Microsoft Windows
-brew install just                       # Homebrew on macOS
 sudo dnf install just                   # dnf on Fedora Linux
 sudo apt install just                   # apt on Ubuntu
 ```
@@ -164,16 +173,16 @@ If you install a copy of _just_ into a user account you can integrate with your 
 
 ### Enabling Shell Autocompletion
 
-To enable autocompletion in a shell, use _--completions_ to generate a completion script that you install into the correct location. For example, to enable autocompletion for the Bash shell, run this command:
-
-```bash
-sudo su -c 'just --completions bash > /etc/bash_completion.d/just.bash'
-```
-
-To install autocompletion for the fish shell, use this command:
+To enable autocompletion in a shell, use _--completions_ to generate a completion script that you install into the correct location. For example, to install autocompletion for the fish shell, use this command:
 
 ```fish
 just --completions fish > ~/.config/fish/completions/just.fish
+```
+
+To enable autocompletion for the Bash shell, run this command:
+
+```bash
+mkdir -p $HOME/.local/share/bash-completion && just --completions bash > $HOME/.local/share/bash-completion/just.bash
 ```
 
 Current versions of _just_ provide autocompletion for Bash, zsh, fish, PowerShell, elvish and Nu.
@@ -261,11 +270,11 @@ When you need to have multiple _justfiles_ in a project, you have two ways to or
 
 You can combine these approaches, but few projects will be complex enough to need to do this.
 
-If you are starting a new project and can require a current version of _just_, consider using _just_ modules. Real-world projects often have multiple components with many tasks, and _just_ modules enable you to define clear namespaces for recipes. Modules also provide more flexibility for organizing the files that contain your recipes. A [later section](#using-modules) in this article explains how to use modules.
+If you are starting a new project, consider using _just_ modules. Real-world projects often have multiple components with many tasks, and _just_ modules enable you to define clear namespaces for recipes. Modules also provide more flexibility for organizing the files that contain your recipes. A [later section](#using-modules) in this article explains how to use modules.
 
 > _Use just 1.31.0 or later with modules:_ The modules feature became available by default with _just_ 1.31.0.
 
-The project directory structure approach is to create a _justfile_ in the root directory of the project, and then create an extra _justfile_ in each sub-directory that relates to a separate area of work. You then enable _fallback_ in the _justfiles_ in subdirectories. Users change working directories to get different recipes from the nearest _justfile_, and if they specify a recipe that is not defined in the nearest _justfile_, then _just_ will try _justfiles_ in parent directories. The [section on directory structures](#multiple-justfiles-in-a-directory-structure) explains how to use multiple _justfiles_ in a directory structure.
+The project directory structure approach means that you create a _justfile_ in the root directory of the project, and then create an extra _justfile_ in each sub-directory that relates to a separate area of work. You then enable _fallback_ in the _justfiles_ in subdirectories. Users change working directories to get different recipes from the nearest _justfile_, and if they specify a recipe that is not defined in the nearest _justfile_, then _just_ will try _justfiles_ in parent directories. The [section on directory structures](#multiple-justfiles-in-a-directory-structure) explains how to use multiple _justfiles_ in a directory structure.
 
 ## Writing justfiles
 
