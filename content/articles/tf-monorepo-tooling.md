@@ -1,7 +1,7 @@
 +++
 title = "Effective Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-07-05T13:07:00+01:00"
+date = "2025-07-05T19:53:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -85,9 +85,14 @@ TFT_EDITION=copy2 task tft:destroy
 TFT_EDITION=copy2 task tft:forget
 ```
 
-> The code for TF modules enables [unique identifiers for resources](#managing-resource-names). You can have as many copies of resources as you wish. The only requirements are that you use the local `handle` as part of resource names and set `TFT_EDITION` to give each extra copy a name.
+Code included in each TF module enables [unique identifiers for resources](#managing-resource-names), so that you can have multiple copies of resources at the same time. The only requirement is that you include `handle` as part of each resource name:
 
-To see a list of all of the available tasks in a project, enter _task_ in a terminal window:
+```hcl
+resource "aws_dynamodb_table" "example_table" {
+  name = "example-${local.handle}"
+```
+
+All of the commands are available through [Task](https://www.stuartellis.name/articles/task-runner/). To see a list of the available tasks in a project, enter _task_ in a terminal window:
 
 ```shell
 task
@@ -212,20 +217,12 @@ For convenience, the tooling creates each new unit as a copy of the files in `tf
 
 > When a unit does not use AWS, ensure that you change the supplied tests to use resources that are relevant for the cloud provider.
 
-You can actually create the units any way that you wish, and there are no limitations on the TF code in them. The tooling automatically finds all of the modules in the directory `tf/units/`. It only requires that each module is a valid TF root module and accepts the four input variables that are listed below.
-
-> Since each unit is a separate module, you can have different versions of the same providers in separate units.
-
-The tooling only requires that each unit is a valid TF root module that accepts these variables:
+The tooling only requires that each unit is a valid TF root module that accepts four variables. The provided code implements these in the file `tft_variables.tf`:
 
 - `tft_product_name` (string) - The name of the product or project
 - `tft_environment_name` (string) - The name of the environment
 - `tft_unit_name` (string) - The name of the component
 - `tft_edition` (string) - An identifier for the specific instance of the resources
-
-> To avoid a direct dependency between your resources and the tooling, only use these variables in locals. Then use locals to define resource names.
-
-The provided code for new units includes locals that use these variables to help you generate [names and identifiers](#managing-resource-names). These include a `handle`, a short version of a unique SHA256 hash. You can have as many copies of resources as you wish, as long as you use the local `handle` as part of each resource name.
 
 The tooling sets the values of the required variables when it runs TF commands on a unit:
 
@@ -234,7 +231,18 @@ The tooling sets the values of the required variables when it runs TF commands o
 - `tft_unit_name` - The name of the unit itself
 - `tft_edition` - Set as the value `default`, except when using an [extra instance](#extra-instances---workspaces-and-tests) or running [tests](#testing)
 
-To avoid compatibility issues with other systems, we should use names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. The section on [resource names](#managing-resource-names) provides more guidance.
+The provided code for new units has locals that use these variables to help you generate [names and identifiers](#managing-resource-names). These include a `handle`, a short version of a unique SHA256 hash. This means that you can have as many copies of resources as you wish, as long as you use the `handle` as part of each resource name:
+
+```hcl
+resource "aws_dynamodb_table" "example_table" {
+  name = "example-${local.handle}"
+```
+
+> To avoid a direct dependency between your resources and the tooling, only use the required variables in locals. Then use locals to define resource names.
+
+If the default behaviour is not appropriate, you can customise the contents of modules in any way that you need. The tooling automatically finds all of the modules in the directory `tf/units/`. It only requires that each module is a valid TF root module and accepts the four input variables.
+
+> Since each unit is a separate module, you can have different versions of the same providers in separate units.
 
 ### Contexts - Configuration Profiles
 
@@ -318,7 +326,7 @@ For consistency and the best compatibility between systems, we should always fol
 - _Environment name:_ `tft_environment_name` - 8 characters or less
 - _Instance name:_ `tft_edition` - 8 characters or less
 
-To avoid coupling live resources directly to the variables that TFT provides, do not reference these variables directly in resource names. Use these variables in locals, and then use the locals to set resource names. For convenience, the code in the unit template includes locals and outputs that you can use in resource names. These are defined in the file `meta_locals.tf`:
+To avoid coupling live resources to the tooling, do not reference these variables directly in resource names. Use these variables in locals, and then use the locals to set resource names. For convenience, the code in the unit template includes locals and outputs that you can use in resource names. These are defined in the file `meta_locals.tf`:
 
 ```hcl
 locals {
@@ -340,8 +348,8 @@ The SHA256 hash in the locals provides a unique identifier for each instance of 
 The tooling includes tasks to show the identifiers for instances, so that you can match deployed resources to the code that produced them:
 
 ```shell
-TFT_CONTEXT=dev TFT_UNIT=my-app task tft:id:handle
-TFT_CONTEXT=dev TFT_UNIT=my-app task tft:id:sha256
+TFT_CONTEXT=dev TFT_UNIT=my-app task tft:instance:handle
+TFT_CONTEXT=dev TFT_UNIT=my-app task tft:instance:sha256
 ```
 
 The example code deploys an AWS Parameter Store parameter that has the SHA256 hash, and also attaches an `InstanceSha256` tag to every resource. This enables us to query AWS for resources by instance.
@@ -427,52 +435,6 @@ Set these variables to override the defaults:
 - `TFT_REMOTE_BACKEND` - Set to _false_ to force the use of local TF state
 - `TFT_EDITION` - See the section on [extra instances](#extra-instances---workspaces-and-tests)
 
-### The `tft` Tasks
-
-| Name          | Description                                                                                |
-| ------------- | ------------------------------------------------------------------------------------------ |
-| tft:apply     | _terraform apply_ for a unit\*                                                             |
-| tft:check-fmt | Checks whether _terraform fmt_ would change the code for a unit                            |
-| tft:clean     | Remove the generated files for a unit                                                      |
-| tft:console   | _terraform console_ for a unit\*                                                           |
-| tft:context   | An alias for `tft:context:list`.                                                           |
-| tft:destroy   | _terraform apply -destroy_ for a unit\*                                                    |
-| tft:fmt       | _terraform fmt_ for a unit                                                                 |
-| tft:forget    | _terraform workspace delete_\*                                                             |
-| tft:init      | _terraform init_ for a unit. An alias for `tft:init:s3`.                                   |
-| tft:new       | Add the source code for a new unit. Copies content from the _tf/units/template/_ directory |
-| tft:plan      | _terraform plan_ for a unit\*                                                              |
-| tft:rm        | Delete the source code for a unit                                                          |
-| tft:test      | _terraform test_ for a unit\*                                                              |
-| tft:units     | List the units.                                                                            |
-| tft:validate  | _terraform validate_ for a unit\*                                                          |
-
-\*: These tasks require that you first [initialise](https://opentofu.org/docs/cli/commands/init/) the unit.
-
-### The `tft:context` Tasks
-
-| Name             | Description                                                                  |
-| ---------------- | ---------------------------------------------------------------------------- |
-| tft:context      | An alias for `tft:context:list`.                                             |
-| tft:context:list | List the contexts                                                            |
-| tft:context:new  | Add a new context. Copies content from the _tf/contexts/template/_ directory |
-| tft:context:rm   | Delete the directory for a context                                           |
-
-### The `tft:id` Tasks
-
-| Name          | Description                                 |
-| ------------- | ------------------------------------------- |
-| tft:id:handle | Handle for the instance of the TF unit      |
-| tft:id:sha256 | SHA256 hash for the instance of the TF unit |
-
-### The `tft:init` Tasks
-
-| Name           | Description                                                             |
-| -------------- | ----------------------------------------------------------------------- |
-| tft:init       | _terraform init_ for a unit. An alias for `tft:init:s3ddb`.             |
-| tft:init:local | _terraform init_ for a unit, with local state.                          |
-| tft:init:s3ddb | _terraform init_ for a unit, with S3 remote state and DynamoDB locking. |
-
 ### Using Extra Instances
 
 Specify `TFT_EDITION` to create an [extra instance](#extra-instances---workspaces-and-tests) of a unit:
@@ -550,7 +512,7 @@ TFT_CLI_EXE=tofu
 To specify which version of OpenTofu to use, create a `.opentofu-version` file. This file should contain the version of OpenTofu and nothing else, like this:
 
 ```shell
-1.9.1
+1.10.2
 ```
 
 > Remember that if you switch between Terraform and OpenTofu, you will need to initialise your unit again, and when you run `apply` it will migrate the TF state. The OpenTofu Website provides [migration guides](https://opentofu.org/docs/intro/migration/), which includes information about code changes that you may need to make.
