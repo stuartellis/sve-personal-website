@@ -1,7 +1,7 @@
 +++
 title = "Effective Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-07-05T19:53:00+01:00"
+date = "2025-07-05T23:49:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -11,7 +11,7 @@ This article describes an example of an approach to low-maintenance tooling for 
 
 - Multiple infrastructure components in the same code repository. Each [unit](#units---tf-modules-as-components) is a complete [root module](https://opentofu.org/docs/language/modules/).
 - Multiple instances of the same component with [different configurations](#contexts---configuration-profiles)
-- [Extra instances](#extra-instances---workspaces-and-tests) of a component for development and testing. Use this to create disposable instances for the branches of your code as you need them.
+- [Extra instances](#extra-instances---workspaces-and-tests) of a component for development and testing.
 - [Integration testing](#testing) for every component.
 - [Migrating from Terraform to OpenTofu](#using-opentofu). You use the same tasks for both.
 
@@ -63,10 +63,17 @@ task tft:plan
 task tft:apply
 ```
 
-You can always specifically set the unit and context for a task. This example runs the [integration tests](#testing) for the module:
+You can always specifically set the unit and context for a task. This example runs `validate` on the module:
 
 ```shell
-TFT_CONTEXT=dev TFT_UNIT=my-app task tft:test
+export TFT_CONTEXT=dev TFT_UNIT=my-app task tft:validate
+```
+
+Code included in each TF module provides [unique identifiers for resources](#managing-resource-names), so that you can have multiple copies of resources at the same time. The only requirement is that you include `handle` as part of each resource name:
+
+```hcl
+resource "aws_dynamodb_table" "example_table" {
+  name = "${local.meta_product_name}-example-${local.handle}"
 ```
 
 To create [an extra copy](#extra-instances---workspaces-and-tests) of the resources for a module, set the variable `TFT_EDITION` with a unique name for the copy. This example will deploy an extra instance called `copy2` alongside the main set of resources:
@@ -85,11 +92,12 @@ TFT_EDITION=copy2 task tft:destroy
 TFT_EDITION=copy2 task tft:forget
 ```
 
-Code included in each TF module enables [unique identifiers for resources](#managing-resource-names), so that you can have multiple copies of resources at the same time. The only requirement is that you include `handle` as part of each resource name:
+Use this feature to create disposable instances for the branches of your code as you need them.
 
-```hcl
-resource "aws_dynamodb_table" "example_table" {
-  name = "example-${local.handle}"
+The ability to have multiple copies of resources for the same module also enables us to run [integration tests](#testing) at any time. This example runs tests for the module:
+
+```shell
+TFT_CONTEXT=dev TFT_UNIT=my-app task tft:test
 ```
 
 All of the commands are available through [Task](https://www.stuartellis.name/articles/task-runner/). To see a list of the available tasks in a project, enter _task_ in a terminal window:
@@ -235,7 +243,7 @@ The provided code for new units has locals that use these variables to help you 
 
 ```hcl
 resource "aws_dynamodb_table" "example_table" {
-  name = "example-${local.handle}"
+  name = "${local.meta_product_name}-example-${local.handle}"
 ```
 
 > To avoid a direct dependency between your resources and the tooling, only use the required variables in locals. Then use locals to define resource names.
@@ -299,9 +307,9 @@ To solve this problem, the tooling allows each copy of a set of infrastructure t
 
 #### Ensuring Unique Identifiers for Instances
 
-If you include the local `handle` in all resource names then every resource will have a unique name, and you will not experience naming conflicts.
+If you include the local called `handle` in all resource names then every resource will have a unique name, and you will not experience naming conflicts. This relies on behaviour that is built into the tooling and the provided code for modules.
 
-The tooling allows every copy of a set of infrastructure to have a separate identifier, which is called the _edition_. The edition is always set to the value _default_, unless you [run a test](#testing) or decide to [use an extra instance](#using-extra-instances). The tooling sets the variable `tft_edition` to match the required edition. The template TF code provides a local called `handle` that uses `tft_edition` to provide a short version of a unique SHA256 hash. It also ensures that the full version of this hash is attached to resources as an AWS tag.
+The tooling allows every copy of a set of infrastructure to have a separate identifier, which is called the _edition_. The edition is always set to the value _default_, unless you [run a test](#testing) or decide to [use an extra instance](#using-extra-instances). The provided TF code for modules combines `tft_edition` and the other required variables to create a unique SHA256 hash for the instance. A short version of this hash is registered in the locals as `handle`, so that we can create unique names for resources. The full version of this hash is also registered as a local called `meta_instance_sha256_hash`, and attached to resources as an AWS tag.
 
 A [later section](#managing-resource-names) has more details about working with resource names and instance hashes.
 
@@ -317,7 +325,7 @@ You do not set `TFT_EDITION` for tests. The example test in the unit template in
 
 ### Managing Resource Names
 
-Cloud systems use tags or labels to enable you to categorise and manage resources. However, resources often need to have unique names. Every type of cloud resource may have a different set of rules about acceptable names. The tooling uses hashes to provide a `handle` as a local, so that every instance of a unit has a unique prefix that you can use in the resource names.
+Cloud systems use tags or labels to enable you to categorise and manage resources. However, resources often need to have unique names. Every type of cloud resource may have a different set of rules about acceptable names. The tooling uses hashes to provide a `handle` as a local, so that every instance of a unit has a unique identifier that you can use in the resource names.
 
 For consistency and the best compatibility between systems, we should always follow some simple guidelines for identifiers. Values should only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. To avoid limits on the total length of resource names, try to limit the size of the standard identifiers:
 
@@ -374,7 +382,7 @@ Similarly, there are no restrictions on how you run tasks on multiple units. You
 
 By default, this tooling uses the copy of Terraform or OpenTofu that is provided by the system. It does not install or manage copies of Terraform and OpenTofu. It is also not dependent on specific versions of these tools.
 
-You will need to use different versions of Terraform and OpenTofu for different projects. To handle this, use a tool version manager. The version manager will install the versions that you need and automatically switch between them as needed. Consider using [tenv](https://tofuutils.github.io/tenv/), which is a version manager that is specifically designed for TF tools. Alternatively, you could decide to manage your project with [mise](https://mise.jdx.dev/), which handles all of the tools that the project needs.
+You will need to use different versions of Terraform and OpenTofu for different projects. To handle this, use a tool version manager. The version manager will install the versions that you need and automatically switch between them as needed. Consider using [tenv](https://tofuutils.github.io/tenv/), which is a version manager that is specifically designed for TF tools. Alternatively, you could decide to manage your project with [mise](https://mise.jdx.dev/), which can control all of the tools for a project.
 
 The generated projects include a `.terraform-version` file so that your tool version manager installs and use the Terraform version that you specify. To use OpenTofu, add an `.opentofu-version` file to enable your tool version manager to install and use the OpenTofu version that you specify.
 
@@ -445,7 +453,7 @@ task tft:plan
 task tft:apply
 ```
 
-Each instance of a unit has an identical configuration as other instances that use the specified context, apart from the tfvar `tft_edition`. The tooling automatically sets the value of the tfvar `tft_edition` to match `TFT_EDITION`. This ensures that every edition has a unique identifier that can be used in TF code.
+Each instance of a unit has an identical configuration as other instances that use the specified context, apart from the variable `tft_edition`. The tooling automatically sets the value of the tfvar `tft_edition` to match `TFT_EDITION`. This ensures that every edition has a unique identifier that can be used in TF code.
 
 Only set `TFT_EDITION` when you want to create an extra copy of a unit. If you do not specify a edition identifier, TF uses the default workspace for state, and the value of the tfvar `tft_edition` is `default`.
 
