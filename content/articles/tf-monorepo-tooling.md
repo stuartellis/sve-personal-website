@@ -1,7 +1,7 @@
 +++
 title = "Effective Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-07-06T15:06:00+01:00"
+date = "2025-07-06T16:10:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -212,9 +212,7 @@ The tasks:
 
 ### Units - TF Modules as Components
 
-To work with the tooling, a TF module must be a valid [root module](https://opentofu.org/docs/language/modules/), and the input variables must include four string variables that have specific names. This tooling refers to modules that follow these requirements as _units_.
-
-These requirements enable us to handle every unit as a component that behaves in a standard way. Each instance of the resources that are defined by a component unit can be independently created, tested, updated or destroyed.
+To work with the tooling, a TF module must be a valid [root module](https://opentofu.org/docs/language/modules/), and the input variables must include four string variables that have specific names. This tooling refers to modules that follow these requirements as _units_. These requirements enable us to handle every unit as a component that behaves in a standard way, regardless of the differences between them. For example, since each unit is a separate root module, you can have different versions of the same providers in different units.
 
 The four required input variables are:
 
@@ -238,7 +236,7 @@ The tooling sets the values of the required variables when it runs TF commands o
 - `tft_unit_name` - The name of the unit itself
 - `tft_edition` - Set as the value `default`, except when using an [extra instance](#extra-instances---workspaces-and-tests) or running [tests](#testing)
 
-The provided code for new units also includes the file `meta_locals.tf`, which defines locals that use these variables to help you generate [names and identifiers](#managing-resource-names). These include a `handle`, a short version of a SHA256 hash for the instance. This means that you can deploy as many instances of the module as you wish, as long as you use the `handle` as part of each resource name:
+The provided code for new units also includes the file `meta_locals.tf`, which defines locals that use these variables to help you generate [names and identifiers](#managing-resource-names). These include a `handle`, a short version of a SHA256 hash for the instance. This means that you can deploy as many instances of the module as you wish without conflicts, as long as you use the `handle` as part of each resource name:
 
 ```hcl
 resource "aws_dynamodb_table" "example_table" {
@@ -249,7 +247,7 @@ resource "aws_dynamodb_table" "example_table" {
 
 If the provided code is not appropriate, you can customise the contents of a module in any way that you need. The tooling automatically finds all of the modules in the directory `tf/units/`. It only requires that a module is a valid TF root module and accepts the four defined input variables. The `handle` and other locals in `meta_locals.tf` give you a set of conventions to help you manage resource names, but the tooling does not rely on them.
 
-> Since each unit is a separate module, you can have different versions of the same providers in separate units.
+> If you do not use the `handle` or an equivalent hash in the name of a resource, you must decide how to ensure that each copy of the resource will have a unique name.
 
 ### Contexts - Configuration Profiles
 
