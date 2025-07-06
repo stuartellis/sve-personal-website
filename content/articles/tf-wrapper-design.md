@@ -3,6 +3,7 @@ title = "The Design of a Wrapper for Terraform & OpenTofu"
 slug = "tf-wrapper-design"
 date = "2025-07-06T16:27:00+01:00"
 description = "Wrapper for Terraform & OpenTofu in monorepos"
+draft = true
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 +++
