@@ -1,7 +1,7 @@
 +++
 title = "Effective Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-07-05T23:49:00+01:00"
+date = "2025-07-06T09:26:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -48,16 +48,16 @@ TFT_UNIT=my-app task tft:new
 
 The `tft:new` task creates a [unit](#units---tf-modules-as-components), a complete Terraform root module. Each new root module includes example code for AWS, so that it can work immediately. The context is a [configuration profile](#contexts---configuration-profiles). You only need to set:
 
-1. The AWS IAM role for TF in the module, with the variable `tf_exec_role_arn`
-2. Either remote state storage settings in the [context](#contexts---configuration-profiles), OR use [local state](#using-local-tf-state)
+1. Either remote state storage settings in the [context](#contexts---configuration-profiles), OR use [local state](#using-local-tf-state)
+2. The AWS IAM role for TF itself. This is the variable `tf_exec_role_arn` in the tfvars files for the [context](#contexts---configuration-profiles).
 
 You can then start working with your TF module:
 
 ```shell
-# Set a default context and unit
+# Set a default configuration and module
 export TFT_CONTEXT=dev TFT_UNIT=my-app
 
-# Run tasks on the unit with the configuration from the context
+# Run tasks on the module with the configuration from the context
 task tft:init
 task tft:plan
 task tft:apply
@@ -69,7 +69,7 @@ You can always specifically set the unit and context for a task. This example ru
 export TFT_CONTEXT=dev TFT_UNIT=my-app task tft:validate
 ```
 
-Code included in each TF module provides [unique identifiers for resources](#managing-resource-names), so that you can have multiple copies of resources at the same time. The only requirement is that you include `handle` as part of each resource name:
+Code included in each TF module provides [unique identifiers for instances](#managing-resource-names), so that you can have multiple copies of the resources at the same time. The only requirement is that you include `handle` as part of each resource name:
 
 ```hcl
 resource "aws_dynamodb_table" "example_table" {
@@ -193,12 +193,13 @@ The tooling uses specific files and directories:
 |
 |- .gitignore
 |- .terraform-version
+|- README.md
 |- Taskfile.yaml
 ```
 
 The Copier template:
 
-- Adds a `.gitignore` file and a `Taskfile.yaml` file to the root directory of the project, if these do not already exist.
+- Adds a `.gitignore` file, a `README.md` file and a `Taskfile.yaml` file to the root directory of the project, if these do not already exist.
 - Provides a `.terraform-version` file.
 - Provides the file `tasks/tft/Taskfile.yaml` to the project. This file contains the task definitions.
 - Provides a `tf/` directory structure for TF files and configuration.
@@ -239,14 +240,14 @@ The tooling sets the values of the required variables when it runs TF commands o
 - `tft_unit_name` - The name of the unit itself
 - `tft_edition` - Set as the value `default`, except when using an [extra instance](#extra-instances---workspaces-and-tests) or running [tests](#testing)
 
-The provided code for new units has locals that use these variables to help you generate [names and identifiers](#managing-resource-names). These include a `handle`, a short version of a unique SHA256 hash. This means that you can have as many copies of resources as you wish, as long as you use the `handle` as part of each resource name:
+The provided code for new units has locals that use these variables to help you generate [names and identifiers](#managing-resource-names). These include a `handle`, a short version of a SHA256 hash for the instance. This means that you can deploy as many instances of the root module as you wish, as long as you use the `handle` as part of each resource name:
 
 ```hcl
 resource "aws_dynamodb_table" "example_table" {
   name = "${local.meta_product_name}-example-${local.handle}"
 ```
 
-> To avoid a direct dependency between your resources and the tooling, only use the required variables in locals. Then use locals to define resource names.
+> Only use the required variables in locals, then use those locals to define resource names. This ensures that your deployed resources are not tied to the details of the tooling.
 
 If the default behaviour is not appropriate, you can customise the contents of modules in any way that you need. The tooling automatically finds all of the modules in the directory `tf/units/`. It only requires that each module is a valid TF root module and accepts the four input variables.
 
@@ -307,7 +308,7 @@ To solve this problem, the tooling allows each copy of a set of infrastructure t
 
 #### Ensuring Unique Identifiers for Instances
 
-If you include the local called `handle` in all resource names then every resource will have a unique name, and you will not experience naming conflicts. This relies on behaviour that is built into the tooling and the provided code for modules.
+If you include the local `handle` in all resource names then you will not experience name conflicts between instances. This relies on behaviour that is built into the tooling and the provided code for modules.
 
 The tooling allows every copy of a set of infrastructure to have a separate identifier, which is called the _edition_. The edition is always set to the value _default_, unless you [run a test](#testing) or decide to [use an extra instance](#using-extra-instances). The provided TF code for modules combines `tft_edition` and the other required variables to create a unique SHA256 hash for the instance. A short version of this hash is registered in the locals as `handle`, so that we can create unique names for resources. The full version of this hash is also registered as a local called `meta_instance_sha256_hash`, and attached to resources as an AWS tag.
 
@@ -325,9 +326,9 @@ You do not set `TFT_EDITION` for tests. The example test in the unit template in
 
 ### Managing Resource Names
 
-Cloud systems use tags or labels to enable you to categorise and manage resources. However, resources often need to have unique names. Every type of cloud resource may have a different set of rules about acceptable names. The tooling uses hashes to provide a `handle` as a local, so that every instance of a unit has a unique identifier that you can use in the resource names.
+Cloud systems use tags or labels to enable you to categorise and manage resources. However, resources often need to have unique names. Every type of cloud resource may have a different set of rules about acceptable names. The tooling uses hashes to provide a `handle` as a local, so that every deployed instance of a module has a unique identifier that you can use in the resource names.
 
-For consistency and the best compatibility between systems, we should always follow some simple guidelines for identifiers. Values should only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. To avoid limits on the total length of resource names, try to limit the size of the standard identifiers:
+For consistency and the best compatibility between systems, we should always follow some simple guidelines for names. Values should only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. To avoid limits on the total length of resource names, try to limit the size of other types of name:
 
 - _Product or project name:_ `tft_product_name` - 12 characters or less
 - _Component name:_ `tft_unit_name` - 12 characters or less
