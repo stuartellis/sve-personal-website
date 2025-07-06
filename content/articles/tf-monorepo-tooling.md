@@ -1,7 +1,7 @@
 +++
 title = "Effective Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-07-06T16:10:00+01:00"
+date = "2025-07-06T16:27:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -300,13 +300,9 @@ TF has two different ways to create extra copies of the same infrastructure from
 
 The extra copies of resources for workspaces and tests create a problem. If you run the same code with the same inputs TF could attempt to create multiple copies of resources with the same name. Cloud services often refuse to allow you to have multiple resources with identical names. They may also keep deleted resources for a period of time, which prevents you from creating new resources that have the same names as other resources that you have deleted.
 
-To solve this problem, the tooling allows each copy of a set of infrastructure to have a [separate identifier](#ensuring-unique-identifiers-for-instances), regardless of how the copy was created. You can have as many copies of resources as you wish, as long as you use the local `handle` as part of resource names.
+To solve this problem, the tooling allows each copy of a set of infrastructure to have a separate identifier, regardless of how the copy was created. This identifier is called the _edition_. The edition is always set to the value _default_, unless you [run a test](#testing) or decide to [use an extra instance](#using-extra-instances).
 
-#### Ensuring Unique Identifiers for Instances
-
-The code that is provided for new modules has a feature to avoid name conflicts between instances. If you use the local called `handle` in resource names each instance of a resource will have a separate name. This relies on behaviour that is built into the tooling and the provided code.
-
-The tooling allows every copy of a set of infrastructure to have a separate identifier, which is called the _edition_. The edition is always set to the value _default_, unless you [run a test](#testing) or decide to [use an extra instance](#using-extra-instances). The provided TF code for modules combines `tft_edition` and the other required variables to create a unique SHA256 hash for the instance. A short version of this hash is registered in the locals as `handle`, so that we can create unique names for resources. The full version of this hash is also registered as a local called `meta_instance_sha256_hash`, and attached to resources as an AWS tag.
+The provided TF code for modules combines the edition and the other standard variables to create a unique SHA256 hash for the instance. A short version of this hash is registered in the locals as `handle`, so that we can create unique names for resources. The full version of this hash is also registered as a local called `meta_instance_sha256_hash`, and attached to resources as an AWS tag.
 
 A [later section](#managing-resource-names) has more details about working with resource names and instance hashes.
 
@@ -350,16 +346,16 @@ locals {
 
 The SHA256 hash in the locals provides a unique identifier for each instance of the root module. This enables us to have a short `handle` that we can use in any kind of resource name. For example, we might create large numbers of Lambdas in an AWS account with different TF root modules, and they will not conflict if the name of each Lambda includes the `handle`.
 
-For convenience, the tooling includes tasks to show the same SHA256 hashes, so that you can match deployed resources to the code that produced them:
+For convenience, the tooling includes tasks to calculate the handle and the full SHA256 hash, so that you can match deployed resources to the code that produced them:
 
 ```shell
 TFT_CONTEXT=dev TFT_UNIT=my-app task tft:instance:handle
 TFT_CONTEXT=dev TFT_UNIT=my-app task tft:instance:sha256
 ```
 
-The provided code also deploys an AWS Parameter Store parameter that has the SHA256 hash, and attaches an `InstanceSha256` tag to every resource. This enables us to query AWS for resources by instance.
+The provided module code also deploys an AWS Parameter Store parameter that has the SHA256 hash, and attaches an `InstanceSha256` tag to every resource. This enables us to query AWS for resources by instance.
 
-> The test in the unit template includes code to set the value of the variable `tft_edition` to a random string with the prefix `tt`. This means that test copies of resources have unique identifiers and will not conflict with existing resources that were deployed with the same TF module.
+> The provided test setup in each unit includes code to set the value of the variable `tft_edition` to a random string with the prefix `tt`. This means that test copies of resources have unique identifiers and will not conflict with existing resources that were deployed with the same TF module.
 
 ### Shared Modules
 
