@@ -1,13 +1,13 @@
 +++
 title = "Effective Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-07-06T16:27:00+01:00"
+date = "2025-07-10T18:15:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 +++
 
-This article describes an example of an approach to low-maintenance tooling for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) in a [monorepo](https://en.wikipedia.org/wiki/Monorepo). The infrastructure configurations can be maintained in the same project, alongside other code. The design also enables projects to support:
+This article describes an example of an approach to tooling for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) in a [monorepo](https://en.wikipedia.org/wiki/Monorepo). The infrastructure configurations can be maintained in the same project, alongside other code. The design also enables projects to support:
 
 - Multiple infrastructure components in the same code repository. Each [unit](#units---tf-modules-as-components) is a complete [root module](https://opentofu.org/docs/language/modules/).
 - Multiple instances of the same component with [different configurations](#contexts---configuration-profiles)
@@ -73,7 +73,7 @@ Code included in each TF module provides [unique identifiers for instances](#man
 
 ```hcl
 resource "aws_dynamodb_table" "example_table" {
-  name = "${local.meta_product_name}-example-${local.handle}"
+  name = "${local.meta_product_name}-${local.meta_component_name}-example-${local.handle}"
 ```
 
 To create [an extra copy](#extra-instances---workspaces-and-tests) of the resources for a module, set the variable `TFT_EDITION` with a unique name for the copy. This example will deploy an extra instance called `copy2` alongside the main set of resources:
@@ -122,7 +122,7 @@ The tooling is designed so that we can use it alongside other tools, and that we
 2. The tooling only requires that each root module implements a small number of [specific input variables](#units---tf-modules-as-components).
 3. The tooling does not impose any limitations on the code within the modules. The generated code for new modules can be completely replaced.
 
-The wrapper itself is a single [Task](https://www.stuartellis.name/articles/task-runner/) file. Task is a command-line tool that generates and runs _tasks_, shell commands that are defined in a Taskfile. Each Taskfile is a YAML document that defines templates for the commands. Task uses a versioned and published schema so that we can [validate Taskfiles](https://www.stuartellis.name/articles/task-runner/#checking-taskfiles). If necessary, we can replace Task with any other tool that generates the same commands.
+The wrapper itself is a single [Task](https://www.stuartellis.name/articles/task-runner/) file. Task is a command-line tool that generates and runs _tasks_, shell commands that are defined in a Taskfile. Each Taskfile is a YAML document that defines templates for the commands. Task uses a versioned and published schema so that we can [validate Taskfiles](https://www.stuartellis.name/articles/task-runner/#checking-taskfiles). We can replace Task with any other tool that generates the same commands, such as [just](https://www.stuartellis.name/articles/just-task-runner/) or even a shell script.
 
 Each task in the Taskfile uses standard UNIX commands, and they do not include any code in a programming language, such as Python or Go. Since the UNIX commands and the command-line interfaces of [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) are stable, the tasks are not tied to particular versions of these tools, and they do not need updates as new versions are released.
 
@@ -240,7 +240,7 @@ The provided code for new units also includes the file `meta_locals.tf`, which d
 
 ```hcl
 resource "aws_dynamodb_table" "example_table" {
-  name = "${local.meta_product_name}-example-${local.handle}"
+  name = "${local.meta_product_name}-${local.meta_component_name}-example-${local.handle}"
 ```
 
 > Only use the required variables in locals, then use those locals to define resource names. This ensures that your deployed resources are not tied to the details of the tooling.
