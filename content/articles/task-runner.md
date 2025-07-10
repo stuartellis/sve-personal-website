@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2025-07-10T21:45:00+01:00"
+date = "2025-07-10T22:54:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -13,7 +13,7 @@ tags = ["automation", "devops"]
 
 ## How Task Works
 
-Each copy of Task is a single executable file, with versions for Linux, macOS and Windows. This executable is relatively small, being about 8Mb for the 64-bit Linux version. The tasks are run with a UNIX shell script interpreter that is built into Task itself, rather than using shells that are already installed on your systems.
+Each copy of Task is a single executable file, with versions for Linux, macOS, Windows and FreeBSD. This executable is relatively small, being about 8Mb for the 64-bit Linux version. The tasks are run with a UNIX shell script interpreter that is built into Task itself, rather than using shells that are already installed on your systems.
 
 This means that you can use Task in any environment. It only requires a copy of the Task executable, and the built-in shell interpreter enables you to use the same syntax for your tasks on any platform. The [template functions](https://taskfile.dev/reference/templating/#functions) enable you to get consistent inputs for your tasks across different platforms. When needed, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfiles), so that Task uses the specific implementation for the current platform.
 
