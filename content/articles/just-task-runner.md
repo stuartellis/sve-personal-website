@@ -1,17 +1,17 @@
 +++
 title = "Shared Tooling for Diverse Systems with just"
 slug = "just-task-runner"
-date = "2025-07-05T10:51:00+01:00"
+date = "2025-07-10T20:43:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
 +++
 
-The [just](https://just.systems) tool is a task runner. It provides a consistent framework for working with sets of tasks, which may be written in any scripting language and can run on multiple platforms.
+The [just](https://just.systems) tool provides a consistent framework for working with sets of tasks, which may be written in any scripting language and can run on multiple platforms.
 
 Add _just_ to your projects when you need to provide task definitions that must run on a diverse range of environments, especially when you do not manage the systems that the tasks are run on. The [wide range of installation methods](#installing-just), support for multiple languages and the [backwards compatibility guarantee](#the-backwards-compatibility-guarantee) allow you to support large numbers of very different systems.
 
-If you are maintaining project tooling for teams within an organization, consider [Task](https://www.stuartellis.name/articles/task-runner/) as an alternative. Task runs tasks with a built-in shell interpreter and uses a published YAML schema for the task definitions. These features enable you to maintain and validate tasks with standard tools, and also ensure that the tasks have consistent behavior on each system. However, they also mean that you need to manage the versions of Task that are in use.
+If you are maintaining project tooling for teams within an organization, you might also consider [Task](https://www.stuartellis.name/articles/task-runner/). Task runs tasks with a built-in shell interpreter and uses a published YAML schema for the task definitions. These features enable you to maintain and validate tasks with standard tools, and also ensure that the tasks have consistent behavior on each system. However, they also mean that you need to manage the versions of Task that are in use.
 
 ## How just Works
 
