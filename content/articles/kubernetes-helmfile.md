@@ -10,6 +10,8 @@ tags = ["automation", "aws", "devops", "kubernetes"]
 
 [Helmfile](https://helmfile.readthedocs.io/en/stable/) is a command-line tool for deploying sets of configuration to Kubernetes clusters. Many administrators use [GitOps](https://www.gitops.tech/) systems like [Flux](https://fluxcd.io/flux/) or [Argo CD](https://argo-cd.readthedocs.io/en/stable/) that run on a cluster and continuously apply a configuration. You can deploy a GitOps system on a cluster with Helmfile, or use it to manage all of the configuration of the cluster. For example, you could use Helmfile to manage development Kubernetes clusters on laptops, or as part of a CI process that deploys a configuration to clusters on demand.
 
+> This article is written for Helmfile 1.1.2 and above.
+
 ## Requirements
 
 Helmfile itself is a single executable file. It does rely on [Helm](https://helm.sh) and several plugins for Helm:
@@ -18,8 +20,6 @@ Helmfile itself is a single executable file. It does rely on [Helm](https://helm
 - [helm-git](https://github.com/aslafy-z/helm-git)
 - [s3](https://github.com/hypnoglow/helm-s3)
 - [secrets](https://github.com/jkroepke/helm-secrets)
-
-## Installing Helmfile
 
 To install Helmfile on macOS and Linux, you can use [Homebrew](https://brew.sh/):
 
@@ -44,3 +44,15 @@ helmfile completion fish > ~/.config/fish/completions/helmfile.fish
 ```
 
 Helmfile currently provides completion support for Bash, fish and zsh.
+
+## Resources
+
+## Articles
+
+- [Even more powerful Helming with Helmfile](https://www.hackerstack.org/even-more-powerful-helming-with-helmfile/)
+- [Using ArgoCD with Helmfile](https://www.kubeblog.com/argocd/using-argocd-with-helmfile/)
+
+### Videos
+
+- [Helmfile - How to manage Kubernetes Helm releases](https://www.youtube.com/watch?v=qIJt8Iq8Zb0), a video introduction from _AI & DevOps Toolkit_, 29 minutes long.
+- [Simplify your Code with Helmfile](https://www.youtube.com/watch?v=jl13ixzteWs), _Codefresh_ introduction, 50 minutes long.
