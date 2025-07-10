@@ -6,7 +6,7 @@
 #
 # https://gohugo.io/
 
-version: '3'
+version: '3.38'
 
 silent: true
 

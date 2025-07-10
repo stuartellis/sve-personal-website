@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2025-07-10T21:32:00+01:00"
+date = "2025-07-10T21:45:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -400,7 +400,7 @@ Follow [the style guidelines](https://taskfile.dev/styleguide/) when writing tas
 - Use a YAML formatter to format your Task files. The [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension adds support for formatting YAML files to Visual Studio Code. The [Prettier](https://prettier.io/) tool formats YAML files, and can be used in any environment.
 - Always set [a minimum version in Task files](https://taskfile.dev/taskfile-versions/). Use version _3.38_ or above, because _TASK_EXE_ was introduced in version 3.38.
 - Write _set: [pipefail]_ at the beginning of top-level Taskfiles to enable failing on the first error. This is a [shell option](https://taskfile.dev/usage/#set-and-shopt).
-- Always use _TASK_EXE_ rather than _task_ when you write a task that calls Task itself, such as a call to _--list_.
+- Always use _TASK_EXE_ rather than _task_ when you write a task that calls Task itself, such as a call to _--list_. Systems may name the Task executable as either _task_ or _go-task_, so use _TASK_EXE_ in Task files.
 - Always put a _desc_ attribute for each task. The description appears next to the task in the output of _--list_.
 - Consider adding a [summary](https://taskfile.dev/usage/#display-summary-of-task) attribute for each task. The summary appears in the output of _task --summary TASK-NAME_.
 - Use [argument forwarding](https://taskfile.dev/usage/#forwarding-cli-arguments-to-commands) or [wildcard task names](https://taskfile.dev/usage/#wildcard-arguments) to get inputs for a task from the command-line.

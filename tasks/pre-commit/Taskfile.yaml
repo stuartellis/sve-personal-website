@@ -6,7 +6,7 @@
 #
 # https://pre-commit.com/
 
-version: '3'
+version: '3.38'
 
 silent: true
 
