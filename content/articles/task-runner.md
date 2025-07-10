@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2025-07-05T10:52:00+01:00"
+date = "2025-07-10T21:32:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -26,7 +26,7 @@ Task uses no configuration files apart from the YAML files that contain the task
 #
 # Hugo: https://gohugo.io
 
-version: '3'
+version: '3.38'
 
 set: [pipefail]
 
@@ -62,7 +62,7 @@ tasks:
       - hugo server
 ```
 
-Task uses a [versioned and published schema](#checking-taskfiles) for these YAML files, so that they can be managed and validated with standard tools. However, this does not guarantee that Taskfiles will be compatible across different versions of Task. Minor releases of Task add new features, and the schema may change with major versions. To avoid issues, use installation methods that enable you to use the same version of Task across your systems.
+Task uses a [versioned and published schema](#checking-taskfiles) for these YAML files, so that they can be managed and validated with standard tools. However, this does not guarantee that Taskfiles will be compatible across different versions of Task. Minor releases of Task add new features, and the schema may change with major versions. To avoid issues, set [a minimum version in Task files](https://taskfile.dev/taskfile-versions/), and use installation methods that enable you to use the same version of Task across your systems.
 
 > If you are maintaining a project for a wide audience, consider using [just](https://www.stuartellis.name/articles/just-task-runner/) instead, which is specifically designed to maintain backward compatibility between versions.
 
@@ -187,7 +187,7 @@ Create a task in the _Taskfile.yaml_ with the name _default_. When Task is invok
 This example user _Taskfile.yaml_ includes a _default_ task that lists the available tasks:
 
 ```yaml
-version: '3'
+version: '3.38'
 
 set: [pipefail]
 
@@ -239,9 +239,9 @@ To enable support for Task in JetBrains IDEs such as PyCharm, install the [Taskf
 
 ## Using Task in a Project
 
-First, add the _.task_ directory to the exclusions for source control. This directory is used to hold [files for tracking changes](https://taskfile.dev/usage/#by-fingerprinting-locally-generated-files-and-their-sources).
+> Always add the _.task_ directory to the exclusions for source control. This directory is used to hold [files for tracking changes](https://taskfile.dev/usage/#by-fingerprinting-locally-generated-files-and-their-sources).
 
-> _Always use the name Taskfile.yaml or Taskfile.yml for Task files._ This enables tools that support [JSON Schemas](https://json-schema.org/) to identify the format of the files, so that they can provide autocompletion and validation.
+Use the name _Taskfile.yaml_ or _Taskfile.yml_ for Task files. This enables tools that support [JSON Schemas](https://json-schema.org/) to identify the format of the files, so that they can provide autocompletion and validation.
 
 If a project only requires one small set of tasks, then use a single Taskfile. If you need to manage several sets of tasks, use these features:
 
@@ -289,7 +289,7 @@ This diagram shows the suggested directory structure for a project with task inc
 #
 # https://taskfile.dev
 
-version: '3'
+version: '3.38'
 
 set: [pipefail]
 
@@ -351,7 +351,7 @@ task
 #
 # https://pre-commit.com/
 
-version: '3'
+version: '3.38'
 
 tasks:
   default:
@@ -398,7 +398,9 @@ task pre-commit:check
 Follow [the style guidelines](https://taskfile.dev/styleguide/) when writing tasks. Here are some extra suggestions:
 
 - Use a YAML formatter to format your Task files. The [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension adds support for formatting YAML files to Visual Studio Code. The [Prettier](https://prettier.io/) tool formats YAML files, and can be used in any environment.
+- Always set [a minimum version in Task files](https://taskfile.dev/taskfile-versions/). Use version _3.38_ or above, because _TASK_EXE_ was introduced in version 3.38.
 - Write _set: [pipefail]_ at the beginning of top-level Taskfiles to enable failing on the first error. This is a [shell option](https://taskfile.dev/usage/#set-and-shopt).
+- Always use _TASK_EXE_ rather than _task_ when you write a task that calls Task itself, such as a call to _--list_.
 - Always put a _desc_ attribute for each task. The description appears next to the task in the output of _--list_.
 - Consider adding a [summary](https://taskfile.dev/usage/#display-summary-of-task) attribute for each task. The summary appears in the output of _task --summary TASK-NAME_.
 - Use [argument forwarding](https://taskfile.dev/usage/#forwarding-cli-arguments-to-commands) or [wildcard task names](https://taskfile.dev/usage/#wildcard-arguments) to get inputs for a task from the command-line.
