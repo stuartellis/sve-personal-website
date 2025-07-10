@@ -3,6 +3,7 @@ title = "Low-Maintenance Kubernetes with EKS Auto Mode"
 slug = "eks-auto-mode"
 date = "2025-05-26T22:58:00+01:00"
 description = "Using EKS with Auto Mode"
+draft = true
 categories = ["automation", "aws", "devops", "kubernetes"]
 tags = ["automation", "aws", "devops", "kubernetes"]
 +++
