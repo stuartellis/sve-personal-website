@@ -1,7 +1,7 @@
 +++
 title = "An Example of Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-07-11T06:43:00+01:00"
+date = "2025-07-11T07:41:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -100,13 +100,15 @@ TFT_EDITION=copy2 task tft:destroy
 TFT_EDITION=copy2 task tft:forget
 ```
 
-Use this feature to create disposable instances for the branches of your code as you need them.
+These extra instances have their own state, using [workspaces](https://opentofu.org/docs/language/state/workspaces/). Use this feature to create disposable instances for the branches of your code as you need them, or to deploy temporary instances for any other purpose.
 
-The ability to have multiple copies of resources for the same module also enables us to run [integration tests](#testing) at any time. This example runs tests for the module:
+The ability to have multiple copies of resources for the same module without conflicts also enables us to run [integration tests](#testing) at any time. This example runs tests for the module:
 
 ```shell
 TFT_CONTEXT=dev TFT_UNIT=my-app task tft:test
 ```
+
+The integration tests can create and then destroy unique copies of the resources for every test run.
 
 All of the commands are available through [Task](https://www.stuartellis.name/articles/task-runner/). To see a list of the available tasks in a project, enter _task_ in a terminal window:
 
@@ -200,8 +202,6 @@ task tft:apply
 
 This create a complete and separate copy of the resources that are defined by the unit. Each instance of a unit has an identical configuration as other instances that use the specified context, apart from the variable `tft_edition`. The tooling automatically sets the value of the tfvar `tft_edition` to match `TFT_EDITION`. This ensures that every instance has a unique identifier that can be used in TF code, and a unique `handle` for resource names.
 
-Only set `TFT_EDITION` when you want to create an extra copy of a unit. If you do not specify a edition identifier, TF uses the _default_ workspace for state, and the value of the tfvar `tft_edition` is `default`.
-
 Once you no longer need the extra instance, run `tft:destroy` to delete the resources, and then run `tft:forget` to delete the TF remote state for the extra instance:
 
 ```shell
@@ -210,7 +210,7 @@ task tft:destroy
 task tft:forget
 ```
 
-> This tooling uses [workspaces](https://opentofu.org/docs/language/state/workspaces/) to handle the TF state for extra instances. If you do not specify an edition name, it uses the _default_ workspace.
+> Only set `TFT_EDITION` when you want to create an extra copy of a unit. If you do not specify a edition identifier, the tooling uses the _default_ [workspace](https://opentofu.org/docs/language/state/workspaces/) to store the state, and the value of the tfvar `tft_edition` is `default`.
 
 ### Formatting
 
