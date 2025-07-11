@@ -1,8 +1,8 @@
 +++
 title = "Designing a Wrapper for Terraform & OpenTofu"
 slug = "tf-wrapper-design"
-date = "2025-07-11T08:00:00+01:00"
-description = "Designing a wrapper for Terraform & OpenTofu"
+date = "2025-07-11T23:00:00+01:00"
+description = "Designing a wrapper for working with Terraform & OpenTofu components"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 +++
@@ -14,6 +14,8 @@ This article describes [an implementation of a wrapper](https://www.stuartellis.
 - [Extra instances](#extra-instances---workspaces-and-tests) of a component for development and testing.
 - Integration testing for every component.
 - Migrating from Terraform to OpenTofu. You use the same tasks for both.
+
+This means that you avoid creating a [terralith](https://masterpoint.io/blog/terralith-monolithic-terraform-architecture/), where all of TF code for all of the resources is in a single root module.
 
 The code for this example tooling is available on GitHub:
 
@@ -252,14 +254,6 @@ The project structure includes a `tf/shared/` directory to hold TF modules that 
 
 To share modules between projects, [publish them to a registry](https://opentofu.org/docs/language/modules/#published-modules).
 
-### Dependencies Between Units
-
-This tooling does not specify or enforce any dependencies between infrastructure components. You are free to run operations on separate components in parallel whenever you believe that this is safe. If you need to execute changes in a particular order, specify that order in whichever system you use to carry out deployments.
-
-Similarly, there are no restrictions on how you run tasks on multiple units. You can use any method that can call Task several times with the required variables. For example, you can create your own Taskfiles that call the supplied tasks, write a script, or define jobs for your CI system.
-
-> This tooling does not explicitly support or conflict with the [stacks feature of Terraform](https://developer.hashicorp.com/terraform/language/stacks). I do not currently test with the stacks feature. It is unclear when this feature will be finalised, or if an equivalent will be implemented by OpenTofu.
-
 ### Working with TF Versions
 
 By default, this tooling uses the copy of Terraform or OpenTofu that is provided by the system. It does not install or manage copies of Terraform and OpenTofu. It is also not dependent on specific versions of these tools.
@@ -269,6 +263,34 @@ You will need to use different versions of Terraform and OpenTofu for different 
 The generated projects include a `.terraform-version` file so that your tool version manager installs and use the Terraform version that you specify. To use OpenTofu, add an `.opentofu-version` file to enable your tool version manager to install and use the OpenTofu version that you specify.
 
 > This tooling can switch between Terraform and OpenTofu. This is specifically to help you migrate projects from one of these tools to the other.
+
+## Dependencies Between Units
+
+This tooling does not specify or enforce any dependencies between infrastructure components. You are free to run operations on separate components in parallel whenever you believe that this is safe. If you need to execute changes in a particular order, specify that order in whichever system you use to carry out deployments.
+
+Similarly, there are no restrictions on how you run tasks on multiple units. You can use any method that can call Task several times with the required variables. For example, you can create your own Taskfiles that call the supplied tasks, write a script, or define jobs for your CI system.
+
+> This tooling does not explicitly support or conflict with the [stacks feature of Terraform](https://developer.hashicorp.com/terraform/language/stacks). I do not currently test with the stacks feature. It is unclear if this feature will be permanently tied to Hashicorp cloud services in Terraform, or what equivalent will be implemented by OpenTofu.
+
+## Migrating to OpenTofu
+
+By default, this tooling currently uses Terraform. [OpenTofu](https://opentofu.org/) accepts the same commands, which means that we can switch between the two. Set `TFT_CLI_EXE` as an environment variable to specify the path to the tool that you wish to use. To use OpenTofu, set `TFT_CLI_EXE` with the value `tofu`:
+
+```shell
+export TFT_CLI_EXE=tofu
+
+TFT_CONTEXT=dev TFT_UNIT=my-app tft:init
+```
+
+To specify which version of OpenTofu to use, create a `.opentofu-version` file. This file should contain the version of OpenTofu and nothing else, like this:
+
+```shell
+1.10.2
+```
+
+The `tenv` tool reads this file when installing or running OpenTofu.
+
+> Remember that if you switch between Terraform and OpenTofu, you will need to initialise your unit again, and when you run `apply` it will migrate the TF state. The OpenTofu Website provides [migration guides](https://opentofu.org/docs/intro/migration/), which includes information about code changes that you may need to make.
 
 ## Going Further
 
