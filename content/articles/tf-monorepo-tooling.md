@@ -1,7 +1,7 @@
 +++
 title = "An Example of Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-07-11T07:41:00+01:00"
+date = "2025-07-11T07:45:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -188,7 +188,9 @@ The `backend_s3ddb` section specifies the settings for a TF backend that uses S3
 
 ### Setting the tfvars for a Context
 
-Each context has one `.tfvars` file for each unit. This `.tfvars` file is automatically loaded when you run a task that unit the with the context. To enable you to have variables for a unit that apply for every context, the directory `tf/contexts/all/` also contains one `.tfvars` file for each unit. The `.tfvars` file for a unit in the `tf/contexts/all/` directory is always used, along with the `.tfvars` for the current context.
+Each context has one `.tfvars` file for each unit. This `.tfvars` file is automatically loaded when you run a task with that context for the unit.
+
+To enable you to have variables for a unit that apply for every context, the directory `tf/contexts/all/` also contains one `.tfvars` file for each unit. The `.tfvars` file for a unit in the `tf/contexts/all/` directory is always used, along with the `.tfvars` for the current context.
 
 ### Using Extra Instances
 
@@ -210,7 +212,7 @@ task tft:destroy
 task tft:forget
 ```
 
-> Only set `TFT_EDITION` when you want to create an extra copy of a unit. If you do not specify a edition identifier, the tooling uses the _default_ [workspace](https://opentofu.org/docs/language/state/workspaces/) to store the state, and the value of the tfvar `tft_edition` is `default`.
+> Only set `TFT_EDITION` when you want to create an extra copy of a unit. If you do not specify an edition identifier, the tooling uses the _default_ [workspace](https://opentofu.org/docs/language/state/workspaces/) to store the state, and the value of the tfvar `tft_edition` will be `default`.
 
 ### Formatting
 
