@@ -306,6 +306,19 @@ Similarly, there are no restrictions on how you run tasks on multiple units. You
 
 > This tooling does not explicitly support or conflict with the [stacks feature of Terraform](https://developer.hashicorp.com/terraform/language/stacks). I do not currently test with the stacks feature. This feature is specific to HCP, and not available in OpenTofu.
 
+## Suggestions About Names
+
+Cloud systems use tags or labels to enable you to categorise and manage resources. However, we do have to give names to the groups of resources, as well as identifiers for individual resources. This tooling also provides a hash that is based on these to help you ensure unique names that are based on groups.
+
+To avoid compatibility issues between systems, we should use context and environment names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter.
+
+Every type of cloud resource may have a different set of rules about acceptable names. The length of names can also become an issue when a resource name includes several names for groups or other things. Here are some suggestions about the lengths of names:
+
+- _Product or project names:_ - 12 characters or less
+- _Component names:_ - 12 characters or less
+- _Environment names:_ - 8 characters or less
+- _Instance (edition) names:_ - 8 characters or less
+
 ## Going Further
 
 This tooling was built for my personal use. I am happy to consider feedback and suggestions, but I may decline to implement anything that makes it less useful for my needs. You are welcome to use this work as a basis for your own wrappers.

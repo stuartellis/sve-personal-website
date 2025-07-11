@@ -1,7 +1,7 @@
 +++
 title = "Designing a Wrapper for Terraform & OpenTofu"
 slug = "tf-wrapper-design"
-date = "2025-07-11T06:41:00+01:00"
+date = "2025-07-11T06:42:00+01:00"
 description = "Designing a wrapper for Terraform & OpenTofu"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -43,31 +43,7 @@ Each task in the Taskfile uses standard UNIX commands, and they do not include a
 
 The tooling is built as a [Copier](https://copier.readthedocs.io/en/stable/) template that includes the Task file. Copier enables us to create new projects from the template, add the tooling to any existing project, and synchronize the copies of the tooling in our projects with newer versions as needed. Copier uses Git and tracks releases by tags, so that templates can be distributed through any code hosting service.
 
-These decisions mean that the tooling will run on any UNIX-based system, including restricted environments like continuous integration runners and Alpine Linux containers. The wrapper works with any UNIX shell, using Task. We can install Terraform or OpenTofu through any method that we prefer. We only need Python and Copier when we create and update projects.
-
-### Requirements
-
-We use Python and Copier when we create and update projects. The tasks only need a UNIX shell, Git, Task and Terraform or OpenTofu. We can install all the tools that we need on Linux or macOS with [Homebrew](https://brew.sh/):
-
-```shell
-brew install git go-task uv cosign tenv
-```
-
-The [tenv](https://tofuutils.github.io/tenv/) tool automatically installs and uses the correct version of Terraform or OpenTofu for each project. We can [add tenv to any environment](https://tofuutils.github.io/tenv/#installation) and then use it to install the versions of Terraform or OpenTofu that we need. It also verifies the copies that it installs, using _cosign_ to carry out signature verification on OpenTofu binaries and GPG for other downloads.
-
-You can use a Python helper like [uv](https://docs.astral.sh/uv/) or [pipx](https://pipx.pypa.io/) to run [Copier](https://copier.readthedocs.io/en/stable/) without installing it. The `uv` tool can also install a copy of Python if needed. To run Copier with `uv`, use the `uvx` command:
-
-```shell
-uvx copier copy git+https://github.com/stuartellis/tf-tasks my-project
-```
-
-The `pipx` tool uses a similar command:
-
-```shell
-pipx run copier copy git+https://github.com/stuartellis/tf-tasks my-project
-```
-
-> Task and tenv do not rely on Git. Copier, Terraform and OpenTofu all use Git for operations.
+These decisions mean that the tooling will run on any UNIX-based system, including restricted environments like continuous integration runners and Alpine Linux containers. The wrapper works with any UNIX shell, using Task. We can install Terraform or OpenTofu through any method that we prefer, although [I usually recommend tenv](#working-with-tf-versions). We only need Python and Copier when we create and update projects.
 
 ## How It Works
 
@@ -288,7 +264,7 @@ Similarly, there are no restrictions on how you run tasks on multiple units. You
 
 By default, this tooling uses the copy of Terraform or OpenTofu that is provided by the system. It does not install or manage copies of Terraform and OpenTofu. It is also not dependent on specific versions of these tools.
 
-You will need to use different versions of Terraform and OpenTofu for different projects. To handle this, use a tool version manager. The version manager will install the versions that you need and automatically switch between them as needed. Consider using [tenv](https://tofuutils.github.io/tenv/), which is a version manager that is specifically designed for TF tools. Alternatively, you could decide to manage your project with [mise](https://mise.jdx.dev/), which can control all of the tools for a project.
+You will need to use different versions of Terraform and OpenTofu for different projects. To handle this, use a tool version manager. The version manager will install the versions that you need and automatically switch between them as needed. Consider using [tenv](https://tofuutils.github.io/tenv/), which is a version manager that is specifically designed for TF tools. Alternatively, you could decide to manage your projects with [mise](https://mise.jdx.dev/), which can control all of the tools for a project.
 
 The generated projects include a `.terraform-version` file so that your tool version manager installs and use the Terraform version that you specify. To use OpenTofu, add an `.opentofu-version` file to enable your tool version manager to install and use the OpenTofu version that you specify.
 
@@ -296,4 +272,4 @@ The generated projects include a `.terraform-version` file so that your tool ver
 
 ## Going Further
 
-This tooling was built for my personal use. I am happy to consider feedback and suggestions, but I may decline to implement anything that makes it less useful for my needs. You are welcome to use this work as a basis for your own wrappers.
+This example tooling was built for my personal use. I am happy to consider feedback and suggestions, but I may decline to implement anything that makes it less useful for my needs. You are welcome to use this work as a basis for your own wrappers.
