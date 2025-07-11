@@ -1,7 +1,7 @@
 +++
 title = "An Example of Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-07-11T07:45:00+01:00"
+date = "2025-07-11T08:01:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -191,6 +191,19 @@ The `backend_s3ddb` section specifies the settings for a TF backend that uses S3
 Each context has one `.tfvars` file for each unit. This `.tfvars` file is automatically loaded when you run a task with that context for the unit.
 
 To enable you to have variables for a unit that apply for every context, the directory `tf/contexts/all/` also contains one `.tfvars` file for each unit. The `.tfvars` file for a unit in the `tf/contexts/all/` directory is always used, along with the `.tfvars` for the current context.
+
+### Customising the Module Code
+
+This tooling creates new units as a copy of files in `tf/units/template/`. If the provided code is not appropriate, you can customise the contents of a module in any way that you need. The provided code is for AWS, but you can completely replace this code and use this tooling for any cloud service. It only requires that a module is a valid TF root module in the directory `tf/units/` and accepts these input variables:
+
+- `tft_product_name` (string) - The name of the product or project
+- `tft_environment_name` (string) - The name of the environment
+- `tft_unit_name` (string) - The name of the component
+- `tft_edition` (string) - An identifier for the specific instance of the resources
+
+The `handle` and other locals in the provided `meta_locals.tf` give you a set of conventions to help you manage resource names, but the tooling does not rely on them. Similarly, you can change the format of the _edition_ identifier that the test setup generates.
+
+> If you do not use the `handle` or an equivalent hash in the name of a resource, you must decide how to ensure that each copy of the resource will have a unique name.
 
 ### Using Extra Instances
 

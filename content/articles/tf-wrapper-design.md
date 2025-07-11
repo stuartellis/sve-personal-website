@@ -1,7 +1,7 @@
 +++
 title = "Designing a Wrapper for Terraform & OpenTofu"
 slug = "tf-wrapper-design"
-date = "2025-07-11T06:42:00+01:00"
+date = "2025-07-11T08:00:00+01:00"
 description = "Designing a wrapper for Terraform & OpenTofu"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -134,7 +134,7 @@ resource "aws_dynamodb_table" "example_table" {
 
 > Only use the required variables in locals, then use those locals to define resource names. This ensures that your deployed resources are not tied to the details of the tooling.
 
-If the provided code is not appropriate, you can customise the contents of a module in any way that you need. The tooling automatically finds all of the modules in the directory `tf/units/`. It only requires that a module is a valid TF root module and accepts the four defined input variables. The `handle` and other locals in `meta_locals.tf` give you a set of conventions to help you manage resource names, but the tooling does not rely on them.
+This tooling creates new units as a copy of files in `tf/units/template/`. If the provided code is not appropriate, you can customise the contents of a module in any way that you need. The tooling automatically finds all of the modules in the directory `tf/units/`. It only requires that a module is a valid TF root module and accepts the four defined input variables. The `handle` and other locals in `meta_locals.tf` give you a set of conventions to help you manage resource names, but the tooling does not rely on them.
 
 > If you do not use the `handle` or an equivalent hash in the name of a resource, you must decide how to ensure that each copy of the resource will have a unique name.
 
@@ -199,9 +199,9 @@ A [later section](#managing-resource-names) has more about resource names and in
 
 By default, TF works with the main copy of the resources for a module. This means that it uses the `default` workspace.
 
-To work with another copy of the resources, set the variable `TFT_EDITION`. The tooling then sets the active workspace to match the variable `TFT_EDITION` and sets the tfvar `tft_edition` to the same value. If a workspace with that name does not already exist, it will automatically be created. To remove a workspace, first run the `destroy` task to terminate the copy of the resources that it manages, and then run the `forget` task to delete the stored state.
+To work with another copy of the resources, we set the variable `TFT_EDITION`. The tooling then sets the active workspace to match the variable `TFT_EDITION` and sets the tfvar `tft_edition` to the same value. If a workspace with that name does not already exist, it will automatically be created. To remove a workspace, first run the `destroy` task to terminate the copy of the resources that it manages, and then run the `forget` task to delete the stored state.
 
-You can set the variable `TFT_EDITION` to any string. For example, you can configure your CI system to set the variable `TFT_EDITION` with values that are based on branch names.
+You can use any string for the variable `TFT_EDITION`. For example, you can configure your CI system to set the variable `TFT_EDITION` with values that are based on branch names.
 
 You do not set `TFT_EDITION` for tests. The example test in the unit template includes code to automatically set the value of `tft_edition` to a random string with the prefix `tt`. This is because we need to use a pattern for `tft_edition` that guarantees a unique value for every test run. You can change this to use a different format in the `tft_edition` identifier for your tests.
 
