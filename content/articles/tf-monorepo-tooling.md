@@ -245,7 +245,7 @@ TFT_UNIT=my-app task tft:fmt
 
 This tooling supports the [validate](https://opentofu.org/docs/cli/commands/validate/) and [test](https://opentofu.org/docs/cli/commands/test/) features of TF. Each unit includes a test configuration, so that you can run immediately run tests on the module as soon as it is created.
 
-Each test run creates and then immediately destroys resources without storing the state. To ensure that temporary test copies of units do not conflict with other copies of the resources, the test setup in the units sets the value of `tft_edition` to a random string with the prefix `tt`. This means that the `handle` becomes a new value for each test run.
+Each test specifies either `plan` or `apply`. Every run of an `apply` test will create and then destroy resources without storing the state. To ensure that these temporary copies do not conflict with other copies of the resources, the test setup in the units sets the value of `tft_edition` to a random string with the prefix `tt`. This means that the `handle` becomes a new value for each test run.
 
 To validate a unit before any resources are deployed, use the `tft:validate` task:
 
