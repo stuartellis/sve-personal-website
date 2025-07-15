@@ -1,7 +1,7 @@
 +++
 title = "An Example of Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-07-12T07:11:00+01:00"
+date = "2025-07-15T20:36:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -13,7 +13,7 @@ This article describes an example of tooling for [Terraform](https://www.terrafo
 - Multiple instances of the same component with different configurations. The TF configurations are called _contexts_.
 - [Extra instances of a component](#using-extra-instances). Use this to deploy instances from version control branches for development, or to create temporary instances.
 - [Integration testing](#testing) for every component.
-- [Migrating from Terraform to OpenTofu](#using-opentofu). You use the same tasks for both.
+- [Migrating from Terraform to OpenTofu](#migrating-to-opentofu). You use the same tasks for both.
 
 The tooling is built as a [Copier](https://copier.readthedocs.io/en/stable/) template. Copier enables us to create new projects from the template, add the tooling to any existing project, and synchronize the copies of the tooling in our projects with newer versions as needed.
 
@@ -40,7 +40,8 @@ brew install git go-task uv cosign tenv
 Start a new project:
 
 ```shell
-# Run Copier with uv to create a new project, and enter your details when prompted
+# Use uv to fetch Copier and run it to create a new project
+# Enter your details when prompted
 uvx copier copy git+https://github.com/stuartellis/tf-tasks my-project
 
 # Go to the working directory for the project
@@ -118,7 +119,30 @@ task
 
 If you set up [shell completions](https://taskfile.dev/installation/#setup-completions) for Task, you will see you suggestions as you type.
 
-## Usage
+## Setting Up a Project
+
+To create a new project, run Copier. I recommend that you use either [uv](https://docs.astral.sh/uv/) or [pipx](https://pipx.pypa.io/) to run Copier, because they will automatically fetch and use Copier without needing to install it. These commands both create a new project:
+
+```shell
+uvx copier copy git+https://github.com/stuartellis/tf-tasks my-project
+```
+
+```shell
+pipx run copier copy git+https://github.com/stuartellis/tf-tasks my-project
+```
+
+Enter your details when prompted. These values are written into the generated files for the project.
+
+To add the tooling to an existing project, change the working directory to your project and then run `copier copy`:
+
+```shell
+cd my-project
+uvx copier copy git+https://github.com/stuartellis/tf-tasks .
+```
+
+Copier only creates or updates the files and directories that are managed by the template. The template is configured to avoid updating these files if they already exist: `.gitignore`, `README.md` and `Taskfile.yaml`.
+
+## Using the Tasks
 
 To use the tasks in a generated project you will need:
 
@@ -194,7 +218,7 @@ To enable you to have variables for a unit that apply for every context, the dir
 
 ### Customising the Module Code
 
-This tooling creates new units as a copy of files in `tf/units/template/`. If the provided code is not appropriate, you can customise the contents of a module in any way that you need. The provided code is for AWS, but you can completely replace this code and use this tooling for any cloud service. It only requires that a module is a valid TF root module in the directory `tf/units/` and accepts these input variables:
+This tooling creates each new unit as a copy of the files in `tf/units/template/`. If the provided code is not appropriate, you can customise the contents of a module in any way that you need. The provided code is for AWS, but you can completely replace this code and use this tooling for any cloud service. It only requires that a module is a valid TF root module in the directory `tf/units/` and accepts these input variables:
 
 - `tft_product_name` (string) - The name of the product or project
 - `tft_environment_name` (string) - The name of the environment
@@ -275,31 +299,13 @@ To use local state, you will also need to comment out the `backend "s3" {}` bloc
 
 ### Shared Modules
 
-The project structure includes a `tf/shared/` directory to hold TF modules that are shared between the root modules in the same project. By design, the tooling does not manage any of these shared modules, and does not impose any requirements on them.
+The project structure includes a `tf/shared/` directory to hold TF modules that are shared between the root modules in the same project.
+
+This directory only exists to provide a simple way to share code between root modules. By design, the tooling does not manage any of the shared modules in this directory, and does not impose any requirements on them.
 
 To share modules between projects, [publish them to a registry](https://opentofu.org/docs/language/modules/#published-modules).
 
-### Using OpenTofu
-
-By default, this tooling currently uses Terraform. Set `TFT_CLI_EXE` as an environment variable to specify the path to the tool that you wish to use. To use [OpenTofu](https://opentofu.org/), set `TFT_CLI_EXE` with the value `tofu`:
-
-```shell
-export TFT_CLI_EXE=tofu
-
-TFT_CONTEXT=dev TFT_UNIT=my-app tft:init
-```
-
-To specify which version of OpenTofu to use, create a `.opentofu-version` file. This file should contain the version of OpenTofu and nothing else, like this:
-
-```shell
-1.10.2
-```
-
-The `tenv` tool reads this file when installing or running OpenTofu.
-
-> Remember that if you switch between Terraform and OpenTofu, you will need to initialise your unit again, and when you run `apply` it will migrate the TF state. The OpenTofu Website provides [migration guides](https://opentofu.org/docs/intro/migration/), which includes information about code changes that you may need to make.
-
-### Updating TF Tasks
+## Updating TF Tasks
 
 To update a project with the latest version of the template, we use the [update feature of Copier](https://copier.readthedocs.io/en/stable/updating/). We can use either [pipx](https://pipx.pypa.io/) or [uv](https://docs.astral.sh/uv/) to run Copier:
 
@@ -337,6 +343,26 @@ Every type of cloud resource may have a different set of rules about acceptable 
 - _Component names:_ - 12 characters or less
 - _Environment names:_ - 8 characters or less
 - _Instance (edition) names:_ - 8 characters or less
+
+## Migrating to OpenTofu
+
+By default, this tooling currently uses Terraform. Set `TFT_CLI_EXE` as an environment variable to specify the path to the tool that you wish to use. To use [OpenTofu](https://opentofu.org/), set `TFT_CLI_EXE` with the value `tofu`:
+
+```shell
+export TFT_CLI_EXE=tofu
+
+TFT_CONTEXT=dev TFT_UNIT=my-app tft:init
+```
+
+To specify which version of OpenTofu to use, create a `.opentofu-version` file. This file should contain the version of OpenTofu and nothing else, like this:
+
+```shell
+1.10.2
+```
+
+The `tenv` tool reads this file when installing or running OpenTofu.
+
+> Remember that if you switch between Terraform and OpenTofu, you will need to initialise your unit again, and when you run `apply` it will migrate the TF state. The OpenTofu Website provides [migration guides](https://opentofu.org/docs/intro/migration/), which includes information about code changes that you may need to make.
 
 ## Going Further
 
