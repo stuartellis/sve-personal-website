@@ -1,7 +1,7 @@
 +++
 title = "An Example of Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-07-15T20:36:00+01:00"
+date = "2025-07-19T20:19:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -78,7 +78,7 @@ You can always specifically set the unit and context for a task. This example ru
 TFT_CONTEXT=dev TFT_UNIT=my-app task tft:validate
 ```
 
-Code included in each TF module provides unique identifiers for instances, so that you can have multiple copies of the resources at the same time. The only requirement is that you include `handle` as part of each resource name:
+Code included in each TF module provides unique identifiers for instances, so that you can have multiple copies of the resources at the same time. The only requirement is that you include the `handle` for the instance as part of each resource name:
 
 ```hcl
 resource "aws_dynamodb_table" "example_table" {
@@ -90,7 +90,7 @@ To create an extra copy of the resources for a module, set the variable `TFT_EDI
 ```shell
 export TFT_CONTEXT=dev TFT_UNIT=my-app
 
-# Create a disposable copy of my-app
+# Create a disposable copy of my-app called "copy2"
 TFT_EDITION=copy2 task tft:plan
 TFT_EDITION=copy2 task tft:apply
 
@@ -161,6 +161,8 @@ task
 
 > The tasks use the namespace `tft`. This means that they do not conflict with any other tasks in the project.
 
+### Creating a Context
+
 Before you manage resources with TF, first create at least one context:
 
 ```shell
@@ -170,23 +172,6 @@ TFT_CONTEXT=dev task tft:context:new
 This creates a new context. Edit the `context.json` file in the directory `tf/contexts/<CONTEXT>/` to set the `environment` name and specify the settings for the [remote state](https://opentofu.org/docs/language/state/remote/) storage that you want to use.
 
 > This tooling currently only supports Amazon S3 for remote state storage.
-
-Next, create a unit:
-
-```shell
-TFT_UNIT=my-app task tft:new
-```
-
-Use `TFT_CONTEXT` and `TFT_UNIT` to create a deployment of the unit with the configuration from the specified context:
-
-```shell
-export TFT_CONTEXT=dev TFT_UNIT=my-app
-task tft:init
-task tft:plan
-task tft:apply
-```
-
-> You will see a warning when you run `init` with a current version of Terraform. This is because Hashicorp are [deprecating the use of DynamoDB with S3 remote state](https://developer.hashicorp.com/terraform/language/backend/s3#state-locking). To support older versions of Terraform, this tooling will continue to use DynamoDB for a period of time.
 
 ### Setting the Remote State for a Context
 
@@ -216,18 +201,39 @@ Each context has one `.tfvars` file for each unit. This `.tfvars` file is automa
 
 To enable you to have variables for a unit that apply for every context, the directory `tf/contexts/all/` also contains one `.tfvars` file for each unit. The `.tfvars` file for a unit in the `tf/contexts/all/` directory is always used, along with the `.tfvars` for the current context.
 
+### Creating a Root Module (Unit)
+
+To create a unit, use `new`:
+
+```shell
+TFT_UNIT=my-app task tft:new
+```
+
+Use `TFT_CONTEXT` and `TFT_UNIT` to create a deployment of the unit with the configuration from the specified context:
+
+```shell
+export TFT_CONTEXT=dev TFT_UNIT=my-app
+task tft:init
+task tft:plan
+task tft:apply
+```
+
+> You will see a warning when you run `init` with a current version of Terraform. This is because Hashicorp are [deprecating the use of DynamoDB with S3 remote state](https://developer.hashicorp.com/terraform/language/backend/s3#state-locking). To support older versions of Terraform, this tooling will continue to use DynamoDB for a period of time.
+
 ### Customising the Module Code
 
-This tooling creates each new unit as a copy of the files in `tf/units/template/`. If the provided code is not appropriate, you can customise the contents of a module in any way that you need. The provided code is for AWS, but you can completely replace this code and use this tooling for any cloud service. It only requires that a module is a valid TF root module in the directory `tf/units/` and accepts these input variables:
+This tooling creates each new unit as a copy of the files in `tf/units/template/`. If the provided code is not appropriate, you can customise the contents of a module in any way that you need. The provided code is for AWS, but you can replace this code and use this tooling for any cloud service.
+
+The tooling only requires that a module is a valid TF root module in the directory `tf/units/` and accepts these input variables:
 
 - `tft_product_name` (string) - The name of the product or project
 - `tft_environment_name` (string) - The name of the environment
 - `tft_unit_name` (string) - The name of the component
 - `tft_edition` (string) - An identifier for the specific instance of the resources
 
-The `handle` and other locals in the provided `meta_locals.tf` give you a set of conventions to help you manage resource names, but the tooling does not rely on them. Similarly, you can change the format of the _edition_ identifier that the test setup generates.
+The instance `handle` and other locals in the provided `meta_locals.tf` give you a set of conventions to help you manage resource names, but the tooling does not rely on them. Similarly, you can change the format of the _edition_ identifier that the test setup generates.
 
-> If you do not use the `handle` or an equivalent hash in the name of a resource, you must decide how to ensure that each copy of the resource will have a unique name.
+> If you do not use the instance `handle` or an equivalent hash in the name of a resource, you must decide how to ensure that each copy of the resource will have a unique name.
 
 ### Using Extra Instances
 
@@ -304,6 +310,15 @@ The project structure includes a `tf/shared/` directory to hold TF modules that 
 This directory only exists to provide a simple way to share code between root modules. By design, the tooling does not manage any of the shared modules in this directory, and does not impose any requirements on them.
 
 To share modules between projects, [publish them to a registry](https://opentofu.org/docs/language/modules/#published-modules).
+
+### Setting Input Variables
+
+The tooling sets the values of the required variables when it runs TF commands on a unit:
+
+- `tft_product_name` - Defaults to the name of the project. Set the environment variable `TFT_PRODUCT_NAME` to override this.
+- `tft_environment_name` - The `environment` of the current context
+- `tft_unit_name` - Automatically set as name of the unit itself
+- `tft_edition` - Automatically set as the value `default`, except when using an [extra instance](#using-extra-instances) or running [tests](#testing)
 
 ## Updating TF Tasks
 
