@@ -1,7 +1,7 @@
 +++
 title = "Designing a Wrapper for Terraform & OpenTofu"
 slug = "tf-wrapper-design"
-date = "2025-07-11T23:00:00+01:00"
+date = "2025-07-25T07:31:00+01:00"
 description = "Designing a wrapper for working with Terraform & OpenTofu components"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -110,7 +110,7 @@ The four required input variables are:
 - `tft_product_name` (string) - The name of the product or project
 - `tft_environment_name` (string) - The name of the environment
 - `tft_unit_name` (string) - The name of the component
-- `tft_edition` (string) - An identifier for the specific instance of the resources
+- `tft_edition_name` (string) - An identifier for the specific instance of the resources
 
 To create a new unit, use the `tft:new` task:
 
@@ -125,9 +125,9 @@ The tooling sets the values of the required variables when it runs TF commands o
 - `tft_product_name` - Defaults to the name of the project, but you can override this
 - `tft_environment_name` - Provided by the current [context](#contexts---configuration-profiles)
 - `tft_unit_name` - The name of the unit itself
-- `tft_edition` - Set as the value `default`, except when using an [extra instance](#extra-instances---workspaces-and-tests) or running tests
+- `tft_edition_name` - Set as the value `default`, except when using an [extra instance](#extra-instances---workspaces-and-tests) or running tests
 
-The provided code for new units also includes the file `meta_locals.tf`, which defines locals that use these variables to help you generate [names and identifiers](#managing-resource-names). These include a `handle`, a short version of a SHA256 hash for the instance. This means that you can deploy as many instances of the module as you wish without conflicts, as long as you use the `handle` as part of each resource name:
+The provided code for new units also includes the file `meta_locals.tf`, which defines locals that use these variables to help you generate [names and identifiers](#managing-resource-names). These include a `edition_id`, a short version of a SHA256 hash for the instance. This means that you can deploy as many instances of the module as you wish without conflicts, as long as you use the `edition_id` as part of each resource name:
 
 ```hcl
 resource "aws_dynamodb_table" "example_table" {
@@ -136,9 +136,9 @@ resource "aws_dynamodb_table" "example_table" {
 
 > Only use the required variables in locals, then use those locals to define resource names. This ensures that your deployed resources are not tied to the details of the tooling.
 
-This tooling creates new units as a copy of files in `tf/units/template/`. If the provided code is not appropriate, you can customise the contents of a module in any way that you need. The tooling automatically finds all of the modules in the directory `tf/units/`. It only requires that a module is a valid TF root module and accepts the four defined input variables. The `handle` and other locals in `meta_locals.tf` give you a set of conventions to help you manage resource names, but the tooling does not rely on them.
+This tooling creates new units as a copy of files in `tf/units/template/`. If the provided code is not appropriate, you can customise the contents of a module in any way that you need. The tooling automatically finds all of the modules in the directory `tf/units/`. It only requires that a module is a valid TF root module and accepts the four defined input variables. The `edition_id` and other locals in `meta_locals.tf` give you a set of conventions to help you manage resource names, but the tooling does not rely on them.
 
-> If you do not use the `handle` or an equivalent hash in the name of a resource, you must decide how to ensure that each copy of the resource will have a unique name.
+> If you do not use the `edition_id` or an equivalent hash in the name of a resource, you must decide how to ensure that each copy of the resource will have a unique name.
 
 ### Contexts - Configuration Profiles
 
@@ -177,6 +177,8 @@ Here is an example of a `context.json` file:
 }
 ```
 
+> _JSON for compatibility:_ This file uses JSON because the format can be read and written by the widest range of tools and programming languages. To work with JSON in UNIX shells, use [jq](https://jqlang.org/).
+
 To enable you to have variables for a unit that apply for every context, the directory `tf/contexts/all/` contains one `.tfvars` file for each unit. The `.tfvars` file for a unit in the `tf/contexts/all/` directory is always used, along with `.tfvars` for the current context.
 
 The tooling creates each new context as a copy of files in `tf/contexts/template/`. It copies the `standard.tfvars` file to create the tfvars files for new units. You can actually create and edit the contexts with any method. The tooling will automatically find all of the contexts in the directory `tf/contexts/`.
@@ -193,7 +195,7 @@ The extra copies of resources for workspaces and tests create a problem. If you 
 
 To solve this problem, the tooling allows each copy of a set of infrastructure to have a separate identifier, regardless of how the copy was created. This identifier is called the _edition_. The edition is always set to the value _default_, unless you run a test or decide to use an extra instance.
 
-The provided TF code for modules combines the edition and the other standard variables to create a unique SHA256 hash for the instance. A short version of this hash is registered in the locals as `handle`, so that we can create unique names for resources. The full version of this hash is also registered as a local called `meta_instance_sha256_hash`, and attached to resources as an AWS tag.
+The provided TF code for modules combines the edition and the other standard variables to create a unique SHA256 hash for the instance. A short version of this hash is registered in the locals as `edition_id`, so that we can create unique names for resources. The full version of this hash is also registered as a local called `meta_instance_sha256_hash`, and attached to resources as an AWS tag.
 
 A [later section](#managing-resource-names) has more about resource names and instance hashes.
 
@@ -201,22 +203,22 @@ A [later section](#managing-resource-names) has more about resource names and in
 
 By default, TF works with the main copy of the resources for a module. This means that it uses the `default` workspace.
 
-To work with another copy of the resources, we set the variable `TFT_EDITION`. The tooling then sets the active workspace to match the variable `TFT_EDITION` and sets the tfvar `tft_edition` to the same value. If a workspace with that name does not already exist, it will automatically be created. To remove a workspace, first run the `destroy` task to terminate the copy of the resources that it manages, and then run the `forget` task to delete the stored state.
+To work with another copy of the resources, we set the variable `TFT_EDITION`. The tooling then sets the active workspace to match the variable `TFT_EDITION` and sets the tfvar `tft_edition_name` to the same value. If a workspace with that name does not already exist, it will automatically be created. To remove a workspace, first run the `destroy` task to terminate the copy of the resources that it manages, and then run the `forget` task to delete the stored state.
 
 You can use any string for the variable `TFT_EDITION`. For example, you can configure your CI system to set the variable `TFT_EDITION` with values that are based on branch names.
 
-You do not set `TFT_EDITION` for tests. The example test in the unit template includes code to automatically set the value of `tft_edition` to a random string with the prefix `tt`. This is because we need to use a pattern for `tft_edition` that guarantees a unique value for every test run. You can change this to use a different format in the `tft_edition` identifier for your tests.
+You do not set `TFT_EDITION` for tests. The example test in the unit template includes code to automatically set the value of `tft_edition_name` to a random string with the prefix `tt`. This is because we need to use a pattern for `tft_edition_name` that guarantees a unique value for every test run. You can change this to use a different format in the `tft_edition_name` identifier for your tests.
 
 ### Managing Resource Names
 
-Cloud systems use tags or labels to enable you to categorise and manage resources. However, resources often need to have unique names. Every type of cloud resource may have a different set of rules about acceptable names. The tooling uses hashes to provide a `handle` as a local, so that every deployed instance of a module has a unique identifier that you can use in the resource names.
+Cloud systems use tags or labels to enable you to categorise and manage resources. However, resources often need to have unique names. Every type of cloud resource may have a different set of rules about acceptable names. The tooling uses hashes to provide a `edition_id` as a local, so that every deployed instance of a module has a unique identifier that you can use in the resource names.
 
 For consistency and the best compatibility between systems, we should always follow some simple guidelines for names. Values should only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter. To avoid limits on the total length of resource names, try to limit the size of other types of name:
 
 - _Product or project name:_ `tft_product_name` - 12 characters or less
 - _Component name:_ `tft_unit_name` - 12 characters or less
 - _Environment name:_ `tft_environment_name` - 8 characters or less
-- _Instance name:_ `tft_edition` - 8 characters or less
+- _Instance name:_ `tft_edition_name` - 8 characters or less
 
 To avoid coupling live resources to the tooling, do not reference these variables directly in resource names. Use these variables in locals, and then use the locals to set resource names. For convenience, the code that is provided for new modules includes locals and outputs that you can use in resource names. These are defined in the file `meta_locals.tf`:
 
@@ -225,28 +227,28 @@ locals {
 
   # Use these in tags and labels
   meta_component_name       = lower(var.tft_unit_name)
-  meta_edition              = lower(var.tft_edition)
+  meta_edition_name         = lower(var.tft_edition_name)
   meta_environment_name     = lower(var.tft_environment_name)
   meta_product_name         = lower(var.tft_product_name)
-  meta_instance_sha256_hash = sha256("${local.meta_product_name}-${local.meta_environment_name}-${local.meta_component_name}-${local.meta_edition}")
+  meta_instance_sha256_hash = sha256("${local.meta_product_name}-${local.meta_environment_name}-${local.meta_component_name}-${local.meta_edition_name}")
 
   # Use this in resource names
-  handle = substr(local.meta_instance_sha256_hash, 0, 8)
+  edition_id = substr(local.meta_instance_sha256_hash, 0, 8)
 }
 ```
 
-The SHA256 hash in the locals provides a unique identifier for each instance of the root module. This enables us to have a short `handle` that we can use in any kind of resource name. For example, we might create large numbers of Lambdas in an AWS account with different TF root modules, and they will not conflict if the name of each Lambda includes the `handle`.
+The SHA256 hash in the locals provides a unique identifier for each instance of the root module. This enables us to have a short `edition_id` that we can use in any kind of resource name. For example, we might create large numbers of Lambdas in an AWS account with different TF root modules, and they will not conflict if the name of each Lambda includes the `edition_id`.
 
-For convenience, the tooling includes tasks to calculate the handle and the full SHA256 hash, so that you can match deployed resources to the code that produced them:
+For convenience, the tooling includes tasks to calculate the ID and the full SHA256 hash, so that you can match deployed resources to the code that produced them:
 
 ```shell
-TFT_CONTEXT=dev TFT_UNIT=my-app task tft:instance:handle
-TFT_CONTEXT=dev TFT_UNIT=my-app task tft:instance:sha256
+TFT_CONTEXT=dev TFT_UNIT=my-app task tft:edition:id
+TFT_CONTEXT=dev TFT_UNIT=my-app task tft:edition:sha256
 ```
 
-The provided module code also deploys an AWS Parameter Store parameter that has the SHA256 hash, and attaches an `InstanceSha256` tag to every resource. This enables us to query AWS for resources by instance.
+The provided module code also deploys an AWS Parameter Store parameter that has the `edition_id`, and attaches an `EditionId` tag to every resource. This enables us to query AWS for resources by instance.
 
-> The provided test setup in each unit includes code to set the value of the variable `tft_edition` to a random string with the prefix `tt`. This means that test copies of resources have unique identifiers and will not conflict with existing resources that were deployed with the same TF module.
+> The provided test setup in each unit includes code to set the value of the variable `tft_edition_name` to a random string with the prefix `tt`. This means that test copies of resources have unique identifiers and will not conflict with existing resources that were deployed with the same TF module.
 
 ### Shared Modules
 
@@ -294,4 +296,4 @@ The `tenv` tool reads this file when installing or running OpenTofu.
 
 ## Going Further
 
-This example tooling was built for my personal use. I am happy to consider feedback and suggestions, but I may decline to implement anything that makes it less useful for my needs. You are welcome to use this work as a basis for your own wrappers.
+This example tooling was built for my personal use. I am happy to consider feedback and suggestions, but I may decline to implement anything that makes it less useful for my needs. You are welcome to use this work as a basis for your own wrappers. The ideas in this wrapper can be implemented in any task runner or programming language that you wish.
