@@ -19,7 +19,7 @@ The tooling is built as a [Copier](https://copier.readthedocs.io/en/stable/) tem
 
 The core is a single [Task](https://www.stuartellis.name/articles/task-runner/) file that Copier adds to projects. Task is a command-line tool that generates and runs _tasks_, shell commands that are defined in a Taskfile. Each Taskfile is a YAML document that defines templates for the commands. Task uses a versioned and published schema so that we can [validate Taskfiles](https://www.stuartellis.name/articles/task-runner/#checking-taskfiles). By design, we can replace the Taskfile with any other script or tool that generates the same commands.
 
-This tooling does not use or rely on the [stacks feature of HCP Terraform](https://developer.hashicorp.com/terraform/language/stacks). Since the _units_ are standard modules, they can be used with stacks or [any other orchestration](#what-about-dependencies-between-components).
+This tooling does not use or rely on the [stacks feature of HCP Terraform](https://developer.hashicorp.com/terraform/language/stacks). Since the _units_ are standard modules, they can be used with stacks or [any other orchestration](#what-about-dependencies-between-components) that you wish.
 
 The code for this example tooling is available on GitHub:
 
@@ -57,7 +57,7 @@ TFT_UNIT=my-app task tft:new
 
 The `tft:new` task creates a _unit_, a complete Terraform root module. Each new root module includes example code for AWS, so that it can work immediately. The context is a configuration profile. You only need to set:
 
-1. Either remote state storage settings in the context, OR use [local state](#using-local-tf-state)
+1. Either the [remote state storage](#setting-the-remote-state-for-a-context), OR use [local state](#using-local-tf-state)
 2. The AWS IAM role for TF itself. This is the variable `tf_exec_role_arn` in the tfvars files for the context.
 
 You can then start working with your TF module:
@@ -78,11 +78,11 @@ You can always specifically set the unit and context for a task. This example ru
 TFT_CONTEXT=dev TFT_UNIT=my-app task tft:validate
 ```
 
-Code included in each TF module provides unique identifiers for instances, so that you can have multiple copies of the resources at the same time. The only requirement is that you include the `handle` for the instance as part of each resource name:
+Code included in each TF module provides unique identifiers for instances, so that you can have multiple copies of the resources at the same time. The only requirement is that you include the `edition_id` for the instance as part of each resource name:
 
 ```hcl
 resource "aws_dynamodb_table" "example_table" {
-  name = "${local.meta_product_name}-${local.meta_component_name}-example-${local.handle}"
+  name = "${local.meta_product_name}-${local.meta_component_name}-example-${local.edition_id}"
 ```
 
 To create an extra copy of the resources for a module, set the variable `TFT_EDITION` with a unique name for the copy. This example will deploy an extra instance called `copy2` alongside the main set of resources:
@@ -101,7 +101,7 @@ TFT_EDITION=copy2 task tft:destroy
 TFT_EDITION=copy2 task tft:forget
 ```
 
-These extra instances have their own state, using [workspaces](https://opentofu.org/docs/language/state/workspaces/). Use this feature to create disposable instances for the branches of your code as you need them, or to deploy temporary instances for any other purpose.
+These extra instances automatically have their own unique `edition_id`, which is a shortened SHA256 hash. They also each have their own TF state, using [workspaces](https://opentofu.org/docs/language/state/workspaces/). Use this feature to create disposable instances for the branches of your code as you need them, or to deploy temporary instances for any other purpose.
 
 The ability to have multiple copies of resources for the same module without conflicts also enables us to run [integration tests](#testing) at any time. This example runs tests for the module:
 
@@ -229,11 +229,13 @@ The tooling only requires that a module is a valid TF root module in the directo
 - `tft_product_name` (string) - The name of the product or project
 - `tft_environment_name` (string) - The name of the environment
 - `tft_unit_name` (string) - The name of the component
-- `tft_edition` (string) - An identifier for the specific instance of the resources
+- `tft_edition_name` (string) - An identifier for the specific instance of the resources
 
-The instance `handle` and other locals in the provided `meta_locals.tf` give you a set of conventions to help you manage resource names, but the tooling does not rely on them. Similarly, you can change the format of the _edition_ identifier that the test setup generates.
+These variables are only used to set locals in the file `meta_locals.tf`. Use the `edition_id` and other locals in `meta_locals.tf` to define resource names, and create your own locals in another file for any other identifiers that the resources need.
 
-> If you do not use the instance `handle` or an equivalent hash in the name of a resource, you must decide how to ensure that each copy of the resource will have a unique name.
+You can change or completely replace the provided test code. For example, you might change the format of the random _edition_name_ identifier that the test setup generates.
+
+> If you do not use the instance `edition_id` or an equivalent hash in the name of a resource, you must decide how to ensure that each copy of the resource will have a unique name.
 
 ### Using Extra Instances
 
@@ -245,7 +247,7 @@ task tft:plan
 task tft:apply
 ```
 
-This create a complete and separate copy of the resources that are defined by the unit. Each instance of a unit has an identical configuration as other instances that use the specified context, apart from the variable `tft_edition`. The tooling automatically sets the value of the tfvar `tft_edition` to match `TFT_EDITION`. This ensures that every instance has a unique identifier that can be used in TF code, and a unique `handle` for resource names.
+This create a complete and separate copy of the resources that are defined by the unit. Each instance of a unit has an identical configuration as other instances that use the specified context, apart from the variable `tft_edition_name`. The tooling automatically sets the value of the tfvar `tft_edition_name` to match `TFT_EDITION`. This ensures that you can use two locals to create names and tags that are unique for each instance: a `meta_edition_name` and a `edition_id`.
 
 Once you no longer need the extra instance, run `tft:destroy` to delete the resources, and then run `tft:forget` to delete the TF remote state for the extra instance:
 
@@ -255,7 +257,7 @@ task tft:destroy
 task tft:forget
 ```
 
-> Only set `TFT_EDITION` when you want to create an extra copy of a unit. If you do not specify an edition identifier, the tooling uses the _default_ [workspace](https://opentofu.org/docs/language/state/workspaces/) to store the state, and the value of the tfvar `tft_edition` will be `default`.
+> Only set `TFT_EDITION` when you want to create an extra copy of a unit. If you do not specify an edition identifier, the tooling uses the _default_ [workspace](https://opentofu.org/docs/language/state/workspaces/) to store the state, and the value of the tfvar `tft_edition_name` will be `default`.
 
 ### Formatting
 
@@ -275,7 +277,7 @@ TFT_UNIT=my-app task tft:fmt
 
 This tooling supports the [validate](https://opentofu.org/docs/cli/commands/validate/) and [test](https://opentofu.org/docs/cli/commands/test/) features of TF. Each unit includes a test configuration, so that you can run immediately run tests on the module as soon as it is created.
 
-Each test specifies either `plan` or `apply`. Every run of an `apply` test will create and then destroy resources without storing the state. To ensure that these temporary copies do not conflict with other copies of the resources, the test setup in the units sets the value of `tft_edition` to a random string with the prefix `tt`. This means that the `handle` becomes a new value for each test run.
+Each test specifies either `plan` or `apply`. Every run of an `apply` test will create and then destroy resources without storing the state. To ensure that these temporary copies do not conflict with other copies of the resources, the test setup in the units sets the value of `tft_edition_name` to a random string with the prefix `tt`. This means that the `edition_id` becomes a new value for each test run.
 
 To validate a unit before any resources are deployed, use the `tft:validate` task:
 
@@ -318,7 +320,9 @@ The tooling sets the values of the required variables when it runs TF commands o
 - `tft_product_name` - Defaults to the name of the project. Set the environment variable `TFT_PRODUCT_NAME` to override this.
 - `tft_environment_name` - The `environment` of the current context
 - `tft_unit_name` - Automatically set as name of the unit itself
-- `tft_edition` - Automatically set as the value `default`, except when using an [extra instance](#using-extra-instances) or running [tests](#testing)
+- `tft_edition_name` - Automatically set as the value `default`, except when using an [extra instance](#using-extra-instances) or running [tests](#testing)
+
+These variables are only used to set locals in the file `meta_locals.tf`. Always use these locals in your TF code, rather than the `tft` variables. This ensures that deployed resources are not directly tied to the tooling.
 
 ## Updating TF Tasks
 
@@ -383,4 +387,6 @@ The `tenv` tool reads this file when installing or running OpenTofu.
 
 This tooling was built for my personal use. I am happy to consider feedback and suggestions, but I may decline to implement anything that makes it less useful for my needs. You are welcome to use this work as a basis for your own wrappers.
 
-For more details about how to work with Task and develop your own tasks, see [my article](https://www.stuartellis.name/articles/task-runner/).
+> For more details about how to develop your own tasks, see [my article on Task](https://www.stuartellis.name/articles/task-runner/).
+
+The ideas in this wrapper can be implemented in any task runner or programming language. For more details about these ideas and the design decisions that I made for this implementation, read my [article on designing a wrapper for TF](https://www.stuartellis.name/articles/tf-wrapper-design/).
