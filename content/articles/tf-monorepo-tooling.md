@@ -1,13 +1,13 @@
 +++
 title = "An Example of Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-07-25T07:32:00+01:00"
+date = "2025-07-26T17:45:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 +++
 
-This article describes an example of tooling for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) in a [monorepo](https://en.wikipedia.org/wiki/Monorepo). The infrastructure configurations can be maintained in the same project, alongside other code. The design also enables projects to support:
+This article describes an example of tooling for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) in a [monorepo](https://en.wikipedia.org/wiki/Monorepo). The infrastructure configurations can be maintained in the same project, alongside other code. The tooling also enables projects to support:
 
 - Multiple infrastructure components in the same code repository. Each of these _units_ is a complete [root module](https://opentofu.org/docs/language/modules/).
 - Multiple instances of the same component with different configurations. The TF configurations are called _contexts_.
@@ -15,11 +15,13 @@ This article describes an example of tooling for [Terraform](https://www.terrafo
 - [Integration testing](#testing) for every component.
 - [Migrating from Terraform to OpenTofu](#migrating-to-opentofu). You use the same tasks for both.
 
-The tooling is built as a [Copier](https://copier.readthedocs.io/en/stable/) template. Copier enables us to create new projects from the template, add the tooling to any existing project, and synchronize the copies of the tooling in our projects with newer versions as needed.
+If we separate out our infrastructure code into components then we can avoid creating a [terralith](https://masterpoint.io/blog/terralith-monolithic-terraform-architecture/), where all of the TF code for all of the resources is in a single root module. Monolithic root modules complicate development and testing, and they grow slower and more brittle over time as resources are added to them.
+
+This tooling is built as a [Copier](https://copier.readthedocs.io/en/stable/) template. Copier enables us to create new projects from the template, add the tooling to any existing project, and synchronize the copies of the tooling in our projects with newer versions as needed.
 
 The core is a single [Task](https://www.stuartellis.name/articles/task-runner/) file that Copier adds to projects. Task is a command-line tool that generates and runs _tasks_, shell commands that are defined in a Taskfile. Each Taskfile is a YAML document that defines templates for the commands. Task uses a versioned and published schema so that we can [validate Taskfiles](https://www.stuartellis.name/articles/task-runner/#checking-taskfiles). By design, we can replace the Taskfile with any other script or tool that generates the same commands.
 
-This tooling does not use or rely on the [stacks feature of HCP Terraform](https://developer.hashicorp.com/terraform/language/stacks). Since the _units_ are standard modules, they can be used with stacks or [any other orchestration](#what-about-dependencies-between-components) that you wish.
+The tooling does not use or rely on the [stacks feature of HCP Terraform](https://developer.hashicorp.com/terraform/language/stacks). Since the _units_ are standard modules, they can be used with stacks or [any other orchestration](#what-about-dependencies-between-components) that you wish.
 
 The code for this example tooling is available on GitHub:
 
@@ -231,9 +233,9 @@ The tooling only requires that a module is a valid TF root module in the directo
 - `tft_unit_name` (string) - The name of the component
 - `tft_edition_name` (string) - An identifier for the specific instance of the resources
 
-These variables are only used to set locals in the file `meta_locals.tf`. Use the `edition_id` and other locals in `meta_locals.tf` to define resource names, and create your own locals in another file for any other identifiers that the resources need.
+These variables are only used to set locals in the file `meta_locals.tf`. Use the `edition_id` and the other locals in `meta_locals.tf` to define resource names, and create your own locals in another file for any other identifiers that the resources need.
 
-You can change or completely replace the provided test code. For example, you might change the format of the random _edition_name_ identifier that the test setup generates.
+You can change or completely replace the provided test code. For example, you might change the format of the random edition name identifier that the test setup generates.
 
 > If you do not use the instance `edition_id` or an equivalent hash in the name of a resource, you must decide how to ensure that each copy of the resource will have a unique name.
 
@@ -247,7 +249,7 @@ task tft:plan
 task tft:apply
 ```
 
-This create a complete and separate copy of the resources that are defined by the unit. Each instance of a unit has an identical configuration as other instances that use the specified context, apart from the variable `tft_edition_name`. The tooling automatically sets the value of the tfvar `tft_edition_name` to match `TFT_EDITION`. This ensures that you can use two locals to create names and tags that are unique for each instance: a `meta_edition_name` and a `edition_id`.
+This creates a complete and separate copy of the resources that are defined by the unit and the context. The tooling automatically sets the value of the tfvar `tft_edition_name` to match `TFT_EDITION`. The unique edition name means that the locals `meta_edition_name` and `edition_id` are also unique.
 
 Once you no longer need the extra instance, run `tft:destroy` to delete the resources, and then run `tft:forget` to delete the TF remote state for the extra instance:
 

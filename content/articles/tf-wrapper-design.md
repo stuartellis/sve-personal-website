@@ -1,13 +1,13 @@
 +++
 title = "Designing a Wrapper for Terraform & OpenTofu"
 slug = "tf-wrapper-design"
-date = "2025-07-26T15:11:00+01:00"
+date = "2025-07-26T17:43:00+01:00"
 description = "Designing a wrapper for working with Terraform & OpenTofu components"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 +++
 
-This article describes [an implementation of a wrapper](https://www.stuartellis.name/articles/tf-monorepo-tooling/) for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/). This particular implementation is for [monorepos](https://en.wikipedia.org/wiki/Monorepo), where the infrastructure configurations can be maintained in the same project alongside other code. The design also enables projects to support:
+This article describes [an implementation of a wrapper](https://www.stuartellis.name/articles/tf-monorepo-tooling/) for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/). This particular implementation is for [monorepos](https://en.wikipedia.org/wiki/Monorepo), where the infrastructure configurations can be maintained in the same project alongside other code. The design enables projects to support:
 
 - Multiple infrastructure components in the same code repository. Each [unit](#units---tf-modules-as-components) is a complete [root module](https://opentofu.org/docs/language/modules/).
 - Multiple instances of the same component with [different configurations](#contexts---configuration-profiles)
@@ -15,7 +15,7 @@ This article describes [an implementation of a wrapper](https://www.stuartellis.
 - Integration testing for every component.
 - Migrating from Terraform to OpenTofu. You use the same tasks for both.
 
-This means that we avoid creating a [terralith](https://masterpoint.io/blog/terralith-monolithic-terraform-architecture/), where all of TF code for all of the resources is in a single root module.
+If we separate out our infrastructure code into components then we can also avoid creating a [terralith](https://masterpoint.io/blog/terralith-monolithic-terraform-architecture/), where all of the TF code for all of the resources is in a single root module. Monolithic root modules complicate development and testing, and they grow slower and more brittle over time as resources are added to them.
 
 The code for this example tooling is available on GitHub:
 
@@ -31,7 +31,11 @@ Several of the same design considerations apply to wrappers for other Infrastruc
 
 The first goal is that this tooling must enable us to use monorepos. This means that a single source code repository is able to contain the code for both the infrastructure along with code for applications and other tools.
 
-The infrastructure code should be defined as one or more named components. We need to enable multiple instances of each of these infrastructure code components to be deployed to multiple environments.
+The infrastructure code should be defined as one or more named components. This means that we will naturally avoid creating a single monolithic root module.
+
+We will need to enable deploy instances of each infrastructure code component to different environments. Since TF can manage a very wide range of SaaS and hosted infrastructure, there is no standard definition of an environment. In some cases, we might be required to have multiple configurations for the same named environment. For example, a named environment might be one shared account or tenant on a cloud service.
+
+We will also need to be able to deploy multiple instances of each configuration of an infrastructure code component to the same named environment. We need this to have multiple branches of development at the same time, when each branch has a separate copy of the infrastructure. It also enables us to run integration tests without risk, since each integration test will need to create a destroy an instance of the infrastructure.
 
 The other key goals are:
 
@@ -39,7 +43,7 @@ The other key goals are:
 2. We must be able to use this tooling alongside other tools
 3. We must be able to stop using this tooling at any time without needing to rewrite the infrastructure code
 
-In general, the tooling should be easy to understand, extend and debug. We should try to avoid the risk of adding a layer of software on top of TF that masks errors or complicates the process of debugging issues with infrastructure deployments.
+In general, the tooling should be easy to understand, extend and debug. We should try to avoid adding a layer of abstraction that makes it more difficult for us to see either the code that is being passed to TF, or the exact TF operations that are being executed.
 
 ## Design Rules
 
@@ -59,7 +63,7 @@ Each task in the Taskfile uses standard UNIX commands, and they do not include a
 
 The tooling is built as a [Copier](https://copier.readthedocs.io/en/stable/) template that includes the Task file. Copier enables us to create new projects from the template, add the tooling to any existing project, and synchronize the copies of the tooling in our projects with newer versions as needed. Copier uses Git and tracks releases by tags, so that templates can be distributed through any code hosting service.
 
-I have avoided requiring any extra configuration as much as possible. The tooling uses the files and directories in the project, so that you do not need to maintain a separate set of configuration. There are [small configuration files](#contexts---configuration-profiles) alongside the TF variables files, since they are needed to support TF remote state and enable the concept of environments. These files use the JSON format, since JSON is supported by all modern tools.
+I have avoided requiring extra configuration as much as possible. The tooling uses the files and directories in the project, so that you do not need to maintain a separate set of configuration. There are [small configuration files](#contexts---configuration-profiles) alongside the TF variables files, since they are needed to handle the settings for TF remote state and allow us to define named environments as simple attributes. These files are JSON documents, since JSON is the most standard and universally supported format for structured data. Task itself has built-in support for parsing JSON.
 
 These decisions mean that the tooling will run on any UNIX-based system, including restricted environments like continuous integration runners and Alpine Linux containers. The wrapper works with any UNIX shell, using Task. We can install Terraform or OpenTofu through any method that we prefer, although [I usually recommend tenv](#working-with-tf-versions). We only need Python and Copier when we create and update projects.
 
@@ -104,12 +108,18 @@ The tooling uses specific files and directories:
 |- Taskfile.yaml
 ```
 
-The Copier template:
+This Copier template:
 
 - Adds a `.gitignore` file, a `README.md` file and a `Taskfile.yaml` file to the root directory of the project, if these do not already exist.
 - Provides a `.terraform-version` file.
 - Provides the file `tasks/tft/Taskfile.yaml` to the project. This file contains the task definitions.
 - Provides a `tf/` directory structure for TF files and configuration.
+
+Once you have generated the project, you can run all of the tasks with [Task](https://www.stuartellis.name/articles/task-runner/). To see a list of the available tasks in a project, enter _task_ in a terminal window:
+
+```shell
+task
+```
 
 The tasks:
 
@@ -205,9 +215,9 @@ The `environment` is a string that is automatically provided to TF as the tfvar 
 
 The `description` is deliberately not used by the tooling, so that you can leave it empty, or do whatever you wish with it.
 
-The `context.json` file stores configuration for TF remote state storage. We could have tried to define the remote state with TF _backend_ configuration files and set the generated commands to use these directly. This would have prevented us from being able to programmatically change or validate the backend configuration at all.
+The `context.json` file stores configuration for TF remote state storage. We could have tried to define the remote state with TF _backend_ configuration files and set the generated commands to use these directly. This would have made it more complex for us to programmatically change or validate the configuration for the remote state.
 
-The configuration file uses JSON because the JSON format can be read and written by the widest range of tools and programming languages. For example, we can work with JSON in UNIX shell scripts by using [jq](https://jqlang.org/).
+The configuration file uses JSON because JSON documents can be read and written by the widest range of tools and programming languages. For example, we can work directly with JSON in UNIX shell scripts by using [jq](https://jqlang.org/).
 
 ### Managing TF Variables for a Context
 
@@ -223,7 +233,7 @@ The extra copies of resources for workspaces and tests create a problem. If we r
 
 To solve this problem, the tooling allows each copy of a set of infrastructure to have a separate identifier, regardless of how the copy was created. This identifier is called the _edition_. The edition is always set to the value _default_, unless you run a test or decide to use an extra instance.
 
-The provided TF code for modules combines the edition and the other standard variables to create a unique SHA256 hash for the instance. A short version of this hash is registered in the locals as `edition_id`, so that we can create unique names for resources. The full version of this hash is also registered as a local called `meta_instance_sha256_hash`, and attached to resources as an AWS tag.
+The provided TF code for modules combines the edition and the other standard variables to create a unique SHA256 hash for the instance. A short version of this hash is registered in the locals as `edition_id`, so that we can create unique names for resources. It is also attached to resources as an AWS tag, so that we can query for all of the deployed resources that belong to the same instance.
 
 A [later section](#managing-resource-names) has more about resource names and instance hashes.
 
