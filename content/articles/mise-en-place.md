@@ -1,15 +1,15 @@
 +++
 title = "mise-en-place: A Project Management Framework"
 slug = "mise-en-place"
-date = "2025-07-26T06:19:00+01:00"
+date = "2025-07-26T13:54:00+01:00"
 description = "Using mise-en-place"
 categories = ["automation", "devops", "programming", "python"]
 tags = ["automation", "devops", "golang", "linux", "macos", "javascript", "python"]
 +++
 
-The [mise-en-place](https://mise.jdx.dev/) (_mise_) tool provides a framework for managing your projects. It can define [environment variables](https://mise.jdx.dev/environments/) and act as a [task runner](https://mise.jdx.dev/tasks/) as well as handling tool versions.
+The [mise-en-place](https://mise.jdx.dev/) (mise) tool provides a framework for managing your projects. It can define [environment variables](https://mise.jdx.dev/environments/) and act as a [task runner](https://mise.jdx.dev/tasks/) as well as handling tool versions.
 
-_mise_ supports [popular programming languages](https://mise.jdx.dev/core-tools.html) and a wide range of [tools](https://mise.jdx.dev/registry.html#tools). This means that you can set the expected versions of all of the languages and tools for a project through a single mise configuration file. You can also include a [lockfile](https://mise.jdx.dev/dev-tools/mise-lock.html) with your projects to pin the exact versions of the tools that it installs.
+mise supports [popular programming languages](https://mise.jdx.dev/core-tools.html) and a wide range of [tools](https://mise.jdx.dev/registry.html#tools). This means that you can set the expected versions of all of the languages and tools for a project through a single mise configuration file. You can also include a [lockfile](https://mise.jdx.dev/dev-tools/mise-lock.html) to pin the exact versions of the software that it installs.
 
 > Avoid using mise in restricted environments. By design, mise can download and install a very wide range of software, and it will connect to multiple services on the public Internet, including GitHub.
 
@@ -17,17 +17,24 @@ _mise_ supports [popular programming languages](https://mise.jdx.dev/core-tools.
 
 The mise tool is a single executable file that is written in Rust. This enables you to use mise in any environment, including [continuous integration systems](https://mise.jdx.dev/continuous-integration.html) like GitHub Actions.
 
-> The mise tool is designed to replace [asdf](https://asdf-vm.com/), an older version manager. It addresses [security and usability issues with the design of asdf](https://mise.jdx.dev/dev-tools/comparison-to-asdf.html).
+It uses text files in the TOML format to store configuration information about tool versions, task definitions and variables. You can place configuration files in the root directory of a project to set project-level options, in your home directory for global defaults, or in [other locations](https://mise.jdx.dev/configuration.html) to handle particular requirements.
 
-Where possible, mise uses [secure installation methods](https://mise.jdx.dev/registry.html#backends) for tools, and verifies the content of downloads. Unfortunately, some software can only be supported with legacy _asdf_ plugins. These plugins only run on UNIX-based systems, and may not support verifying downloads. Refer to the [mise registry](https://mise.jdx.dev/registry.html#tools) for a list of available tools and the installation methods that are used.
+You can also add [lockfiles](https://mise.jdx.dev/dev-tools/mise-lock.html) to pin the exact versions of the software that mise installs and uses. This feature is currently _experimental_, which means that the format of the lockfiles may change with future versions of mise.
 
-> [mise supports Microsoft Windows](https://mise.jdx.dev/faq.html#windows-support). It cannot install some tools on Windows, because they require _asdf_ plugins.
+Where possible, mise uses [secure installation methods](https://mise.jdx.dev/registry.html#backends) for software, and verifies the content of downloads. Unfortunately, some software can only be supported with legacy _asdf_ plugins. These plugins only run on UNIX-based systems, and may not support verifying downloads. Refer to the [mise registry](https://mise.jdx.dev/registry.html#tools) for a list of available tools and the installation methods that are used.
+
+> The mise tool is designed to be able to replace [asdf](https://asdf-vm.com/), an older version manager, so it supports asdf plugins. It addresses [security and usability issues with the design of asdf](https://mise.jdx.dev/dev-tools/comparison-to-asdf.html).
 
 ## Setting Up mise on Developer Systems
 
-The mise project offers [many installation options](https://mise.jdx.dev/installing-mise.html), including [Homebrew](http://brew.sh/), [WinGet](https://learn.microsoft.com/en-us/windows/package-manager/winget/) and [Scoop](https://scoop.sh/) and packages for most popular Linux distributions. If necessary, you can use [a shell script](https://mise.jdx.dev/installing-mise.html#https-mise-run) to install it on Linux and macOS systems.
+> [mise itself supports Microsoft Windows](https://mise.jdx.dev/faq.html#windows-support). It cannot install tools that require _asdf_ plugins on Windows.
 
-Consider using Homebrew to install _mise_ on your development systems for macOS and Linux. Homebrew enables you to update the development tools on the system with minimal effort.
+The mise project offers [many installation options](https://mise.jdx.dev/installing-mise.html). Consider using these tools for developer systems, since they enable you to update mise:
+
+- [Homebrew](http://brew.sh/) for macOS and Linux systems
+- [WinGet](https://learn.microsoft.com/en-us/windows/package-manager/winget/) or [Scoop](https://scoop.sh/) for Microsoft Windows
+
+If necessary, you can use [a shell script](https://mise.jdx.dev/installing-mise.html#https-mise-run) to install it on Linux and macOS systems.
 
 Regardless of how you install it, [mise requires extra tools to verify downloads](https://mise.jdx.dev/tips-and-tricks.html#software-verification). Linux systems often include the GnuPG tool. To install GnuPG on other operating systems, use the same method that you used to install mise. You can then use mise to install _cosign_ and _slsa-verifier_.
 
@@ -52,14 +59,14 @@ mise settings disable_backends=asdf
 
 If you installed mise with Homebrew or a package manager, use the same method to upgrade it. If you added mise to a system without using Homebrew or a package manager, upgrade it with the [self-update feature](https://mise.jdx.dev/cli/self-update.html#mise-self-update).
 
-These commands will upgrade _mise_ on Homebrew:
+These commands will upgrade mise on Homebrew:
 
 ```shell
 brew update
 brew upgrade mise
 ```
 
-> Updating mise never changes the tool version for your projects.
+> Updating mise never changes the versions of software that your projects use.
 
 ## mise and Python Virtual Environments
 
