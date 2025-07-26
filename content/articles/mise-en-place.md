@@ -1,7 +1,7 @@
 +++
 title = "mise-en-place: A Project Management Framework"
 slug = "mise-en-place"
-date = "2025-07-25T21:57:00+01:00"
+date = "2025-07-26T06:19:00+01:00"
 description = "Using mise-en-place"
 categories = ["automation", "devops", "programming", "python"]
 tags = ["automation", "devops", "golang", "linux", "macos", "javascript", "python"]
@@ -9,7 +9,7 @@ tags = ["automation", "devops", "golang", "linux", "macos", "javascript", "pytho
 
 The [mise-en-place](https://mise.jdx.dev/) (_mise_) tool provides a framework for managing your projects. It can define [environment variables](https://mise.jdx.dev/environments/) and act as a [task runner](https://mise.jdx.dev/tasks/) as well as handling tool versions.
 
-_mise_ supports wide range of [programming languages](https://mise.jdx.dev/core-tools.html) and [tools](https://mise.jdx.dev/registry.html#tools). This means that you can set the expected versions of all of the languages and tools for a project through a single mise configuration file. You can also include a [lockfile](https://mise.jdx.dev/dev-tools/mise-lock.html) with your projects to pin the exact versions of the tools that it installs.
+_mise_ supports [popular programming languages](https://mise.jdx.dev/core-tools.html) and a wide range of [tools](https://mise.jdx.dev/registry.html#tools). This means that you can set the expected versions of all of the languages and tools for a project through a single mise configuration file. You can also include a [lockfile](https://mise.jdx.dev/dev-tools/mise-lock.html) with your projects to pin the exact versions of the tools that it installs.
 
 > Avoid using mise in restricted environments. By design, mise can download and install a very wide range of software, and it will connect to multiple services on the public Internet, including GitHub.
 
@@ -21,7 +21,7 @@ The mise tool is a single executable file that is written in Rust. This enables 
 
 Where possible, mise uses [secure installation methods](https://mise.jdx.dev/registry.html#backends) for tools, and verifies the content of downloads. Unfortunately, some software can only be supported with legacy _asdf_ plugins. These plugins only run on UNIX-based systems, and may not support verifying downloads. Refer to the [mise registry](https://mise.jdx.dev/registry.html#tools) for a list of available tools and the installation methods that are used.
 
-> [mise supports Microsoft Windows](https://mise.jdx.dev/faq.html#windows-support). It cannot install some tools on Windows, because they require _asdf_ plugins. Refer to the [mise registry](https://mise.jdx.dev/registry.html#tools) for a list of tools and installation methods.
+> [mise supports Microsoft Windows](https://mise.jdx.dev/faq.html#windows-support). It cannot install some tools on Windows, because they require _asdf_ plugins.
 
 ## Setting Up mise on Developer Systems
 
@@ -52,6 +52,15 @@ mise settings disable_backends=asdf
 
 If you installed mise with Homebrew or a package manager, use the same method to upgrade it. If you added mise to a system without using Homebrew or a package manager, upgrade it with the [self-update feature](https://mise.jdx.dev/cli/self-update.html#mise-self-update).
 
+These commands will upgrade _mise_ on Homebrew:
+
+```shell
+brew update
+brew upgrade mise
+```
+
+> Updating mise never changes the tool version for your projects.
+
 ## mise and Python Virtual Environments
 
 You should use a project tool like [uv](https://docs.astral.sh/uv/), [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io) to develop your projects. These manage Python virtual environments for you.
@@ -59,3 +68,14 @@ You should use a project tool like [uv](https://docs.astral.sh/uv/), [PDM](https
 If you are not using a project tool, you can use your version manager to handle Python virtual environments. Support for creating and switching between virtual environments is [built-in to mise](https://mise.jdx.dev/lang/python.html#automatic-virtualenv-activation).
 
 Current versions of mise can [integrate with uv](https://mise.jdx.dev/mise-cookbook/python.html#mise-uv), so that there are no conflicts between the tools.
+
+## Resources
+
+### Documentation
+
+- [mise Documentation](https://mise.jdx.dev/)
+- [Renovate support for mise](https://docs.renovatebot.com/modules/manager/mise/)
+
+### Media
+
+- [devtools FM Episode #129: Jeff Dickey - Mise, Usage, and Pitchfork and the Future of Polyglot Tools](https://www.devtools.fm/episode/129)
