@@ -1,27 +1,21 @@
 +++
 title = "An Example of Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-07-26T17:45:00+01:00"
+date = "2025-07-29T20:57:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 +++
 
-This article describes an example of tooling for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) in a [monorepo](https://en.wikipedia.org/wiki/Monorepo). The infrastructure configurations can be maintained in the same project, alongside other code. The tooling also enables projects to support:
+This article describes an example of tooling for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) in a [monorepo](https://en.wikipedia.org/wiki/Monorepo). The infrastructure configurations can be maintained in the same project, alongside other code. The tooling enables projects to support:
 
 - Multiple infrastructure components in the same code repository. Each of these _units_ is a complete [root module](https://opentofu.org/docs/language/modules/).
-- Multiple instances of the same component with different configurations. The TF configurations are called _contexts_.
+- Multiple instances of the same component with different configurations. The TF configurations are called [contexts](#creating-a-context).
 - [Extra instances of a component](#using-extra-instances). Use this to deploy instances from version control branches for development, or to create temporary instances.
 - [Integration testing](#testing) for every component.
 - [Migrating from Terraform to OpenTofu](#migrating-to-opentofu). You use the same tasks for both.
 
-If we separate out our infrastructure code into components then we can avoid creating a [terralith](https://masterpoint.io/blog/terralith-monolithic-terraform-architecture/), where all of the TF code for all of the resources is in a single root module. Monolithic root modules complicate development and testing, and they grow slower and more brittle over time as resources are added to them.
-
-This tooling is built as a [Copier](https://copier.readthedocs.io/en/stable/) template. Copier enables us to create new projects from the template, add the tooling to any existing project, and synchronize the copies of the tooling in our projects with newer versions as needed.
-
-The core is a single [Task](https://www.stuartellis.name/articles/task-runner/) file that Copier adds to projects. Task is a command-line tool that generates and runs _tasks_, shell commands that are defined in a Taskfile. Each Taskfile is a YAML document that defines templates for the commands. Task uses a versioned and published schema so that we can [validate Taskfiles](https://www.stuartellis.name/articles/task-runner/#checking-taskfiles). By design, we can replace the Taskfile with any other script or tool that generates the same commands.
-
-The tooling does not use or rely on the [stacks feature of HCP Terraform](https://developer.hashicorp.com/terraform/language/stacks). Since the _units_ are standard modules, they can be used with stacks or [any other orchestration](#what-about-dependencies-between-components) that you wish.
+> If we separate out our infrastructure code into components then we avoid create a [terralith](https://masterpoint.io/blog/terralith-monolithic-terraform-architecture/), where all of the TF code for all of the resources is in a single root module. Monolithic root modules complicate development and testing, and they grow slower and more brittle over time as resources are added to them.
 
 The code for this example tooling is available on GitHub:
 
@@ -36,7 +30,7 @@ For more details about how this tooling works and the design decisions, read my 
 First, install the tools on Linux or macOS with [Homebrew](https://brew.sh/):
 
 ```shell
-brew install git go-task uv cosign tenv
+brew install git uv go-task cosign tenv
 ```
 
 Start a new project:
@@ -121,6 +115,14 @@ task
 
 If you set up [shell completions](https://taskfile.dev/installation/#setup-completions) for Task, you will see you suggestions as you type.
 
+## How It Works
+
+This tooling is built as a [Copier](https://copier.readthedocs.io/en/stable/) template. Copier enables us to create new projects from the template, add the tooling to any existing project, and synchronize the copies of the tooling in our projects with newer versions as needed.
+
+The core is a single [Task](https://www.stuartellis.name/articles/task-runner/) file that Copier adds to projects. Task is a command-line tool that generates and runs _tasks_, shell commands that are defined in a Taskfile. Each Taskfile is a YAML document that defines templates for the commands. Task uses a versioned and published schema so that we can [validate Taskfiles](https://www.stuartellis.name/articles/task-runner/#checking-taskfiles). By design, we can replace the Taskfile with any other script or tool that generates the same commands.
+
+The tooling does not use or rely on the [stacks feature of HCP Terraform](https://developer.hashicorp.com/terraform/language/stacks). Since the _units_ are standard modules, they can be used with stacks or [any other orchestration](#what-about-dependencies-between-components) that you wish.
+
 ## Setting Up a Project
 
 To create a new project, run Copier. I recommend that you use either [uv](https://docs.astral.sh/uv/) or [pipx](https://pipx.pypa.io/) to run Copier, because they will automatically fetch and use Copier without needing to install it. These commands both create a new project:
@@ -165,13 +167,13 @@ task
 
 ### Creating a Context
 
-Before you manage resources with TF, first create at least one context:
+Contexts provide configurations for TF. Before you manage resources with TF, first create at least one context:
 
 ```shell
 TFT_CONTEXT=dev task tft:context:new
 ```
 
-This creates a new context. Edit the `context.json` file in the directory `tf/contexts/<CONTEXT>/` to set the `environment` name and specify the settings for the [remote state](https://opentofu.org/docs/language/state/remote/) storage that you want to use.
+Edit the `context.json` file in the directory `tf/contexts/<CONTEXT>/` to set the `environment` name and specify the settings for the [remote state](https://opentofu.org/docs/language/state/remote/) storage that you want to use.
 
 > This tooling currently only supports Amazon S3 for remote state storage.
 
@@ -307,25 +309,6 @@ To use local state, you will also need to comment out the `backend "s3" {}` bloc
 
 > I highly recommend that you only use TF local state for prototyping. Local state means that the resources can only be managed from a computer that has access to the state files.
 
-### Shared Modules
-
-The project structure includes a `tf/shared/` directory to hold TF modules that are shared between the root modules in the same project.
-
-This directory only exists to provide a simple way to share code between root modules. By design, the tooling does not manage any of the shared modules in this directory, and does not impose any requirements on them.
-
-To share modules between projects, [publish them to a registry](https://opentofu.org/docs/language/modules/#published-modules).
-
-### Setting Input Variables
-
-The tooling sets the values of the required variables when it runs TF commands on a unit:
-
-- `tft_product_name` - Defaults to the name of the project. Set the environment variable `TFT_PRODUCT_NAME` to override this.
-- `tft_environment_name` - The `environment` of the current context
-- `tft_unit_name` - Automatically set as name of the unit itself
-- `tft_edition_name` - Automatically set as the value `default`, except when using an [extra instance](#using-extra-instances) or running [tests](#testing)
-
-These variables are only used to set locals in the file `meta_locals.tf`. Always use these locals in your TF code, rather than the `tft` variables. This ensures that deployed resources are not directly tied to the tooling.
-
 ## Updating TF Tasks
 
 To update a project with the latest version of the template, we use the [update feature of Copier](https://copier.readthedocs.io/en/stable/updating/). We can use either [pipx](https://pipx.pypa.io/) or [uv](https://docs.astral.sh/uv/) to run Copier:
@@ -343,6 +326,25 @@ uvx copier update -A -a .copier-answers-tf-task.yaml .
 Copier `update` synchronizes the files in the project that the template manages with the latest release of the template.
 
 > Copier only changes the files and directories that are managed by the template.
+
+## How Input Variables Are Set
+
+The tooling sets the values of the required variables when it runs TF commands on a unit:
+
+- `tft_product_name` - Defaults to the name of the project. Set the environment variable `TFT_PRODUCT_NAME` to override this.
+- `tft_environment_name` - The `environment` of the current context
+- `tft_unit_name` - Automatically set as name of the unit itself
+- `tft_edition_name` - Automatically set as the value `default`, except when using an [extra instance](#using-extra-instances) or running [tests](#testing)
+
+These variables are only used to set locals in the file `meta_locals.tf`. Always use these locals in your TF code, rather than the `tft` variables. This ensures that deployed resources are not directly tied to the tooling.
+
+## Shared Modules
+
+The project structure includes a `tf/shared/` directory to hold TF modules that are shared between the root modules in the same project.
+
+This directory only exists to provide a simple way to share code between root modules. By design, the tooling does not manage any of the shared modules in this directory, and does not impose any requirements on them.
+
+To share modules between projects, [publish them to a registry](https://opentofu.org/docs/language/modules/#published-modules).
 
 ## What About Dependencies Between Components?
 
@@ -378,7 +380,7 @@ TFT_CONTEXT=dev TFT_UNIT=my-app tft:init
 To specify which version of OpenTofu to use, create a `.opentofu-version` file. This file should contain the version of OpenTofu and nothing else, like this:
 
 ```shell
-1.10.2
+1.10.3
 ```
 
 The `tenv` tool reads this file when installing or running OpenTofu.

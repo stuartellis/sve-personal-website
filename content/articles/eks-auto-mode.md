@@ -1,7 +1,7 @@
 +++
 title = "Kubernetes with Helmfile and EKS Auto Mode"
 slug = "eks-auto-mode"
-date = "2025-07-27T12:25:00+01:00"
+date = "2025-07-29T06:26:00+01:00"
 description = "Kubernetes with Helmfile and EKS Auto Mode"
 draft = true
 categories = ["automation", "aws", "devops", "kubernetes"]
@@ -75,22 +75,23 @@ This project uses several command-line tools. You can install all of these tools
 
 The required command-line tools are:
 
-- [AWS CLI](https://aws.amazon.com/cli/) - `brew install awscli`
-- [Helm]([https://helm.sh/]) - `brew install helm`
-- [Helmfile]([https://helmfile.readthedocs.io/) - `brew install helmfile`
-- [Git](https://git-scm.com/) - `brew install git`
-- [kubectl](https://kubernetes.io/docs/reference/kubectl/) - `brew install kubernetes-cli`
-- [Task](https://taskfile.dev) - `brew install go-task`
-- [Terraform](https://www.terraform.io/)
-- [Trivy](https://trivy.dev) - `brew install trivy`
+- [AWS CLI](https://aws.amazon.com/cli/)
+- [Helm]([https://helm.sh/])
+- [Helmfile]([https://helmfile.readthedocs.io/)
+- [Git](https://git-scm.com/)
+- [kubectl](https://kubernetes.io/docs/reference/kubectl/)
+- [pipx](https://pipx.pypa.io)
+- [Task](https://taskfile.dev)
+- [tenv](https://tofuutils.github.io/tenv/) with [cosign](https://github.com/sigstore/cosign)
+- [Trivy](https://trivy.dev)
+
+> We use `tenv` to install the required version of Terraform during the [set up process](#preparing-your-workstation).
 
 Use Homebrew to install the required tools:
 
 ```shell
-brew install awscli kubernetes-cli git go-task helmfile trivy tenv cosign
+brew install awscli pipx kubernetes-cli git go-task helmfile kustomize trivy tenv cosign
 ```
-
-> We use `tenv` to install the required version of Terraform during the [set up process](#preparing-your-workstation).
 
 ### AWS Account Requirements
 
@@ -147,13 +148,13 @@ There are several ways to run Kubernetes on your desktop systems, including [Min
 The `local` Helmfile has only one environment, which is the `default`. To run Helmfile commands, use the provided tasks. For example, run this task to apply the `local` Helmfile configuration to a `minikube` Kubernetes context:
 
 ```shell
-HF_PROFILE=local HF_K8S_CONTEXT=minikube hf:apply
+HF_PROFILE=local HF_K8S_CONTEXT=minikube task hf:apply
 ```
 
 Then use the `hf:test` task to run the post-deployment integration tests that the Helm charts provide:
 
 ```shell
-HF_PROFILE=local HF_K8S_CONTEXT=minikube hf:test
+HF_PROFILE=local HF_K8S_CONTEXT=minikube task hf:test
 ```
 
 Once you have deployed the Helmfile configuration, you can start port forwarding to enable access to the default _podinfo_ application:
@@ -260,7 +261,7 @@ The Helmfile configuration includes an `aws` profile, which has `dev` and `prod`
 For example, run this command to apply the `dev` environment in the `aws` Helmfile configuration to an EKS context:
 
 ```shell
-HF_PROFILE=aws HF_ENVIRONMENT=dev HF_K8S_CONTEXT=arn:aws:eks:eu-west-2:1234567891012:cluster/dev-amc-k8s-210433fc hf:apply
+HF_PROFILE=aws HF_ENVIRONMENT=dev HF_K8S_CONTEXT=arn:aws:eks:eu-west-2:1234567891012:cluster/dev-amc-k8s-210433fc task hf:apply
 ```
 
 ## Destroying EKS Clusters
