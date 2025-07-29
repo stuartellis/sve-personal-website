@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2025-07-10T22:54:00+01:00"
+date = "2025-07-29T20:51:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -84,10 +84,10 @@ If you install a global copy of Task then [you can integrate it with your shell]
 
 ### Installing Task with mise
 
-This command installs version 3.44.0 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
+This command installs version 3.44.1 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
 
 ```shell
-mise use -gy task@3.44.0
+mise use -gy task@3.44.1
 ```
 
 ### Adding Task to a Dev Container
@@ -97,7 +97,7 @@ If you are using a Dev Container with Visual Studio Code, you can add the featur
 ```json
     "features": {
         "ghcr.io/devcontainers-contrib/features/go-task:1": {
-            "version": "3.44.0"
+            "version": "3.44.1"
         }
     }
 ```
@@ -132,7 +132,7 @@ curl -L https://taskfile.dev/install.sh > install-task.sh
 To use the installation script, call it with the Git tag and the _-b_ option. The Git tag specifies the version of Task. The _-b_ option specifies which directory to install it to:
 
 ```shell
-./install-task.sh -b $HOME/.local/bin v3.44.0
+./install-task.sh -b $HOME/.local/bin v3.44.1
 ```
 
 {{< alert >}}
@@ -453,7 +453,7 @@ Add these lines to the _.pre-commit-config.yaml_ file in the root directory of y
 
 ```yaml
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: '0.33.0'
+  rev: '0.33.2'
   hooks:
     - id: check-taskfile
 - repo: https://github.com/adrienverge/yamllint.git
