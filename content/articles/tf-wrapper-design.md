@@ -1,13 +1,15 @@
 +++
 title = "Designing a Wrapper for Terraform & OpenTofu"
 slug = "tf-wrapper-design"
-date = "2025-07-26T17:43:00+01:00"
+date = "2025-07-30T22:05:00+01:00"
 description = "Designing a wrapper for working with Terraform & OpenTofu components"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 +++
 
-This article describes [an implementation of a wrapper](https://www.stuartellis.name/articles/tf-monorepo-tooling/) for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/). This particular implementation is for [monorepos](https://en.wikipedia.org/wiki/Monorepo), where the infrastructure configurations can be maintained in the same project alongside other code. The design enables projects to support:
+This article describes [an implementation of a wrapper](https://www.stuartellis.name/articles/tf-monorepo-tooling/) for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/). This implementation is for [monorepos](https://en.wikipedia.org/wiki/Monorepo), where the infrastructure configurations can be maintained in the same project alongside other code. The wrapper only requires a [general-purpose task runner tool](https://www.stuartellis.name/articles/task-runner/).
+
+The design enables projects to support:
 
 - Multiple infrastructure components in the same code repository. Each [unit](#units---tf-modules-as-components) is a complete [root module](https://opentofu.org/docs/language/modules/).
 - Multiple instances of the same component with [different configurations](#contexts---configuration-profiles)

@@ -1,13 +1,13 @@
 +++
 title = "An Example of Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-07-29T20:57:00+01:00"
+date = "2025-07-30T22:06:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 +++
 
-This article describes an example of tooling for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) in a [monorepo](https://en.wikipedia.org/wiki/Monorepo). The infrastructure configurations can be maintained in the same project, alongside other code. The tooling enables projects to support:
+This article describes an example of tooling for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) in a [monorepo](https://en.wikipedia.org/wiki/Monorepo) that only needs a [general-purpose task runner tool](https://www.stuartellis.name/articles/task-runner/). The infrastructure configurations can be maintained in the same project, alongside other code. The tooling enables projects to support:
 
 - Multiple infrastructure components in the same code repository. Each of these _units_ is a complete [root module](https://opentofu.org/docs/language/modules/).
 - Multiple instances of the same component with different configurations. The TF configurations are called [contexts](#creating-a-context).
@@ -30,15 +30,15 @@ For more details about how this tooling works and the design decisions, read my 
 First, install the tools on Linux or macOS with [Homebrew](https://brew.sh/):
 
 ```shell
-brew install git uv go-task cosign tenv
+brew install git pipx go-task cosign tenv
 ```
 
 Start a new project:
 
 ```shell
-# Use uv to fetch Copier and run it to create a new project
+# Use pipx to fetch Copier and run it to create a new project
 # Enter your details when prompted
-uvx copier copy git+https://github.com/stuartellis/tf-tasks my-project
+pipx run copier copy git+https://github.com/stuartellis/tf-tasks my-project
 
 # Go to the working directory for the project
 cd my-project
