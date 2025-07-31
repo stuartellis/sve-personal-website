@@ -12,7 +12,7 @@ This article steps you through an example project for Kubernetes clusters that s
 
 The project uses [Helmfile](https://helmfile.readthedocs.io/en/stable/), a command-line tool for deploying sets of configuration to Kubernetes clusters. Many administrators use [GitOps](https://www.gitops.tech/) systems like [Argo CD](https://argo-cd.readthedocs.io/en/stable/) that run on a cluster and continuously apply a configuration. You can use Helmfile to deploy a GitOps system to clusters, or use it to manage all of the configuration of a cluster.
 
-[Terraform](https://www.terraform.io/) configures EKS clusters that use [Auto Mode](https://docs.aws.amazon.com/eks/latest/userguide/automode.html). EKS Auto Mode configures clusters with a number of components and features that AWS recommend to integrate Kubernetes with their services and reduce manual maintenance.
+This project uses [Terraform](https://www.terraform.io/) to manage EKS clusters. These EKS clusters use [Auto Mode](https://docs.aws.amazon.com/eks/latest/userguide/automode.html), which configures a number of components and features that AWS recommend to integrate Kubernetes with their services and reduce manual maintenance.
 
 The code for this project is published on GitHub:
 
@@ -141,7 +141,7 @@ This will add the required plugins for Helmfile to your Helm installation and ca
 
 ## Using a Local Kubernetes Cluster
 
-The Helmfile configuration includes a `local` profile, as well as an `aws` profile. This enables you to develop with Kubernetes clusters on your laptop or workstation and then reproduce the same configuration on your EKS clusters.
+The project includes separate Helmfile configurations for `local` and `aws`. This enables you to develop with Kubernetes clusters on your laptop or workstation and use the same tooling on the EKS clusters.
 
 There are several ways to run Kubernetes on your desktop systems, including [Minikube](https://minikube.sigs.k8s.io/docs/) and [Docker Desktop](https://www.docker.com/products/docker-desktop/). Each desktop Kubernetes system will register as a context in your `kubectl` configuration. For example, Minikube registers a cluster as `minikube` by default.
 
@@ -289,10 +289,10 @@ The tasks for TF are provided by [my tooling template](https://github.com/stuart
 I have made several decisions in the example TF code for this project:
 
 - The example code uses the [EKS module](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest) from the [terraform-modules](https://registry.terraform.io/namespaces/terraform-aws-modules) project. This module enables you to deploy an EKS cluster by setting a relatively small number of values.
-- We use a setting in the TF provider for AWS to apply tags on all AWS resources. This ensures that resources have a consistent set of tags with minimal code.
+- It uses a setting on the TF provider for AWS to apply tags on all AWS resources. This ensures that resources have a consistent set of tags with minimal code.
 - To ensure that resource identifiers are unique, the TF code always constructs resource names in _locals_. The code for resources then uses these locals.
 - The code supports [TF test](https://opentofu.org/docs/cli/commands/test/), the built-in testing framework for TF. You may decide to use other testing frameworks.
-- The constructed names of AWS resources include an _edition_id_, which is set as a tfvar. The _edition_id_ is a shortened hash which uniquely identifies each instance.
+- The constructed names of AWS resources include an _edition_id_, which is set as a tfvar. The _edition_id_ is a shortened SHA256 hash which uniquely identifies each instance.
 
 ## Resources
 
