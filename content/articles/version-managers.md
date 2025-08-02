@@ -1,13 +1,13 @@
 +++
 title = "Using Version Managers for Your Tools"
 slug = "version-managers"
-date = "2025-07-25T22:18:00+01:00"
+date = "2025-08-02T19:11:00+01:00"
 description = "Using version managers"
 categories = ["automation", "devops", "programming", "python"]
 tags = ["automation", "devops", "golang", "linux", "macos", "javascript", "python"]
 +++
 
-Avoid installing stand-alone packages for tools and programming languages. Instead, use version manager tools. These enable you to use the correct version of the required tools and dependencies for each of your projects. A version manager can download all of the versions of a product that your projects need and switch the active version as you move between projects, as well as letting you set a default version.
+Avoid installing stand-alone packages for tools and programming languages. Instead, use version managers. These enable you to use the correct version of the required tools and dependencies for each of your projects. A version manager can download all of the versions of a product that your projects need and switch the active version as you move between projects, as well as letting you set a default version.
 
 Each popular programming language has a [specialized version manager](#version-managers-for-programming-languages). Alternatively, you can use [mise-en-place](https://www.stuartellis.name/articles/mise-en-place/) (_mise_), which supports wide range of popular programming languages and tools. This means that you can set the expected versions of all of the languages and tools for a project through a single mise configuration file.
 
@@ -49,7 +49,7 @@ Homebrew can install all of the popular version manager tools. For example, to i
 brew install pyenv rustup
 ```
 
-You can also use Homebrew to install other tools that version managers work with. For example, we should install _cosign_ on systems that use _tenv_. If _cosign_ is present, _tenv_ automatically uses it to carry out signature verification on the binaries that it downloads. This command uses Homebrew to install both _tenv_ and _cosign_:
+You can also use Homebrew to install other tools that version managers work with. For example, we should install _cosign_ on systems that use _tenv_. If _cosign_ is present, _tenv_ automatically uses it to carry out signature verification on the OpenTofu binaries that it downloads. This command uses Homebrew to install both _tenv_ and _cosign_:
 
 ```shell
 brew install tenv cosign
