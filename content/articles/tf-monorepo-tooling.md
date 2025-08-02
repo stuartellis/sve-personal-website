@@ -1,13 +1,13 @@
 +++
 title = "An Example of Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-07-30T22:06:00+01:00"
+date = "2025-08-02T10:32:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 +++
 
-This article describes an example of tooling for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) in a [monorepo](https://en.wikipedia.org/wiki/Monorepo) that only needs a [general-purpose task runner tool](https://www.stuartellis.name/articles/task-runner/). The infrastructure configurations can be maintained in the same project, alongside other code. The tooling enables projects to support:
+This article describes an example of tooling for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) in a [monorepo](https://en.wikipedia.org/wiki/Monorepo) which only needs a [general-purpose task runner tool](https://www.stuartellis.name/articles/task-runner/). The infrastructure configurations can be maintained in the same project, alongside other code. The tooling enables projects to support:
 
 - Multiple infrastructure components in the same code repository. Each of these _units_ is a complete [root module](https://opentofu.org/docs/language/modules/).
 - Multiple instances of the same component with different configurations. The TF configurations are called [contexts](#creating-a-context).
@@ -125,14 +125,14 @@ The tooling does not use or rely on the [stacks feature of HCP Terraform](https:
 
 ## Setting Up a Project
 
-To create a new project, run Copier. I recommend that you use either [uv](https://docs.astral.sh/uv/) or [pipx](https://pipx.pypa.io/) to run Copier, because they will automatically fetch and use Copier without needing to install it. These commands both create a new project:
-
-```shell
-uvx copier copy git+https://github.com/stuartellis/tf-tasks my-project
-```
+To create a new project, run Copier. I recommend that you use either [pipx](https://pipx.pypa.io/) or [uv](https://docs.astral.sh/uv/) to run Copier, because they will automatically fetch and use Copier without needing to install it. These commands both create a new project:
 
 ```shell
 pipx run copier copy git+https://github.com/stuartellis/tf-tasks my-project
+```
+
+```shell
+uvx copier copy git+https://github.com/stuartellis/tf-tasks my-project
 ```
 
 Enter your details when prompted. These values are written into the generated files for the project.
@@ -256,7 +256,7 @@ This creates a complete and separate copy of the resources that are defined by t
 Once you no longer need the extra instance, run `tft:destroy` to delete the resources, and then run `tft:forget` to delete the TF remote state for the extra instance:
 
 ```shell
-export TFT_CONTEXT=dev TFT_UNIT=my-app TFT_EDITION=copy2
+export TFT_CONTEXT=dev TFT_UNIT=my-app TFT_EDITION=feature1
 task tft:destroy
 task tft:forget
 ```
@@ -356,11 +356,11 @@ Similarly, there are no restrictions on how you run tasks on multiple units. You
 
 ## Suggestions About Names
 
-Cloud systems use tags or labels to enable you to categorise and manage resources. However, we do have to give names to the groups of resources, as well as identifiers for individual resources. This tooling also provides a hash that is based on these to help you ensure unique names that are based on groups.
+Cloud systems use tags or labels to enable you to categorise and manage resources. However, we do have to give names to the groups of resources, as well as setting identifiers for individual resources. This tooling provides a hash that is based on these groups to help you ensure unique resource identifiers.
 
-To avoid compatibility issues between systems, we should use context and environment names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter.
+Every type of cloud resource may have a different set of rules about acceptable names. To avoid compatibility issues between systems, we should use context and environment names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter.
 
-Every type of cloud resource may have a different set of rules about acceptable names. The length of names can also become an issue when a resource name includes several names for groups or other things. Here are some suggestions about the lengths of names:
+The length of names can also become an issue when a resource name includes several names for groups or other things. Here are some suggestions about the lengths of names:
 
 - _Product or project names:_ - 12 characters or less
 - _Component names:_ - 12 characters or less

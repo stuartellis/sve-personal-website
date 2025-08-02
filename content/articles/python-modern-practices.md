@@ -1,20 +1,19 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2025-03-22T09:22:00+00:00"
+date = "2025-08-02T10:29:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
-
 +++
 
 [Python](https://www.python.org/) has a long history, and it has evolved over time. This article describes some agreed modern best practices.
 
 ## Use a Helper to Run Python Tools
 
-Use either [pipx](https://pipx.pypa.io) or [uv](https://docs.astral.sh/uv/) to run Python tools on development systems, rather than installing these applications with _pip_ or another method. Both _pipx_ and _uv_ automatically put each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
+Use either [pipx](https://pipx.pypa.io) or [uv](https://docs.astral.sh/uv/) to run Python tools on development systems, rather than installing these applications with _pip_ or another method. Both _pipx_ and _uv_ automatically put each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html). Many Linux distributions include packages for _pipx_.
 
-> If you use _pipx_, always follow the instructions on the [Website](https://pipx.pypa.io) to install it on your operating system. These ensure that _pipx_ works correctly with an appropriate Python installation.
+> Always follow the instructions on the [Website](https://pipx.pypa.io) to install _pipx_ on your operating system. This will ensure that _pipx_ works correctly with an appropriate Python installation.
 
 Use the [pipx run](https://pipx.pypa.io/stable/#walkthrough-running-an-application-in-a-temporary-virtual-environment) feature of _pipx_ for most Python applications, or [uvx](https://docs.astral.sh/uv/#tool-management), which is the equivalent command for _uv_. These download the application to a cache and run it. For example, these commands download and run the latest version of [bpytop](https://github.com/aristocratos/bpytop), a system monitoring tool:
 
@@ -66,7 +65,7 @@ Choose a project tool to help you manage your project. There are several of thes
 
 If you are developing a Python library, you may prefer to use [Hatch](https://hatch.pypa.io). Hatch provides a well-integrated set of features for building and testing Python packages.
 
-Avoid using [Rye](https://rye.astral.sh/). Rye is for experimental work that may be implemented in _uv_ in future.
+Avoid using [Rye](https://rye.astral.sh/). Rye has been superseded by _uv_.
 
 Some Python projects have specialized requirements that mean that you will decide to create a customised project, rather than using a popular project tool. In these cases, think carefully about the tools and directory structure that you will need, and ensure that you are familiar with the current [best practices for Python projects](https://www.stuartellis.name/articles/python-project-setup).
 
@@ -264,7 +263,7 @@ This [RealPython article](https://realpython.com/working-with-files-in-python/#d
 
 ### Use os.scandir() Instead of os.listdir()
 
-The _os.scandir()_ function is significantly faster and more efficient than _os.listdir()_. If you previously used the _os.listdir()_ function, udate your code to use _os.scandir()_.
+The _os.scandir()_ function is significantly faster and more efficient than _os.listdir()_. If you previously used the _os.listdir()_ function, update your code to use _os.scandir()_.
 
 This function provides an iterator, and works with a context manager:
 

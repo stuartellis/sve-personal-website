@@ -1,7 +1,7 @@
 +++
 title = "mise-en-place: A Project Management Framework"
 slug = "mise-en-place"
-date = "2025-07-26T13:54:00+01:00"
+date = "2025-08-02T10:32:00+01:00"
 description = "Using mise-en-place"
 categories = ["automation", "devops", "programming", "python"]
 tags = ["automation", "devops", "golang", "linux", "macos", "javascript", "python"]
@@ -70,7 +70,7 @@ brew upgrade mise
 
 ## mise and Python Virtual Environments
 
-You should use a project tool like [uv](https://docs.astral.sh/uv/), [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io) to develop your projects. These manage Python virtual environments for you.
+You should use a project tool to develop your Python projects, such [uv](https://docs.astral.sh/uv/) or [Poetry](https://python-poetry.org/). These manage Python virtual environments for you.
 
 If you are not using a project tool, you can use your version manager to handle Python virtual environments. Support for creating and switching between virtual environments is [built-in to mise](https://mise.jdx.dev/lang/python.html#automatic-virtualenv-activation).
 
