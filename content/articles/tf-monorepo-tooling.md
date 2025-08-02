@@ -1,16 +1,17 @@
 +++
 title = "An Example of Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-08-02T10:32:00+01:00"
+date = "2025-08-02T18:24:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 +++
 
-This article describes an example of tooling for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) in a [monorepo](https://en.wikipedia.org/wiki/Monorepo) which only needs a [general-purpose task runner tool](https://www.stuartellis.name/articles/task-runner/). The infrastructure configurations can be maintained in the same project, alongside other code. The tooling enables projects to support:
+This article describes an example of tooling for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) which only needs a [general-purpose task runner tool](https://www.stuartellis.name/articles/task-runner/). The tooling enables projects to support:
 
+- Infrastructure components alongside other code in a [monorepo](https://en.wikipedia.org/wiki/Monorepo).
 - Multiple infrastructure components in the same code repository. Each of these _units_ is a complete [root module](https://opentofu.org/docs/language/modules/).
-- Multiple instances of the same component with different configurations. The TF configurations are called [contexts](#creating-a-context).
+- Multiple instances of the same infrastructure component with different configurations. The TF configurations are called [contexts](#creating-a-context).
 - [Extra instances of a component](#using-extra-instances). Use this to deploy instances from version control branches for development, or to create temporary instances.
 - [Integration testing](#testing) for every component.
 - [Migrating from Terraform to OpenTofu](#migrating-to-opentofu). You use the same tasks for both.
