@@ -11,7 +11,7 @@ tags = ["python"]
 
 ## Use a Helper to Run Python Tools
 
-Use either [pipx](https://pipx.pypa.io) or [uv](https://docs.astral.sh/uv/) to run Python tools on development systems, rather than installing these applications with _pip_ or another method. Both _pipx_ and _uv_ automatically put each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html). Many Linux distributions include packages for _pipx_.
+Use either [pipx](https://pipx.pypa.io) or [uv](https://docs.astral.sh/uv/) to run Python tools on development systems, rather than installing these applications with _pip_ or another method. Both _pipx_ and _uv_ automatically put each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
 
 > Always follow the instructions on the [Website](https://pipx.pypa.io) to install _pipx_ on your operating system. This will ensure that _pipx_ works correctly with an appropriate Python installation.
 
