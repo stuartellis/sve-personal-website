@@ -74,16 +74,19 @@ brew update
 brew upgrade mise
 ```
 
-> Updating mise never changes the versions of software that your projects use.
+> Updating mise never changes the versions of software that your projects use. Run [mise upgrade](https://mise.jdx.dev/cli/upgrade.html#mise-upgrade) to update the versions of tools in mise configurations.
 
 ## Using mise with Continuous Integration (CI)
 
 You can use mise with [any continuous integration system](https://mise.jdx.dev/continuous-integration.html). The mise project provide an [action](https://mise.jdx.dev/continuous-integration.html#github-actions) for GitHub Actions.
 
-If you define a custom environment for CI, you will need to ensure that:
+If you define a custom environment for CI, you will need to ensure that the environment has GnuPG installed, so that mise can use it to verify downloads. You can then use mise to install _cosign_ and _slsa-verifier_ to ensure that it has these tools to [verify downloads](https://mise.jdx.dev/tips-and-tricks.html#software-verification). Add this command to your CI job definition:
 
-1. The environment has GnuPG installed, so that mise can use it to verify downloads.
-2. It has a [$MISE_DATA_DIR](https://mise.jdx.dev/directories.html#local-share-mise) environment variable that specifies a location that your CI can cache.
+```shell
+mise use cosign slsa-verifier
+```
+
+Most CI systems support caching downloads. Set the [$MISE_DATA_DIR](https://mise.jdx.dev/directories.html#local-share-mise) as an environment variable, and use it to specify a location that your CI can cache.
 
 I recommend that your mise configuration has one or more [environments](https://mise.jdx.dev/configuration/environments.html#config-environments) specifically for CI, so that you can override the default settings for the project when you need different behavior in a CI job. To specify the active mise environment for a CI job, set `MISE_ENV` as an environment variable:
 
