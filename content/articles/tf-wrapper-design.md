@@ -1,21 +1,21 @@
 +++
 title = "Designing a Wrapper for Terraform & OpenTofu"
 slug = "tf-wrapper-design"
-date = "2025-08-02T10:31:00+01:00"
+date = "2025-08-03T07:14:00+01:00"
 description = "Designing a wrapper for working with Terraform & OpenTofu components"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 +++
 
-This article describes [an implementation of a wrapper](https://www.stuartellis.name/articles/tf-monorepo-tooling/) for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/). This implementation is for [monorepos](https://en.wikipedia.org/wiki/Monorepo), where the infrastructure configurations can be maintained in the same project alongside other code. The wrapper uses a [general-purpose task runner tool](https://www.stuartellis.name/articles/task-runner/) and has no other dependencies.
+This article describes [an implementation of a wrapper](https://www.stuartellis.name/articles/tf-monorepo-tooling/) for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/). This implementation is for [monorepos](https://en.wikipedia.org/wiki/Monorepo), where the infrastructure configurations can be maintained in the same project along with other code. The wrapper uses a [general-purpose task runner tool](https://www.stuartellis.name/articles/task-runner/) and has no other dependencies.
 
 The design enables projects to support:
 
 - Multiple infrastructure components in the same code repository. Each [unit](#units---tf-modules-as-components) is a complete [root module](https://opentofu.org/docs/language/modules/).
 - Multiple instances of the same component with [different configurations](#contexts---configuration-profiles)
-- [Extra instances](#extra-instances---workspaces-and-tests) of a component for development and testing.
+- [Deploying extra instances](#extra-instances---workspaces-and-tests) of a component for development and testing.
 - Integration testing for every component.
-- Migrating from Terraform to OpenTofu. You use the same tasks for both.
+- Migrating from Terraform to OpenTofu. You use the same commands for both.
 
 If we separate out our infrastructure code into components then we can also avoid creating a [terralith](https://masterpoint.io/blog/terralith-monolithic-terraform-architecture/), where all of the TF code for all of the resources is in a single root module. Monolithic root modules complicate development and testing, and they grow slower and more brittle over time as resources are added to them.
 
@@ -25,19 +25,21 @@ The code for this example tooling is available on GitHub:
 
 For practical walk-through of using the example tooling, see [this article](https://www.stuartellis.name/articles/tf-monorepo-tooling/).
 
-Several of the same design considerations apply to wrappers for other Infrastructure as Code (IaC) tools.
+This wrapper is specifically for Terraform and OpenTofu. You could write a similar wrapper for other Infrastructure as Code (IaC) tools. Many of the same design considerations will apply for other tools, such as CloudFormation.
 
 > These articles uses the identifier _TF_ or _tf_ for Terraform and OpenTofu. Both tools accept the same commands and have the same behavior. The tooling itself is just called `tft` (_TF Tasks_).
 
 ## Goals
 
-The first goal is that this tooling must enable us to use monorepos. This means that a single source code repository is able to contain the code for both the infrastructure along with code for applications and other tools.
+The first goal is that this tooling must enable us to use monorepos. This means that a source code repository will be able to contain the code for both the infrastructure along with code for applications and other tools.
 
-The infrastructure code should be defined as one or more named components. This means that we will naturally avoid creating a single monolithic root module.
+The infrastructure code should be defined as one or more named components. This means that we will naturally avoid creating a single monolithic TF root module.
 
-We will need to enable deploy instances of each infrastructure code component to different environments. Since TF can manage a very wide range of SaaS and hosted infrastructure, there is no standard definition of an environment. In some cases, we might be required to have multiple configurations for the same named environment. For example, a named environment might be one shared account or tenant on a cloud service.
+We know that we will need to be able to deploy instances of each infrastructure code component to different environments. Since TF can manage a very wide range of SaaS and hosted infrastructure, there is actually no consistency about what an environment means. In effect, all that we can say is that the environment is an attribute that is part of each configuration.
 
-We will also need to be able to deploy multiple instances of each configuration of an infrastructure code component to the same named environment. We need this to have multiple branches of development at the same time, when each branch has a separate copy of the infrastructure. It also enables us to run integration tests without risk, since each integration test will need to create a destroy an instance of the infrastructure.
+In some cases, we might be required to deploy multiple instances of a component into the same named environment with different configurations. For example, all of the instances might exist in a named environment that is one shared account or tenant on a cloud service.
+
+We will also need to be able to deploy multiple instances of an infrastructure code component to the same named environment with the same set of configuration. We need this to have multiple branches of development at the same time, with a separate copy of the infrastructure for each branch. This capability will also enable us to run integration tests without risk, since each integration test will need to create a destroy an instance of the infrastructure.
 
 The other key goals are:
 

@@ -1,7 +1,7 @@
 +++
 title = "An Example of Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-08-02T18:24:00+01:00"
+date = "2025-08-03T07:15:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -9,12 +9,12 @@ tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 
 This article describes an example of tooling for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) which only needs a [general-purpose task runner tool](https://www.stuartellis.name/articles/task-runner/). The tooling enables projects to support:
 
-- Infrastructure components alongside other code in a [monorepo](https://en.wikipedia.org/wiki/Monorepo).
+- [Monorepo](https://en.wikipedia.org/wiki/Monorepo) projects that contain the code for infrastructure and applications.
 - Multiple infrastructure components in the same code repository. Each of these _units_ is a complete [root module](https://opentofu.org/docs/language/modules/).
 - Multiple instances of the same infrastructure component with different configurations. The TF configurations are called [contexts](#creating-a-context).
-- [Extra instances of a component](#using-extra-instances). Use this to deploy instances from version control branches for development, or to create temporary instances.
+- [Deploying extra instances of a component](#using-extra-instances) with the same set of configuration. Use this to deploy instances from version control branches for development, or to create temporary instances.
 - [Integration testing](#testing) for every component.
-- [Migrating from Terraform to OpenTofu](#migrating-to-opentofu). You use the same tasks for both.
+- [Migrating from Terraform to OpenTofu](#migrating-to-opentofu). You use the same commands for both.
 
 > If we separate out our infrastructure code into components then we avoid create a [terralith](https://masterpoint.io/blog/terralith-monolithic-terraform-architecture/), where all of the TF code for all of the resources is in a single root module. Monolithic root modules complicate development and testing, and they grow slower and more brittle over time as resources are added to them.
 
@@ -357,9 +357,9 @@ Similarly, there are no restrictions on how you run tasks on multiple units. You
 
 ## Suggestions About Names
 
-Cloud systems use tags or labels to enable you to categorise and manage resources. However, we do have to give names to the groups of resources, as well as setting identifiers for individual resources. This tooling provides a hash that is based on these groups to help you ensure unique resource identifiers.
+Cloud systems use tags or labels to enable you to categorise and manage resources. However, we do have to give names to the groups of resources, as well as setting identifiers for individual resources.
 
-Every type of cloud resource may have a different set of rules about acceptable names. To avoid compatibility issues between systems, we should use context and environment names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter.
+Every type of cloud resource may have a different set of rules about acceptable names. To avoid compatibility issues between systems, we should use names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter.
 
 The length of names can also become an issue when a resource name includes several names for groups or other things. Here are some suggestions about the lengths of names:
 
@@ -367,6 +367,8 @@ The length of names can also become an issue when a resource name includes sever
 - _Component names:_ - 12 characters or less
 - _Environment names:_ - 8 characters or less
 - _Instance (edition) names:_ - 8 characters or less
+
+This tooling provides an `edition_id` hash that is based on these groups, so that every instance of a set of resources has a unique identifier. You can place the `edition_id` anywhere in a resource name.
 
 ## Migrating to OpenTofu
 
