@@ -11,7 +11,7 @@ Avoid installing stand-alone packages for tools and programming languages. Inste
 
 Each popular programming language has a [specialized version manager](#version-managers-for-programming-languages). Alternatively, you can use [mise-en-place](https://www.stuartellis.name/articles/mise-en-place/) (_mise_), which supports wide range of popular programming languages and tools. This means that you can set the expected versions of all of the languages and tools for a project through a single mise configuration file.
 
-> Avoid using mise in restricted environments. By design, mise can download and install a very wide range of software, and it will connect to multiple services on the public Internet, including GitHub.
+> Avoid using mise for projects that have strict requirements about reproducible environments or the [software supply chain](https://en.wikipedia.org/wiki/Software_supply_chain). By design, mise can download and install a very wide range of software, and it will connect to multiple services on the public Internet, including GitHub.
 
 ## Specialized Version Managers
 
@@ -90,18 +90,18 @@ brew upgrade
 
 ## Version Managers and Python
 
+You should use a project tool to develop your Python projects, such as [uv](https://docs.astral.sh/uv/) or [Poetry](https://python-poetry.org/). These manage Python virtual environments for you, and also offer the ability to manage the versions of Python. I would currently recommend that you use pyenv or mise to install versions of Python, rather than using the features in project tools.
+
+> You can enable current versions of mise to [integrate with uv](https://mise.jdx.dev/mise-cookbook/python.html#mise-uv), so that there are no conflicts between the tools.
+
 ### Installing Python with a Version Manager
 
-Whichever version manager tool you use, ensure that it compiles each version of Python that it installs, rather than downloading [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). These standalone builds are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project.
+Whichever tool that you use to install Python, ensure that it compiles each version of Python that it installs, rather than using [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). These standalone builds are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project.
 
 The pyenv tool automatically compiles Python. You must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation rather than standalone builds. Both pyenv and mise use [python-build](https://github.com/pyenv/pyenv/tree/master/plugins/python-build) to compile Python.
 
 > Only use the Python installation features of [uv](https://docs.astral.sh/uv/), [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) for experimental projects. These project tools always download the third-party standalone builds of Python when a user requests a Python version that is not already installed on the system.
 
 ### Version Managers and Python Virtual Environments
-
-You should use a project tool like [uv](https://docs.astral.sh/uv/), [PDM](https://pdm-project.org) or [Hatch](https://hatch.pypa.io) to develop your projects. These manage Python virtual environments for you.
-
-> Current versions of mise can [integrate with uv](https://mise.jdx.dev/mise-cookbook/python.html#mise-uv), so that there are no conflicts between the tools.
 
 If you are not using a project tool, you can use your version manager to handle Python virtual environments. Both pyenv and mise support automatic switching between Python virtual environments. Support for creating and switching between virtual environments is [built-in to mise](https://mise.jdx.dev/lang/python.html#automatic-virtualenv-activation). The [pyenv](https://github.com/pyenv/pyenv) version manager supports virtual environments with the [virtualenv plugin](https://github.com/pyenv/pyenv-virtualenv).

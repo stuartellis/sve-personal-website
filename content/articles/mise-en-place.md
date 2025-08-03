@@ -1,23 +1,23 @@
 +++
-title = "mise-en-place: A Project Management Framework"
+title = "mise-en-place for Managing Development Tooling"
 slug = "mise-en-place"
-date = "2025-08-02T20:22:00+01:00"
+date = "2025-08-03T07:21:00+01:00"
 description = "Using mise-en-place"
 categories = ["automation", "devops", "programming", "python"]
 tags = ["automation", "devops", "golang", "linux", "macos", "javascript", "python"]
 +++
 
-The [mise-en-place](https://mise.jdx.dev/) (mise) tool provides a framework for managing your projects, so that you have a consistent set of configuration, tools and reusable tasks for every copy of the project. It can run in Continuous Integration (CI) environments as well as on developer systems.
+[mise-en-place](https://mise.jdx.dev/) (mise) provides a framework for development tooling, so that you can have a consistent set of configuration, tools and task definitions for every copy of a project. It can run in Continuous Integration (CI) environments as well as on developer systems.
 
-You can also set a default mise configuration for your user account, so that it can provide a standard set of configuration, tools and tasks that are always available.
+You can also set a default mise configuration for your user account. This enables it to provide a standard set of configuration, tools and tasks that are always available to you.
 
-To enable mise to manage tools, you define the expected versions of the [programming languages](https://mise.jdx.dev/core-tools.html) and other [tools](https://mise.jdx.dev/registry.html#tools). It then downloads copies of the required software to a cache as needed, and can switch the active version of each language and tool when you change projects or request a different version.
+To enable mise to manage software, you define the expected versions of the [programming languages](https://mise.jdx.dev/core-tools.html) and other [tools](https://mise.jdx.dev/registry.html#tools). It then downloads copies of the required products to a cache as needed, and can switch the active version of each language and tool when you change projects or request a different version.
 
 Similarly, you can define [environment variables](https://mise.jdx.dev/environments/), so that mise adds and removes them as needed. It supports multiple profiles for a project, so that you can switch between sets of environment variables as you work.
 
 Current versions of mise allow you to define [tasks](https://mise.jdx.dev/tasks/) as part of mise configurations. This means that you may not need to use a separate task runner such as [just](https://www.stuartellis.name/articles/just-task-runner/) to maintain a shared set of tasks for projects that use mise.
 
-> Avoid using mise in restricted environments. By design, mise can download and install a very wide range of software, and it will connect to multiple services on the public Internet, including GitHub.
+> Avoid using mise for projects that have strict requirements about reproducible environments or the [software supply chain](https://en.wikipedia.org/wiki/Software_supply_chain). By design, mise can download and install a very wide range of software, and it will connect to multiple services on the public Internet, including GitHub.
 
 ## How mise Works
 
@@ -78,9 +78,18 @@ brew upgrade mise
 
 ## Using mise with Continuous Integration (CI)
 
-You can use mise with [any continuous integration system](https://mise.jdx.dev/continuous-integration.html). The mise project provide an [action](https://mise.jdx.dev/continuous-integration.html#github-actions) for GitHub Actions. If you define a custom environment for CI, you will need to ensure that GnuPG is installed for mise to use it to verify downloads.
+You can use mise with [any continuous integration system](https://mise.jdx.dev/continuous-integration.html). The mise project provide an [action](https://mise.jdx.dev/continuous-integration.html#github-actions) for GitHub Actions.
 
-I recommend that your mise configuration has one or more [environments](https://mise.jdx.dev/configuration/environments.html#config-environments) specifically for CI, so that you can override the default settings for the project when you need different behavior in a CI job. To specify the active mise environment for a CI job, set `MISE_ENV` as an environment variable.
+If you define a custom environment for CI, you will need to ensure that:
+
+1. The environment has GnuPG installed, so that mise can use it to verify downloads.
+2. It has a [$MISE_DATA_DIR](https://mise.jdx.dev/directories.html#local-share-mise) environment variable that specifies a location that your CI can cache.
+
+I recommend that your mise configuration has one or more [environments](https://mise.jdx.dev/configuration/environments.html#config-environments) specifically for CI, so that you can override the default settings for the project when you need different behavior in a CI job. To specify the active mise environment for a CI job, set `MISE_ENV` as an environment variable:
+
+```shell
+MISE_ENV: test
+```
 
 I would also recommend that you configure your CI system to set an environment variable to enable [paranoid](https://mise.jdx.dev/paranoid.html) mode:
 
@@ -88,23 +97,33 @@ I would also recommend that you configure your CI system to set an environment v
 MISE_PARANOID: 1
 ```
 
-Once you define these environment variables you can use `mise trust` in your CI, so that mise only works with the configuration files that you expect:
+Once you enable paranoid mode, mise only uses the configuration files that you allow. To allow a configuration file, use `mise trust`:
 
 ```shell
-# Trust the main project configuration file
+# Trust the main mise configuration file for the project.
 mise trust --quiet .mise.toml
 
 # Trust the configuration file for the current mise environment.
 mise trust --quiet .mise.$MISE_ENV.toml
 ```
 
-## mise and Python Virtual Environments
+For extra safety, disable the use of legacy asdf plugins:
 
-You should use a project tool to develop your Python projects, such [uv](https://docs.astral.sh/uv/) or [Poetry](https://python-poetry.org/). These manage Python virtual environments for you.
+```shell
+mise settings disable_backends=asdf
+```
 
-If you are not using a project tool, you can use your version manager to handle Python virtual environments. Support for creating and switching between virtual environments is [built-in to mise](https://mise.jdx.dev/lang/python.html#automatic-virtualenv-activation).
+## mise and Python
+
+You should use a project tool to develop your Python projects, such as [uv](https://docs.astral.sh/uv/) or [Poetry](https://python-poetry.org/). These manage Python virtual environments for you, and also offer to manage the versions of Python.
 
 Current versions of mise can [integrate with uv](https://mise.jdx.dev/mise-cookbook/python.html#mise-uv), so that there are no conflicts between the tools.
+
+I would recommend that you use mise to manage the versions of Python. This means that the versions of Python are managed along with all of the other tools.
+
+In addition, the project tools always download third-party [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/) of Python when a user requests a Python version that is not already installed on the system. These standalone builds are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project. You can [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to compile copies of Python rather than using the standalone builds.
+
+If you are not using a project tool, you can use mise to handle Python virtual environments as well as the versions of Python. Support for creating and switching between virtual environments is [built-in to mise](https://mise.jdx.dev/lang/python.html#automatic-virtualenv-activation).
 
 ## Resources
 
