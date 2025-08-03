@@ -7,7 +7,7 @@ categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 +++
 
-This article describes an example of tooling for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) which only needs a [general-purpose task runner tool](https://www.stuartellis.name/articles/task-runner/). The tooling enables projects to support:
+This article describes an example of tooling for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) using a [general-purpose task runner utility](https://www.stuartellis.name/articles/task-runner/). The tooling supports these features without any other third-party software:
 
 - [Monorepo](https://en.wikipedia.org/wiki/Monorepo) projects that contain the code for infrastructure and applications.
 - Multiple infrastructure components in the same code repository. Each of these _units_ is a complete [root module](https://opentofu.org/docs/language/modules/).
@@ -120,7 +120,7 @@ If you set up [shell completions](https://taskfile.dev/installation/#setup-compl
 
 This tooling is built as a [Copier](https://copier.readthedocs.io/en/stable/) template. Copier enables us to create new projects from the template, add the tooling to any existing project, and synchronize the copies of the tooling in our projects with newer versions as needed.
 
-The core is a single [Task](https://www.stuartellis.name/articles/task-runner/) file that Copier adds to projects. Task is a command-line tool that generates and runs _tasks_, shell commands that are defined in a Taskfile. Each Taskfile is a YAML document that defines templates for the commands. Task uses a versioned and published schema so that we can [validate Taskfiles](https://www.stuartellis.name/articles/task-runner/#checking-taskfiles). By design, we can replace the Taskfile with any other script or tool that generates the same commands.
+The core is a single [Task](https://www.stuartellis.name/articles/task-runner/) file that Copier adds to projects. Task is a command-line tool that generates and runs _tasks_, shell commands that are defined in a Taskfile. Each Taskfile is a YAML document that defines templates for the commands. Task uses a versioned and published schema so that we can [validate Taskfiles](https://www.stuartellis.name/articles/task-runner/#checking-taskfiles). By design, we can replace Task with any other script or tool that generates the same commands.
 
 The tooling does not use or rely on the [stacks feature of HCP Terraform](https://developer.hashicorp.com/terraform/language/stacks). Since the _units_ are standard modules, they can be used with stacks or [any other orchestration](#what-about-dependencies-between-components) that you wish.
 
