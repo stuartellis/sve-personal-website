@@ -37,7 +37,7 @@ Helmfile runs Helm and Kustomize to work with releases and kustomizations. It is
 
 Helmfile produces standard Helm releases, so it is compatible with other Kubernetes management tools. Each Helmfile configuration only affects the Helm releases that it manages. This means that you can use multiple Helmfile configurations to manage different features on the same Kubernetes cluster, or use of a combination of Helmfile and other tools. I would recommend only using one configuration for each namespace, to avoid issues.
 
-> Read the documentation on [ArgoCD integration](https://helmfile.readthedocs.io/en/stable/#argocd-integration) if you would like to use Helmfile and Argo CD on the same Kubernetes clusters.
+> Read the documentation on [Argo CD integration](https://helmfile.readthedocs.io/en/stable/#argocd-integration) if you would like to use Helmfile and Argo CD on the same Kubernetes clusters.
 
 ## Quick Examples
 
@@ -103,7 +103,13 @@ helmfile destroy
 
 Deleting Helm releases removes all of the resources that they manage. Helmfile `destroy` will not delete namespaces.
 
-> For examples of configurations that use a directory structure, see my [example EKS project](https://github.com/stuartellis/eks-auto-example). This project uses two Helmfile configurations: _helmfile/local/_ and _helmfile/aws/_.
+## Other Examples of Helmfile Configurations
+
+For examples of configurations that use a directory structure, see my [example EKS project](https://github.com/stuartellis/eks-auto-example). This project uses three Helmfile configurations:
+
+- _helmfile/aws/_ - AWS EKS Auto Mode
+- _helmfile/kind/_ - Docker Desktop (Kubernetes in Docker)
+- _helmfile/minikube/_ - Minikube
 
 ## Requirements
 
@@ -144,5 +150,5 @@ Helmfile currently provides completion support for Bash, fish and zsh.
 
 ### Videos
 
-- [Helmfile - How to manage Kubernetes Helm releases](https://www.youtube.com/watch?v=qIJt8Iq8Zb0), from AI & DevOps Toolkit, 29 minutes, posted 4 years ago
-- [Complete Helm Chart Tutorial: From Beginner to Expert Guide](https://www.youtube.com/watch?v=DQk8HOVlumI) - by Rahul Wagh, 2 hours, includes Helmfile
+- [Helmfile - How to manage Kubernetes Helm releases](https://www.youtube.com/watch?v=qIJt8Iq8Zb0), from _AI & DevOps Toolkit_, 29 minutes
+- [Complete Helm Chart Tutorial: From Beginner to Expert Guide](https://www.youtube.com/watch?v=DQk8HOVlumI) - by _Rahul Wagh_, 2 hours, includes Helmfile
