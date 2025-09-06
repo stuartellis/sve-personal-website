@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Diverse Systems with just"
 slug = "just-task-runner"
-date = "2025-07-29T20:52:00+01:00"
+date = "2025-09-06T15:41:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -154,7 +154,7 @@ You can install _just_ with an operating system package manager, if necessary. F
 ```shell
 winget install --id Casey.Just --exact  # winget on Microsoft Windows
 sudo dnf install just                   # dnf on Fedora Linux
-sudo apt install just                   # apt on Ubuntu
+sudo apt install just                   # apt on Debian and Ubuntu
 ```
 
 To install Task on Alpine Linux, you need to use the _community_ package repository:
@@ -162,8 +162,6 @@ To install Task on Alpine Linux, you need to use the _community_ package reposit
 ```shell
 doas apk add go-task --repository=http://dl-cdn.alpinelinux.org/alpine/latest-stable/community/
 ```
-
-Debian only includes [_just_ in the _testing_ distribution](https://packages.debian.org/trixie/just).
 
 > See [the package list page](https://just.systems/man/en/packages.html) for a list of the available operating system packages.
 
