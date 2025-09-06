@@ -1,18 +1,18 @@
 +++
 title = "Kubernetes with Helmfile and EKS Auto Mode"
 slug = "eks-auto-mode"
-date = "2025-07-29T06:26:00+01:00"
+date = "2025-09-06T16:07:00+01:00"
 description = "Kubernetes with Helmfile and EKS Auto Mode"
 draft = true
 categories = ["automation", "aws", "devops", "kubernetes"]
 tags = ["automation", "aws", "devops", "kubernetes"]
 +++
 
-This article steps you through an example project for Kubernetes clusters that supports both local development and [Amazon EKS](https://docs.aws.amazon.com/eks/).
+This article steps you through an example project for Kubernetes clusters that supports both development and [Amazon EKS](https://docs.aws.amazon.com/eks/).
 
-The project uses [Helmfile](https://helmfile.readthedocs.io/en/stable/), a command-line tool for deploying sets of configuration to Kubernetes clusters. Many administrators use [GitOps](https://www.gitops.tech/) systems like [Argo CD](https://argo-cd.readthedocs.io/en/stable/) that run on a cluster and continuously apply a configuration. You can use Helmfile to deploy a GitOps system to clusters, or use it to manage all of the configuration of a cluster.
+This project uses [Terraform](https://www.terraform.io/) to manage the EKS clusters and [Helmfile](https://www.stuartellis.name/articles/helmfile/), a command-line tool for deploying sets of configuration to Kubernetes clusters. Many administrators use [GitOps](https://www.gitops.tech/) systems like [Argo CD](https://argo-cd.readthedocs.io/en/stable/) that run on a cluster and continuously apply a configuration. You can use Helmfile to deploy a GitOps system to clusters, or use it to manage all of the configuration of a cluster.
 
-This project uses [Terraform](https://www.terraform.io/) to manage EKS clusters. These EKS clusters use [Auto Mode](https://docs.aws.amazon.com/eks/latest/userguide/automode.html), which configures a number of components and features that AWS recommend to integrate Kubernetes with their services and reduce manual maintenance.
+The EKS clusters use [Auto Mode](https://docs.aws.amazon.com/eks/latest/userguide/automode.html), which configures a number of components and features that AWS recommend to integrate Kubernetes with their services and reduce manual maintenance.
 
 The code for this project is published on GitHub:
 
@@ -141,20 +141,22 @@ This will add the required plugins for Helmfile to your Helm installation and ca
 
 ## Using a Local Kubernetes Cluster
 
-The project includes separate Helmfile configurations for `local` and `aws`. This enables you to develop with Kubernetes clusters on your laptop or workstation and use the same tooling on the EKS clusters.
+There are several ways to run Kubernetes on your desktop systems, including [Minikube](https://minikube.sigs.k8s.io/docs/) and [Docker Desktop](https://www.docker.com/products/docker-desktop/), which uses [kind(Kubernetes in Docker)](https://kind.sigs.k8s.io/). Each desktop Kubernetes system will register as a context in your `kubectl` configuration. For example, Minikube registers a cluster as `minikube` by default.
 
-There are several ways to run Kubernetes on your desktop systems, including [Minikube](https://minikube.sigs.k8s.io/docs/) and [Docker Desktop](https://www.docker.com/products/docker-desktop/). Each desktop Kubernetes system will register as a context in your `kubectl` configuration. For example, Minikube registers a cluster as `minikube` by default.
+The project includes separate Helmfile configurations for `aws` and other targets. This structure enables you to develop with Kubernetes clusters on your laptop or workstation and use the same tooling on the EKS clusters. It currently includes example configurations for `minikube` and `kind`.
 
-The `local` Helmfile has only one environment, which is the `default`. To run Helmfile commands, use the provided tasks. For example, run this task to apply the `local` Helmfile configuration to a `minikube` Kubernetes context:
+> Both the `minikube` and the `kind` Helmfiles only have one environment, which is the `default`.
+
+To run Helmfile commands, use the provided tasks. By default, the tasks will use the `minikube` Helmfile configuration and the `minikube` Kubernetes context. To use other configurations and contexts, set the Helmfile configuration and the Kubernetes context as variables. For example, run this task to apply the `kind` Helmfile configuration to the `docker` Kubernetes context:
 
 ```shell
-HF_PROFILE=local HF_K8S_CONTEXT=minikube task hf:apply
+HELMFILE_PROFILE=kind HELMFILE_K8S_CONTEXT=docker task helmfile:apply
 ```
 
-Then use the `hf:test` task to run the post-deployment integration tests that the Helm charts provide:
+Then use the `helmfile:test` task to run the post-deployment integration tests that the Helm charts provide:
 
 ```shell
-HF_PROFILE=local HF_K8S_CONTEXT=minikube task hf:test
+HELMFILE_PROFILE=kind HELMFILE_K8S_CONTEXT=docker task helmfile:test
 ```
 
 Once you have deployed the Helmfile configuration, you can start port forwarding to enable access to the default _podinfo_ application:
@@ -165,7 +167,7 @@ kubectl -n podinfo port-forward deploy/podinfo 8080:9898
 
 You can then see the Web page for the _podinfo_ application. Open a Web browser window with this address:
 
-- [http://localhost:8080/](http://localhost:8080/)
+- [http://host:8080/](http://host:8080/)
 
 ## Setting Up an EKS Cluster
 
@@ -200,7 +202,7 @@ Once the `apply` for _amc-k8s_ is complete, you will have an EKS cluster.
 
 > It takes at least 10 minutes for a new EKS cluster to be created.
 
-To use local TF state, you need to comment out the `backend "s3" {}` block in the `main.tf` file in each of the three TF root modules. You then use the task `tft:init:local`, rather than `tft:init`.
+To use TF state, you need to comment out the `backend "s3" {}` block in the `main.tf` file in each of the three TF root modules. You then use the task `tft:init:`, rather than `tft:init`.
 
 ## 4: Register Your Cluster with Kubernetes Tools
 
@@ -217,6 +219,8 @@ Run this command to add the cluster to your kubectl configuration:
 ```shell
 aws eks update-kubeconfig --name your-eks-cluster-name
 ```
+
+You can now access your cluster with any Kubernetes tools that read your context configuration, such as [kubectl](https://kubernetes.io/docs/reference/kubectl/), [k9s](https://k9scli.io/) and Helmfile.
 
 To set this cluster as the default context for your Kubernetes tools, run this command:
 
@@ -261,7 +265,7 @@ The Helmfile configuration includes an `aws` profile, which has `dev` and `prod`
 For example, run this command to apply the `dev` environment in the `aws` Helmfile configuration to an EKS context:
 
 ```shell
-HF_PROFILE=aws HF_ENVIRONMENT=dev HF_K8S_CONTEXT=arn:aws:eks:eu-west-2:1234567891012:cluster/dev-amc-k8s-210433fc task hf:apply
+HELMFILE_PROFILE=aws HELMFILE_ENVIRONMENT=dev HELMFILE_K8S_CONTEXT=arn:aws:eks:eu-west-2:1234567891012:cluster/dev-amc-k8s-210433fc task helmfile:apply
 ```
 
 ## Destroying EKS Clusters
@@ -290,7 +294,7 @@ I have made several decisions in the example TF code for this project:
 
 - The example code uses the [EKS module](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest) from the [terraform-modules](https://registry.terraform.io/namespaces/terraform-aws-modules) project. This module enables you to deploy an EKS cluster by setting a relatively small number of values.
 - It uses a setting on the TF provider for AWS to apply tags on all AWS resources. This ensures that resources have a consistent set of tags with minimal code.
-- To ensure that resource identifiers are unique, the TF code always constructs resource names in _locals_. The code for resources then uses these locals.
+- To ensure that resource identifiers are unique, the TF code always constructs resource names in _s_. The code for resources then uses these s.
 - The code supports [TF test](https://opentofu.org/docs/cli/commands/test/), the built-in testing framework for TF. You may decide to use other testing frameworks.
 - The constructed names of AWS resources include an _edition_id_, which is set as a tfvar. The _edition_id_ is a shortened SHA256 hash which uniquely identifies each instance.
 
@@ -306,6 +310,7 @@ I have made several decisions in the example TF code for this project:
 
 ### Helmfile
 
+- [My article on Helmfile](https://www.stuartellis.name/articles/helmfile/)
 - [Official Helmfile Documentation](https://helmfile.readthedocs.io/)
 - [Even more powerful Helming with Helmfile](https://www.hackerstack.org/even-more-powerful-helming-with-helmfile/) - A tutorial for Helmfile by _Gmkziz_
 - [Helmfile - How to manage Kubernetes Helm releases](https://www.youtube.com/watch?v=qIJt8Iq8Zb0), a video by _AI & DevOps Toolkit_, 29 minutes
