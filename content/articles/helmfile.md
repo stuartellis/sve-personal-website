@@ -1,7 +1,7 @@
 +++
 title = "Configuring Kubernetes with Helmfile"
 slug = "helmfile"
-date = "2025-09-06T17:34:00+01:00"
+date = "2025-09-06T17:45:00+01:00"
 description = "Managing Kubernetes configurations with Helmfile"
 categories = ["automation", "devops", "kubernetes"]
 tags = ["automation", "devops", "kubernetes"]
@@ -36,6 +36,8 @@ Helmfile is designed to be a flexible tool that integrates with existing tools a
 > [Renovate supports Helmfile](https://docs.renovatebot.com/modules/manager/helmfile/), so that you can automate updating the Helm chart versions.
 
 Helmfile produces standard Helm releases, so it is compatible with other Kubernetes management tools. Each Helmfile configuration only affects the releases that it manages. This means that you can use multiple Helmfile configurations to manage different features on the same Kubernetes cluster, or use of a combination of Helmfile and other tools. I would recommend only using one configuration for each namespace, to avoid issues.
+
+> Read the documentation on [ArgoCD integration](https://helmfile.readthedocs.io/en/stable/#argocd-integration) if you would like to use Helmfile and Argo CD on the same Kubernetes clusters.
 
 ## Quick Examples
 
