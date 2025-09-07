@@ -1,7 +1,7 @@
 +++
 title = "An Example of Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-08-03T07:15:00+01:00"
+date = "2025-09-07T17:30:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -108,6 +108,12 @@ TFT_CONTEXT=dev TFT_UNIT=my-app task tft:test
 
 The integration tests can create and then destroy unique copies of the resources for every test run.
 
+To pass extra options to Terraform or OpenTofu, add `--` to the end of the command, followed by the options:
+
+```shell
+task tft:init -- -upgrade
+```
+
 All of the commands are available through [Task](https://www.stuartellis.name/articles/task-runner/). To see a list of the available tasks in a project, enter _task_ in a terminal window:
 
 ```shell
@@ -188,17 +194,29 @@ The `context.json` file is the configuration file for the context. It specifies 
     "description": "Cloud development environment",
     "environment": "dev"
   },
-  "backend_s3ddb": {
-    "tfstate_bucket": "789000123456-tf-state-dev-eu-west-2",
-    "tfstate_ddb_table": "789000123456-tf-lock-dev-eu-west-2",
-    "tfstate_dir": "dev",
-    "region": "eu-west-2",
-    "role_arn": "arn:aws:iam::789000123456:role/my-tf-state-role"
+  "backends": {
+    "s3": {
+      "tfstate_bucket": "789000123456-tf-state-dev-eu-west-2",
+      "tfstate_dir": "dev",
+      "region": "eu-west-2",
+      "role_arn": "arn:aws:iam::789000123456:role/my-tf-state-role"
+    },
+    "s3ddb": {
+      "tfstate_bucket": "",
+      "tfstate_ddb_table": "",
+      "tfstate_dir": "",
+      "region": "",
+      "role_arn": ""
+    }
   }
 }
 ```
 
-The `backend_s3ddb` section specifies the settings for a TF backend that uses S3 for storage with DynamoDB for locking. The tooling automatically enables encryption for this backend.
+The `backends.s3` section specifies the settings for a TF backend that uses S3 for storage. This uses the [S3 native locking feature](https://opentofu.org/docs/language/settings/backends/s3/) in current versions of Terraform and OpenTofu. It does not use DynamoDB. The tooling will use this backend by default.
+
+The `backends.s3ddb` section specifies the settings for a legacy TF backend that uses S3 for storage and DynamoDB for locking. Only use this type of backend if you need to use an older version of Terraform or OpenTofu.
+
+> The tooling automatically enables encryption for both types of S3 backend.
 
 ### Setting the tfvars for a Context
 
@@ -208,22 +226,26 @@ To enable you to have variables for a unit that apply for every context, the dir
 
 ### Creating a Root Module (Unit)
 
-To create a unit, use `new`:
+To create a unit from the template, use `new`:
 
 ```shell
-TFT_UNIT=my-app task tft:new
+TFT_UNIT=my-new-app task tft:new
+```
+
+To create a unit as a copy of an existing unit, use `clone`. Specify the existing unit with `TFT_SOURCE_UNIT` and the name of the new unit with `TFT_UNIT`, like this:
+
+```shell
+TFT_SOURCE_UNIT=my-first-app TFT_UNIT=my-new-app task tft:clone
 ```
 
 Use `TFT_CONTEXT` and `TFT_UNIT` to create a deployment of the unit with the configuration from the specified context:
 
 ```shell
-export TFT_CONTEXT=dev TFT_UNIT=my-app
+export TFT_CONTEXT=dev TFT_UNIT=my-new-app
 task tft:init
 task tft:plan
 task tft:apply
 ```
-
-> You will see a warning when you run `init` with a current version of Terraform. This is because Hashicorp are [deprecating the use of DynamoDB with S3 remote state](https://developer.hashicorp.com/terraform/language/backend/s3#state-locking). To support older versions of Terraform, this tooling will continue to use DynamoDB for a period of time.
 
 ### Customising the Module Code
 

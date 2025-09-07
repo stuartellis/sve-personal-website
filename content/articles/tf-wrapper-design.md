@@ -1,7 +1,7 @@
 +++
 title = "Designing a Wrapper for Terraform & OpenTofu"
 slug = "tf-wrapper-design"
-date = "2025-08-03T07:14:00+01:00"
+date = "2025-09-07T17:25:00+01:00"
 description = "Designing a wrapper for working with Terraform & OpenTofu components"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
@@ -144,10 +144,14 @@ The four required input variables are:
 - `tft_unit_name` (string) - The name of the component
 - `tft_edition_name` (string) - An identifier for the specific instance of the resources
 
-To create a new unit, use the `tft:new` task:
+To create a new unit, use the `tft:clone` or `tft:new` tasks:
 
 ```shell
-TFT_UNIT=my-app task tft:new
+# Create a new unit as a copy of an existing unit
+TFT_SOURCE_UNIT=my-first-app TFT_UNIT=my-new-app task tft:clone
+
+# Create a new unit from the template unit
+TFT_UNIT=my-new-app task tft:new
 ```
 
 Each unit is created as a subdirectory in the directory `tf/units/`. The provided code implements the required input variables in the file `tft_variables.tf`.
@@ -198,12 +202,20 @@ Here is an example of a `context.json` file:
     "description": "Cloud development environment",
     "environment": "dev"
   },
-  "backend_s3ddb": {
-    "tfstate_bucket": "789000123456-tf-state-dev-eu-west-2",
-    "tfstate_ddb_table": "789000123456-tf-lock-dev-eu-west-2",
-    "tfstate_dir": "dev",
-    "region": "eu-west-2",
-    "role_arn": "arn:aws:iam::789000123456:role/my-tf-state-role"
+  "backends": {
+    "s3": {
+      "tfstate_bucket": "789000123456-tf-state-dev-eu-west-2",
+      "tfstate_dir": "dev",
+      "region": "eu-west-2",
+      "role_arn": "arn:aws:iam::789000123456:role/my-tf-state-role"
+    },
+    "s3ddb": {
+      "tfstate_bucket": "",
+      "tfstate_ddb_table": "",
+      "tfstate_dir": "",
+      "region": "",
+      "role_arn": ""
+    }
   }
 }
 ```
@@ -304,7 +316,7 @@ You will need to use different versions of Terraform and OpenTofu for different 
 
 The best way to handle this is to use a version manager. This will install the versions that you specify in a configuration file and automatically switch between them as needed.
 
-This tooling is designed to work with version managers and not complicate version changes. It does not install or manage copies of Terraform and OpenTofu. Unlike other wrappers, it is also not dependent on specific versions of Terraform or OpenTofu. It supports new features by new tasks, but never hard-codes references to specific versions.
+This tooling is designed to work with version managers and to not complicate version changes. It does not install or manage copies of Terraform and OpenTofu. Unlike other wrappers, it is also not dependent on specific versions of Terraform or OpenTofu. It supports new features by new tasks, but never hard-codes references to specific versions. For example, it supports both types of S3 remote backend by having a separate `init` task for each.
 
 For convenience, the generated projects include a `.terraform-version` file, so that your tool version manager will install and use the Terraform version that you specify. To use OpenTofu, add an `.opentofu-version` file to enable your tool version manager to install and use the OpenTofu version that you specify. Once the version file is generated, you change the version as you need.
 
