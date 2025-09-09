@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2025-07-29T20:51:00+01:00"
+date = "2025-09-09T06:25:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -70,7 +70,7 @@ Task uses a [versioned and published schema](#checking-taskfiles) for these YAML
 
 You can install Task with [operating system packages](#installing-task-with-operating-system-packages). These packages only provide a single global copy of Task, and only allow you to install the versions that are available for that release of the operating system.
 
-If possible, use a tool that enables you to specify which versions of Task to install and activate different versions of Task for different projects. These options enable you to specify a version of Task for a project:
+If possible, use a tool that enables you to specify which versions of Task to install and activate different versions of Task for different projects. These options enable you to specify a version of Task for each project:
 
 1. Tool version managers like [mise](#installing-task-with-mise)
 2. [Dev Containers](#adding-task-to-a-dev-container)
@@ -151,14 +151,16 @@ This will install the most recent version of Task that is known to Homebrew.
 
 ### Installing Task with Operating System Packages
 
-If you do need to install Task with an operating system package manager, versions are available for several popular systems. For example, these commands install Task:
+If you do need to install Task with an operating system package manager, versions are available for several popular systems. The Task project provide RPM and DEB packages through [GitHub Releases](https://github.com/go-task/task/releases). These can be used on any operating system that supports the package format.
+
+Some operating systems have packages for Task that are available through their own repositories. For example, these commands install Task:
 
 ```shell
 winget install Task.Task  # winget on Microsoft Windows
 sudo dnf install go-task  # dnf on Fedora Linux
 ```
 
-To install Task on Alpine Linux, you need to use the _community_ package repository:
+Task is available through the _community_ package repository for Alpine Linux. To install Task on Alpine Linux, run this command:
 
 ```shell
 doas apk add go-task --repository=http://dl-cdn.alpinelinux.org/alpine/latest-stable/community/
