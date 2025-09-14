@@ -1,6 +1,6 @@
 +++
 title = "Tooling for Maintaining YAML Files"
-slug = "yaml-"
+slug = "yaml-maintenance"
 date = "2025-09-14T16:51:00+01:00"
 description = "Tooling for maintenance of YAML files"
 categories = ["automation", "devops", "kubernetes", "programming"]
@@ -9,7 +9,7 @@ tags = ["automation", "devops", "kubernetes"]
 
 [YAML](https://en.wikipedia.org/wiki/YAML) is an essential and unavoidable part of operating modern software. It has been the established format for configurations for years, and is unlikely to be replaced for a long time to come. Many, many tools rely on YAML.
 
-Ideally, we generate YAML files. If we need to maintain YAML files that are manually edited we can apply several tools to help us maintain these files. These tools become most effective when they run automatically. They should run in text editors, with pre-commit hooks that call them every time that we commit YAML files to version control, and in Continuous Integration pipelines.
+Ideally, we generate YAML files. If we need to maintain YAML files that are manually edited we can apply several tools to help us. These tools become most effective when they run automatically. They should run in text editors, with pre-commit hooks that call them every time that we commit YAML files to version control, and in Continuous Integration pipelines.
 
 ## Formatting, Linting and Validating YAML
 
@@ -88,6 +88,7 @@ repos:
   - repo: https://github.com/python-jsonschema/check-jsonschema
     rev: "0.33.3"
     hooks:
+      - id: check-github-workflows
       - id: check-taskfile
 ```
 
