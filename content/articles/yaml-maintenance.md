@@ -67,7 +67,7 @@ The `pre-commit` configuration must be in a file called `.pre-commit-config.yaml
 ---
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: 'v6.0.0'
+    rev: "v6.0.0"
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -75,18 +75,18 @@ repos:
       - id: check-added-large-files
 
   - repo: https://github.com/rbubley/mirrors-prettier
-    rev: 'v3.5.2'
+    rev: "v3.5.2"
     hooks:
       - id: prettier
 
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: 'v1.37.1'
+    rev: "v1.37.1"
     hooks:
       - id: yamllint
-        args: ['--strict']
+        args: ["--strict"]
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: '0.33.3'
+    rev: "0.33.3"
     hooks:
       - id: check-taskfile
 ```
