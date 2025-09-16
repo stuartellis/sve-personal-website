@@ -1,15 +1,17 @@
 +++
 title = "Tooling for Maintaining YAML Files"
 slug = "yaml-maintenance"
-date = "2025-09-14T16:51:00+01:00"
+date = "2025-09-16T06:12:00+01:00"
 description = "Tooling for maintenance of YAML files"
 categories = ["automation", "devops", "kubernetes", "programming"]
 tags = ["automation", "devops", "kubernetes"]
 +++
 
-[YAML](https://en.wikipedia.org/wiki/YAML) is an essential and unavoidable part of operating modern software. It has been the established format for configurations for years, and is unlikely to be replaced for a long time to come. Many, many tools rely on YAML.
+[YAML](https://en.wikipedia.org/wiki/YAML) is an essential and unavoidable part of operating modern software systems. It has been an established format for configurations for years, and is unlikely to be replaced for a long time to come. Many, many products rely on YAML.
 
-Ideally, we generate YAML files. If we need to maintain YAML files that are manually edited we can apply several tools to help us. These tools become most effective when they run automatically. They should run in text editors, with pre-commit hooks that call them every time that we commit YAML files to version control, and in Continuous Integration pipelines.
+Ideally, we generate YAML files. This ensures that they are valid, correctly formatted and consistent. However, many YAML files are manually edited. This article describes some standard tools that help us maintain YAML, regardless of how it is produced.
+
+All of these tools become most effective when they work automatically. We can run them in text editors, with pre-commit hooks that call them every time that we commit YAML files to version control, and in Continuous Integration pipelines. If they run automatically in editors, pre-commit and in CI, we ensure that all of the YAML files in a project are always maintained to the same standard.
 
 ## Formatting, Linting and Validating YAML
 
@@ -19,13 +21,17 @@ These tools will work on files that use the standard YAML format and file extens
 - [yamllint](https://yamllint.readthedocs.io) - Lints YAML files
 - [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/) - Checks JSON and YAML files against their schema
 
-Modern text editors support all of them through plugins. You can run them with both pre-commit hooks and on-demand by [using the pre-commit tool](#running-tools-with-pre-commit).
+You can run them with both pre-commit hooks and on-demand by [using the pre-commit tool](#running-tools-with-pre-commit). Since they are command-line tools, you can run them as part of Continuous Integration.
 
 All of these tools have useful default configurations, so you only need to add configuration files if you need to customize their behavior.
+
+Modern text editors use the same schemas as `check-jsonschema`. They can use Prettier, either as a [plugin](https://prettier.io/docs/editors/), or [built-in](https://zed.dev/docs/languages/yaml?highlight=prettier#formatting).
 
 ### Formatting with Prettier
 
 [Prettier](https://prettier.io/) formats files for a [wide range of programming languages and data types](https://prettier.io/docs/), including YAML. It is deliberately opinionated, so that every installation of Prettier formats files in exactly the same way, unless users decide to override it.
+
+If your text editor supports Prettier and is configured to format YAML files on save then it works automatically. The Zed editor [has Prettier built-in](https://zed.dev/docs/languages/yaml?highlight=prettier#formatting). For other editors, the documentation for the Prettier plugin should explain how to set it up.
 
 Automated code formatting has very powerful effects in software projects. When we apply the same formatter on every change, the format of the code becomes consistent and predictable, which enables us to rapidly refactor. Automatic code formatting also removes the need for commits that only format files.
 
@@ -39,9 +45,11 @@ If you have YAML files that are templates, you will need to provide a custom con
 
 ### Validation with check-jsonschema
 
-The [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/) tool checks YAML files against the relevant schema. It includes copies of schemas for popular tools, and provides [hooks](https://check-jsonschema.readthedocs.io/en/stable/precommit_usage.html#supported-hooks) for their files that work offline. You can configure it to use other schemas, including your own schemas.
+The schemas for YAML formats are [JSON Schemas](https://json-schema.org/). Each schema is a JSON file that describes JSON or YAML. Vendors publish the schemas for their products to the [Schema Store](https://www.schemastore.org/). You can [create your own schemas](https://json-schema.org/learn/getting-started-step-by-step).
 
-The schemas for YAML formats are [JSON Schemas](https://json-schema.org/). Each schema is a JSON file. Vendors publish the schemas for their products to the [Schema Store](https://www.schemastore.org/). You can [create your own schemas](https://json-schema.org/learn/getting-started-step-by-step). Modern text editors use JSON Schemas for autocompletion and error-checking, which means that both editors and tools like `check-jsonschema` apply the same validation rules.
+Modern text editors like Zed and Visual Studio Code use JSON Schemas for autocompletion and error-checking. They automatically download schemas from the Schema Store. This means that both editors and tools like `check-jsonschema` apply the same rules.
+
+The [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/) tool checks YAML files against the relevant schema. It includes copies of schemas for popular tools, can use other schemas, including your own schemas. It also provides [hooks for pre-commit](https://check-jsonschema.readthedocs.io/en/stable/precommit_usage.html#supported-hooks).
 
 ## Running Tools with pre-commit
 
