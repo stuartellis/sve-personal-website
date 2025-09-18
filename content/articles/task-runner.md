@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2025-09-09T06:25:00+01:00"
+date = "2025-09-18T20:57:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -26,7 +26,7 @@ Task uses no configuration files apart from the YAML files that contain the task
 #
 # Hugo: https://gohugo.io
 
-version: '3.38'
+version: "3.38"
 
 set: [pipefail]
 
@@ -47,7 +47,7 @@ tasks:
   clean:
     desc: Delete generated files
     cmds:
-      - for: ['.hugo_build.lock', 'public']
+      - for: [".hugo_build.lock", "public"]
         cmd: rm -fr {{.ITEM}}
 
   deploy:
@@ -189,7 +189,7 @@ Create a task in the _Taskfile.yaml_ with the name _default_. When Task is invok
 This example user _Taskfile.yaml_ includes a _default_ task that lists the available tasks:
 
 ```yaml
-version: '3.38'
+version: "3.38"
 
 set: [pipefail]
 
@@ -201,13 +201,13 @@ tasks:
   list:
     desc: List available tasks
     cmds:
-      - '{{.TASK_EXE}} --list'
+      - "{{.TASK_EXE}} --list"
 
   system-info:
     desc: Display system information
     cmds:
-      - 'echo CPU architecture: {{ARCH}}'
-      - 'echo Operating system: {{OS}}'
+      - "echo CPU architecture: {{ARCH}}"
+      - "echo Operating system: {{OS}}"
 ```
 
 Use the option _-g_ to run the user _Taskfile.yaml_, rather than the nearest Taskfile:
@@ -291,7 +291,7 @@ This diagram shows the suggested directory structure for a project with task inc
 #
 # https://taskfile.dev
 
-version: '3.38'
+version: "3.38"
 
 set: [pipefail]
 
@@ -326,7 +326,7 @@ tasks:
     aliases: [format]
     cmds:
       - task: pre-commit:run
-        vars: { HOOK_ID: 'ruff-format' }
+        vars: { HOOK_ID: "ruff-format" }
 
   lint:
     desc: Run all checks
@@ -337,7 +337,7 @@ tasks:
   list:
     desc: List available tasks
     cmds:
-      - '{{.TASK_EXE}} --list'
+      - "{{.TASK_EXE}} --list"
 ```
 
 The _default_ task runs the _list_ task, so this command displays a list of all of the available tasks, including the tasks in the namespaces:
@@ -353,7 +353,7 @@ task
 #
 # https://pre-commit.com/
 
-version: '3.38'
+version: "3.38"
 
 tasks:
   default:
@@ -455,11 +455,11 @@ Add these lines to the _.pre-commit-config.yaml_ file in the root directory of y
 
 ```yaml
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: '0.33.2'
+  rev: "0.33.2"
   hooks:
     - id: check-taskfile
 - repo: https://github.com/adrienverge/yamllint.git
-  rev: 'v1.37.1'
+  rev: "v1.37.1"
   hooks:
     - id: yamllint
       args: [--strict]
