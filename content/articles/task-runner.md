@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2025-09-18T20:57:00+01:00"
+date = "2025-09-18T21:44:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -15,7 +15,7 @@ tags = ["automation", "devops"]
 
 Each copy of Task is a single executable file, with versions for Linux, macOS, Windows and FreeBSD. This executable is relatively small, being about 8Mb for the 64-bit Linux version. The tasks are run with a UNIX shell script interpreter that is built into Task itself, rather than using shells that are already installed on your systems.
 
-This means that you can use Task in any environment. It only requires a copy of the Task executable, and the built-in shell interpreter enables you to use the same syntax for your tasks on any platform. The [template functions](https://taskfile.dev/reference/templating/#functions) enable you to get consistent inputs for your tasks across different platforms. When needed, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfiles), so that Task uses the specific implementation for the current platform.
+This means that you can use Task in any environment. It only requires a copy of the Task executable. Task has a UNIX shell interpreter and [some UNIX commands](https://taskfile.dev/docs/faq#are-shell-core-utilities-available-on-windows) built in, which enables you to use the same syntax for your tasks on any platform. The [template functions](https://taskfile.dev/reference/templating/#functions) enable you to get consistent inputs for your tasks across different platforms. When needed, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfiles), so that Task uses the specific implementation for the current platform.
 
 Task also includes two other key features: [conditional execution of tasks](https://taskfile.dev/usage/#prevent-unnecessary-work) and [running tasks on file changes](https://taskfile.dev/usage/#watch-tasks). These features are designed to be usable with any type of software development.
 
@@ -84,10 +84,10 @@ If you install a global copy of Task then [you can integrate it with your shell]
 
 ### Installing Task with mise
 
-This command installs version 3.44.1 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
+This command installs version 3.45.4 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
 
 ```shell
-mise use -gy task@3.44.1
+mise use -gy task@3.45.4
 ```
 
 ### Adding Task to a Dev Container
@@ -97,7 +97,7 @@ If you are using a Dev Container with Visual Studio Code, you can add the featur
 ```json
     "features": {
         "ghcr.io/devcontainers-contrib/features/go-task:1": {
-            "version": "3.44.1"
+            "version": "3.45.4"
         }
     }
 ```
@@ -132,7 +132,7 @@ curl -L https://taskfile.dev/install.sh > install-task.sh
 To use the installation script, call it with the Git tag and the _-b_ option. The Git tag specifies the version of Task. The _-b_ option specifies which directory to install it to:
 
 ```shell
-./install-task.sh -b $HOME/.local/bin v3.44.1
+./install-task.sh -b $HOME/.local/bin v3.45.4
 ```
 
 {{< alert >}}
@@ -400,7 +400,7 @@ task pre-commit:check
 Follow [the style guidelines](https://taskfile.dev/styleguide/) when writing tasks. Here are some extra suggestions:
 
 - Use a YAML formatter to format your Task files. The [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension adds support for formatting YAML files to Visual Studio Code. The [Prettier](https://prettier.io/) tool formats YAML files, and can be used in any environment.
-- Always set [a minimum version in Task files](https://taskfile.dev/taskfile-versions/). Use version _3.38_ or above, because _TASK_EXE_ was introduced in version 3.38.
+- Always set [a minimum version in Task files](https://taskfile.dev/taskfile-versions/). If possible, use version _3.45_ or above, which was the first version to include built-in UNIX commands. Otherwise, use a minimum version of _3.38_, because _TASK_EXE_ was introduced in version 3.38.
 - Write _set: [pipefail]_ at the beginning of top-level Taskfiles to enable failing on the first error. This is a [shell option](https://taskfile.dev/usage/#set-and-shopt).
 - Always use _TASK_EXE_ rather than _task_ when you write a task that calls Task itself, such as a call to _--list_. Systems may name the Task executable as either _task_ or _go-task_, so use _TASK_EXE_ in Task files.
 - Always put a _desc_ attribute for each task. The description appears next to the task in the output of _--list_.
@@ -409,7 +409,7 @@ Follow [the style guidelines](https://taskfile.dev/styleguide/) when writing tas
 - Specify the [requires](https://taskfile.dev/usage/#ensuring-required-variables-are-set) attribute for each task that uses a variable. This ensures that the task has the necessary variables.
 - Use [dotenv files](https://taskfile.dev/usage/#env-files) to get configuration from files.
 - Use Bash shell syntax for tasks. Task uses [mvdan/sh](https://github.com/mvdan/sh) to provide the equivalent of the _bash_ shell.
-- To ensure that your tasks are portable, check the options for UNIX commands that you call in tasks, such as _rm_. Different operating systems and Linux distributions provide different implementations of these commands, which means that the options may not be consistent across environments.
+- To ensure that your tasks are portable, check the options for UNIX commands that you call in tasks, or [enable using the UNIX commands built-in to Task](https://taskfile.dev/docs/faq#are-shell-core-utilities-available-on-windows). Different operating systems and Linux distributions provide different implementations of these commands, which means that the options may not be consistent across environments.
 - When it is possible, use the [template functions](https://taskfile.dev/reference/templating/#functions) instead of shell commands, because these will behave consistently across different environments.
 - Provide [operating system specific Taskfiles](https://taskfile.dev/usage/#os-specific-taskfiles) when necessary.
 
