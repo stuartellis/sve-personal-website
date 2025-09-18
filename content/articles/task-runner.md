@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2025-09-18T22:18:00+01:00"
+date = "2025-09-18T22:31:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -73,8 +73,9 @@ You can install Task with [operating system packages](#installing-task-with-oper
 If possible, use a tool that enables you to specify which versions of Task to install and activate different versions of Task for different projects. These options enable you to specify a version of Task for each project:
 
 1. Tool version managers like [mise](#installing-task-with-mise)
-2. [Dev Containers](#adding-task-to-a-dev-container)
-3. [Installation script](#installing-task-with-a-script)
+2. [Installation with npm](#installing-task-with-npm)
+3. [Dev Containers](#adding-task-to-a-dev-container)
+4. [Installation script](#installing-task-with-a-script)
 
 Tool version managers and the installation script also enable you to install Task so that it is globally available for all of your work, not just a single project.
 
@@ -88,6 +89,14 @@ This command installs version 3.45.4 of Task with [mise](https://mise.jdx.dev/) 
 
 ```shell
 mise use -gy task@3.45.4
+```
+
+### Installing Task with npm
+
+This command installs version 3.45.4 of Task with [npm](https://docs.npmjs.com/) and makes it available to your user account:
+
+```shell
+npm install -g @go-task/cli@3.45.4
 ```
 
 ### Adding Task to a Dev Container
