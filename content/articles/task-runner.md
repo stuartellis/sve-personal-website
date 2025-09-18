@@ -447,15 +447,17 @@ To validate Task files on the command-line, use [check-jsonschema](https://check
 
 The _check-jsonschema_ and _yamllint_ projects also provide hooks for [pre-commit](https://pre-commit.com). The next section files explains how to configure `pre-commit` so that Task files are automatically checked before changes are committed to source control.
 
-### Validating Task files with pre-commit
+### Maintaining Task files with pre-commit
 
-To validate Task files before you commit them to source control, add the [hook for check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/precommit_usage.html) and the [hook for yamllint](https://yamllint.readthedocs.io/en/stable/integration.html#integration-with-pre-commit) to the [pre-commit](https://pre-commit.com/) configuration for your project.
-
-Add these lines to the _.pre-commit-config.yaml_ file in the root directory of your project:
+To maintain Task files in your project, add these lines to the _.pre-commit-config.yaml_ configuration file:
 
 ```yaml
+  - repo: https://github.com/rbubley/mirrors-prettier
+    rev: "v3.5.2"
+    hooks:
+      - id: prettier
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: "0.33.2"
+  rev: "0.33.3"
   hooks:
     - id: check-taskfile
 - repo: https://github.com/adrienverge/yamllint.git
@@ -465,7 +467,9 @@ Add these lines to the _.pre-commit-config.yaml_ file in the root directory of y
       args: [--strict]
 ```
 
-To ensure that _yamllint_ handles Task files, add a _.yamllint.yaml_ file with this content:
+These hooks automatically run [Prettier](https://prettier.io/) to format your files, and check all YAML files with [yamllint](https://yamllint.readthedocs.io/en/stable/integration.html#integration-with-pre-commit). The [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/precommit_usage.html) hook validates Task files.
+
+To ensure that _yamllint_ handles Task files correctly, add a _.yamllint.yaml_ file with this content:
 
 ```yaml
 ---
