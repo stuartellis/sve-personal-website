@@ -464,7 +464,7 @@ To maintain Task files in your project, add these lines to the _.pre-commit-conf
   rev: "v1.37.1"
   hooks:
     - id: yamllint
-      args: [--strict]
+      args: ["--strict"]
 ```
 
 These hooks automatically run [Prettier](https://prettier.io/) to format your files, and check all YAML files with [yamllint](https://yamllint.readthedocs.io/en/stable/integration.html#integration-with-pre-commit). The [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/precommit_usage.html) hook validates Task files.
