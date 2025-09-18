@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2025-09-18T22:40:00+01:00"
+date = "2025-09-18T22:49:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -461,10 +461,10 @@ The _check-jsonschema_ and _yamllint_ projects also provide hooks for [pre-commi
 To maintain Task files in your project, add these lines to the _.pre-commit-config.yaml_ configuration file:
 
 ```yaml
-  - repo: https://github.com/rbubley/mirrors-prettier
-    rev: "v3.5.2"
-    hooks:
-      - id: prettier
+- repo: https://github.com/rbubley/mirrors-prettier
+  rev: "v3.5.2"
+  hooks:
+    - id: prettier
 - repo: https://github.com/python-jsonschema/check-jsonschema
   rev: "0.33.3"
   hooks:
