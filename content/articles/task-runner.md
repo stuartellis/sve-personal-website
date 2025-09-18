@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2025-09-18T21:44:00+01:00"
+date = "2025-09-18T22:18:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -17,7 +17,7 @@ Each copy of Task is a single executable file, with versions for Linux, macOS, W
 
 This means that you can use Task in any environment. It only requires a copy of the Task executable. Task has a UNIX shell interpreter and [some UNIX commands](https://taskfile.dev/docs/faq#are-shell-core-utilities-available-on-windows) built in, which enables you to use the same syntax for your tasks on any platform. The [template functions](https://taskfile.dev/reference/templating/#functions) enable you to get consistent inputs for your tasks across different platforms. When needed, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfiles), so that Task uses the specific implementation for the current platform.
 
-Task also includes two other key features: [conditional execution of tasks](https://taskfile.dev/usage/#prevent-unnecessary-work) and [running tasks on file changes](https://taskfile.dev/usage/#watch-tasks). These features are designed to be usable with any type of software development.
+Task also includes three other key features: [parallel execution of dependencies](https://taskfile.dev/docs/guide#task-dependencies), [conditional execution of tasks](https://taskfile.dev/usage/#prevent-unnecessary-work) and [running tasks on file changes](https://taskfile.dev/usage/#watch-tasks). These features are designed to be usable with any type of software development.
 
 Task uses no configuration files apart from the YAML files that contain the tasks. Here is an example of a _Taskfile.yaml_, with a _build_ task that only runs when the _sources_ change:
 
@@ -414,7 +414,7 @@ Follow [the style guidelines](https://taskfile.dev/styleguide/) when writing tas
 - Provide [operating system specific Taskfiles](https://taskfile.dev/usage/#os-specific-taskfiles) when necessary.
 
 {{< alert >}}
-_Dependencies run in parallel._ This means that dependencies of a task should not depend on each other. If you want to ensure that tasks run in sequence, see the documentation on [Calling Another Task](https://taskfile.dev/usage/#calling-another-task).
+[Dependencies run in parallel](https://taskfile.dev/docs/guide#task-dependencies). This means that dependencies of a task should not depend on each other. If you want to ensure that tasks run in sequence, see the documentation on [Calling Another Task](https://taskfile.dev/usage/#calling-another-task).
 {{< /alert >}}
 
 ## Running Tasks
