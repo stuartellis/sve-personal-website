@@ -1,7 +1,7 @@
 +++
 title = "Configuring Kubernetes with Helmfile"
 slug = "helmfile"
-date = "2025-09-07T12:11:00+01:00"
+date = "2025-09-19T21:43:00+01:00"
 description = "Managing Kubernetes configurations with Helmfile"
 categories = ["automation", "devops", "kubernetes"]
 tags = ["automation", "devops", "kubernetes"]
@@ -27,9 +27,9 @@ Helmfile will use Helm charts from either remote repositories or the filesystem.
 
 > If you define more than one environment in a Helmfile configuration, you should have [a separate lockfile for each environment](https://helmfile.readthedocs.io/en/stable/advanced-features/#lockfile-per-environment).
 
-When you run Helmfile, it reads the configuration and the lockfile to generate the YAML for Helm releases, using templating and lookups to resolve values as needed. It only applies this generated configuration if you run the specific commands that change the state of the target cluster. This means that you can develop a configuration and compare it with the deployed releases on a target cluster without making any changes to the current state of that cluster.
+When you run Helmfile, it generates the YAML for Helm releases from the configuration and the lockfile, using templating and lookups to resolve values as needed. It only applies this generated configuration if you run the specific commands that change the state of the target cluster. This means that you can develop a configuration and compare it with the deployed releases on a target cluster without making any changes to the current state of that cluster.
 
-You can also develop and apply limited changes at any time by specifying [selectors](https://helmfile.readthedocs.io/en/stable/#labels-overview). To use selectors, ensure that your Helmfile configuration has labels for release definitions and included files. You can then specify one or more selectors with any Helmfile command and it will use the labels to determine which parts of the configuration should be used. The generated YAML will only include the required releases.
+You can also develop and apply limited changes by specifying [selectors](https://helmfile.readthedocs.io/en/stable/#labels-overview). To use selectors, ensure that your Helmfile configuration has labels for release definitions and included files. You can then specify one or more selectors with any Helmfile command and it will use the labels to determine which parts of the configuration should be used. The generated YAML will only include the required releases.
 
 If you need to deploy Kubernetes manifests that are not part of a Helm chart then you can specify a directory as the source for a release, instead of the location of a Helm chart. The directory only needs to contain YAML files for the manifests and any kustomizations that you want to apply to them. Helmfile will automatically create a temporary Helm chart for the directory and generate a release for it, alongside the Helm releases that it generates for existing charts.
 
@@ -51,7 +51,7 @@ releases:
   - name: prom-norbac
     namespace: monitoring
     chart: prometheus-community/prometheus
-    version: '>27.33.0'
+    version: ">27.33.0"
     installed: true
     set:
       - name: rbac.create
@@ -145,10 +145,15 @@ Helmfile currently provides completion support for Bash, fish and zsh.
 
 ## Resources
 
+### Documentation
+
 - [Official Helmfile Documentation](https://helmfile.readthedocs.io/)
 - The [Helmfile best practices guide](https://helmfile.readthedocs.io/en/stable/writing-helmfile/#the-helmfile-best-practices-guide)
-- [Even more powerful Helming with Helmfile](https://www.hackerstack.org/even-more-powerful-helming-with-helmfile/) - A tutorial for Helmfile by _Gmkziz_
 - [Renovate support for Helmfile](https://docs.renovatebot.com/modules/manager/helmfile/)
+
+### Tutorials
+
+- [Even more powerful Helming with Helmfile](https://www.hackerstack.org/even-more-powerful-helming-with-helmfile/) - A tutorial for Helmfile by _Gmkziz_
 
 ### Videos
 
