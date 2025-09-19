@@ -1,17 +1,17 @@
 +++
 title = "Tooling for Maintaining YAML Files"
 slug = "yaml-maintenance"
-date = "2025-09-18T20:25:00+01:00"
+date = "2025-09-19T07:02:00+01:00"
 description = "Tooling for maintenance of YAML files"
 categories = ["automation", "devops", "kubernetes", "programming"]
 tags = ["automation", "devops", "kubernetes"]
 +++
 
-[YAML](https://en.wikipedia.org/wiki/YAML) is an essential part of operating modern cloud software. It has been an established format for configurations for years, and is unlikely to be replaced for a long time to come. Many, many products now rely on YAML.
+[YAML](https://en.wikipedia.org/wiki/YAML) is an essential part of modern software development. It has been an established format for configurations for years, and is unlikely to be replaced for a long time to come. Many, many products now use YAML for configuration, from developer tools and continuous integration pipelines to tools for managing systems, like Ansible and Kubernetes.
 
 Ideally, we generate YAML files. This ensures that they are valid, correctly formatted and consistent. However, many YAML files are manually edited. This article describes some standard tools that help us maintain YAML, regardless of how it is produced.
 
-All of these tools become most effective when they work automatically. We can run them in text editors, with pre-commit hooks that call them every time that we commit YAML files to version control, and in Continuous Integration pipelines. If they run automatically in editors, pre-commit and in CI, we ensure that all of the YAML files in a project are always maintained to the same standard.
+All of these tools become most effective when they work automatically. We can run them in text editors and with pre-commit hooks that call them when we commit changes to version control. We should also run them in continuous integration pipelines. If they run in continuous integration, we ensure that all of the YAML files in a project are always maintained to the same standard.
 
 ## Formatting, Linting and Validating YAML
 
@@ -19,15 +19,15 @@ These tools will work on files that use standard YAML:
 
 - [Prettier](https://prettier.io/) - Formats many types of file, including YAML
 - [yamllint](https://yamllint.readthedocs.io) - Lints YAML files
-- [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/) - Checks JSON and YAML files against their schema
+- [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/) - Checks JSON and YAML files with identified types against their [schema](https://json-schema.org/)
 
-You can run them with both pre-commit hooks and on-demand by [using the pre-commit tool](#running-tools-with-pre-commit). Since they are command-line tools, you can also run them as part of Continuous Integration.
+You can run them with both pre-commit hooks and on-demand by [using the pre-commit tool](#running-tools-with-pre-commit). Since they are command-line tools, you can also run them as part of continuous integration pipelines.
 
 All of these tools have useful default configurations, so you only need to add configuration files if you need to customize their behavior.
 
-This set of tools works in partnership with modern text editors, like Visual Studio Code, JetBrains IDEs, Neovim and Zed. These text editors automatically use the same schemas as `check-jsonschema`. All of these editors can also run Prettier on your code, either with a [plugin](https://prettier.io/docs/editors/), or as [a built-in feature](https://zed.dev/docs/languages/yaml?highlight=prettier#formatting).
+Prettier and schemas also work in modern text editors, like Visual Studio Code, JetBrains IDEs, Neovim and Zed. These text editors automatically use the same schemas as `check-jsonschema` for error checking and autocompletion. All of these editors can run Prettier on your code, either with a [plugin](https://prettier.io/docs/editors/), or as [a built-in feature](https://zed.dev/docs/languages/yaml?highlight=prettier#formatting).
 
-> If you use Visual Studio Code, install the [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension to add support for error checking and autocompletion of YAML.
+> If you use Visual Studio Code, install the [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension to add support for any YAML, not just files with schemas.
 
 ### Formatting with Prettier
 
@@ -111,7 +111,7 @@ cd my-project
 pre-commit install
 ```
 
-> Since the `pre-commit` configuration file is YAML, it will automatically be formatted and checked by the same tools that it runs.
+> Since the `pre-commit` configuration file is YAML, it will automatically be formatted and checked by the same tools that `pre-commit` runs itself.
 
 ### Using pre-commit
 
@@ -137,4 +137,4 @@ To update all of the hooks to their current version, run this command:
 pre-commit autoupdate
 ```
 
-It will automatically edit the `.pre-commit-config.yaml` file with the current versions of the hooks. You then commit this change to source control.
+It automatically edits the `.pre-commit-config.yaml` file to update the versions of the hooks. You then commit this change to source control, so that other copies of the repository will use the same versions.
