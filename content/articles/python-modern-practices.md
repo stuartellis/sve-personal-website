@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2025-08-02T10:29:00+01:00"
+date = "2025-09-19T07:03:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -219,11 +219,11 @@ The built-in _print()_ statement is convenient for adding debugging information,
 
 ### File Formats: TOML for Configuration & JSON for Data
 
-Use [TOML](https://toml.io/) for data files that must be written or edited by human beings. Use the JSON format for data that is transferred between computer programs. If neither of these are suitable, consider using [KDL](https://kdl.dev/), which is an emerging standard.
+Use [TOML](https://toml.io/) for configuration files that must be written or edited by human beings. Use the JSON format for data that is transferred between computer programs. If neither of these are suitable, consider using [KDL](https://kdl.dev/), which is an emerging standard.
 
 Current versions of Python include support for reading and creating JSON. Python 3.11 and above include _tomllib_ to read the TOML format. If your Python software will generate TOML, you need to add [Tomli-W](https://pypi.org/project/tomli-w/) to your project.
 
-Avoid using the INI or YAML formats for new projects. These formats are more difficult to validate with software, and human errors are also more likely.
+Avoid using the INI or YAML formats for new projects. These formats are more difficult to validate with software, and human errors are also more likely. If you need to work with YAML, use [ruamel.yaml](https://pypi.org/project/ruamel.yaml/), rather than [PyYAML](https://pypi.org/project/PyYAML/). You should use version 1.2 of the YAML format, and PyYAML only supports YAML 1.1.
 
 > [PEP 680 - tomllib: Support for Parsing TOML in the Standard Library](https://peps.python.org/pep-0680/) explains why TOML is now included with Python.
 
