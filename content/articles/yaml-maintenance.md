@@ -1,13 +1,13 @@
 +++
 title = "Tooling for Maintaining YAML Files"
 slug = "yaml-maintenance"
-date = "2025-09-19T07:02:00+01:00"
+date = "2025-09-19T21:54:00+01:00"
 description = "Tooling for maintenance of YAML files"
 categories = ["automation", "devops", "kubernetes", "programming"]
 tags = ["automation", "devops", "kubernetes"]
 +++
 
-[YAML](https://en.wikipedia.org/wiki/YAML) is an essential part of modern software development. It has been an established format for configurations for years, and is unlikely to be replaced for a long time to come. Many, many products now use YAML for configuration, from developer tools and continuous integration pipelines to tools for managing systems, like Ansible and Kubernetes.
+[YAML](https://en.wikipedia.org/wiki/YAML) is an essential part of modern software development. It has been an established format for configurations for years, and is unlikely to be replaced for a long time to come. Many, many products now use YAML for configuration, from developer tools and continuous integration pipelines to tools for managing systems like Kubernetes and Ansible.
 
 Ideally, we generate YAML files. This ensures that they are valid, correctly formatted and consistent. However, many YAML files are manually edited. This article describes some standard tools that help us maintain YAML, regardless of how it is produced.
 
@@ -19,15 +19,13 @@ These tools will work on files that use standard YAML:
 
 - [Prettier](https://prettier.io/) - Formats many types of file, including YAML
 - [yamllint](https://yamllint.readthedocs.io) - Lints YAML files
-- [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/) - Checks JSON and YAML files with identified types against their [schema](https://json-schema.org/)
+- [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/) - Checks JSON and YAML files with identified types against their [schema](#validation-with-check-jsonschema)
 
 You can run them with both pre-commit hooks and on-demand by [using the pre-commit tool](#running-tools-with-pre-commit). Since they are command-line tools, you can also run them as part of continuous integration pipelines.
 
-All of these tools have useful default configurations, so you only need to add configuration files if you need to customize their behavior.
+> All of these tools have useful default configurations, so you only need to add configuration files if you need to customize their behavior.
 
-Prettier and schemas also work in modern text editors, like Visual Studio Code, JetBrains IDEs, Neovim and Zed. These text editors automatically use the same schemas as `check-jsonschema` for error checking and autocompletion. All of these editors can run Prettier on your code, either with a [plugin](https://prettier.io/docs/editors/), or as [a built-in feature](https://zed.dev/docs/languages/yaml?highlight=prettier#formatting).
-
-> If you use Visual Studio Code, install the [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension to add support for any YAML, not just files with schemas.
+Prettier and schemas also work in modern text editors. These editors can run Prettier on your code, either with a [plugin](https://prettier.io/docs/editors/), or as [a built-in feature](https://zed.dev/docs/languages/yaml?highlight=prettier#formatting). Editors use the same [schemas](#validation-with-check-jsonschema) as `check-jsonschema` for error checking and autocompletion.
 
 ### Formatting with Prettier
 
@@ -49,7 +47,9 @@ If you have YAML files that are templates, you will need to provide a custom con
 
 The schemas for YAML formats are [JSON Schemas](https://json-schema.org/). Each schema is a JSON file that describes JSON or YAML. Vendors publish the schemas for their products to the [Schema Store](https://www.schemastore.org/). You can [create your own schemas](https://json-schema.org/learn/getting-started-step-by-step).
 
-Modern text editors like Visual Studio Code and JetBrains IDEs use JSON Schemas for autocompletion and error-checking. These editors automatically download schemas from the Schema Store, which means that both editors and tools like `check-jsonschema` apply the same rules.
+Modern text editors like Visual Studio Code, JetBrains IDEs, Neovim and Zed use JSON Schemas for autocompletion and error-checking. These editors download schemas for YAML files from the Schema Store, which means that both editors and tools like `check-jsonschema` apply the same rules.
+
+> Visual Studio Code requires the [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension to support schemas for YAML.
 
 The [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/) tool checks YAML and JSON files against the relevant schema. It includes copies of schemas for popular tools and can use other schemas, including your own schemas. It also provides [hooks for pre-commit](https://check-jsonschema.readthedocs.io/en/stable/precommit_usage.html#supported-hooks).
 
