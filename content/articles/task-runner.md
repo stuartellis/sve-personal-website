@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2025-09-18T22:49:00+01:00"
+date = "2025-09-20T20:37:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -13,13 +13,20 @@ tags = ["automation", "devops"]
 
 ## How Task Works
 
-Each copy of Task is a single executable file, with versions for Linux, macOS, Windows and FreeBSD. The tasks are run with a UNIX shell script interpreter that is built into Task itself, rather than using shells that are already installed on your systems.
+A copy of Task is a single executable file, with versions for Linux, macOS, Windows and FreeBSD. It uses no configuration files apart from _Taskfiles_, YAML files that describe the tasks.
 
-This means that you can use Task in any environment. It only requires a copy of the Task executable. Task has a UNIX shell interpreter and [some UNIX commands](https://taskfile.dev/docs/faq#are-shell-core-utilities-available-on-windows) built in, which enables you to use the same syntax for your tasks on any platform. The [template functions](https://taskfile.dev/reference/templating/#functions) enable you to get consistent inputs for your tasks across different platforms. When needed, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfiles), so that Task uses the specific implementation for the current platform.
+Each task in a Taskfile defines templates for one or more UNIX shell commands, with cross-platform [template functions](https://taskfile.dev/reference/templating/#functions). The commands for tasks are then run with a UNIX shell script interpreter that is built into Task itself, rather than using shells that are already installed on your systems. Task also includes implementations of [UNIX utilities](https://taskfile.dev/docs/faq#are-shell-core-utilities-available-on-windows) that it can use, instead of relying on copies of tools on the system.
 
-Task also includes three other key features: [parallel execution of dependencies](https://taskfile.dev/docs/guide#task-dependencies), [conditional execution of tasks](https://taskfile.dev/usage/#prevent-unnecessary-work) and [running tasks on file changes](https://taskfile.dev/usage/#watch-tasks). These features are designed to be usable with any type of software development.
+This means that you can use Task in any environment with only a copy of the Task executable and the Taskfiles, and the behavior will be consistent on every system. If necessary, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfiles), so that Task uses task definitions that for the current platform.
 
-Task uses no configuration files apart from the YAML files that contain the tasks. Here is an example of a _Taskfile.yaml_, with a _build_ task that only runs when the _sources_ change:
+Task also includes several other key features:
+
+- Parallel execution of [dependencies](https://taskfile.dev/docs/guide#task-dependencies)
+- Optional parallel execution of [tasks](https://taskfile.dev/docs/reference/cli#p-parallel)
+- [Conditional execution of tasks](https://taskfile.dev/usage/#prevent-unnecessary-work)
+- [Running tasks on file changes](https://taskfile.dev/usage/#watch-tasks)
+
+Here is an example of a _Taskfile.yaml_, with a _build_ task that only runs when the files for the _sources_ change:
 
 ```yaml
 # Tasks for a Hugo static website project
@@ -62,7 +69,7 @@ tasks:
       - hugo server
 ```
 
-Task uses a [versioned and published schema](#checking-taskfiles) for these YAML files, so that they can be managed and validated with standard tools. However, this does not guarantee that Taskfiles will be compatible across different versions of Task. Minor releases of Task add new features, and the schema may change with major versions. To avoid issues, set [a minimum version in Task files](https://taskfile.dev/taskfile-versions/), and use installation methods that enable you to use the same version of Task across your systems.
+Task uses a [versioned and published schema](#checking-taskfiles) for these YAML files, so that the structure can be validated with standard tools. However, this does not guarantee that Taskfiles will be compatible across different versions of Task. Minor releases of Task add new features, and the schema may change with major versions. To avoid issues, set [a minimum version in Task files](https://taskfile.dev/taskfile-versions/), and use installation methods that enable you to use the same version of Task across your systems.
 
 > If you are maintaining a project for a wide audience, consider using [just](https://www.stuartellis.name/articles/just-task-runner/) instead, which is specifically designed to maintain backward compatibility between versions.
 
@@ -77,7 +84,7 @@ If possible, use a tool that enables you to specify which versions of Task to in
 3. [Dev Containers](#adding-task-to-a-dev-container)
 4. [Installation script](#installing-task-with-a-script)
 
-Tool version managers and the installation script also enable you to install Task so that it is globally available for all of your work, not just a single project.
+Tool version managers, `npm` and the installation script also enable you to install Task so that it is globally available for all of your work, not just a single project.
 
 If you install a global copy of Task then [you can integrate it with your shell](#integrating-task-with-your-shell).
 
