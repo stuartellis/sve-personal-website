@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2025-09-28T21:38:00+01:00"
+date = "2025-10-04T12:37:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -29,7 +29,7 @@ The _bpytop_ tool is cached after the first download, which means that the secon
 
 Use _pipx install_ or _uv tool install_ for tools that are essential for your development process. These options install the tool on to your system. This ensures that the tool is available if you have no Internet access, and that you keep the same version of the tool until you decide to upgrade it.
 
-For example, install [pre-commit](https://pre-commit.com/), rather than use a temporary copy. The _pre-commit_ tool automatically runs every time that we commit a change to version control, so we want it to be consistent and always available. To install _pre-commit_, run the appropriate command for _pipx_ or _uv_:
+For example, if you use [pre-commit](https://pre-commit.com/) you should install it, rather than use a temporary copy. The _pre-commit_ tool automatically runs every time that we commit a change to version control, so we want it to be consistent and always available. To install _pre-commit_, run the appropriate command for _pipx_ or _uv_:
 
 ```shell
 pipx install pre-commit
@@ -47,11 +47,11 @@ If your operating system includes a Python installation, avoid using it for your
 
 ### Install Python With Tools That Support Multiple Versions
 
-Instead of manually installing Python on to your development systems with packages from [the Python Website](https://www.python.org), use a version manager tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv). These tools allow you to switch between different versions of Python. This means that you can upgrade each of your projects to new versions of Python later without interfering with other tools and projects that use Python. I provide a separate [article on using version managers](https://www.stuartellis.name/articles/version-managers/).
+Instead of manually installing Python on to your development systems with packages from [the Python Website](https://www.python.org), use a version manager tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv). These tools allow you to switch between different versions of Python. This means that you can choose a Python version for each of your projects, and to new versions of Python later without interfering with other tools and projects that use Python. I provide a separate [article on using version managers](https://www.stuartellis.name/articles/version-managers/).
 
 Alternatively, consider using [Development Containers](https://containers.dev/), which are a feature of Visual Studio Code and Jetbrains IDEs. Development Containers enable you to define an isolated environment for a software project, which means that it will have a completely separate installation of Python.
 
-Whichever tool you use, ensure that it compiles Python, rather than downloading [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). These standalone builds are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project.
+Whichever tool you use, ensure that it compiles Python, rather than downloading [standalone builds](https://github.com/astral-sh/python-build-standalone). These standalone builds are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project.
 
 Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) automatically compile Python, but you must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation.
 
@@ -61,13 +61,11 @@ Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://g
 
 Choose a project tool for Python. There are several of these tools, each of which provides the same essential features. For example, all of these tools can generate a directory structure that follows best practices and will be compatible with other Python tooling.
 
-[Poetry](https://python-poetry.org/) is currently the most popular tool for Python application projects. Consider using [uv](https://docs.astral.sh/uv/) or [PDM](https://pdm-project.org) for new application projects. PDM and _uv_ align more closely to the latest Python standards.
-
-If you are developing a Python library, you may prefer to use [Hatch](https://hatch.pypa.io). Hatch provides a well-integrated set of features for building and testing Python packages.
+[Poetry](https://python-poetry.org/) is currently the most popular tool for Python projects. Some projects use [Hatch](https://hatch.pypa.io), which provides a well-integrated set of features for building and testing Python packages. Consider using [PDM](https://pdm-project.org) or [uv](https://docs.astral.sh/uv/) for new projects. PDM and _uv_ are closely aligned to the latest Python standards.
 
 > _Avoid using [Rye](https://rye.astral.sh/)_. Rye has been superseded by _uv_.
 
-Some Python projects have specialized requirements that mean that you will decide to create a customised project, rather than using a popular project tool. In these cases, think carefully about the tools and directory structure that you will need, and ensure that you are familiar with the current [best practices for Python projects](https://www.stuartellis.name/articles/python-project-setup).
+You may need to create projects that include Python for some purpose but cannot use Python project tools. In these cases, think carefully about the tools and directory structure that you will need, and ensure that you are familiar with the current [best practices for Python projects](https://www.stuartellis.name/articles/python-project-setup).
 
 ### Use the Most Recent Version of Python That You Can
 
@@ -85,23 +83,23 @@ Use a formatting tool with a plugin to your editor, so that your code is automat
 
 Consider using [Ruff](https://docs.astral.sh/ruff/), which provides both code formatting and quality checks for Python code. [Black](https://black.readthedocs.io/en/stable/) was the most popular code formatting tool for Python before the release of Ruff.
 
-Use [pre-commit](https://pre-commit.com/) to run the formatting tool before each commit to source control. You should also run the formatting tool with your CI system, so that it rejects any code that does not match the format for your project.
+Use pre-hooks to run the formatting tool before each commit to source control. You should also run the formatting tool with your CI system, so that it rejects any code that does not match the format for your project.
 
 ### Use a Code Linter
 
 Use a code linting tool with a plugin to your editor, so that your code is automatically checked for issues.
 
-[flake8](https://flake8.pycqa.org/en/latest/) has been the most popular linter for Python, but consider using [Ruff](https://docs.astral.sh/ruff/). Ruff includes the features of both flake8 and the most popular plugins for flake8, along with many other capabilities.
+Consider using [Ruff](https://docs.astral.sh/ruff/) for linting Python code. The previous standard linter was [flake8](https://flake8.pycqa.org/en/latest/). Ruff includes the features of both flake8 and the most popular plugins for flake8, along with many other capabilities.
 
-Use [pre-commit](https://pre-commit.com/) to run the linting tool before each commit to source control. You should also run the linting tool with your CI system, so that it rejects any code that does not meet the standards for your project.
+Use pre-commit hooks to run the linting tool before each commit to source control. You should also run the linting tool with your CI system, so that it rejects any code that does not meet the standards for your project.
 
 ### Use Type Hinting
 
 Current versions of Python support type hinting. Consider using type hints in any critical application. If you develop a shared library, use type hints.
 
-Once you add type hints, type checkers like [mypy](http://www.mypy-lang.org/) can check your code as you develop it. Code editors will read type hints to display information about the code that you are working with. You can also add a type checker to your pre-commit hooks and CI to validate that the code in your project is consistent.
+Once you add type hints, type checkers like [mypy](http://www.mypy-lang.org/) and [pyright](https://microsoft.github.io/pyright/) can check your code as you develop it. Code editors will read type hints to display information about the code that you are working with. You can also add a type checker to your pre-commit hooks and CI to validate that the code in your project is consistent.
 
-If you use [Pydantic](https://docs.pydantic.dev/) in your application, it can work with type hints. Use the [mypy plugin for Pydantic](https://docs.pydantic.dev/latest/integrations/mypy/) to improve the integration between mypy and Pydantic.
+If you use [Pydantic](https://docs.pydantic.dev/) in your application, it can work with type hints. If you use mypy, add the [plugin for Pydantic](https://docs.pydantic.dev/latest/integrations/mypy/) to improve the integration between mypy and Pydantic.
 
 > [PEP 484 - Type Hints](https://peps.python.org/pep-0484/) and [PEP 526 – Syntax for Variable Annotations](https://peps.python.org/pep-0526/) define the notation for type hinting.
 
@@ -115,17 +113,17 @@ To see how much of your code is covered by tests, add the [pytest-cov](https://p
 
 ### Package Your Projects
 
-Always package the tools and code libraries that you would like to share with other people. Packages enable people to use your code with the operating systems and tools that they prefer to work with, and also allow them to manage which version of your code they use.
+Always package the applications and code libraries that you would like to share with other people. Packages enable people to use your code with the operating systems and tools that they prefer to work with, and also allow them to manage which version of your code they use.
 
 Use [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages to distribute the Python libraries that you create. Read the [Python Packaging User Guide](https://packaging.python.org/en/latest/flow/) for an explanation of how to distribute software with wheel packages.
 
 You can also use _wheel_ packages to share development tools. If you publish your Python application as a _wheel_, other developers can run it with _uv_ or _pipx_. All _wheel_ packages require an existing installation of Python.
 
-For all other cases, package your applications in a format includes a copy of the required version of Python as well as your code and the dependencies. This will ensure that your code runs with the expected version of Python, and that it has the correct version of each dependency.
+For all other cases, package your applications in a format that includes a copy of the required version of Python as well as your code and the dependencies. This ensures that your code runs with the expected version of Python, and that it has the correct version of each dependency. You can package applications either in container images or as executable files.
 
-Use container images to package applications that provide a network service, such as a Web application. You can build OCI container images with Docker, [buildah](https://buildah.io/) and other tools. OCI container images can run on any system that uses Docker, Podman or Kubernetes, as well as on cloud infrastructure. Consider using the [official Python container image](https://hub.docker.com/_/python) as the base when you build images for your application.
+Use container images to package Python applications that are intended to be run by a service, such as Docker or a workflow engine, especially if the application provides a network service itself, such as a Web application. You can build OCI container images with Docker, [buildah](https://buildah.io/) and other tools. OCI container images can run on any system that uses Docker, Podman or Kubernetes, as well as on cloud infrastructure. Consider using the [official Python container image](https://hub.docker.com/_/python) as the base when you build images for your application.
 
-Use [PyInstaller](https://pyinstaller.org/) to publish desktop and command-line applications as a single executable file. Each PyInstaller file includes a copy of Python, along with your code and the required dependencies.
+Use [PyInstaller](https://pyinstaller.org/) or [Nuitka](https://nuitka.net) to publish desktop and command-line applications as a single executable file. Each executable file includes a copy of Python, along with your code and the required dependencies. Each executable will only run on the type of operating system and CPU that it was compiled to use. For example, an executable for Windows on Intel-compatible machines will not run on macOS.
 
 > _Requirements files:_ If you use requirements files to build or deploy projects then configure your tools to [use hashes](#ensure-that-requirements-files-include-hashes).
 
@@ -157,7 +155,7 @@ Python code frequently has classes for _data objects_: items that exist to store
 
 Pydantic provides validation, serialization and other features for data objects. You need to define the classes for Pydantic data objects with type hints.
 
-The built-in Python syntax for data classes offers fewer capabilities than Pydantic. The data class syntax does enable you to reduce the amount of code that you need to define data objects. Each data class acts as a standard Python class, because the syntax for data classes does not change the behavior of the classes that you define with it. Data classes also provide a limited set of features, such as the ability to mark instances of a data class as [frozen](https://docs.python.org/3/library/dataclasses.html#frozen-instances).
+The built-in Python syntax for data classes offers fewer capabilities than Pydantic. The data class syntax does enable you to reduce the amount of code that you need to define data objects. Each data class acts as a standard Python class. Data classes also provide a limited set of extra features, such as the ability to mark instances of a data class as [frozen](https://docs.python.org/3/library/dataclasses.html#frozen-instances).
 
 > [PEP 557](https://www.python.org/dev/peps/pep-0557/) describes data classes.
 
@@ -213,17 +211,25 @@ The [breakpoint()](https://docs.python.org/3/library/functions.html#breakpoint) 
 
 ### Use Logging for Diagnostic Messages, Rather Than print()
 
-The built-in _print()_ statement is convenient for adding debugging information, but you should include logging in your scripts and applications. Use the [logging](https://docs.python.org/3/library/logging.html#logrecord-attributes) module in the standard library, or a third-party logging module.
+The built-in _print()_ statement is convenient for adding debugging information, but you should use logging for your scripts and applications.
 
-### File Formats: TOML for Configuration & JSON for Data
+Always use a [structured format](https://www.structlog.org/en/stable/why.html) for your logs, such as JSON, so that they can be parsed and analyzed later. To generate structured logs, use either the [logging](https://docs.python.org/3/library/logging.html#logrecord-attributes) module in the standard library, or a third-party logging module such as [structlog](https://www.structlog.org/).
 
-Use [TOML](https://toml.io/) for configuration files that must be written or edited by human beings. Use the JSON format for data that is transferred between computer programs. Current versions of Python include support for both of these formats.
+### Use TOML Files for Configuration
 
-All of the versions of Python 3 includes [a module](https://docs.python.org/3/library/json.html) for both reading and creating JSON. Python 3.11 and above include [tomllib](https://docs.python.org/3/library/tomllib.html) to read the TOML format. If your Python software will generate TOML, you need to add [Tomli-W](https://pypi.org/project/tomli-w/) to your project.
-
-Avoid using the INI or YAML formats for new projects. These formats are more difficult to validate with software, and human errors are also more likely. If you need to work with YAML, use [ruamel.yaml](https://pypi.org/project/ruamel.yaml/), rather than [PyYAML](https://pypi.org/project/PyYAML/). You should use version 1.2 of the YAML format, and PyYAML only supports YAML 1.1.
+Use environment variables for options that must be passed to an application each time that it starts. Use [TOML](https://toml.io/) for configuration files that must be written or edited by human beings. Python 3.11 and above include [tomllib](https://docs.python.org/3/library/tomllib.html) to read the TOML format. If your Python software must generate TOML, you need to add [Tomli-W](https://pypi.org/project/tomli-w/) to your project.
 
 > [PEP 680 - tomllib: Support for Parsing TOML in the Standard Library](https://peps.python.org/pep-0680/) explains why TOML is now included with Python.
+
+Avoid using INI or YAML formats for new projects. These formats are not completely consistent between systems. This means that they are more difficult to validate with software, and it is more likely that humans will add errors to configuration files that they edit. If you need to work with YAML, use [ruamel.yaml](https://pypi.org/project/ruamel.yaml/). Avoid using [PyYAML](https://pypi.org/project/PyYAML/). You should use version 1.2 of the YAML format, and PyYAML only supports YAML 1.1.
+
+### Use JSON for Data Transfer and SQLite for Storage
+
+In most cases, you should use the JSON format for data that is transferred between applications, especially if the applications must communicate with HTTP. If you need to work with large amounts of data, use [Apache Parquet](https://parquet.apache.org/) or another specialized data format instead. All of the versions of Python 3 includes [a module](https://docs.python.org/3/library/json.html) for both reading and creating JSON documents. Consider using [DuckDB](https://duckdb.org/) for querying or processing Parquet files and sets of JSON documents.
+
+Use SQLite to store sets of data that must be available for a long time. SQLite is [designed to be resilient](https://sqlite.org/hirely.html) and the file format is [guaranteed to be stable](https://sqlite.org/lts.html). All of the versions of Python 3 includes [a module](https://docs.python.org/3/library/sqlite3.html) for SQLite.
+
+Avoid using CSV files for new projects. Systems can implement CSV in different ways, and CSV files that are edited by humans are very likely to contain formatting errors. Python includes [a module for CSV files](https://docs.python.org/3/library/csv.html), but consider using [DuckDB](https://duckdb.org/) instead, because it provides the best support for parsing CSV formats.
 
 ### Only Use async Where It Makes Sense
 
