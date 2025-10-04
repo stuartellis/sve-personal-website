@@ -139,7 +139,7 @@ Most CI systems support caching downloads. Set the [$MISE_DATA_DIR](https://mise
 
 ## mise and Python
 
-You should use a project tool to develop your Python projects, such as [uv](https://docs.astral.sh/uv/) or [Poetry](https://python-poetry.org/). These manage Python virtual environments for you, and also offer to manage the versions of Python.
+You should use a project tool to develop your Python projects, such as [Poetry](https://python-poetry.org/) or [uv](https://docs.astral.sh/uv/). These manage Python virtual environments for you, and also offer to manage the versions of Python.
 
 Current versions of mise can [integrate with uv](https://mise.jdx.dev/mise-cookbook/python.html#mise-uv), so that there are no conflicts between the tools.
 

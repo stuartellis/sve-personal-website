@@ -90,7 +90,7 @@ brew upgrade
 
 ## Version Managers and Python
 
-You should use a project tool to develop your Python projects, such as [uv](https://docs.astral.sh/uv/) or [Poetry](https://python-poetry.org/). These manage Python virtual environments for you, and also offer the ability to manage the versions of Python. I would currently recommend that you use pyenv or mise to install versions of Python, rather than using the features in project tools.
+You should use a project tool to develop your Python projects, such as [Poetry](https://python-poetry.org/) or [uv](https://docs.astral.sh/uv/). These manage Python virtual environments for you, and also offer the ability to manage the versions of Python. I would currently recommend that you use pyenv or mise to install versions of Python, rather than using the features in project tools.
 
 > You can enable current versions of mise to [integrate with uv](https://mise.jdx.dev/mise-cookbook/python.html#mise-uv), so that there are no conflicts between the tools.
 
@@ -100,7 +100,7 @@ Whichever tool that you use to install Python, ensure that it compiles each vers
 
 The pyenv tool automatically compiles Python. You must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation rather than standalone builds. Both pyenv and mise use [python-build](https://github.com/pyenv/pyenv/tree/master/plugins/python-build) to compile Python.
 
-> Only use the Python installation features of [uv](https://docs.astral.sh/uv/), [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) for experimental projects. These project tools always download the third-party standalone builds of Python when a user requests a Python version that is not already installed on the system.
+> Only use the Python installation features of project tools for experiments. These always download the third-party standalone builds of Python when a user requests a Python version that is not already installed on the system.
 
 ### Version Managers and Python Virtual Environments
 
