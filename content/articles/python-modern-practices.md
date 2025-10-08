@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2025-10-08T09:17:00+01:00"
+date = "2025-10-08T21:01:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -47,7 +47,7 @@ If your operating system includes a Python installation, avoid using it for your
 
 ### Install Python With Tools That Support Multiple Versions
 
-Instead of manually installing Python on to your development systems with packages from [the Python Website](https://www.python.org), use a version manager tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv). These tools allow you to switch between different versions of Python. This means that you can choose a Python version for each of your projects, and to new versions of Python later without interfering with other tools and projects that use Python. I provide a separate [article on using version managers](https://www.stuartellis.name/articles/version-managers/).
+Instead of manually installing Python on to your development systems with packages from [the Python Website](https://www.python.org), use a version manager tool like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv). These tools allow you to switch between different versions of Python. This means that you can choose a Python version for each of your projects, and upgrade them to new versions of Python later without interfering with other tools and projects that use Python. I provide a separate [article on using version managers](https://www.stuartellis.name/articles/version-managers/).
 
 Alternatively, consider using [Development Containers](https://containers.dev/), which are a feature of Visual Studio Code and Jetbrains IDEs. Development Containers enable you to define an isolated environment for a software project, which means that it will have a completely separate installation of Python.
 
@@ -61,7 +61,7 @@ Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://g
 
 Choose a project tool for Python. There are several of these tools, each of which provides the same essential features. For example, all of these tools can generate a directory structure that follows best practices and they can all automate Python virtual environments, so that you do not need to manually create and activate environments as you work.
 
-[Poetry](https://python-poetry.org/) is currently the most popular tool for Python projects. It is mature and well-supported. Some projects use [Hatch](https://hatch.pypa.io), which provides a well-integrated set of features for building and testing Python packages. Consider using [PDM](https://pdm-project.org) or [uv](https://docs.astral.sh/uv/) for new projects. PDM and _uv_ are frequently updated and closely align to the latest Python standards.
+[Poetry](https://python-poetry.org/) is currently the most popular tool for Python projects. It is mature and well-supported. Some projects use [Hatch](https://hatch.pypa.io), which provides a well-integrated set of features for building and testing Python packages. Consider using [PDM](https://pdm-project.org) or [uv](https://docs.astral.sh/uv/) for new projects. PDM and _uv_ closely align to the latest Python standards.
 
 > _Avoid using [Rye](https://rye.astral.sh/)_. Rye has been superseded by _uv_.
 
@@ -115,7 +115,7 @@ To see how much of your code is covered by tests, add the [pytest-cov](https://p
 
 Always package the applications and code libraries that you would like to share with other people. Packages enable people to use your code with the operating systems and tools that they prefer to work with, and also allow them to manage which version of your code they use.
 
-Use [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages to distribute the Python libraries that you create. Read the [Python Packaging User Guide](https://packaging.python.org/en/latest/flow/) for an explanation of how to distribute software with wheel packages.
+Use [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages to distribute the Python libraries that you create. Read the [Python Packaging User Guide](https://packaging.python.org/en/latest/flow/) for an explanation of how to build and distribute wheel packages.
 
 You can also use _wheel_ packages to share development tools. If you publish your Python application as a _wheel_, other developers can run it with _uv_ or _pipx_. All _wheel_ packages require an existing installation of Python.
 
@@ -221,17 +221,33 @@ Use environment variables for options that must be passed to an application each
 
 > [PEP 680 - tomllib: Support for Parsing TOML in the Standard Library](https://peps.python.org/pep-0680/) explains why TOML is now included with Python.
 
-Avoid using INI or YAML formats for new projects. These formats are not completely consistent between systems. YAML is particularly complex. It has many features, many parts of the syntax are optional, and systems sometimes extend the format with custom features. This means that YAML documents can be difficult to validate with software. Humans are also more likely to add errors to YAML configuration files that they edit.
+TOML replaces the INI file format. Avoid using INI files, even though the [module for INI support](https://docs.python.org/3/library/configparser.html) has not yet been removed from the Python standard library.
+
+### Data Formats: JSON for Transfer and SQLite for Storage
+
+In most cases, you should use the JSON format for data that is transferred between systems, especially if they must communicate with HTTP. You can validate JSON documents with [JSON Schemas](https://json-schema.org/). Vendors publish the schemas for their products to the [public Schema Store](https://www.schemastore.org/) and you can [create your own schemas](https://json-schema.org/learn/getting-started-step-by-step).
+
+If you need to store and query large amounts of data, use [Apache Parquet](https://parquet.apache.org/) or another specialized file format. These formats support features like indexing, compression and encryption.
+
+All of the versions of Python 3 includes [a module](https://docs.python.org/3/library/json.html) for both reading and creating JSON documents. Consider using [DuckDB](https://duckdb.org/docs/stable/clients/python/overview.html) for working with Parquet files and sets of JSON documents.
+
+Use SQLite to store sets of data that must be available for a long time, such as [the data stores for applications](https://sqlite.org/appfileformat.html). SQLite is [designed to be resilient](https://sqlite.org/hirely.html) and the file format is [guaranteed to be stable and portable for decades](https://sqlite.org/lts.html). All of the versions of Python 3 includes [a module](https://docs.python.org/3/library/sqlite3.html) for SQLite. DuckDB can also read and write SQLite databases with an [extension](https://duckdb.org/docs/stable/core_extensions/sqlite).
+
+### Avoid Using the CSV Format
+
+Avoid using CSV files for new projects. Use JSON, Apache Parquet or SQLite instead, as explained in the previous section.
+
+CSV formats are frequently used to create sets of data that are intended to portable and copied between different systems. In practice, systems can implement CSV in different ways, which means that there are frequently issues when you use a CSV file that has been created by another system. CSV files that are edited by humans are also very likely to contain formatting errors.
+
+Python includes [a module for CSV files](https://docs.python.org/3/library/csv.html), but consider using DuckDB instead. DuckDB provides [CSV support](https://duckdb.org/docs/stable/data/csv/overview.html) that is [tested for its ability to handle incorrectly formatted files](https://duckdb.org/2025/04/16/duckdb-csv-pollock-benchmark.html).
+
+### Avoid Using the YAML Format
+
+The YAML format is commonly used for configuration files. Avoid using this format for new projects. Use TOML for configuration files. If your project requires a large or complex set of configuration, treat the configuration as a set of structured data.
+
+YAML documents are very vulnerable to problems because the format has a large number of features, many parts of the syntax are optional, and systems sometimes extend the format with custom features. Humans are also more likely to add errors to YAML configuration files that they edit. Some types of YAML documents have published schemas that use the [JSON Schema](https://json-schema.org/) standard, but others either have no defined schema or extend the format in ways that are not compatible with the standards.
 
 If you need to work with YAML, use [ruamel.yaml](https://pypi.org/project/ruamel.yaml/), and avoid using [PyYAML](https://pypi.org/project/PyYAML/). You should use version 1.2 of the YAML format, and PyYAML only supports YAML 1.1.
-
-### Use JSON for Data Transfer and SQLite for Storage
-
-In most cases, you should use the JSON format for data that is transferred between applications, especially if the applications must communicate with HTTP. If you need to work with large amounts of data, use [Apache Parquet](https://parquet.apache.org/) or another specialized data format instead. All of the versions of Python 3 includes [a module](https://docs.python.org/3/library/json.html) for both reading and creating JSON documents. Consider using [DuckDB](https://duckdb.org/) for querying or processing Parquet files and sets of JSON documents.
-
-Use SQLite to store sets of data that must be available for a long time, such as [the data stores for applications](https://sqlite.org/appfileformat.html). SQLite is [designed to be resilient](https://sqlite.org/hirely.html) and the file format is [guaranteed to be stable and portable for the long-term](https://sqlite.org/lts.html). All of the versions of Python 3 includes [a module](https://docs.python.org/3/library/sqlite3.html) for SQLite.
-
-Avoid using CSV files for new projects. Systems can implement CSV in different ways, which means that there are frequently issues when you move a CSV file from one system to another. CSV files that are edited by humans are also very likely to contain formatting errors. Python includes [a module for CSV files](https://docs.python.org/3/library/csv.html), but consider using [DuckDB](https://duckdb.org/) instead, because it provides CSV support that is [formally tested for its ability to handle incorrectly formatted files](https://duckdb.org/2025/04/16/duckdb-csv-pollock-benchmark.html).
 
 ### Only Use async Where It Makes Sense
 
