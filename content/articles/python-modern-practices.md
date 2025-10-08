@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2025-10-04T12:37:00+01:00"
+date = "2025-10-08T09:17:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -59,13 +59,13 @@ Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://g
 
 ### Use a Project Tool
 
-Choose a project tool for Python. There are several of these tools, each of which provides the same essential features. For example, all of these tools can generate a directory structure that follows best practices and will be compatible with other Python tooling.
+Choose a project tool for Python. There are several of these tools, each of which provides the same essential features. For example, all of these tools can generate a directory structure that follows best practices and they can all automate Python virtual environments, so that you do not need to manually create and activate environments as you work.
 
-[Poetry](https://python-poetry.org/) is currently the most popular tool for Python projects. Some projects use [Hatch](https://hatch.pypa.io), which provides a well-integrated set of features for building and testing Python packages. Consider using [PDM](https://pdm-project.org) or [uv](https://docs.astral.sh/uv/) for new projects. PDM and _uv_ are closely aligned to the latest Python standards.
+[Poetry](https://python-poetry.org/) is currently the most popular tool for Python projects. It is mature and well-supported. Some projects use [Hatch](https://hatch.pypa.io), which provides a well-integrated set of features for building and testing Python packages. Consider using [PDM](https://pdm-project.org) or [uv](https://docs.astral.sh/uv/) for new projects. PDM and _uv_ are frequently updated and closely align to the latest Python standards.
 
 > _Avoid using [Rye](https://rye.astral.sh/)_. Rye has been superseded by _uv_.
 
-You may need to create projects that include Python for some purpose but cannot use Python project tools. In these cases, think carefully about the tools and directory structure that you will need, and ensure that you are familiar with the current [best practices for Python projects](https://www.stuartellis.name/articles/python-project-setup).
+You may need to create projects that include Python but cannot use Python project tools. In these cases, think carefully about the tools and directory structure that you will need, and ensure that you are familiar with the current [best practices for Python projects](https://www.stuartellis.name/articles/python-project-setup).
 
 ### Use the Most Recent Version of Python That You Can
 
@@ -73,7 +73,7 @@ For new projects, choose the most recent stable version of Python 3. This ensure
 
 Upgrade your projects as new Python versions are released. The Python development team usually support each version for five years, but some Python libraries may only support each version of Python for a shorter period of time. If you use tools that support multiple versions of Python and automated testing, you can test your projects on new Python versions with little risk.
 
-_Avoid using Python 2._ Older operating systems include Python 2, but it is not supported by the Python development team or by the developers of most popular Python libraries.
+> _Avoid using Python 2._ Older operating systems include Python 2, but it is not supported by the Python development team or by the developers of most popular Python libraries.
 
 ## Developing Python Projects
 
@@ -221,15 +221,17 @@ Use environment variables for options that must be passed to an application each
 
 > [PEP 680 - tomllib: Support for Parsing TOML in the Standard Library](https://peps.python.org/pep-0680/) explains why TOML is now included with Python.
 
-Avoid using INI or YAML formats for new projects. These formats are not completely consistent between systems. This means that they are more difficult to validate with software, and it is more likely that humans will add errors to configuration files that they edit. If you need to work with YAML, use [ruamel.yaml](https://pypi.org/project/ruamel.yaml/). Avoid using [PyYAML](https://pypi.org/project/PyYAML/). You should use version 1.2 of the YAML format, and PyYAML only supports YAML 1.1.
+Avoid using INI or YAML formats for new projects. These formats are not completely consistent between systems. YAML is particularly complex. It has many features, many parts of the syntax are optional, and systems sometimes extend the format with custom features. This means that YAML documents can be difficult to validate with software. Humans are also more likely to add errors to YAML configuration files that they edit.
+
+If you need to work with YAML, use [ruamel.yaml](https://pypi.org/project/ruamel.yaml/), and avoid using [PyYAML](https://pypi.org/project/PyYAML/). You should use version 1.2 of the YAML format, and PyYAML only supports YAML 1.1.
 
 ### Use JSON for Data Transfer and SQLite for Storage
 
 In most cases, you should use the JSON format for data that is transferred between applications, especially if the applications must communicate with HTTP. If you need to work with large amounts of data, use [Apache Parquet](https://parquet.apache.org/) or another specialized data format instead. All of the versions of Python 3 includes [a module](https://docs.python.org/3/library/json.html) for both reading and creating JSON documents. Consider using [DuckDB](https://duckdb.org/) for querying or processing Parquet files and sets of JSON documents.
 
-Use SQLite to store sets of data that must be available for a long time. SQLite is [designed to be resilient](https://sqlite.org/hirely.html) and the file format is [guaranteed to be stable](https://sqlite.org/lts.html). All of the versions of Python 3 includes [a module](https://docs.python.org/3/library/sqlite3.html) for SQLite.
+Use SQLite to store sets of data that must be available for a long time, such as [the data stores for applications](https://sqlite.org/appfileformat.html). SQLite is [designed to be resilient](https://sqlite.org/hirely.html) and the file format is [guaranteed to be stable and portable for the long-term](https://sqlite.org/lts.html). All of the versions of Python 3 includes [a module](https://docs.python.org/3/library/sqlite3.html) for SQLite.
 
-Avoid using CSV files for new projects. Systems can implement CSV in different ways, and CSV files that are edited by humans are very likely to contain formatting errors. Python includes [a module for CSV files](https://docs.python.org/3/library/csv.html), but consider using [DuckDB](https://duckdb.org/) instead, because it provides the best support for parsing CSV formats.
+Avoid using CSV files for new projects. Systems can implement CSV in different ways, which means that there are frequently issues when you move a CSV file from one system to another. CSV files that are edited by humans are also very likely to contain formatting errors. Python includes [a module for CSV files](https://docs.python.org/3/library/csv.html), but consider using [DuckDB](https://duckdb.org/) instead, because it provides CSV support that is [formally tested for its ability to handle incorrectly formatted files](https://duckdb.org/2025/04/16/duckdb-csv-pollock-benchmark.html).
 
 ### Only Use async Where It Makes Sense
 
@@ -295,8 +297,8 @@ The [subprocess](https://docs.python.org/3/library/subprocess.html) module provi
 
 ### Use httpx for Web Clients
 
-Use [httpx](https://www.python-httpx.org/) for Web client applications. Many Python applications include [requests](https://requests.readthedocs.io/en/latest/), but you should httpx for new projects.
+Use [httpx](https://www.python-httpx.org/) for Web client applications. Many Python applications include [requests](https://requests.readthedocs.io/en/latest/), but you should use httpx for new projects.
 
-The httpx package supersedes requests. It supports [HTTP/2](https://www.python-httpx.org/http2/) and [async](https://www.python-httpx.org/async/), which are not available with requests.
+The httpx package completely supersedes _requests_. It supports [HTTP/2](https://www.python-httpx.org/http2/) and [async](https://www.python-httpx.org/async/), which are not available with requests.
 
-Avoid using _urllib.request_ from the Python standard library. It was designed as a low-level library, and lacks the features of requests and httpx.
+Avoid using [urllib.request](https://docs.python.org/3/library/urllib.request.html) from the Python standard library. It was designed as a low-level library, and lacks the features of requests and _httpx_.
