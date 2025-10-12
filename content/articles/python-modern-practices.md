@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2025-10-09T17:25:00+01:00"
+date = "2025-10-12T12:20:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -209,11 +209,57 @@ The [breakpoint()](https://docs.python.org/3/library/functions.html#breakpoint) 
 
 ## Application Design
 
+### Configuration: Use Environment Variables or TOML
+
+Use environment variables for options that must be passed to an application each time that it starts. If your application is a command-line tool, you should also provide options that can override the environment variables.
+
+Use [TOML](https://toml.io/) for configuration files that must be written or edited by human beings. This format is an open standard that is used across Python projects and other programming languages. For example, TOML also is the default configuration file format for Rust projects.
+
+Python 3.11 and above include [tomllib](https://docs.python.org/3/library/tomllib.html) to read the TOML format. If your Python software must generate TOML, you need to add [Tomli-W](https://pypi.org/project/tomli-w/) to your project.
+
+TOML replaces the INI file format. Avoid using INI files, even though the [module for INI support](https://docs.python.org/3/library/configparser.html) has not yet been removed from the Python standard library.
+
 ### Use Logging for Diagnostic Messages, Rather Than print()
 
 The built-in _print()_ statement is convenient for adding debugging information, but you should use logging for your scripts and applications.
 
 Always use a [structured format](https://www.structlog.org/en/stable/why.html) for your logs, such as JSON, so that they can be parsed and analyzed later. To generate structured logs, use either the [logging](https://docs.python.org/3/library/logging.html#logrecord-attributes) module in the standard library, or a third-party logging module such as [structlog](https://www.structlog.org/).
+
+### Use Recommended File Formats for Data
+
+There are now data file formats that are open, standardized and portable. If possible, use these formats:
+
+- [JSON](https://en.wikipedia.org/wiki/JSON)
+- [SQLite](https://sqlite.org)
+- [Apache Parquet](https://parquet.apache.org/)
+
+> All of the versions of Python 3 includes modules for [JSON](https://docs.python.org/3/library/json.html) and [SQLite](https://docs.python.org/3/library/sqlite3.html).
+
+Avoid these older file formats:
+
+- CSV - Use SQLite or Apache Parquet instead
+- DBM - Use SQLite instead
+- YAML - Use TOML or JSON instead
+
+Systems can implement these legacy formats in different ways, which means that there is a risk that data will not be read correctly when you use a file that has been created by another system. Files that are edited by humans are also more likely to contain errors, due to the complexities and inconsistency of these formats.
+
+In most cases, you should use the JSON format to transfer data between systems, especially if the systems must communicate with HTTP. JSON documents can be used for any kind of data. Every programming language and modern SQL database supports JSON. You can validate JSON documents with [JSON Schemas](https://json-schema.org/).
+
+> Vendors publish the schemas for their products to the [public Schema Store](https://www.schemastore.org/). [Pydantic](https://docs.pydantic.dev/) enables you to generate JSON Schemas for your own data objects.
+
+Use SQLite to store sets of data, such as [the data stores for applications](https://sqlite.org/appfileformat.html). It uses tables that will store standard types of data, including plain text with optional [full-text search](sqlite.org/fts5.html) and will also [store and query data in JSON format](https://sqlite.org/json1.html). SQLite is widely-supported, [designed to be resilient](https://sqlite.org/hirely.html) and the file format is [guaranteed to be stable and portable for decades](https://sqlite.org/lts.html).
+
+If you need to query a large set of tabular data, store a copy in [Apache Parquet](https://parquet.apache.org/) files. This format is specifically designed for large-scale data operations. It is portable, widely-supported and supports features like indexing, compression and encryption.
+
+Consider using either dataframes like [Pandas](https://pandas.pydata.org) or [DuckDB](https://duckdb.org/docs/stable/clients/python/overview.html) for data analysis. These tools closely integrate with Python and support the Parquet format as well as JSON and SQLite.
+
+### Working with Other Data Formats
+
+If you need to work with other data formats, consider using a modern file format in your application and importing data or generating exports in the other formats as you need them. For example, both Pandas and DuckDB can import and export data to Excel file formats.
+
+Python includes [a module for CSV files](https://docs.python.org/3/library/csv.html), but consider using DuckDB instead. DuckDB provides [CSV support](https://duckdb.org/docs/stable/data/csv/overview.html) that is [tested for its ability to handle incorrectly formatted files](https://duckdb.org/2025/04/16/duckdb-csv-pollock-benchmark.html).
+
+If you need to work with YAML in Python, use [ruamel.yaml](https://pypi.org/project/ruamel.yaml/). This supports YAML version 1.2. Avoid using [PyYAML](https://pypi.org/project/PyYAML/), because it only supports version 1.1 of the YAML format.
 
 ### Only Use async Where It Makes Sense
 
@@ -228,48 +274,6 @@ The [FastAPI](https://fastapi.tiangolo.com/) Web framework supports [using both 
 If you would like to work with _asyncio_, use Python 3.7 or above. Version 3.7 of Python introduced [context variables](https://docs.python.org/3/library/contextvars.html), which enable you to have data that is local to a specific _task_, as well as the _asyncio.run()_ function.
 
 > [PEP 0567](https://www.python.org/dev/peps/pep-0567/) describes context variables.
-
-## File Formats
-
-### Use TOML Files for Configuration
-
-Use environment variables for options that must be passed to an application each time that it starts. Use [TOML](https://toml.io/) for configuration files that must be written or edited by human beings. Python 3.11 and above include [tomllib](https://docs.python.org/3/library/tomllib.html) to read the TOML format. If your Python software must generate TOML, you need to add [Tomli-W](https://pypi.org/project/tomli-w/) to your project.
-
-> [PEP 680 - tomllib: Support for Parsing TOML in the Standard Library](https://peps.python.org/pep-0680/) explains why TOML is now included with Python.
-
-TOML replaces the INI file format. Avoid using INI files, even though the [module for INI support](https://docs.python.org/3/library/configparser.html) has not yet been removed from the Python standard library.
-
-### Data Formats: JSON, Parquet and SQLite
-
-In most cases, you should use the JSON format for data that is transferred between systems, especially if they must communicate with HTTP. JSON documents can store any kind of data or object. You can validate JSON documents with [JSON Schemas](https://json-schema.org/).
-
-> Vendors publish the schemas for their products to the [public Schema Store](https://www.schemastore.org/). You can [create schemas](https://json-schema.org/learn/getting-started-step-by-step) for the documents in your own projects.
-
-If you need to store and query large amounts of data, use [Apache Parquet](https://parquet.apache.org/). This format is portable, widely-supported and supports features like indexing, compression and encryption.
-
-All of the versions of Python 3 includes [a module](https://docs.python.org/3/library/json.html) for both reading and creating JSON documents. Consider using [DuckDB](https://duckdb.org/docs/stable/clients/python/overview.html) or [Pandas](https://pandas.pydata.org) for working with Parquet files and sets of JSON documents.
-
-Use SQLite to store sets of data that must be available for a long time, such as [the data stores for applications](https://sqlite.org/appfileformat.html). SQLite is widely-supported, [designed to be resilient](https://sqlite.org/hirely.html) and the file format is [guaranteed to be stable and portable for decades](https://sqlite.org/lts.html). SQLite databases can [store and query data in JSON format](https://sqlite.org/json1.html).
-
-All of the versions of Python 3 includes [a module](https://docs.python.org/3/library/sqlite3.html) for SQLite. Pandas can use this module to work with SQLite databases. DuckDB can also read and write SQLite databases if you install an [extension](https://duckdb.org/docs/stable/core_extensions/sqlite).
-
-### Avoid Using the CSV Format
-
-Avoid using CSV files for new projects. CSV formats are frequently used to create sets of data that are intended to be portable, so that the data can be copied between different systems. In practice, systems can implement CSV formats in different ways, which means that there is a risk that data will not be read correctly when you use a CSV file that has been created by another system. CSV files that are edited by humans are also very likely to contain errors.
-
-Use JSON, Apache Parquet or SQLite instead, as explained in the previous section. All of these formats are portable between systems. Your Python code can use [Pandas](https://pandas.pydata.org) or DuckDB to analyze data that is stored in these formats. If you need to work with spreadsheet applications, both Pandas and DuckDB can also import and export data to Excel file formats.
-
-Python includes [a module for CSV files](https://docs.python.org/3/library/csv.html), but consider using DuckDB instead. DuckDB provides [CSV support](https://duckdb.org/docs/stable/data/csv/overview.html) that is [tested for its ability to handle incorrectly formatted files](https://duckdb.org/2025/04/16/duckdb-csv-pollock-benchmark.html).
-
-### Avoid Using the YAML Format
-
-The YAML format is commonly used for configuration files. Avoid using this format for new projects. Use TOML for configuration files instead. If your project requires a large or complex set of configuration, treat the configuration as a set of structured data that must be managed.
-
-YAML documents are very vulnerable to problems. The format itself has a large number of features and many parts of the syntax are optional. We should use version 1.2 of the YAML format, which removes some of the problems of older versions, but many products accept YAML that does not strictly comply with version 1.2. Systems also sometimes extend the format with custom features. The complexity of the format means that humans are also more likely to add errors to YAML configuration files that they edit.
-
-Some types of YAML documents have published schemas that use the [JSON Schema](https://json-schema.org/) standard, but others either have no defined schema or extend the format in ways that are not compatible with the standards.
-
-If you need to work with YAML, use [ruamel.yaml](https://pypi.org/project/ruamel.yaml/). Avoid using [PyYAML](https://pypi.org/project/PyYAML/), because it only supports version 1.1 of the YAML format.
 
 ## Libraries
 
