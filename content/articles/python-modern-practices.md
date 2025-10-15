@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2025-10-12T12:20:00+01:00"
+date = "2025-10-15T16:33:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -57,6 +57,14 @@ Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://g
 
 > Only use the Python installation features of [uv](https://docs.astral.sh/uv/), [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) for experimental projects. These project tools always download third-party standalone builds of Python when a user requests a Python version that is not already installed on the system.
 
+### Use the Most Recent Version of Python That You Can
+
+For new projects, choose the most recent stable version of Python 3. This ensures that you have the latest security fixes, as well as the fastest performance.
+
+Upgrade your projects as new Python versions are released. The Python development team usually support each version for five years, but some Python libraries may only support each version of Python for a shorter period of time. If you use tools that support multiple versions of Python and automated testing, you can test your projects on new Python versions with little risk.
+
+> _Avoid using Python 2._ Older operating systems include Python 2, but it is not supported by the Python development team or by the developers of most popular Python libraries.
+
 ### Use a Project Tool
 
 Choose a project tool for Python. There are several of these tools, each of which provides the same essential features. For example, all of these tools can generate a directory structure that follows best practices and they can all automate Python virtual environments, so that you do not need to manually create and activate environments as you work.
@@ -66,14 +74,6 @@ Choose a project tool for Python. There are several of these tools, each of whic
 > _Avoid using [Rye](https://rye.astral.sh/)_. Rye has been superseded by _uv_.
 
 You may need to create projects that include Python but cannot use Python project tools. In these cases, think carefully about the tools and directory structure that you will need, and ensure that you are familiar with the current [best practices for Python projects](https://www.stuartellis.name/articles/python-project-setup).
-
-### Use the Most Recent Version of Python That You Can
-
-For new projects, choose the most recent stable version of Python 3. This ensures that you have the latest security fixes, as well as the fastest performance.
-
-Upgrade your projects as new Python versions are released. The Python development team usually support each version for five years, but some Python libraries may only support each version of Python for a shorter period of time. If you use tools that support multiple versions of Python and automated testing, you can test your projects on new Python versions with little risk.
-
-> _Avoid using Python 2._ Older operating systems include Python 2, but it is not supported by the Python development team or by the developers of most popular Python libraries.
 
 ## Developing Python Projects
 
@@ -121,7 +121,7 @@ You can also use _wheel_ packages to share development tools. If you publish you
 
 For all other cases, package your applications in a format that includes a copy of the required version of Python as well as your code and the dependencies. This ensures that your code runs with the expected version of Python, and that it has the correct version of each dependency. You can package applications either in container images or as executable files.
 
-Use container images to package Python applications that are intended to be run by a service, such as Docker or a workflow engine, especially if the application provides a network service itself, such as a Web application. You can build OCI container images with Docker, [buildah](https://buildah.io/) and other tools. OCI container images can run on any system that uses Docker, Podman or Kubernetes, as well as on cloud infrastructure. Consider using the [official Python container image](https://hub.docker.com/_/python) as the base when you build images for your application.
+Use container images to package Python applications that are intended to be run by a service, such as Docker or a workflow engine, especially if the application provides a network service itself, such as a Web application. You can build OCI container images with Docker, [buildah](https://buildah.io/) and other tools. OCI container images can run on any system that uses Docker, Podman or Kubernetes, as well as on cloud infrastructure. Consider using the [official Python container image](https://hub.docker.com/_/python) as the base image for your application container images.
 
 Use [PyInstaller](https://pyinstaller.org/) or [Nuitka](https://nuitka.net) to publish desktop and command-line applications as a single executable file. Each executable file includes a copy of Python, along with your code and the required dependencies. Each executable will only run on the type of operating system and CPU that it was compiled to use. For example, an executable for Windows on Intel-compatible machines will not run on macOS.
 
@@ -213,27 +213,37 @@ The [breakpoint()](https://docs.python.org/3/library/functions.html#breakpoint) 
 
 Use environment variables for options that must be passed to an application each time that it starts. If your application is a command-line tool, you should also provide options that can override the environment variables.
 
-Use [TOML](https://toml.io/) for configuration files that must be written or edited by human beings. This format is an open standard that is used across Python projects and other programming languages. For example, TOML also is the default configuration file format for Rust projects.
+Use [TOML](https://toml.io/) for configuration files that must be written or edited by human beings. This format is an open standard that is used across Python projects and is also supported by other programming languages. For example, TOML is the default configuration file format for Rust projects.
 
 Python 3.11 and above include [tomllib](https://docs.python.org/3/library/tomllib.html) to read the TOML format. If your Python software must generate TOML, you need to add [Tomli-W](https://pypi.org/project/tomli-w/) to your project.
 
 TOML replaces the INI file format. Avoid using INI files, even though the [module for INI support](https://docs.python.org/3/library/configparser.html) has not yet been removed from the Python standard library.
 
-### Use Logging for Diagnostic Messages, Rather Than print()
-
-The built-in _print()_ statement is convenient for adding debugging information, but you should use logging for your scripts and applications.
-
-Always use a [structured format](https://www.structlog.org/en/stable/why.html) for your logs, such as JSON, so that they can be parsed and analyzed later. To generate structured logs, use either the [logging](https://docs.python.org/3/library/logging.html#logrecord-attributes) module in the standard library, or a third-party logging module such as [structlog](https://www.structlog.org/).
-
-### Use Recommended File Formats for Data
+### Use Modern File Formats for Data
 
 There are now data file formats that are open, standardized and portable. If possible, use these formats:
 
-- [JSON](https://en.wikipedia.org/wiki/JSON)
-- [SQLite](https://sqlite.org)
-- [Apache Parquet](https://parquet.apache.org/)
+- [JSON](https://en.wikipedia.org/wiki/JSON) - Plain-text format for data objects
+- [SQLite](https://sqlite.org) - Binary format for self-contained SQL database files
+- [Apache Parquet](https://parquet.apache.org/) - Binary format for efficient column-based storage
 
-> All of the versions of Python 3 includes modules for [JSON](https://docs.python.org/3/library/json.html) and [SQLite](https://docs.python.org/3/library/sqlite3.html).
+All of the versions of Python 3 include modules for [JSON](https://docs.python.org/3/library/json.html) and [SQLite](https://docs.python.org/3/library/sqlite3.html).
+
+If you need to work with other data formats, consider using a modern file format in your application and adding features to import data or generate exports in other formats when necessary.
+
+> You can use DuckDB or Pandas to import and export data to Excel file formats.
+
+In most cases, you should use the JSON format to transfer data between systems, especially if the systems must communicate with HTTP. JSON documents can be used for any kind of data. Every programming language and modern SQL database supports JSON. You can validate JSON documents with [JSON Schemas](https://json-schema.org/). [Pydantic](https://docs.pydantic.dev/) enables you to export your Python data objects to JSON and generate JSON Schemas from the data models.
+
+Use SQLite files for [data and configuration for applications](https://sqlite.org/appfileformat.html) as well as for queryable databases. They are arguably more portable and resilient than sets of plain-text files. SQLite is widely-supported, [designed to be resilient](https://sqlite.org/hirely.html) and the file format is [guaranteed to be stable and portable for decades](https://sqlite.org/lts.html). Each SQLite database file can safely be several gigabytes in size.
+
+> You can use SQLite databases for any kind of data. They can be used to [store and query data in JSON format](https://sqlite.org/json1.html), they hold plain text with [optional full-text search](sqlite.org/fts5.html), and they can store binary data.
+
+If you need to query a large set of tabular data, put a copy in [Apache Parquet](https://parquet.apache.org/) files and use that copy for analysis. The Parquet format is specifically designed for large-scale data operations. [DuckDB](https://duckdb.org/docs/stable/clients/python/overview.html) and dataframes like [Pandas](https://pandas.pydata.org) support the Parquet format, as well as JSON and SQLite.
+
+> I provide a separate article with more details about [modern data formats](https://www.stuartellis.name/articles/modern-data-file-formats/).
+
+### Avoid Problematic File Formats
 
 Avoid these older file formats:
 
@@ -241,25 +251,23 @@ Avoid these older file formats:
 - DBM - Use SQLite instead
 - YAML - Use TOML or JSON instead
 
-Systems can implement these legacy formats in different ways, which means that there is a risk that data will not be read correctly when you use a file that has been created by another system. Files that are edited by humans are also more likely to contain errors, due to the complexities and inconsistency of these formats.
+Systems can implement legacy formats in different ways, which means that there is a risk that data will not be read correctly when you use a file that has been created by another system. Files that are edited by humans are also more likely to contain errors, due to the complexities and inconsistency of these formats.
 
-In most cases, you should use the JSON format to transfer data between systems, especially if the systems must communicate with HTTP. JSON documents can be used for any kind of data. Every programming language and modern SQL database supports JSON. You can validate JSON documents with [JSON Schemas](https://json-schema.org/).
+### Working with YAML Files
 
-> Vendors publish the schemas for their products to the [public Schema Store](https://www.schemastore.org/). [Pydantic](https://docs.pydantic.dev/) enables you to generate JSON Schemas for your own data objects.
+If you need to work with YAML in Python, use [ruamel.yaml](https://pypi.org/project/ruamel.yaml/). This supports YAML version 1.2. Avoid using [PyYAML](https://pypi.org/project/PyYAML/), because it only supports version 1.1 of the YAML format.
 
-Use SQLite to store sets of data, such as [the data stores for applications](https://sqlite.org/appfileformat.html). It uses tables that will store standard types of data, including plain text with optional [full-text search](sqlite.org/fts5.html) and will also [store and query data in JSON format](https://sqlite.org/json1.html). SQLite is widely-supported, [designed to be resilient](https://sqlite.org/hirely.html) and the file format is [guaranteed to be stable and portable for decades](https://sqlite.org/lts.html).
-
-If you need to query a large set of tabular data, store a copy in [Apache Parquet](https://parquet.apache.org/) files. This format is specifically designed for large-scale data operations. It is portable, widely-supported and supports features like indexing, compression and encryption.
-
-Consider using either dataframes like [Pandas](https://pandas.pydata.org) or [DuckDB](https://duckdb.org/docs/stable/clients/python/overview.html) for data analysis. These tools closely integrate with Python and support the Parquet format as well as JSON and SQLite.
-
-### Working with Other Data Formats
-
-If you need to work with other data formats, consider using a modern file format in your application and importing data or generating exports in the other formats as you need them. For example, both Pandas and DuckDB can import and export data to Excel file formats.
+### Working with CSV Files
 
 Python includes [a module for CSV files](https://docs.python.org/3/library/csv.html), but consider using DuckDB instead. DuckDB provides [CSV support](https://duckdb.org/docs/stable/data/csv/overview.html) that is [tested for its ability to handle incorrectly formatted files](https://duckdb.org/2025/04/16/duckdb-csv-pollock-benchmark.html).
 
-If you need to work with YAML in Python, use [ruamel.yaml](https://pypi.org/project/ruamel.yaml/). This supports YAML version 1.2. Avoid using [PyYAML](https://pypi.org/project/PyYAML/), because it only supports version 1.1 of the YAML format.
+If you use DuckDB or Pandas then you can import and export data to Excel file formats. Unlike CSV, Excel file formats store explicit data types for items.
+
+### Use Logging for Diagnostic Messages, Rather Than print()
+
+The built-in _print()_ statement is convenient for adding debugging information, but you should use logging for your scripts and applications.
+
+Always use a [structured format](https://www.structlog.org/en/stable/why.html) for your logs, such as JSON, so that they can be parsed and analyzed later. To generate structured logs, use either the [logging](https://docs.python.org/3/library/logging.html#logrecord-attributes) module in the standard library, or a third-party logging module such as [structlog](https://www.structlog.org/).
 
 ### Only Use async Where It Makes Sense
 
