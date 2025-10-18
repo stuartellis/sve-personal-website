@@ -7,7 +7,7 @@ categories = ["programming", "python"]
 tags = ["python"]
 +++
 
-[Python](https://www.python.org/) has a long history, and it has evolved over time. This article describes some agreed modern best practices.
+[Python](https://www.python.org/) has a long history, and it has evolved over time. This article describes some modern good practices.
 
 ## Use a Helper to Run Python Tools
 
@@ -43,11 +43,13 @@ uv tool install pre-commit
 
 ### Use a Project Tool
 
-Always use a project tool for Python, unless you have special requirements. There are several of these tools, each of which provides the same essential features. For example, all of these tools can generate a directory structure that follows best practices and they can all automate Python virtual environments, so that you do not need to manually create and activate environments as you work.
+Use a project tool for Python, unless you have special requirements. There are several of these tools, which all provide a key set of features for Python development. For example, all of these tools can generate a directory structure that follows best practices, manage package dependencies and also automate Python virtual environments, so that you do not need to manually create and activate environments as you work.
 
-Several project tools can also manage the versions of Python, so that you will automatically have the correct version of Python for each project. These can download versions of Python as needed. The [uv](https://docs.astral.sh/uv/) tool is a single executable file that is written in Rust, which means that you do not need to install any version of Python yourself before you use it. The [section below](#install-python-with-tools-that-support-multiple-versions) explains in more detail.
+Project tools can manage the versions of Python, so that you will automatically have the correct version of Python for each project. These can download versions of Python as needed. The [section below](#install-python-with-tools-that-support-multiple-versions) explains in more detail.
 
-[Poetry](https://python-poetry.org/) is currently the most popular tool for managing Python projects. It is mature and well-supported. It does not include features to provide versions of Python, so you should use a version manager alongside Poetry. Consider using [uv](https://docs.astral.sh/uv/) or [PDM](https://pdm-project.org) for new projects, which can manage Python versions and also install packages more efficiently than Poetry. Some projects use [Hatch](https://hatch.pypa.io), which provides a well-integrated set of features for building and testing Python software.
+[Poetry](https://python-poetry.org/) is currently the most popular tool for managing Python projects, and it is a good choice for most cases. It is well-supported and has been steadily developed. The feature to provide versions of Python is currently [experimental](https://python-poetry.org/docs/cli/#python), so you should use a version manager alongside Poetry for significant projects.
+
+There are currently several other well-known project tools for Python. The [PDM](https://pdm-project.org) project and [uv](https://docs.astral.sh/uv/) from [Astral](https://astral.sh/) are less conservative than Poetry, adopting new features and standards more rapidly. Some teams use [Hatch](https://hatch.pypa.io), which provides a well-integrated set of features for building and testing Python software products.
 
 > _Avoid using [Rye](https://rye.astral.sh/)_. Rye has been superseded by _uv_.
 
@@ -57,11 +59,9 @@ You may need to create projects that include Python but cannot use Python projec
 
 Instead of manually installing Python on to your development systems with packages from [the Python Website](https://www.python.org), use tools that provide copies of Python on demand. This means that you can choose a Python version for each of your projects, and upgrade projects to new versions of Python later without interfering with other tools and projects that use Python.
 
-The [uv](https://docs.astral.sh/uv/), [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) project tools can install copies of Python as needed. These project tools use [standalone builds](https://github.com/astral-sh/python-build-standalone), which are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project. The standalone builds have [some limitations](https://gregoryszorc.com/docs/python-build-standalone/main/quirks.html) that are not present with other copies of Python.
+The project tools can install copies of Python as needed. They use [standalone builds](https://github.com/astral-sh/python-build-standalone), which are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project. The standalone builds have [some limitations](https://gregoryszorc.com/docs/python-build-standalone/main/quirks.html) that are not present with other copies of Python.
 
-Version manager tools like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv) provide the same capabilities. They allow you to switch between different versions of Python at will, as well as providing the defined version for each of your projects.
-
-> I provide a separate [article on using version managers](https://www.stuartellis.name/articles/version-managers/).
+Version manager tools like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv) also allow you to switch between different versions of Python at will, as well as providing the defined version for each of your projects. I provide a separate [article on using version managers](https://www.stuartellis.name/articles/version-managers/).
 
 [Development Containers](https://containers.dev/) enable you to define a complete environment for a software project, which means that the project will always have a separate installation of Python. Development containers are a feature of Visual Studio Code and Jetbrains IDEs.
 
@@ -293,13 +293,11 @@ If you would like to work with _asyncio_, use Python 3.7 or above. Version 3.7 o
 
 ## Libraries
 
-### Handle Command-line Input with argparse
+### Use a Modern Framework for CLI Applications
 
-The [argparse](https://docs.python.org/3/library/argparse.html) module is now the recommended way to process command-line input. Use _argparse_, rather than the older _optparse_ and _getopt_.
+Consider using the [Cyclopts](https://cyclopts.readthedocs.io/en/latest/) framework or the [Typer](https://typer.tiangolo.com/) library for building CLI applications. Both of these use type hints and support more complex command-line features like subcommands. The older [Click](https://click.palletsprojects.com/) library is more limited.
 
-The _optparse_ module is officially deprecated, so update code that uses _optparse_ to use _argparse_ instead.
-
-Refer to [the argparse tutorial](https://docs.python.org/3/howto/argparse.html) in the official documentation for more details.
+If you must limit your project to only use the Python standard library, use the [argparse](https://docs.python.org/3/library/argparse.html) module. The _optparse_ module is officially deprecated, so update code that uses _optparse_ or _getopt_ to use _argparse_ instead. Refer to [the argparse tutorial](https://docs.python.org/3/howto/argparse.html) in the official documentation for more details.
 
 ### Use pathlib for File and Directory Paths
 
