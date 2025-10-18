@@ -13,7 +13,7 @@ All of the suggested formats are open, standardized and portable. If you need to
 
 ## JSON
 
-[JSON](https://en.wikipedia.org/wiki/JSON) is a plain-text format for defining data objects. In most cases, you should use this format to transfer data between systems, especially if they must communicate with HTTP. JSON documents can be used for any kind of data.
+[JSON](https://en.wikipedia.org/wiki/JSON) is a plain-text format for defining data objects. In most cases, you should use this format to transfer data between systems, especially if they must communicate with HTTP. JSON documents can be used for any kind of data. Since JSON is plain-text, data in this format can be stored either in files or in any modern database.
 
 You can validate JSON documents with [JSON Schemas](https://json-schema.org/). Each schema is a JSON file, which means that they can be published in any Web site or stored in version control. Vendors publish the schemas for their products to the [public Schema Store](https://www.schemastore.org/). You can [write schemas yourself](https://json-schema.org/learn/getting-started-step-by-step), or generate them with tools. For example, [Pydantic](https://docs.pydantic.dev/) enables you to generate JSON Schemas for your Python data objects.
 
@@ -45,7 +45,7 @@ TOML is the default configuration file format for Python and Rust projects. Pyth
 
 ### Tabular Data: Apache Parquet
 
-If you need to query a large set of tabular data, store a copy in [Apache Parquet](https://parquet.apache.org/) files. It is a binary file format that is specifically designed for large-scale data operations, and supports features like indexing, compression and encryption.
+If you need to query a large set of tabular data, store a copy in [Apache Parquet](https://parquet.apache.org/) files. It is a binary file format that is specifically designed for large-scale operations on data, and supports features like indexing, compression and encryption. Parquet can store data that is in JSON format, as well as standard data types.
 
 Parquet is portable and widely-supported. For example, [DuckDB](https://duckdb.org/) and dataframe libraries like [Pandas](https://pandas.pydata.org/) support the Parquet format. Database systems that are based on [Apache Iceberg](https://iceberg.apache.org/) can use Parquet as the file format for storage.
 

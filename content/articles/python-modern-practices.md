@@ -13,7 +13,7 @@ tags = ["python"]
 
 Use either [pipx](https://pipx.pypa.io) or [uv](https://docs.astral.sh/uv/) to run Python tools on development systems, rather than installing these applications with _pip_ or another method. Both _pipx_ and _uv_ automatically put each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
 
-> Always follow the instructions on the [Website](https://pipx.pypa.io) to install _pipx_ on your operating system. This will ensure that _pipx_ works correctly with an appropriate Python installation.
+Follow the instructions on the [Website](https://pipx.pypa.io) to install _pipx_ on your operating system. This will ensure that _pipx_ works correctly with an appropriate Python installation. The _uv_ tool is a single executable file that is written in Rust, which means that you do not need to install any version of Python yourself before you use it.
 
 Use the [pipx run](https://pipx.pypa.io/stable/#walkthrough-running-an-application-in-a-temporary-virtual-environment) feature of _pipx_ for most Python applications, or [uvx](https://docs.astral.sh/uv/#tool-management), which is the equivalent command for _uv_. These download the application to a cache and run it. For example, these commands download and run the latest version of [bpytop](https://github.com/aristocratos/bpytop), a system monitoring tool:
 
@@ -43,11 +43,11 @@ uv tool install pre-commit
 
 ### Use a Project Tool
 
-Always use a project tool, unless you have special requirements. There are several of these tools, each of which provides the same essential features. For example, all of these tools can generate a directory structure that follows best practices and they can all automate Python virtual environments, so that you do not need to manually create and activate environments as you work.
+Always use a project tool for Python, unless you have special requirements. There are several of these tools, each of which provides the same essential features. For example, all of these tools can generate a directory structure that follows best practices and they can all automate Python virtual environments, so that you do not need to manually create and activate environments as you work.
 
-These tools can also install copies of Python, so that you do not need to set up Python yourself and have the correct version of Python for each project. The [section below](#install-python-with-tools-that-support-multiple-versions) explains in more detail.
+Several project tools can also manage the versions of Python, so that you will automatically have the correct version of Python for each project. These can download versions of Python as needed. The [uv](https://docs.astral.sh/uv/) tool is a single executable file that is written in Rust, which means that you do not need to install any version of Python yourself before you use it. The [section below](#install-python-with-tools-that-support-multiple-versions) explains in more detail.
 
-[Poetry](https://python-poetry.org/) is currently the most popular tool for Python projects. It is mature and well-supported. Some projects use [Hatch](https://hatch.pypa.io), which provides a well-integrated set of features for building and testing Python packages. Consider using [PDM](https://pdm-project.org) or [uv](https://docs.astral.sh/uv/) for new projects. PDM and _uv_ closely align to the latest Python standards.
+[Poetry](https://python-poetry.org/) is currently the most popular tool for managing Python projects. It is mature and well-supported. It does not include features to provide versions of Python, so you should use a version manager alongside Poetry. Consider using [uv](https://docs.astral.sh/uv/) or [PDM](https://pdm-project.org) for new projects, which can manage Python versions and also install packages more efficiently than Poetry. Some projects use [Hatch](https://hatch.pypa.io), which provides a well-integrated set of features for building and testing Python software.
 
 > _Avoid using [Rye](https://rye.astral.sh/)_. Rye has been superseded by _uv_.
 
@@ -55,17 +55,17 @@ You may need to create projects that include Python but cannot use Python projec
 
 ### Install Python With Tools That Support Multiple Versions
 
-Instead of manually installing Python on to your development systems with packages from [the Python Website](https://www.python.org), use tools that provide copies of Python on demand. This means that you can choose a Python version for each of your projects, and upgrade them to new versions of Python later without interfering with other tools and projects that use Python.
+Instead of manually installing Python on to your development systems with packages from [the Python Website](https://www.python.org), use tools that provide copies of Python on demand. This means that you can choose a Python version for each of your projects, and upgrade projects to new versions of Python later without interfering with other tools and projects that use Python.
 
-If you enable the feature, project tools like Poetry and _uv_ will install copies of Python as needed. Avoid using this feature for production systems. The project tools use [standalone builds](https://github.com/astral-sh/python-build-standalone), which are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project. These standalone builds may have issues that are not present with other copies of Python.
+The [uv](https://docs.astral.sh/uv/), [PDM](https://pdm-project.org) and [Hatch](https://hatch.pypa.io) project tools can install copies of Python as needed. These project tools use [standalone builds](https://github.com/astral-sh/python-build-standalone), which are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project. The standalone builds have [some limitations](https://gregoryszorc.com/docs/python-build-standalone/main/quirks.html) that are not present with other copies of Python.
 
-Version manager tools like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv) also allow you to switch between different versions of Python at will, as well as providing the correct versions for projects.
+Version manager tools like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv) provide the same capabilities. They allow you to switch between different versions of Python at will, as well as providing the defined version for each of your projects.
 
 > I provide a separate [article on using version managers](https://www.stuartellis.name/articles/version-managers/).
 
 [Development Containers](https://containers.dev/) enable you to define a complete environment for a software project, which means that the project will always have a separate installation of Python. Development containers are a feature of Visual Studio Code and Jetbrains IDEs.
 
-Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) automatically compile Python rather than using the standalone builds, but you must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation.
+Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) automatically compile Python from source code, rather than using the third-party standalone builds. For mise, you will need to [change the configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) if you prefer to compile Python from the official sources rather than downloading standalone builds.
 
 ### Use the Most Recent Version of Python That You Can
 
@@ -169,13 +169,13 @@ Use the _enum_ type for immutable collections of key-value pairs. Enums can use 
 
 Python also has _collections.namedtuple()_ for immutable key-value pairs. This feature was created before _enum_ types. Named tuples do not use classes.
 
-### Format Strings with f-strings
+### Format Strings with f-strings or t-strings
 
-The new [f-string](https://docs.python.org/3/reference/lexical_analysis.html#f-strings) syntax is both more readable and has better performance than older methods. Use f-strings instead of _%_ formatting, _str.format()_ or _str.Template()_.
+The [f-string](https://docs.python.org/3/reference/lexical_analysis.html#f-strings) syntax is both more readable and has better performance than older methods for formatting strings. Python 3.14 also includes the [t-string syntax](https://t-strings.help/), which supports more advanced cases. Use f-strings or t-strings instead of _%_ formatting, _str.format()_ or _str.Template()_.
 
 The older features for formatting strings will not be removed, to avoid breaking backward compatibility.
 
-> [PEP 498](https://www.python.org/dev/peps/pep-0498/) explains f-strings in detail.
+> [PEP 498](https://www.python.org/dev/peps/pep-0498/) explains f-strings in detail. [PEP 750](https://peps.python.org/pep-0750/) explains t-strings.
 
 ### Use Datetime Objects with Time Zones
 
@@ -233,17 +233,17 @@ There are now data file formats that are open, standardized and portable. If pos
 
 All of the versions of Python 3 include modules for [JSON](https://docs.python.org/3/library/json.html) and [SQLite](https://docs.python.org/3/library/sqlite3.html). Python dataframe libraries like [Pandas](https://pandas.pydata.org) support Parquet, JSON and SQLite. [DuckDB](https://duckdb.org/docs/stable/clients/python/overview) also supports all three formats.
 
-If you need to work with other data formats, consider using a modern file format in your application and adding features to import data or generate exports in other formats when necessary.
+If you need to work with other data formats, consider using a modern file format in your application and adding features to import data or generate exports in other formats when necessary. For example, DuckDB and Pandas include features to import and export data to files in the Excel format.
 
-> DuckDB and Pandas include features to import and export data to other file formats, including Excel.
+In most cases, you should use the JSON format to transfer data between systems, especially if the systems must communicate with HTTP. JSON documents can be used for any kind of data. Since JSON is plain-text, data in this format can be stored either in files or in a database. Every programming language and modern SQL database supports JSON.
 
-In most cases, you should use the JSON format to transfer data between systems, especially if the systems must communicate with HTTP. JSON documents can be used for any kind of data. Every programming language and modern SQL database supports JSON. You can validate JSON documents with [JSON Schemas](https://json-schema.org/). [Pydantic](https://docs.pydantic.dev/) enables you to export your Python data objects to JSON and generate JSON Schemas from the data models.
+> You can validate JSON documents with [JSON Schemas](https://json-schema.org/). [Pydantic](https://docs.pydantic.dev/) enables you to export your Python data objects to JSON and generate JSON Schemas from the data models.
 
 Each SQLite database is a single file. Use SQLite files for [data and configuration for applications](https://sqlite.org/appfileformat.html) as well as for queryable databases. They are arguably more portable and resilient than sets of plain-text files. SQLite is widely-supported, [robust](https://sqlite.org/hirely.html) and the file format is [guaranteed to be stable and portable for decades](https://sqlite.org/lts.html). Each SQLite database file can safely be several gigabytes in size.
 
 > You can use SQLite databases for any kind of data. They can be used to [store and query data in JSON format](https://sqlite.org/json1.html), they hold plain text with [optional full-text search](sqlite.org/fts5.html), and they can store binary data.
 
-If you need to query a large set of tabular data, put a copy in [Apache Parquet](https://parquet.apache.org/) files and use that copy for your analysis. The Parquet format is specifically designed for large-scale data operations, and scales to tables with millions of rows.
+If you need to query a large set of tabular data, put a copy in [Apache Parquet](https://parquet.apache.org/) files and use that copy for your work. The Parquet format is specifically designed for large-scale data operations, and scales to tables with millions of rows. Parquet can store data that is in JSON format, as well as standard data types.
 
 > I provide a separate article with more details about [modern data formats](https://www.stuartellis.name/articles/modern-data-file-formats/).
 
@@ -261,11 +261,13 @@ Systems can implement legacy formats in different ways, which means that there i
 
 If you need to work with YAML in Python, use [ruamel.yaml](https://pypi.org/project/ruamel.yaml/). This supports YAML version 1.2. Avoid using [PyYAML](https://pypi.org/project/PyYAML/), because it only supports version 1.1 of the YAML format.
 
+Avoid creating YAML files, because modern formats offer better options. Consider using TOML for application configuration, and JSON or table-based storage like SQLite for larger sets of data.
+
 ### Working with CSV Files
 
-Avoid creating CSV files. If you use DuckDB or Pandas then you can import and export data to Parquet and Excel file formats. Unlike CSV, Parquet and Excel file formats store explicit data types for items.
-
 Python does include [a module for CSV files](https://docs.python.org/3/library/csv.html), but consider using DuckDB instead. DuckDB provides [CSV support](https://duckdb.org/docs/stable/data/csv/overview.html) that is [tested for its ability to handle incorrectly formatted files](https://duckdb.org/2025/04/16/duckdb-csv-pollock-benchmark.html).
+
+Avoid creating CSV files, because modern data formats are all more capable. If you use DuckDB or Pandas then you can import and export data to Parquet, SQLite and Excel file formats. Unlike CSV, these file formats store explicit data types for items.
 
 ### Use Logging for Diagnostic Messages, Rather Than print()
 

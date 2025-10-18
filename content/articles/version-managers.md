@@ -17,12 +17,12 @@ Each popular programming language has a [specialized version manager](#version-m
 
 ### Version Managers for Programming Languages
 
-These are popular specialized version managers for programming languages:
+These are popular version managers for programming languages:
 
 - The standard _go_ tool [manages versions of Go](https://go.dev/doc/manage-install#installing-multiple).
 - [jEnv](https://www.jenv.be/) for Java
 - [fnm](https://github.com/Schniz/fnm) and [nvm](https://github.com/nvm-sh/nvm) for Node.js
-- [pyenv](https://github.com/pyenv/pyenv) for Python
+- [pyenv](https://github.com/pyenv/pyenv) or [uv](https://docs.astral.sh/uv/) for Python
 - [rustup](https://rustup.rs/) for Rust
 
 > See the [section on Python](#version-managers-and-python) for more details about using version managers with Python.
@@ -90,18 +90,14 @@ brew upgrade
 
 ## Version Managers and Python
 
-You should use a project tool to develop your Python projects, such as [Poetry](https://python-poetry.org/) or [uv](https://docs.astral.sh/uv/). These manage Python virtual environments for you, and also offer the ability to manage the versions of Python. I would currently recommend that you use pyenv or mise to install versions of Python, rather than using the features in project tools.
+You should use a project tool to develop your Python projects, such as [Poetry](https://python-poetry.org/), [PDM](https://pdm-project.org) or [uv](https://docs.astral.sh/uv/). These manage Python virtual environments for you. PDM and _uv_ also provide the ability to manage the versions of Python for your projects. The _uv_ tool is a single executable file that is written in Rust, which means that you do not need to install any version of Python yourself before you use it.
+
+These project tools use [standalone builds](https://github.com/astral-sh/python-build-standalone), which are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project. The standalone builds have [some limitations](https://gregoryszorc.com/docs/python-build-standalone/main/quirks.html) that are not present with other copies of Python.
+
+The [pyenv](https://github.com/pyenv/pyenv) tool automatically compiles Python from source code, rather than downloading the third-party standalone builds. For mise, you will need to [change the configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) if you prefer to compile Python from the official sources rather than downloading standalone builds. Both pyenv and mise use [python-build](https://github.com/pyenv/pyenv/tree/master/plugins/python-build) to compile Python.
 
 > You can enable current versions of mise to [integrate with uv](https://mise.jdx.dev/mise-cookbook/python.html#mise-uv), so that there are no conflicts between the tools.
 
-### Installing Python with a Version Manager
-
-Whichever tool that you use to install Python, ensure that it compiles each version of Python that it installs, rather than using [standalone builds](https://gregoryszorc.com/docs/python-build-standalone/main/). These standalone builds are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project.
-
-The pyenv tool automatically compiles Python. You must [change the mise configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to use compilation rather than standalone builds. Both pyenv and mise use [python-build](https://github.com/pyenv/pyenv/tree/master/plugins/python-build) to compile Python.
-
-> Only use the Python installation features of project tools for experiments. These always download the third-party standalone builds of Python when a user requests a Python version that is not already installed on the system.
-
 ### Version Managers and Python Virtual Environments
 
-If you are not using a project tool, you can use your version manager to handle Python virtual environments. Both pyenv and mise support automatic switching between Python virtual environments. Support for creating and switching between virtual environments is [built-in to mise](https://mise.jdx.dev/lang/python.html#automatic-virtualenv-activation). The [pyenv](https://github.com/pyenv/pyenv) version manager supports virtual environments with the [virtualenv plugin](https://github.com/pyenv/pyenv-virtualenv).
+If you are not using a Python project tool, you can use your version manager to handle Python virtual environments. Both pyenv and mise support automatic switching between Python virtual environments. Support for creating and switching between virtual environments is [built-in to mise](https://mise.jdx.dev/lang/python.html#automatic-virtualenv-activation). The [pyenv](https://github.com/pyenv/pyenv) version manager supports virtual environments with the [virtualenv plugin](https://github.com/pyenv/pyenv-virtualenv).
