@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2025-10-17T23:01:00+01:00"
+date = "2025-10-19T08:19:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -43,9 +43,9 @@ uv tool install pre-commit
 
 ### Use a Project Tool
 
-Use a project tool for Python, unless you have special requirements. There are several of these tools, which all provide a key set of features for Python development. For example, all of these tools can generate a directory structure that follows best practices, manage package dependencies and also automate Python virtual environments, so that you do not need to manually create and activate environments as you work.
+Use a project tool for Python, unless you have special requirements. There are several of these tools, which all provide a key set of features for Python development. For example, all of these tools can generate a directory structure that follows best practices, manage package dependencies and automate Python virtual environments, so that you do not need to manually create and activate environments as you work.
 
-Project tools can manage the versions of Python, so that you will automatically have the correct version of Python for each project. These can download versions of Python as needed. The [section below](#install-python-with-tools-that-support-multiple-versions) explains in more detail.
+Project tools can also manage the versions of Python, so that you will automatically have the correct version of Python for each project. Your project tool can install copies of Python as needed. The [section below](#install-python-with-tools-that-support-multiple-versions) explains in more detail.
 
 [Poetry](https://python-poetry.org/) is currently the most popular tool for managing Python projects, and it is a good choice for most cases. It is well-supported and has been steadily developed. The feature to provide versions of Python is currently [experimental](https://python-poetry.org/docs/cli/#python), so you should use a version manager alongside Poetry for significant projects.
 
@@ -197,113 +197,9 @@ Python 3.9 and above include the **zoneinfo** module. This provides access to th
 
 > [PEP 615](https://www.python.org/dev/peps/pep-0615/) describes support for the IANA time zone database with **zoneinfo**.
 
-### Use collections.abc for Custom Collection Types
-
-The abstract base classes in _collections.abc_ provide the components for building your own custom collection types.
-
-Use these classes, because they are fast and well-tested. The implementations in Python 3.7 and above are written in C, to provide better performance than Python code.
-
-### Use breakpoint() for Debugging
-
-This function drops you into the debugger at the point where it is called. Both the [built-in debugger](https://docs.python.org/3/library/pdb.html) and external debuggers can use these breakpoints.
-
-The [breakpoint()](https://docs.python.org/3/library/functions.html#breakpoint) feature was added in version 3.7 of Python.
-
-> [PEP 553](https://www.python.org/dev/peps/pep-0553/) describes the _breakpoint()_ function.
-
-## Application Design
-
-### Configuration: Use Environment Variables or TOML
-
-Use environment variables for options that must be passed to an application each time that it starts. If your application is a command-line tool, you should also provide options that can override the environment variables.
-
-Use [TOML](https://toml.io/) for configuration files that must be written or edited by human beings. This format is an open standard that is used across Python projects and is also supported by other programming languages. For example, TOML is the default configuration file format for Rust projects.
-
-Python 3.11 and above include [tomllib](https://docs.python.org/3/library/tomllib.html) to read the TOML format. If your Python software must generate TOML, you need to add [Tomli-W](https://pypi.org/project/tomli-w/) to your project.
-
-TOML replaces the INI file format. Avoid using INI files, even though the [module for INI support](https://docs.python.org/3/library/configparser.html) has not yet been removed from the Python standard library.
-
-### Data Storage: Use Modern File Formats
-
-There are now data file formats that are open, standardized and portable. If possible, use these formats:
-
-- [JSON](https://en.wikipedia.org/wiki/JSON) - Plain-text format for data objects
-- [SQLite](https://sqlite.org) - Binary format for self-contained and robust database files
-- [Apache Parquet](https://parquet.apache.org/) - Binary format for efficient storage of tabular data
-
-All of the versions of Python 3 include modules for [JSON](https://docs.python.org/3/library/json.html) and [SQLite](https://docs.python.org/3/library/sqlite3.html). Python dataframe libraries like [Pandas](https://pandas.pydata.org) support Parquet, JSON and SQLite. [DuckDB](https://duckdb.org/docs/stable/clients/python/overview) also supports all three formats.
-
-If you need to work with other data formats, consider using a modern file format in your application and adding features to import data or generate exports in other formats when necessary. For example, DuckDB and Pandas include features to import and export data to files in the Excel format.
-
-In most cases, you should use the JSON format to transfer data between systems, especially if the systems must communicate with HTTP. JSON documents can be used for any kind of data. Since JSON is plain-text, data in this format can be stored either in files or in a database. Every programming language and modern SQL database supports JSON.
-
-> You can validate JSON documents with [JSON Schemas](https://json-schema.org/). [Pydantic](https://docs.pydantic.dev/) enables you to export your Python data objects to JSON and generate JSON Schemas from the data models.
-
-Each SQLite database is a single file. Use SQLite files for [data and configuration for applications](https://sqlite.org/appfileformat.html) as well as for queryable databases. They are arguably more portable and resilient than sets of plain-text files. SQLite is widely-supported, [robust](https://sqlite.org/hirely.html) and the file format is [guaranteed to be stable and portable for decades](https://sqlite.org/lts.html). Each SQLite database file can safely be several gigabytes in size.
-
-> You can use SQLite databases for any kind of data. They can be used to [store and query data in JSON format](https://sqlite.org/json1.html), they hold plain text with [optional full-text search](sqlite.org/fts5.html), and they can store binary data.
-
-If you need to query a large set of tabular data, put a copy in [Apache Parquet](https://parquet.apache.org/) files and use that copy for your work. The Parquet format is specifically designed for large-scale data operations, and scales to tables with millions of rows. Parquet can store data that is in JSON format, as well as standard data types.
-
-> I provide a separate article with more details about [modern data formats](https://www.stuartellis.name/articles/modern-data-file-formats/).
-
-### Avoid Problematic File Formats
-
-Avoid these older file formats:
-
-- INI - Use TOML instead
-- CSV - Use SQLite or Apache Parquet instead
-- YAML - Use TOML or JSON instead
-
-Systems can implement legacy formats in different ways, which means that there is a risk that data will not be read correctly when you use a file that has been created by another system. Files that are edited by humans are also more likely to contain errors, due to the complexities and inconsistency of these formats.
-
-### Working with YAML Files
-
-If you need to work with YAML in Python, use [ruamel.yaml](https://pypi.org/project/ruamel.yaml/). This supports YAML version 1.2. Avoid using [PyYAML](https://pypi.org/project/PyYAML/), because it only supports version 1.1 of the YAML format.
-
-Avoid creating YAML files, because modern formats offer better options. Consider using TOML for application configuration, and JSON or table-based storage like SQLite for larger sets of data.
-
-### Working with CSV Files
-
-Python does include [a module for CSV files](https://docs.python.org/3/library/csv.html), but consider using DuckDB instead. DuckDB provides [CSV support](https://duckdb.org/docs/stable/data/csv/overview.html) that is [tested for its ability to handle incorrectly formatted files](https://duckdb.org/2025/04/16/duckdb-csv-pollock-benchmark.html).
-
-Avoid creating CSV files, because modern data formats are all more capable. If you use DuckDB or Pandas then you can import and export data to Parquet, SQLite and Excel file formats. Unlike CSV, these file formats store explicit data types for items.
-
-### Use Logging for Diagnostic Messages, Rather Than print()
-
-The built-in _print()_ statement is convenient for adding debugging information, but you should use logging in applications. If you use an application framework, it should include features for logging.
-
-If you are implementing logging yourself, consider using [loguru](https://loguru.readthedocs.io/en/stable/) or [structlog](https://www.structlog.org/). Use a [structured format](https://www.structlog.org/en/stable/why.html) such as JSON, so that your logs can be parsed and analyzed later. Always include timestamps with timezones, and use the UTC timezone on servers and shared systems.
-
-Avoid using the [logging module](https://docs.python.org/3/library/logging.html) in the Python standard library. It is slow, more difficult to configure than modern logging libraries, and the default configuration does not provide logs with timestamps.
-
-### Only Use async Where It Makes Sense
-
-The [asynchronous features of Python](https://docs.python.org/3/library/asyncio.html) enable a single process to avoid blocking on I/O operations. To achieve concurrency with Python, you must run multiple Python processes. Each of these processes may or may not use asynchronous I/O.
-
-To run multiple application processes, either use a container system, with one container per process, or an application server like [Gunicorn](https://gunicorn.org/). If you need to build a custom application that manages multiple processes, use the [multiprocessing](https://docs.python.org/3/library/multiprocessing.html) package in the Python standard library.
-
-Code that uses asynchronous I/O must not call _any_ function that uses synchronous I/O, such as _open()_, or the _logging_ module in the standard library. Instead, you need to use either the equivalent functions from _asyncio_ in the standard library or a third-party library that is designed to support asynchronous code.
-
-The [FastAPI](https://fastapi.tiangolo.com/) Web framework supports [using both synchronous and asynchronous functions in the same application](https://fastapi.tiangolo.com/async/). You must still ensure that asynchronous functions never call any synchronous function.
-
-If you would like to work with _asyncio_, use Python 3.7 or above. Version 3.7 of Python introduced [context variables](https://docs.python.org/3/library/contextvars.html), which enable you to have data that is local to a specific _task_, as well as the _asyncio.run()_ function.
-
-> [PEP 0567](https://www.python.org/dev/peps/pep-0567/) describes context variables.
-
-## Libraries
-
-### Use a Modern Framework for CLI Applications
-
-Consider using the [Cyclopts](https://cyclopts.readthedocs.io/en/latest/) framework or the [Typer](https://typer.tiangolo.com/) library for building CLI applications. Both of these use type hints and support more complex command-line features like subcommands. The older [Click](https://click.palletsprojects.com/) library is more limited.
-
-If you must limit your project to only use the Python standard library, use the [argparse](https://docs.python.org/3/library/argparse.html) module. The _optparse_ module is officially deprecated, so update code that uses _optparse_ or _getopt_ to use _argparse_ instead. Refer to [the argparse tutorial](https://docs.python.org/3/howto/argparse.html) in the official documentation for more details.
-
 ### Use pathlib for File and Directory Paths
 
-Use [pathlib](https://docs.python.org/3/library/pathlib.html) objects instead of strings whenever you need to work with file and directory pathnames.
-
-Consider using the [the pathlib equivalents for os functions](https://docs.python.org/3/library/pathlib.html#correspondence-to-tools-in-the-os-module).
+Use [pathlib](https://docs.python.org/3/library/pathlib.html) objects instead of strings whenever you need to work with file and directory pathnames. Consider using the [the pathlib equivalents for os functions](https://docs.python.org/3/library/pathlib.html#correspondence-to-tools-in-the-os-module) as well.
 
 Methods in the standard library support Path objects. For example, to list all of the the files in a directory, you can use either the _.iterdir()_ function of a Path object, or the _os.scandir()_ function.
 
@@ -337,6 +233,62 @@ The [subprocess](https://docs.python.org/3/library/subprocess.html) module provi
 
 > [PEP 324](https://www.python.org/dev/peps/pep-0324/) explains subprocess in detail.
 
+### Use collections.abc for Custom Collection Types
+
+The abstract base classes in _collections.abc_ provide the components for building your own custom collection types.
+
+Use these classes, because they are fast and well-tested. The implementations in Python 3.7 and above are written in C, to provide better performance than Python code.
+
+### Use breakpoint() for Debugging
+
+This function drops you into the debugger at the point where it is called. Both the [built-in debugger](https://docs.python.org/3/library/pdb.html) and external debuggers can use these breakpoints.
+
+The [breakpoint()](https://docs.python.org/3/library/functions.html#breakpoint) feature was added in version 3.7 of Python.
+
+> [PEP 553](https://www.python.org/dev/peps/pep-0553/) describes the _breakpoint()_ function.
+
+## Application Design
+
+### Use a Modern Framework for CLI Applications
+
+Consider using the [Cyclopts](https://cyclopts.readthedocs.io/en/latest/) framework or the [Typer](https://typer.tiangolo.com/) library for building new CLI applications. Both of these use type hints and are built for modern Python. Many projects still use the older [Click](https://click.palletsprojects.com/) framework.
+
+If you must limit your project to only use the Python standard library, use the [argparse](https://docs.python.org/3/library/argparse.html) module. The _optparse_ module is officially deprecated, so update code that uses _optparse_ or _getopt_ to use _argparse_ instead. Refer to [the argparse tutorial](https://docs.python.org/3/howto/argparse.html) in the official documentation for more details.
+
+### Use Products To Enable Concurrency and async
+
+The [asynchronous features of Python](https://docs.python.org/3/library/asyncio.html) enable a single process to avoid blocking on I/O operations. To achieve concurrency with Python, you must run multiple Python processes. Each of these processes may or may not use asynchronous I/O.
+
+Many products support these features, so that you can run your Python code concurrently on multiple CPUs or multiple computers, and can use asynchronous code when it makes sense to do so. You often do not need to implement these capabilities yourself.
+
+To run multiple Python processes, use a Python framework or a separate product that suits your needs. For example, you could use the [Dramatiq](https://dramatiq.io/) task processing library, [Dask](https://docs.dask.org/en/stable/index.html) for parallel computation, a workflow engine such as [Apache Airflow](https://airflow.apache.org/) or [Prefect](https://www.prefect.io/), or an application server like [Gunicorn](https://gunicorn.org/). To reliably handle long-running processes at scale, you can use a container system with one container per process, such as Kubernetes or [Amazon ECS](https://aws.amazon.com/ecs/).
+
+To use asynchronous I/O in your code, use a Python library or framework that supports it. Some support writing both synchronous and asynchronous functions in the same application. The [FastAPI](https://fastapi.tiangolo.com/) Web framework [supports both types of function](https://fastapi.tiangolo.com/async/), as does [Dramatiq](https://dramatiq.io/guide.html#actors).
+
+Code that uses asynchronous I/O must not call _any_ function that uses synchronous I/O, such as _open()_, or the _logging_ module in the standard library. Instead, you need to use either the equivalent functions from _asyncio_ in the standard library or ensure that the third-party library that you use is designed to support asynchronous code.
+
+> If you use a framework that supports asynchronous I/O it may provide safe functions for services like logging, but you must still ensure that asynchronous functions never call any synchronous functions.
+
+If you need to build a custom application that manages multiple processes, consider using the [multiprocessing](https://docs.python.org/3/library/multiprocessing.html) package in the Python standard library.
+
+### Configuration: Use Environment Variables or TOML
+
+Use environment variables for options that must be passed to an application each time that it starts. If your application is a command-line tool, you should also provide options that can override the environment variables.
+
+Use [TOML](https://toml.io/) for configuration files that must be written or edited by human beings. This format is an open standard that is used across Python projects and is also supported by other programming languages. For example, TOML is the default configuration file format for Rust projects.
+
+Python 3.11 and above include [tomllib](https://docs.python.org/3/library/tomllib.html) to read the TOML format. If your Python software must generate TOML, you need to add [Tomli-W](https://pypi.org/project/tomli-w/) to your project.
+
+TOML replaces the INI file format. Avoid using INI files, even though the [module for INI support](https://docs.python.org/3/library/configparser.html) has not yet been removed from the Python standard library.
+
+### Use Logging for Diagnostic Messages, Rather Than print()
+
+The built-in _print()_ statement is convenient for adding debugging information, but you should use logging in applications. If you use an application framework, it should include features for logging.
+
+If you are implementing logging yourself, consider using [loguru](https://loguru.readthedocs.io/en/stable/) or [structlog](https://www.structlog.org/). Use a [structured format](https://www.structlog.org/en/stable/why.html) such as JSON, so that your logs can be parsed and analyzed later. Always include timestamps with timezones, and use the UTC timezone on servers and shared systems.
+
+Avoid using the [logging module](https://docs.python.org/3/library/logging.html) in the Python standard library. It is slow, more difficult to configure than modern logging libraries, and the default configuration does not provide logs with timestamps.
+
 ### Use httpx for Web Clients
 
 Use [httpx](https://www.python-httpx.org/) for Web client applications. Many Python applications include [requests](https://requests.readthedocs.io/en/latest/), but you should use httpx for new projects.
@@ -344,3 +296,49 @@ Use [httpx](https://www.python-httpx.org/) for Web client applications. Many Pyt
 The httpx package completely supersedes _requests_. It supports [HTTP/2](https://www.python-httpx.org/http2/) and [async](https://www.python-httpx.org/async/), which are not available with requests.
 
 Avoid using [urllib.request](https://docs.python.org/3/library/urllib.request.html) from the Python standard library. It was designed as a low-level library, and lacks the features of requests and _httpx_.
+
+### Data Storage: Use Modern File Formats
+
+There are now data file formats that are open, standardized and portable. If possible, use these formats:
+
+- [JSON](https://en.wikipedia.org/wiki/JSON) - Plain-text format for data objects
+- [SQLite](https://sqlite.org) - Binary format for self-contained and robust database files
+- [Apache Parquet](https://parquet.apache.org/) - Binary format for efficient storage of tabular data
+
+All of the versions of Python 3 include modules for [JSON](https://docs.python.org/3/library/json.html) and [SQLite](https://docs.python.org/3/library/sqlite3.html). Python dataframe libraries like [Pandas](https://pandas.pydata.org) support Parquet, JSON and SQLite. [DuckDB](https://duckdb.org/docs/stable/clients/python/overview) also supports all three formats.
+
+If you need to work with other data formats, consider using a modern file format in your application and adding features to import data or generate exports in other formats when necessary. For example, DuckDB and Pandas include features to import and export data to files in the Excel format.
+
+In most cases, you should use the JSON format to transfer data between systems, especially if the systems must communicate with HTTP. JSON documents can be used for any kind of data. Since JSON is plain-text, data in this format can be stored either in files or in a database. Every programming language and modern SQL database supports JSON.
+
+> You can validate JSON documents with [JSON Schemas](https://json-schema.org/). [Pydantic](https://docs.pydantic.dev/) enables you to export your Python data objects to JSON and generate JSON Schemas from the data models.
+
+Each SQLite database is a single file. Use SQLite files for [data and configuration for applications](https://sqlite.org/appfileformat.html) as well as for queryable databases. They are arguably more portable and resilient than sets of plain-text files. SQLite is widely-supported, [robust](https://sqlite.org/hirely.html) and the file format is [guaranteed to be stable and portable for decades](https://sqlite.org/lts.html). Each SQLite database file can safely be gigabytes in size.
+
+> You can use SQLite databases for any kind of data. They can be used to [store and query data in JSON format](https://sqlite.org/json1.html), they hold plain text with [optional full-text search](sqlite.org/fts5.html), and they can store binary data.
+
+If you need to query a large set of tabular data, put a copy in [Apache Parquet](https://parquet.apache.org/) files and use that copy for your work. The Parquet format is specifically designed for large-scale data operations, and scales to tables with millions of rows. Parquet can store data that is in JSON format, as well as standard data types.
+
+> I provide a separate article with more details about [modern data formats](https://www.stuartellis.name/articles/modern-data-file-formats/).
+
+### Avoid Problematic File Formats
+
+Avoid these older file formats:
+
+- INI - Use TOML instead
+- CSV - Use SQLite or Apache Parquet instead
+- YAML - Use TOML or JSON instead
+
+Systems can implement legacy formats in different ways, which means that there is a risk that data will not be read correctly when you use a file that has been created by another system. Files that are edited by humans are also more likely to contain errors, due to the complexities and inconsistency of these formats.
+
+### Working with YAML Files
+
+If you need to work with YAML in Python, use [ruamel.yaml](https://pypi.org/project/ruamel.yaml/). This supports YAML version 1.2. Avoid using [PyYAML](https://pypi.org/project/PyYAML/), because it only supports version 1.1 of the YAML format.
+
+Avoid creating YAML files, because modern formats offer better options. Consider using TOML for application configuration, and JSON or table-based storage like SQLite for larger sets of data.
+
+### Working with CSV Files
+
+Python does include [a module for CSV files](https://docs.python.org/3/library/csv.html), but consider using DuckDB instead. DuckDB provides [CSV support](https://duckdb.org/docs/stable/data/csv/overview.html) that is [tested for its ability to handle incorrectly formatted files](https://duckdb.org/2025/04/16/duckdb-csv-pollock-benchmark.html).
+
+Avoid creating CSV files, because modern data formats are all more capable. If you use DuckDB or Pandas then you can import and export data to Parquet, SQLite and Excel file formats. Unlike CSV, these file formats store explicit data types for items.

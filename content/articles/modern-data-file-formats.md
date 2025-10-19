@@ -41,7 +41,7 @@ Every modern programming language has libraries to support SQLite. All of the ve
 
 TOML is the default configuration file format for Python and Rust projects. Python 3.11 and above include [tomllib](https://docs.python.org/3/library/tomllib.html) to read the TOML format. If your Python software must generate TOML, you need to add [Tomli-W](https://pypi.org/project/tomli-w/) to your project.
 
-> You can use [Taplo](https://taplo.tamasfe.dev/) to validate and format TOML files. It is both a command-line tool and Rust library.
+> You can use [Taplo](https://taplo.tamasfe.dev/) to validate and format TOML files. It is both a command-line tool and a Rust library.
 
 ### Tabular Data: Apache Parquet
 
@@ -61,7 +61,7 @@ Systems can implement these legacy formats in different ways, which means that t
 
 ### CSV
 
-CSV formats are frequently used to create sets of data that are intended to be portable, so that the data can be copied between different systems. In practice, systems can implement CSV formats in different ways, which means that there is a risk that data will not be read correctly when you use a CSV file that has been created by another system. CSV files that are edited by humans are also very likely to contain errors.
+CSV formats are frequently used to create sets of data that are intended to be portable, so that the data can be copied between different systems. In practice, systems implement CSV formats in different ways, which means that it is possible that data will not be read correctly when you use a CSV file that has been created by another system. CSV files that are edited by humans are also very likely to contain errors.
 
 Use Apache Parquet or SQLite instead of CSV formats. These formats are portable between systems and explicitly attach data types to columns. Your code can use dataframes or [DuckDB](https://duckdb.org/) to analyze data that is stored in these formats.
 
@@ -71,7 +71,7 @@ Python includes [a module for CSV files](https://docs.python.org/3/library/csv.h
 
 Avoid using INI files for new projects. The INI format is a configuration file format that was designed for old versions of Microsoft products. The format was then implemented in other systems, such as the Python programming language. INI is not a published standard.
 
-TOML completely replaces the INI file format. Python now includes and uses the TOML format, although [the INI support](https://docs.python.org/3/library/configparser.html) has not yet been removed from the Python standard library.
+TOML replaces the INI file format. Python now includes and uses the TOML format, although [the INI support](https://docs.python.org/3/library/configparser.html) has not yet been removed from the Python standard library.
 
 ### YAML
 
