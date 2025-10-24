@@ -261,9 +261,9 @@ The [asynchronous features of Python](https://docs.python.org/3/library/asyncio.
 
 Many products support these features, so that you can run your Python code concurrently on multiple CPUs or multiple computers, and can use asynchronous code when it makes sense to do so. You often do not need to implement these capabilities yourself.
 
-To run multiple Python processes, use a Python framework or a separate product that suits your needs. For example, you could use the [Dramatiq](https://dramatiq.io/) task processing library, [Dask](https://docs.dask.org/en/stable/index.html) for parallel computation, a workflow engine such as [Apache Airflow](https://airflow.apache.org/) or [Prefect](https://www.prefect.io/), or an application server like [Gunicorn](https://gunicorn.org/). To reliably handle long-running processes at scale, you can use a container system with one container per process, such as Kubernetes or [Amazon ECS](https://aws.amazon.com/ecs/).
+To run multiple Python processes, use a Python framework or a separate product that suits your needs. For example, you could use the [Dramatiq](https://dramatiq.io/) task processing library, [Dask](https://docs.dask.org/en/stable/index.html) for parallel computation, a workflow engine such as [Apache Airflow](https://airflow.apache.org/) or [Prefect](https://www.prefect.io/), or an application server like [Granian](https://github.com/emmett-framework/granian) or [Gunicorn](https://gunicorn.org/). To reliably handle long-running processes at scale, you can use a container system with one container per process, such as Kubernetes or [Amazon ECS](https://aws.amazon.com/ecs/).
 
-To use asynchronous I/O in your code, use a Python library or framework that supports it. Some support writing both synchronous and asynchronous functions in the same application. The [FastAPI](https://fastapi.tiangolo.com/) Web framework [supports both types of function](https://fastapi.tiangolo.com/async/), as does [Dramatiq](https://dramatiq.io/guide.html#actors).
+To use asynchronous I/O in your code, use a Python library or framework that supports it. Some support writing both synchronous and asynchronous functions in the same application. For example, the [FastAPI](https://fastapi.tiangolo.com/) Web framework [supports both types of function](https://fastapi.tiangolo.com/async/), as does [Dramatiq](https://dramatiq.io/guide.html#actors).
 
 Code that uses asynchronous I/O must not call _any_ function that uses synchronous I/O, such as _open()_, or the _logging_ module in the standard library. Instead, you need to use either the equivalent functions from _asyncio_ in the standard library or ensure that the third-party library that you use is designed to support asynchronous code.
 
@@ -279,15 +279,15 @@ Use [TOML](https://toml.io/) for configuration files that must be written or edi
 
 Python 3.11 and above include [tomllib](https://docs.python.org/3/library/tomllib.html) to read the TOML format. If your Python software must generate TOML, you need to add [Tomli-W](https://pypi.org/project/tomli-w/) to your project.
 
-TOML replaces the INI file format. Avoid using INI files, even though the [module for INI support](https://docs.python.org/3/library/configparser.html) has not yet been removed from the Python standard library.
+TOML replaces the INI format. Avoid using INI for projects, even though the [module for INI support](https://docs.python.org/3/library/configparser.html) has not yet been removed from the Python standard library.
 
 ### Use Logging for Diagnostic Messages, Rather Than print()
 
-The built-in _print()_ statement is convenient for adding debugging information, but you should use logging in applications. If you use an application framework, it should include features for logging.
+The built-in _print()_ statement is convenient for adding debugging information, but you should use logging in applications.
 
-If you are implementing logging yourself, consider using [loguru](https://loguru.readthedocs.io/en/stable/) or [structlog](https://www.structlog.org/). Use a [structured format](https://www.structlog.org/en/stable/why.html) such as JSON, so that your logs can be parsed and analyzed later. Always include timestamps with timezones, and use the UTC timezone on servers and shared systems.
+Use a [structured format for your logs](https://www.structlog.org/en/stable/why.html) so that they can be parsed and analyzed later. The format should always include timestamps with timezones. We include the timezones so that the data can be accurately searched and analyzed by other systems. We would expect servers and shared systems to use the UTC timezone, but log analyzers can never make this assumption.
 
-Avoid using the [logging module](https://docs.python.org/3/library/logging.html) in the Python standard library. It is slow, more difficult to configure than modern logging libraries, and the default configuration does not provide logs with timestamps.
+If you use an application framework, you can use the features that it provides for logging. If you implement logging yourself, consider using [loguru](https://loguru.readthedocs.io/en/stable/) or [structlog](https://www.structlog.org/). The [logging module](https://docs.python.org/3/library/logging.html) in the Python standard library is slower and more difficult to configure than modern logging libraries, and the default configuration is limited.
 
 ### Use httpx for Web Clients
 
@@ -297,7 +297,9 @@ The httpx package completely supersedes _requests_. It supports [HTTP/2](https:/
 
 Avoid using [urllib.request](https://docs.python.org/3/library/urllib.request.html) from the Python standard library. It was designed as a low-level library, and lacks the features of requests and _httpx_.
 
-### Data Storage: Use Modern File Formats
+## Data Formats and Storage
+
+### Modern Data Formats
 
 There are now data file formats that are open, standardized and portable. If possible, use these formats:
 
@@ -305,11 +307,11 @@ There are now data file formats that are open, standardized and portable. If pos
 - [SQLite](https://sqlite.org) - Binary format for self-contained and robust database files
 - [Apache Parquet](https://parquet.apache.org/) - Binary format for efficient storage of tabular data
 
-All of the versions of Python 3 include modules for [JSON](https://docs.python.org/3/library/json.html) and [SQLite](https://docs.python.org/3/library/sqlite3.html). Python dataframe libraries like [Pandas](https://pandas.pydata.org) support Parquet, JSON and SQLite. [DuckDB](https://duckdb.org/docs/stable/clients/python/overview) also supports all three formats.
+All of the versions of Python 3 include modules for [JSON](https://docs.python.org/3/library/json.html) and [SQLite](https://docs.python.org/3/library/sqlite3.html). The [Pandas](https://pandas.pydata.org) dataframe library supports Parquet, JSON and SQLite. [DuckDB](https://duckdb.org/docs/stable/clients/python/overview) also supports all three formats.
 
 If you need to work with other data formats, consider using a modern file format in your application and adding features to import data or generate exports in other formats when necessary. For example, DuckDB and Pandas include features to import and export data to files in the Excel format.
 
-In most cases, you should use the JSON format to transfer data between systems, especially if the systems must communicate with HTTP. JSON documents can be used for any kind of data. Since JSON is plain-text, data in this format can be stored either in files or in a database. Every programming language and modern SQL database supports JSON.
+In most cases, you should use the JSON format to transfer data between systems, especially if the systems must communicate with HTTP. JSON documents can be used for any kind of data. Since JSON is plain-text, data in this format can be stored in either files or in a database. Every programming language and modern SQL database supports JSON.
 
 > You can validate JSON documents with [JSON Schemas](https://json-schema.org/). [Pydantic](https://docs.pydantic.dev/) enables you to export your Python data objects to JSON and generate JSON Schemas from the data models.
 
@@ -335,7 +337,7 @@ Systems can implement legacy formats in different ways, which means that there i
 
 If you need to work with YAML in Python, use [ruamel.yaml](https://pypi.org/project/ruamel.yaml/). This supports YAML version 1.2. Avoid using [PyYAML](https://pypi.org/project/PyYAML/), because it only supports version 1.1 of the YAML format.
 
-Avoid creating YAML files, because modern formats offer better options. Consider using TOML for application configuration, and JSON or table-based storage like SQLite for larger sets of data.
+Avoid creating YAML files, because modern formats offer better options. Consider using [TOML](#configuration-use-environment-variables-or-toml) for application configuration, and JSON or table-based storage like SQLite for larger sets of data.
 
 ### Working with CSV Files
 
