@@ -55,11 +55,13 @@ serve:
     @hugo server
 ```
 
+> You can run recipes [in parallel](https://just.systems/man/en/parallelism.html) when it makes sense to do so.
+
 ### The Backwards Compatibility Guarantee
 
-The behaviour of _just_ is covered by a [backwards compatibility guarantee](https://just.systems/man/en/backwards-compatibility.html). This means that new versions of _just_ will not introduce backwards incompatible changes that break existing _justfiles_. To verify that new versions of _just_ do not break compatibility, the _just_ project maintain automation to test against _justfiles_ that are published as Open Source.
+The behaviour of _just_ is covered by a [backwards compatibility guarantee](https://just.systems/man/en/backwards-compatibility.html). This means that new versions of _just_ will not introduce backwards incompatible changes that break existing _justfiles_. New features are only available when you use the _unstable_ flag, until it can be guaranteed that they will not change. To verify that new versions of _just_ do not break compatibility, the _just_ project maintain automation to test against _justfiles_ that are published as Open Source.
 
-This enables _just_ to be an evergreen tool. Project maintainers simply decide the minimum version of _just_ that they will require. Users can install and update their copies of _just_ with whatever method they prefer, as long as it provides versions that is more recent than the minimum version that is required by the project.
+These decisions enable _just_ to be an evergreen tool. Project maintainers simply decide the minimum version of _just_ that they will require. Users can install and update their copies of _just_ with whatever method they prefer, as long as it provides versions that is more recent than the minimum version that is required by the project.
 
 ## Installing just
 
@@ -193,7 +195,7 @@ Current versions of _just_ provide autocompletion for Bash, zsh, fish, PowerShel
 
 If you install _just_ into a user account, you can define a set of recipes that are available at any time. Create a file with the name _.user.justfile_ in your home directory to store these recipes.
 
-Add the first recipe in the root _justfile_ with the name _help_. Write _@just --list_ in the body of the recipe. When _just_ is invoked without the name of a recipe, it runs the first recipe in the _justfile_.
+Add the first recipe in the root _justfile_ with the name _help_. Write _@just --list_ in the body of the recipe.
 
 Here is an example of a user justfile:
 
@@ -230,6 +232,8 @@ To list the recipes in your user _justfile_, type _.j_ and press the _Enter_ key
 ```shell
 .j
 ```
+
+> When _just_ is invoked without the name of a recipe, it runs the [default recipe](https://just.systems/man/en/the-default-recipe.html) or the first recipe in the _justfile_.
 
 ## Integrating just with Other Tools
 
@@ -294,6 +298,7 @@ just --unstable --fmt
 
 Follow these guidelines when writing recipes:
 
+- Set a [default recipe](https://just.systems/man/en/the-default-recipe.html). When _just_ is invoked without the name of a recipe, it runs the default recipe. If there no default recipe, it will run the first recipe in the _justfile_.
 - Use [parameters](https://just.systems/man/en/recipe-parameters.html) to get inputs for a recipe from the command-line.
 - Use [dotenv files](https://just.systems/man/en/settings.html#dotenv-settings) to get configuration from files.
 - Remember to use POSIX shell (_sh_) syntax for single-line recipes. By default, _just_ uses the _sh_ shell on the system.
