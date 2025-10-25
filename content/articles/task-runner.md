@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2025-09-20T20:37:00+01:00"
+date = "2025-10-25T08:45:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -21,10 +21,11 @@ This means that you can use Task in any environment with only a copy of the Task
 
 Task also includes several other key features:
 
-- Parallel execution of [dependencies](https://taskfile.dev/docs/guide#task-dependencies)
 - Optional parallel execution of [tasks](https://taskfile.dev/docs/reference/cli#p-parallel)
+- Parallel execution of [dependencies](https://taskfile.dev/docs/guide#task-dependencies)
 - [Conditional execution of tasks](https://taskfile.dev/usage/#prevent-unnecessary-work)
 - [Running tasks on file changes](https://taskfile.dev/usage/#watch-tasks)
+- Tasks can read [JSON and YAML](https://taskfile.dev/docs/guide#parsing-json-yaml-into-map-variables) without extra tools
 
 Here is an example of a _Taskfile.yaml_, with a _build_ task that only runs when the files for the _sources_ change:
 
@@ -75,20 +76,21 @@ Task uses a [versioned and published schema](#checking-taskfiles) for these YAML
 
 ## Installing Task
 
-You can install Task with [operating system packages](#installing-task-with-operating-system-packages). These packages only provide a single global copy of Task, and only allow you to install the versions that are available for that release of the operating system.
-
 If possible, use a tool that enables you to specify which versions of Task to install and activate different versions of Task for different projects. These options enable you to specify a version of Task for each project:
 
 1. Tool version managers like [mise](#installing-task-with-mise)
 2. [Installation with npm](#installing-task-with-npm)
 3. [Dev Containers](#adding-task-to-a-dev-container)
 4. [Installation script](#installing-task-with-a-script)
+5. The official [GitHub Action](https://github.com/go-task/setup-task)
 
 Tool version managers, `npm` and the installation script also enable you to install Task so that it is globally available for all of your work, not just a single project.
 
+You can install Task with [operating system packages](#installing-task-with-operating-system-packages). These packages only provide a single global copy of Task, and only allow you to install the versions that are available for that release of the operating system.
+
 If you install a global copy of Task then [you can integrate it with your shell](#integrating-task-with-your-shell).
 
-> If your organization has private package repositories, then you can distribute packages for Task through these. This ensures that your preferred versions of Task are available.
+> If your organization has private package repositories, then you can distribute Task through these. This ensures that your preferred versions of Task are available.
 
 ### Installing Task with mise
 
@@ -167,7 +169,7 @@ This will install the most recent version of Task that is known to Homebrew.
 
 ### Installing Task with Operating System Packages
 
-If you do need to install Task with an operating system package manager, versions are available for several popular systems. The Task project provide RPM and DEB packages through [GitHub Releases](https://github.com/go-task/task/releases). These can be used on any operating system that supports the package format.
+The Task project provide packages through [GitHub Releases](https://github.com/go-task/task/releases). These can be used on any operating system that supports the package format.
 
 Some operating systems have packages for Task that are available through their own repositories. For example, these commands install Task:
 
@@ -182,7 +184,7 @@ Task is available through the _community_ package repository for Alpine Linux. T
 doas apk add go-task --repository=http://dl-cdn.alpinelinux.org/alpine/latest-stable/community/
 ```
 
-> _Alpine Linux installs Task as go-task._ This means that you need to use the name _go-task_ rather than _task_ on the command-line. For example _go-task --list_.
+> _The Alpine Linux package installs Task as go-task._ This means that you need to use the name _go-task_ rather than _task_ on the command-line. For example _go-task --list_.
 
 ## Integrating Task with Your Shell
 
