@@ -123,11 +123,11 @@ Use [wheel](https://packaging.python.org/en/latest/specifications/binary-distrib
 
 You can also use _wheel_ packages to share development tools. If you publish your Python application as a _wheel_, other developers can run it with _uv_ or _pipx_. All _wheel_ packages require an existing installation of Python.
 
-For all other cases, package your applications in a format that includes a copy of the required version of Python as well as your code and the dependencies. This ensures that your code runs with the expected version of Python, and that it has the correct version of each dependency. You can package applications either in container images or as executable files.
+For all other cases, package your applications in a format that includes a copy of the required version of Python as well as your code and the dependencies. This ensures that your code runs with the expected version of Python, and that it has the correct version of each dependency. You can package applications in container images, as self-contained executable files, or in various package formats, like Debian packages. Container images and self-contained executable files will run on many different types of system, but packages will only install on operating systems where a software management tool accepts that specific package format.
 
 Use container images to package Python applications that are intended to be run by a service, such as Docker or a workflow engine, especially if the application provides a network service itself, such as a Web application. You can build OCI container images with Docker, [buildah](https://buildah.io/) and other tools. OCI container images can run on any system that uses Docker, Podman or Kubernetes, as well as on cloud infrastructure. Consider using the [official Python container image](https://hub.docker.com/_/python) as the base image for your application container images.
 
-Use [PyInstaller](https://pyinstaller.org/) or [Nuitka](https://nuitka.net) to publish desktop and command-line applications as a single executable file. Each executable file includes a copy of Python, along with your code and the required dependencies. Each executable will only run on the type of operating system and CPU that it was compiled to use. For example, an executable for Windows on Intel-compatible machines will not run on macOS.
+Use [PyInstaller](https://pyinstaller.org/) or [Nuitka](https://nuitka.net) to publish desktop and command-line applications as a single executable file. Each executable file includes a copy of Python, along with your code and the required dependencies. Each executable will only run on the type of operating system and CPU that it was compiled to use. For example, an executable for Microsoft Windows on Intel-compatible machines will work on all editions of Windows, but it will not run on macOS.
 
 > _Requirements files:_ If you use requirements files to build or deploy projects then configure your tools to [use hashes](#ensure-that-requirements-files-include-hashes).
 
@@ -285,23 +285,25 @@ TOML replaces the INI format. Avoid using INI for projects, even though the [mod
 
 The built-in _print()_ statement is convenient for adding debugging information, but you should use logging in applications.
 
-Use a [structured format for your logs](https://www.structlog.org/en/stable/why.html) so that they can be parsed and analyzed later. The format should always include timestamps with timezones. We include the timezones so that the data can be accurately searched and analyzed by other systems. We would expect servers and shared systems to use the UTC timezone, but log analyzers can never make this assumption.
+Use a [structured format for your logs](https://www.structlog.org/en/stable/why.html) so that they can be parsed and analyzed later. The format should always include timestamps with timezones. We include the timezones so that the data can be accurately searched and analyzed by other systems. We should expect servers and shared systems to use the UTC timezone, but log analyzers can never make this assumption.
 
-If you use an application framework, you can use the features that it provides for logging. If you implement logging yourself, consider using [loguru](https://loguru.readthedocs.io/en/stable/) or [structlog](https://www.structlog.org/). The [logging module](https://docs.python.org/3/library/logging.html) in the Python standard library is slower and more difficult to configure than modern logging libraries, and the default configuration is limited.
+Many frameworks use the [logging module](https://docs.python.org/3/library/logging.html) in the Python standard library, but this module was not designed to modern standards and requires some configuration to produce well-formatted logs. When you implement logging, consider using [loguru](https://loguru.readthedocs.io/en/stable/) or [structlog](https://www.structlog.org/).
 
 ### Use httpx for Web Clients
 
 Use [httpx](https://www.python-httpx.org/) for Web client applications. Many Python applications include [requests](https://requests.readthedocs.io/en/latest/), but you should use httpx for new projects.
 
-The httpx package completely supersedes _requests_. It supports [HTTP/2](https://www.python-httpx.org/http2/) and [async](https://www.python-httpx.org/async/), which are not available with requests.
+The httpx package supersedes _requests_. It supports [HTTP/2](https://www.python-httpx.org/http2/) and [async](https://www.python-httpx.org/async/), which are not available with requests.
 
 Avoid using [urllib.request](https://docs.python.org/3/library/urllib.request.html) from the Python standard library. It was designed as a low-level library, and lacks the features of requests and _httpx_.
 
 ## Data Formats and Storage
 
+There are now data file formats that are open, standardized and portable. If possible, use these formats, and avoid older formats. Modern formats are standardized, can be reliably read by many different systems and can be processed efficiently, even with large quantities of data. Some older formats are not standardized, which means that different systems can write different variations, which then cause errors when you move data between systems.
+
 ### Modern Data Formats
 
-There are now data file formats that are open, standardized and portable. If possible, use these formats:
+If possible, use these formats for structured data:
 
 - [JSON](https://en.wikipedia.org/wiki/JSON) - Plain-text format for data objects
 - [SQLite](https://sqlite.org) - Binary format for self-contained and robust database files
