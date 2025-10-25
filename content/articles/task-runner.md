@@ -86,11 +86,11 @@ If possible, use a tool that enables you to specify which versions of Task to in
 
 Tool version managers, `npm` and the installation script also enable you to install Task so that it is globally available for all of your work, not just a single project.
 
-You can install Task with [operating system packages](#installing-task-with-operating-system-packages). These packages only provide a single global copy of Task, and only allow you to install the versions that are available for that release of the operating system.
+You can install Task with [Homebrew](#installing-task-with-homebrew) or [operating system packages](#installing-task-with-operating-system-packages). These methods only provide a single global copy of Task.
 
-If you install a global copy of Task then [you can integrate it with your shell](#integrating-task-with-your-shell).
+> If you install a global copy of Task then [you can integrate it with your shell](#integrating-task-with-your-shell).
 
-> If your organization has private package repositories, then you can distribute Task through these. This ensures that your preferred versions of Task are available.
+If your organization has private package repositories, consider distributing Task through these. This ensures that your preferred versions of Task are available.
 
 ### Installing Task with mise
 
@@ -169,7 +169,7 @@ This will install the most recent version of Task that is known to Homebrew.
 
 ### Installing Task with Operating System Packages
 
-The Task project provide packages through [GitHub Releases](https://github.com/go-task/task/releases). These can be used on any operating system that supports the package format.
+The Task project provide packages for popular operating systems through [GitHub Releases](https://github.com/go-task/task/releases). These can be used on any operating system that supports one of the provided package formats.
 
 Some operating systems have packages for Task that are available through their own repositories. For example, these commands install Task:
 
