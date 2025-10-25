@@ -80,44 +80,19 @@ brew upgrade mise
 
 You can use mise with [any continuous integration system](https://mise.jdx.dev/continuous-integration.html). The next sections provide suggestions to consider when you set up mise and CI systems.
 
-### Using mise Environments with CI
+### Using Separate Configuration Files or mise Environments with CI
 
-I recommend that your mise configuration has one or more [environments](https://mise.jdx.dev/configuration/environments.html#config-environments) specifically for CI, so that you can override the default settings for the project when you need different behavior in a CI job. To specify the active mise environment for a CI job, set `MISE_ENV` as an environment variable:
+Consider using a separate mise configuration file specifically for CI. Alternatively, create one or more [mise environments](https://mise.jdx.dev/configuration/environments.html#config-environments) specifically for CI, so that you can override the default settings for the project when you need different behavior in a CI job.
+
+To specify the active mise environment for a CI job, set `MISE_ENV` as an environment variable:
 
 ```shell
 MISE_ENV: test
 ```
 
-### Verifying Downloads
-
-You need to ensure that the environment has GnuPG installed, so that mise can use it to verify downloads. You can then write mise CI job definitions that use mise itself to install _cosign_ and _slsa-verifier_, which mise may also use to [verify downloads](https://mise.jdx.dev/tips-and-tricks.html#software-verification):
-
-```shell
-mise use cosign slsa-verifier
-```
-
-### Disabling Software Sources
-
-Unless you need specific software that is only available through asdf plugins, disable the use of legacy asdf plugins:
-
-```shell
-mise settings disable_backends=asdf
-```
-
-To avoid issues, you should also disable these backend types unless you expect a project to need them:
-
-- [vfox](https://mise.jdx.dev/dev-tools/backends/vfox.html)
-- [pipx](https://mise.jdx.dev/dev-tools/backends/pipx.html)
-- [npm](https://mise.jdx.dev/dev-tools/backends/npm.html)
-- [go](https://mise.jdx.dev/dev-tools/backends/go.html)
-- [cargo](https://mise.jdx.dev/dev-tools/backends/cargo.html)
-- [dotnet](https://mise.jdx.dev/dev-tools/backends/dotnet.html)
-
-Apart from _vfox_, all of these backends require additional tools to run.
-
 ### Limiting mise to Trusted Configurations
 
-I would recommend that you configure your CI system to set an environment variable to enable [paranoid mode](https://mise.jdx.dev/paranoid.html):
+I would recommend that you configure your CI system to enable [paranoid mode](https://mise.jdx.dev/paranoid.html). If you do this with an environment variable, the CI system can apply the setting to every run of the CI jobs.
 
 ```shell
 MISE_PARANOID: 1
@@ -133,9 +108,28 @@ mise trust --quiet .mise.toml
 mise trust --quiet .mise.$MISE_ENV.toml
 ```
 
+### Verifying Downloads
+
+You need to ensure that the environment has GnuPG installed, so that mise can use it to verify downloads. You can then write mise CI job definitions that use mise itself to install _cosign_ and _slsa-verifier_, which mise may also use to [verify downloads](https://mise.jdx.dev/tips-and-tricks.html#software-verification).
+
+### Disabling Software Sources
+
+Unless you need specific software that is only available through asdf plugins, always disable the use of legacy asdf plugins.
+
+To avoid issues, you should also disable these backend types unless you expect a project to need them:
+
+- [vfox](https://mise.jdx.dev/dev-tools/backends/vfox.html)
+- [pipx](https://mise.jdx.dev/dev-tools/backends/pipx.html)
+- [npm](https://mise.jdx.dev/dev-tools/backends/npm.html)
+- [go](https://mise.jdx.dev/dev-tools/backends/go.html)
+- [cargo](https://mise.jdx.dev/dev-tools/backends/cargo.html)
+- [dotnet](https://mise.jdx.dev/dev-tools/backends/dotnet.html)
+
+Apart from _vfox_, all of these backends require additional tools to run.
+
 ### Caching Downloads
 
-Most CI systems support caching downloads. Set the [$MISE_DATA_DIR](https://mise.jdx.dev/directories.html#local-share-mise) as an environment variable, and use it to specify a location that your CI can cache.
+Most CI systems support caching downloads. Set the [$MISE_DATA_DIR](https://mise.jdx.dev/directories.html#local-share-mise) as a location that your CI can cache.
 
 ## mise and Python
 
