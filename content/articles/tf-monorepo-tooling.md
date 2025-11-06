@@ -232,10 +232,10 @@ To create a unit from the template, use `new`:
 TFT_UNIT=my-new-app task tft:new
 ```
 
-To create a unit as a copy of an existing unit, use `clone`. Specify the existing unit with `TFT_SOURCE_UNIT` and the name of the new unit with `TFT_UNIT`, like this:
+To create a unit as a copy of an existing unit, use `copy`. Specify the existing unit with `TFT_SOURCE_UNIT` and the name of the new unit with `TFT_UNIT`, like this:
 
 ```shell
-TFT_SOURCE_UNIT=my-first-app TFT_UNIT=my-new-app task tft:clone
+TFT_SOURCE_UNIT=my-first-app TFT_UNIT=my-new-app task tft:copy
 ```
 
 Use `TFT_CONTEXT` and `TFT_UNIT` to create a deployment of the unit with the configuration from the specified context:

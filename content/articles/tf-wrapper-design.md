@@ -144,11 +144,11 @@ The four required input variables are:
 - `tft_unit_name` (string) - The name of the component
 - `tft_edition_name` (string) - An identifier for the specific instance of the resources
 
-To create a new unit, use the `tft:clone` or `tft:new` tasks:
+To create a new unit, use the `tft:copy` or `tft:new` tasks:
 
 ```shell
 # Create a new unit as a copy of an existing unit
-TFT_SOURCE_UNIT=my-first-app TFT_UNIT=my-new-app task tft:clone
+TFT_SOURCE_UNIT=my-first-app TFT_UNIT=my-new-app task tft:copy
 
 # Create a new unit from the template unit
 TFT_UNIT=my-new-app task tft:new
