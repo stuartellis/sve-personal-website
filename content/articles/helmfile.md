@@ -1,7 +1,7 @@
 +++
 title = "Configuring Kubernetes with Helmfile"
 slug = "helmfile"
-date = "2025-09-19T21:43:00+01:00"
+date = "2025-11-06T19:31:00+01:00"
 description = "Managing Kubernetes configurations with Helmfile"
 categories = ["automation", "devops", "kubernetes"]
 tags = ["automation", "devops", "kubernetes"]
@@ -29,13 +29,19 @@ Helmfile will use Helm charts from either remote repositories or the filesystem.
 
 When you run Helmfile, it generates the YAML for Helm releases from the configuration and the lockfile, using templating and lookups to resolve values as needed. It only applies this generated configuration if you run the specific commands that change the state of the target cluster. This means that you can develop a configuration and compare it with the deployed releases on a target cluster without making any changes to the current state of that cluster.
 
-You can also develop and apply limited changes by specifying [selectors](https://helmfile.readthedocs.io/en/stable/#labels-overview). To use selectors, ensure that your Helmfile configuration has labels for release definitions and included files. You can then specify one or more selectors with any Helmfile command and it will use the labels to determine which parts of the configuration should be used. The generated YAML will only include the required releases.
-
-If you need to deploy Kubernetes manifests that are not part of a Helm chart then you can specify a directory as the source for a release, instead of the location of a Helm chart. The directory only needs to contain YAML files for the manifests and any kustomizations that you want to apply to them. Helmfile will automatically create a temporary Helm chart for the directory and generate a release for it, alongside the Helm releases that it generates for existing charts.
-
 You can use a combination of Helmfile and other tools to manage different resources on the same cluster. Since Helmfile runs Helm and produces standard Helm releases, it is compatible with other Kubernetes management tools.
 
 > If you would like to use Helmfile and Argo CD on the same Kubernetes clusters, see the Helmfile documentation on [Argo CD integration](https://helmfile.readthedocs.io/en/stable/#argocd-integration).
+
+### Selectors
+
+You can develop and apply limited changes by specifying [selectors](https://helmfile.readthedocs.io/en/stable/#labels-overview). To use selectors, ensure that your Helmfile configuration has labels for release definitions and included files.
+
+You can then specify one or more selectors with any Helmfile command and it will use the labels to determine which parts of the configuration should be used. The generated YAML will only include the required releases.
+
+### Using Manifests
+
+If you need to deploy Kubernetes manifests that are not part of a Helm chart then you can specify a directory as the source for a release, instead of the location of a Helm chart. The directory only needs to contain YAML files for the manifests and any kustomizations that you want to apply to them. Helmfile will automatically create a temporary Helm chart for the directory and generate a release for it, alongside the Helm releases that it generates for existing charts.
 
 ## Quick Examples
 
