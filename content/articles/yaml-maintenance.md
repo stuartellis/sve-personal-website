@@ -1,7 +1,7 @@
 +++
 title = "Tooling for Maintaining YAML Files"
 slug = "yaml-maintenance"
-date = "2025-12-28T12:21:00+00:00"
+date = "2025-12-28T21:40:00+00:00"
 description = "Tooling for maintenance of YAML files"
 categories = ["automation", "devops", "kubernetes", "programming"]
 tags = ["automation", "devops", "kubernetes"]
@@ -55,9 +55,9 @@ The [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/) tool 
 
 ## Running Tools with prek or pre-commit
 
-The [prek](https://prek.j178.dev/) and [pre-commit](https://pre-commit.com/) tools both manage Git hooks and enables you to run the same actions at any time, not just when you commit changes. These tools will download the other runtimes and tools that the hooks need. This means that they can provide a cross-platform way to install and run a complete set of tools for formatting and checking code.
+The [prek](https://prek.j178.dev/) tool manages Git hooks and enables you to run the same actions at any time, not just when you commit changes. It can download the other runtimes and tools that the hooks need. This means that it can provide a cross-platform way to install and run a complete set of tools for formatting and checking code.
 
-> The [prek](https://prek.j178.dev/) tool supersedes [pre-commit](https://pre-commit.com/).
+> The [prek](https://prek.j178.dev/) tool supersedes [pre-commit](https://pre-commit.com/). It can use hooks that are written for `pre-commit`, and works with existing `pre-commit` project configurations.
 
 ### Installing prek
 
@@ -105,7 +105,7 @@ repos:
       - id: check-taskfile
 ```
 
-This configuration enables Prettier, `yamllint` and `check-jsonschema`. It also includes [check-yaml](https://github.com/pre-commit/pre-commit-hooks#check-yaml), one of the standard hooks. This hook uses [ruamel.yaml](https://pypi.org/project/ruamel.yaml/) to check YAML files for syntax errors. I leave it in place because it does not slow down small projects. It is redundant, and you might choose to remove it.
+This configuration enables Prettier, `yamllint` and `check-jsonschema`. It also includes `check-yaml`, one of the standard hooks. This hook is redundant, and you might choose to remove it.
 
 To activate the configuration, run `prek install`. This adds the hooks to the Git configuration for your copy of the project, so that the tools automatically run on the staged changes each time that you commit.
 
