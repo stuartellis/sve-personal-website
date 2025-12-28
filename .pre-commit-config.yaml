@@ -2,18 +2,18 @@
 #
 # SPDX-License-Identifier: MIT
 #
-# Configuration for pre-commit
+# Tasks for prek:
 #
-# See https://pre-commit.com
+# - https://prek.j178.dev/
 
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: "v5.0.0"
+  - repo: builtin
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-json
       - id: check-toml
+      - id: check-yaml
       - id: check-added-large-files
   - repo: https://github.com/fsfe/reuse-tool
     rev: "v5.0.2"
