@@ -1,7 +1,7 @@
 +++
 title = "Tooling for Maintaining YAML Files"
 slug = "yaml-maintenance"
-date = "2025-09-19T21:54:00+01:00"
+date = "2025-12-28T12:21:00+00:00"
 description = "Tooling for maintenance of YAML files"
 categories = ["automation", "devops", "kubernetes", "programming"]
 tags = ["automation", "devops", "kubernetes"]
@@ -21,7 +21,7 @@ These tools will work on files that use standard YAML:
 - [yamllint](https://yamllint.readthedocs.io) - Lints YAML files
 - [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/) - Checks JSON and YAML files with identified types against their [schema](#validation-with-check-jsonschema)
 
-You can run them with both pre-commit hooks and on-demand by [using the pre-commit tool](#running-tools-with-pre-commit). Since they are command-line tools, you can also run them as part of continuous integration pipelines.
+You can run them with both Git hooks and on-demand by [using a pre-commit tool](#running-tools-with-prek-or-pre-commit). Since they are command-line tools, you can also run them as part of continuous integration pipelines.
 
 > All of these tools have useful default configurations, so you only need to add configuration files if you need to customize their behavior.
 
@@ -51,36 +51,39 @@ Modern text editors like Visual Studio Code, JetBrains IDEs, Neovim and Zed use 
 
 > Visual Studio Code requires the [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension to support schemas for YAML.
 
-The [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/) tool checks YAML and JSON files against the relevant schema. It includes copies of schemas for popular tools and can use other schemas, including your own schemas. It also provides [hooks for pre-commit](https://check-jsonschema.readthedocs.io/en/stable/precommit_usage.html#supported-hooks).
+The [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/) tool checks YAML and JSON files against the relevant schema. It includes copies of schemas for popular tools and can use other schemas, including your own schemas. It also provides [hooks](https://check-jsonschema.readthedocs.io/en/stable/precommit_usage.html#supported-hooks).
 
-## Running Tools with pre-commit
+## Running Tools with prek or pre-commit
 
-The [pre-commit](https://pre-commit.com/) tool both manages Git pre-commit hooks and enables you to run the same actions at any time, not just when you commit changes. The `pre-commit` tool itself requires Python to run, but it will download the other runtimes and tools that the hooks need. This means that `pre-commit` provides a cross-platform way to install and run a complete set of tools for formatting and checking code.
+The [prek](https://prek.j178.dev/) and [pre-commit](https://pre-commit.com/) tools both manage Git hooks and enables you to run the same actions at any time, not just when you commit changes. These tools will download the other runtimes and tools that the hooks need. This means that they can provide a cross-platform way to install and run a complete set of tools for formatting and checking code.
 
-### Installing pre-commit
+> The [prek](https://prek.j178.dev/) tool supersedes [pre-commit](https://pre-commit.com/).
 
-To install `pre-commit`, use either [pipx](https://pipx.pypa.io) or [uv](https://docs.astral.sh/uv/):
+### Installing prek
+
+To install `prek`, use either [pipx](https://pipx.pypa.io) or [uv](https://docs.astral.sh/uv/):
 
 ```shell
-pipx install pre-commit
+pipx install prek
 ```
 
 ```shell
-uv tool install pre-commit
+uv tool install prek
 ```
 
-### Adding pre-commit To a Project
+### Adding Hooks To a Project
 
-The `pre-commit` configuration must be in a file called `.pre-commit-config.yaml` file. Save this file in the root directory of your project:
+The configuration must be in a file called `.pre-commit-config.yaml` file. Save this file in the root directory of your project:
 
 ```yaml
 ---
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: "v6.0.0"
+  - repo: builtin
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
+      - id: check-json
+      - id: check-toml
       - id: check-yaml
       - id: check-added-large-files
 
@@ -102,39 +105,39 @@ repos:
       - id: check-taskfile
 ```
 
-This configuration enables Prettier, `yamllint` and `check-jsonschema`. It also includes [check-yaml](https://github.com/pre-commit/pre-commit-hooks#check-yaml), one of the standard `pre-commit-hooks`. This hook uses [ruamel.yaml](https://pypi.org/project/ruamel.yaml/) to check YAML files for syntax errors. I leave it in place because it does not slow down small projects. It is redundant, and you might choose to remove it.
+This configuration enables Prettier, `yamllint` and `check-jsonschema`. It also includes [check-yaml](https://github.com/pre-commit/pre-commit-hooks#check-yaml), one of the standard hooks. This hook uses [ruamel.yaml](https://pypi.org/project/ruamel.yaml/) to check YAML files for syntax errors. I leave it in place because it does not slow down small projects. It is redundant, and you might choose to remove it.
 
-To activate the configuration, run `pre-commit install`. This adds the pre-commit hooks to the Git configuration for your copy of the project, so that the tools automatically run on the staged changes each time that you commit.
+To activate the configuration, run `prek install`. This adds the hooks to the Git configuration for your copy of the project, so that the tools automatically run on the staged changes each time that you commit.
 
 ```shell
 cd my-project
-pre-commit install
+prek install
 ```
 
-> Since the `pre-commit` configuration file is YAML, it will automatically be formatted and checked by the same tools that `pre-commit` runs itself.
+> Since the `prek` configuration file is YAML, it will automatically be formatted and checked by the same tools that `prek` runs itself.
 
-### Using pre-commit
+### Using Hooks
 
 The tools automatically run on the staged changes each time that you commit. To run a tool without commiting a change, use `precommit run`. If you add the option `--all-files` it will check the current files in the project, not just staged changes.
 
 For example, to run the `check-github-workflows` hook on the project, use this command:
 
 ```shell
-pre-commit run check-github-workflows --all-files
+prek run check-github-workflows --all-files
 ```
 
 To run all of the hooks on the project, use this command:
 
 ```shell
-pre-commit run --all-files
+prek run --all-files
 ```
 
-### Updating pre-commit Hooks
+### Updating Hooks
 
 To update all of the hooks to their current version, run this command:
 
 ```shell
-pre-commit autoupdate
+prek autoupdate
 ```
 
 It automatically edits the `.pre-commit-config.yaml` file to update the versions of the hooks. You then commit this change to source control, so that other copies of the repository will use the same versions.
