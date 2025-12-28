@@ -1,5 +1,5 @@
 +++
-title = "An Example of Tooling for Terraform & OpenTofu in Monorepos"
+title = "Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
 date = "2025-09-07T17:30:00+01:00"
 description = "Tooling for Terraform and OpenTofu in monorepos"
