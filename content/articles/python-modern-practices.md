@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2025-10-19T08:19:00+01:00"
+date = "2025-12-28T23:21:00+00:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -29,7 +29,7 @@ The _bpytop_ tool is cached after the first download, which means that the secon
 
 Use _pipx install_ or _uv tool install_ for tools that are essential for your development process. These options install the tool on to your system. This ensures that the tool is available if you have no Internet access, and that you keep the same version of the tool until you decide to upgrade it.
 
-For example, if you use [pre-commit](https://pre-commit.com/) you should install it, rather than use a temporary copy. The _pre-commit_ tool automatically runs every time that we commit a change to version control, so we want it to be consistent and always available. To install _pre-commit_, run the appropriate command for _pipx_ or _uv_:
+For example, if you use a manager like [prek](https://prek.j178.dev/) or [pre-commit](https://pre-commit.com/) for Git hooks you should install it, rather than use a temporary copy. The hooks will automatically run every time that we commit a change to version control, so we need the hook manager to be consistent and always available. To install _pre-commit_, run the appropriate command for _pipx_ or _uv_:
 
 ```shell
 pipx install pre-commit
@@ -43,7 +43,7 @@ uv tool install pre-commit
 
 ### Use a Project Tool
 
-Use a project tool for Python, unless you have special requirements. There are several of these tools, which all provide a key set of features for Python development. For example, all of these tools can generate a directory structure that follows best practices, manage package dependencies and automate Python virtual environments, so that you do not need to manually create and activate environments as you work.
+Use a project tool when you work with Python. There are several of these tools, which all provide the key features for managing Python projects. All of them can generate a directory structure that follows best practices, manage package dependencies and automate Python virtual environments, so that you do not need to manually create and activate environments as you work.
 
 Project tools can also manage the versions of Python, so that you will automatically have the correct version of Python for each project. Your project tool can install copies of Python as needed. The [section below](#install-python-with-tools-that-support-multiple-versions) explains in more detail.
 
@@ -79,6 +79,118 @@ Upgrade your projects as new Python versions are released. The Python developmen
 
 If your operating system includes a Python installation, avoid using it for your projects. This Python installation is for system tools. It is likely to use an older version of Python, and may not include all of the standard features. An operating system copy of Python should be [marked](https://packaging.python.org/en/latest/specifications/externally-managed-environments/#externally-managed-environments) to prevent you from installing packages into it, but not all operating systems set this marker.
 
+## Application Design
+
+### Use a Modern Framework for CLI Applications
+
+Consider using the [Cyclopts](https://cyclopts.readthedocs.io/en/latest/) framework or the [Typer](https://typer.tiangolo.com/) library for building new CLI applications. Both of these use type hints and are built for modern Python. Many projects still use the older [Click](https://click.palletsprojects.com/) framework.
+
+If you must limit your project to only use the Python standard library, use the [argparse](https://docs.python.org/3/library/argparse.html) module. The _optparse_ module is officially deprecated, so update code that uses _optparse_ or _getopt_ to use _argparse_ instead. Refer to [the argparse tutorial](https://docs.python.org/3/howto/argparse.html) in the official documentation for more details.
+
+### Use Products That Enable Concurrency and async
+
+When you need to run concurrent operations, look for existing products that suit your needs. For example, you can use a workflow engine such as [Apache Airflow](https://airflow.apache.org/) or [Prefect](https://www.prefect.io/), or combine a Web framework like [FastAPI](https://fastapi.tiangolo.com/) with the [Granian](https://github.com/emmett-framework/granian) or [Gunicorn](https://gunicorn.org/) application servers. You can then use a container system to reliably host long-running Python processes at scale, such as Kubernetes or [Amazon ECS](https://aws.amazon.com/ecs/).
+
+By default, each Python process uses a single thread on a single CPU, so that it can can only perform one operation at a time. You can have multiple threads within a process, but this only enables switching between threads. The [asynchronous features of Python](https://docs.python.org/3/library/asyncio.html) enable threads to avoid blocking on I/O operations. To achieve full concurrency with Python, you must run multiple Python processes so that each process can run its threads on a separate CPU. These processes may or may not use asynchronous I/O. Many products support these features, so that you can run your Python code concurrently on multiple CPUs or multiple computers, and can use asynchronous code when it makes sense to do so. Container systems run one container per process, and can spread the containers across many computers.
+
+To use asynchronous I/O in your code, you must use a Python library or framework that supports it. Code that uses asynchronous I/O must not call _any_ function that uses synchronous I/O, such as _open()_, or the _logging_ module in the standard library. Instead, you need to use either the equivalent functions from _asyncio_ in the standard library or ensure that the third-party products that you use are designed to support asynchronous code. Some products support writing both synchronous and asynchronous functions in the same application. For example, the FastAPI Web framework [supports both types of function](https://fastapi.tiangolo.com/async/).
+
+> If you use a framework that supports asynchronous I/O it may provide safe functions for services like logging, but you must still ensure that asynchronous functions never call any synchronous functions.
+
+If you need to build a custom application with concurrency, consider using the [concurrent.futures](https://docs.python.org/3/library/concurrent.futures.html) package in the Python standard library. This includes executors for distributing work across a pool of multiple threads or separate CPUs.
+
+### Plan Your Projects To Be Packaged
+
+Always design your projects so that you can package them. Packages enable people to use your code with the operating systems and tools that they prefer to work with, and also allow them to manage which version of your code they use.
+
+Project tools like Poetry can build [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages. Use _wheel_ packages to distribute Python libraries. You can also use _wheel_ packages to share development tools. If you publish your Python application as a _wheel_, other developers can run it with _uv_ or _pipx_. All _wheel_ packages require an existing installation of Python.
+
+> Read the [Python Packaging User Guide](https://packaging.python.org/en/latest/flow/) for more about wheel packages.
+
+For all other cases, use a format that includes a copy of the required version of Python as well as your code and the dependencies. This ensures that your code runs with the expected version of Python, and that it has the correct version of each dependency.
+
+You can package applications in container images, self-contained executable files, or operating system packages. Container images and self-contained executable files will run on many different types of system, but packages will only install on operating systems where a software management tool accepts that specific package format.
+
+Use OCI container images to package Python applications that are intended to be run by a service, such as Docker or a workflow engine, especially if the application provides a network service itself, such as a Web application. You can build OCI container images with Docker, [buildah](https://buildah.io/) and other tools. OCI container images can run on any system that uses Docker, Podman or Kubernetes, as well as on cloud infrastructure. Consider using the [official Python container image](https://hub.docker.com/_/python) as the base image for your application container images.
+
+Use [PyInstaller](https://pyinstaller.org/) or [Nuitka](https://nuitka.net) to publish desktop and command-line applications as a single executable file. Each executable file includes a copy of Python, along with your code and the required dependencies. Each executable will only run on the type of operating system and CPU that it was compiled to use. For example, an executable for Microsoft Windows on Intel-compatible machines will work on all editions of Windows, but it will not run on macOS.
+
+> _Requirements files:_ If you use requirements files to build or deploy projects then configure your tools to [use hashes](#ensure-that-requirements-files-include-hashes).
+
+### Configuration: Use Environment Variables or TOML
+
+Use environment variables for options that must be passed to an application each time that it starts. If your application is a command-line tool, you should also provide options that can override the environment variables.
+
+Use [TOML](https://toml.io/) for configuration files that must be written or edited by human beings. This format is an open standard that is used across Python projects and is also supported by other programming languages. For example, TOML is the default configuration file format for Rust projects.
+
+Python 3.11 and above include [tomllib](https://docs.python.org/3/library/tomllib.html) to read the TOML format. If your Python software must generate TOML, you need to add [Tomli-W](https://pypi.org/project/tomli-w/) to your project.
+
+TOML replaces the INI format. Avoid using INI for projects, even though the [module for INI support](https://docs.python.org/3/library/configparser.html) has not yet been removed from the Python standard library.
+
+### Set Up Logging for Diagnostic Messages, Rather Than print()
+
+The built-in _print()_ statement is convenient for adding debugging information, but you should use logging in applications.
+
+Use a [structured format for your logs](https://www.structlog.org/en/stable/why.html) so that they can be parsed and analyzed later. The format should always include timestamps with timezones. We include the timezones so that the data can be accurately searched and analyzed by other systems. We should expect servers and shared systems to use the UTC timezone, but log analyzers can never make this assumption.
+
+Many frameworks use the [logging module](https://docs.python.org/3/library/logging.html) in the Python standard library, but this module was not designed to modern standards and requires some configuration to produce well-formatted logs. When you implement logging, consider using [loguru](https://loguru.readthedocs.io/en/stable/) or [structlog](https://www.structlog.org/).
+
+### Decide On A HTTP Client Library
+
+Avoid using [urllib.request](https://docs.python.org/3/library/urllib.request.html) from the Python standard library. It was designed as a low-level library for HTTP, and lacks the features of modern Web client libraries. Many Python applications include [requests](https://requests.readthedocs.io/en/latest/), but this only supports HTTP/1.1, and cannot be used with async code. Consider alternative Web client libraries like [aiohttp](https://pypi.org/project/aiohttp/) when you want to use async I/O.
+
+> Python SDKs for cloud services will have a dependency on a Web client library. Check which client library an SDK uses before you include it in your project.
+
+## Data Formats and Storage
+
+There are now data file formats that are open, standardized and portable. If possible, use these formats, and avoid older formats. Modern formats are standardized, can be reliably read by many different systems and can be processed efficiently, even with large quantities of data. Some older formats are not standardized, which means that different systems can write different variations, which then cause errors when you move data between systems.
+
+### Modern Data Formats
+
+If possible, use these formats for structured data:
+
+- [JSON](https://en.wikipedia.org/wiki/JSON) - Plain-text format for data objects
+- [SQLite](https://sqlite.org) - Binary format for self-contained and robust database files
+- [Apache Parquet](https://parquet.apache.org/) - Binary format for efficient storage of tabular data
+
+All of the versions of Python 3 include modules for [JSON](https://docs.python.org/3/library/json.html) and [SQLite](https://docs.python.org/3/library/sqlite3.html). The [Pandas](https://pandas.pydata.org) dataframe library supports Parquet, JSON and SQLite. [DuckDB](https://duckdb.org/docs/stable/clients/python/overview) also supports all three formats.
+
+If you need to work with other data formats, consider using a modern file format in your application and adding features to import data or generate exports in other formats when necessary. For example, DuckDB and Pandas include features to import and export data to files in the Excel format.
+
+In most cases, you should use the JSON format to transfer data between systems, especially if the systems must communicate with HTTP. JSON documents can be used for any kind of data. Since JSON is plain-text, data in this format can be stored in either files or in a database. Every programming language and modern SQL database supports JSON.
+
+> You can validate JSON documents with [JSON Schemas](https://json-schema.org/). [Pydantic](https://docs.pydantic.dev/) enables you to export your Python data objects to JSON and generate JSON Schemas from the data models.
+
+Each SQLite database is a single file. Use SQLite files for [data and configuration for applications](https://sqlite.org/appfileformat.html) as well as for queryable databases. They are arguably more portable and resilient than sets of plain-text files. SQLite is widely-supported, [robust](https://sqlite.org/hirely.html) and the file format is [guaranteed to be stable and portable for decades](https://sqlite.org/lts.html). Each SQLite database file can safely be gigabytes in size.
+
+> You can use SQLite databases for any kind of data. They can be used to [store and query data in JSON format](https://sqlite.org/json1.html), they hold plain text with [optional full-text search](sqlite.org/fts5.html), and they can store binary data.
+
+If you need to query a large set of tabular data, put a copy in [Apache Parquet](https://parquet.apache.org/) files and use that copy for your work. The Parquet format is specifically designed for large-scale data operations, and scales to tables with millions of rows. Parquet can store data that is in JSON format, as well as standard data types.
+
+> I provide a separate article with more details about [modern data formats](https://www.stuartellis.name/articles/modern-data-file-formats/).
+
+### Avoid Problematic File Formats
+
+Avoid these older file formats:
+
+- INI - Use TOML instead
+- CSV - Use SQLite or Apache Parquet instead
+- YAML - Use TOML or JSON instead
+
+Systems can implement legacy formats in different ways, which means that there is a risk that data will not be read correctly when you use a file that has been created by another system. Files that are edited by humans are also more likely to contain errors, due to the complexities and inconsistency of these formats.
+
+### Working with CSV Files
+
+Python does include [a module for CSV files](https://docs.python.org/3/library/csv.html), but consider using DuckDB instead. DuckDB provides [CSV support](https://duckdb.org/docs/stable/data/csv/overview.html) that is [tested for its ability to handle incorrectly formatted files](https://duckdb.org/2025/04/16/duckdb-csv-pollock-benchmark.html).
+
+Avoid creating CSV files, because modern data formats are all more capable. If you use DuckDB or Pandas then you can import and export data to Parquet, SQLite and Excel file formats. Unlike CSV, these file formats store explicit data types for items.
+
+### Working with YAML Files
+
+If you need to work with YAML in Python, use [ruamel.yaml](https://pypi.org/project/ruamel.yaml/). This supports YAML version 1.2. Avoid using [PyYAML](https://pypi.org/project/PyYAML/), because it only supports version 1.1 of the YAML format.
+
+Avoid creating YAML files, because modern formats offer better options. Consider using [TOML](#configuration-use-environment-variables-or-toml) for application configuration, and JSON or table-based storage like SQLite for larger sets of data.
+
 ## Developing Python Projects
 
 ### Format Your Code
@@ -87,7 +199,7 @@ Use a formatting tool with a plugin to your editor, so that your code is automat
 
 Consider using [Ruff](https://docs.astral.sh/ruff/), which provides both code formatting and quality checks for Python code. [Black](https://black.readthedocs.io/en/stable/) was the most popular code formatting tool for Python before the release of Ruff.
 
-Use pre-commit hooks to run the formatting tool before each commit to source control. You should also run the formatting tool with your CI system, so that it rejects any code that does not match the format for your project.
+Use Git hooks to run the formatting tool before each commit to source control. You should also run the formatting tool with your CI system, so that it rejects any code that does not match the format for your project.
 
 ### Use a Code Linter
 
@@ -95,13 +207,13 @@ Use a code linting tool with a plugin to your editor, so that your code is autom
 
 Consider using [Ruff](https://docs.astral.sh/ruff/) for linting Python code. The previous standard linter was [flake8](https://flake8.pycqa.org/en/latest/). Ruff includes the features of both flake8 and the most popular plugins for flake8, along with many other capabilities.
 
-Use pre-commit hooks to run the linting tool before each commit to source control. You should also run the linting tool with your CI system, so that it rejects any code that does not meet the standards for your project.
+Use Git hooks to run the linting tool before each commit to source control. You should also run the linting tool with your CI system, so that it rejects any code that does not meet the standards for your project.
 
 ### Use Type Hinting
 
 Current versions of Python support type hinting. Consider using type hints in any critical application. If you develop a shared library, use type hints.
 
-Once you add type hints, type checkers like [mypy](http://www.mypy-lang.org/) and [pyright](https://microsoft.github.io/pyright/) can check your code as you develop it. Code editors will read type hints to display information about the code that you are working with. You can also add a type checker to your pre-commit hooks and CI to validate that the code in your project is consistent.
+Once you add type hints, type checkers like [mypy](http://www.mypy-lang.org/) and [pyright](https://microsoft.github.io/pyright/) can check your code as you develop it. Code editors will read type hints to display information about the code that you are working with. You can also add a type checker to your Git hooks and CI to validate that the code in your project is consistent.
 
 If you use [Pydantic](https://docs.pydantic.dev/) in your application, it can work with type hints. If you use mypy, add the [plugin for Pydantic](https://docs.pydantic.dev/latest/integrations/mypy/) to improve the integration between mypy and Pydantic.
 
@@ -114,22 +226,6 @@ Use [pytest](http://pytest.org) for testing. Use the _unittest_ module in the st
 By default, _pytest_ runs tests in the order that they appear in the test code. To avoid issues where tests interfere with each other, always add the [pytest-randomly](https://pypi.org/project/pytest-randomly/) plugin to _pytest_. This plugin causes _pytest_ to run tests in random order. Randomizing the order of tests is a common good practice for software development.
 
 To see how much of your code is covered by tests, add the [pytest-cov](https://pytest-cov.readthedocs.io) plugin to _pytest_. This plugin uses [coverage](https://coverage.readthedocs.io) to analyze your code.
-
-### Package Your Projects
-
-Always package the applications and code libraries that you would like to share with other people. Packages enable people to use your code with the operating systems and tools that they prefer to work with, and also allow them to manage which version of your code they use.
-
-Use [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages to distribute the Python libraries that you create. Read the [Python Packaging User Guide](https://packaging.python.org/en/latest/flow/) for an explanation of how to build and distribute wheel packages.
-
-You can also use _wheel_ packages to share development tools. If you publish your Python application as a _wheel_, other developers can run it with _uv_ or _pipx_. All _wheel_ packages require an existing installation of Python.
-
-For all other cases, package your applications in a format that includes a copy of the required version of Python as well as your code and the dependencies. This ensures that your code runs with the expected version of Python, and that it has the correct version of each dependency. You can package applications in container images, as self-contained executable files, or in various package formats, like Debian packages. Container images and self-contained executable files will run on many different types of system, but packages will only install on operating systems where a software management tool accepts that specific package format.
-
-Use container images to package Python applications that are intended to be run by a service, such as Docker or a workflow engine, especially if the application provides a network service itself, such as a Web application. You can build OCI container images with Docker, [buildah](https://buildah.io/) and other tools. OCI container images can run on any system that uses Docker, Podman or Kubernetes, as well as on cloud infrastructure. Consider using the [official Python container image](https://hub.docker.com/_/python) as the base image for your application container images.
-
-Use [PyInstaller](https://pyinstaller.org/) or [Nuitka](https://nuitka.net) to publish desktop and command-line applications as a single executable file. Each executable file includes a copy of Python, along with your code and the required dependencies. Each executable will only run on the type of operating system and CPU that it was compiled to use. For example, an executable for Microsoft Windows on Intel-compatible machines will work on all editions of Windows, but it will not run on macOS.
-
-> _Requirements files:_ If you use requirements files to build or deploy projects then configure your tools to [use hashes](#ensure-that-requirements-files-include-hashes).
 
 ### Ensure That Requirements Files Include Hashes
 
@@ -246,103 +342,3 @@ This function drops you into the debugger at the point where it is called. Both 
 The [breakpoint()](https://docs.python.org/3/library/functions.html#breakpoint) feature was added in version 3.7 of Python.
 
 > [PEP 553](https://www.python.org/dev/peps/pep-0553/) describes the _breakpoint()_ function.
-
-## Application Design
-
-### Use a Modern Framework for CLI Applications
-
-Consider using the [Cyclopts](https://cyclopts.readthedocs.io/en/latest/) framework or the [Typer](https://typer.tiangolo.com/) library for building new CLI applications. Both of these use type hints and are built for modern Python. Many projects still use the older [Click](https://click.palletsprojects.com/) framework.
-
-If you must limit your project to only use the Python standard library, use the [argparse](https://docs.python.org/3/library/argparse.html) module. The _optparse_ module is officially deprecated, so update code that uses _optparse_ or _getopt_ to use _argparse_ instead. Refer to [the argparse tutorial](https://docs.python.org/3/howto/argparse.html) in the official documentation for more details.
-
-### Use Products To Enable Concurrency and async
-
-The [asynchronous features of Python](https://docs.python.org/3/library/asyncio.html) enable a single process to avoid blocking on I/O operations. To achieve concurrency with Python, you must run multiple Python processes. Each of these processes may or may not use asynchronous I/O.
-
-Many products support these features, so that you can run your Python code concurrently on multiple CPUs or multiple computers, and can use asynchronous code when it makes sense to do so. You often do not need to implement these capabilities yourself.
-
-To run multiple Python processes, use a Python framework or a separate product that suits your needs. For example, you could use the [Dramatiq](https://dramatiq.io/) task processing library, [Dask](https://docs.dask.org/en/stable/index.html) for parallel computation, a workflow engine such as [Apache Airflow](https://airflow.apache.org/) or [Prefect](https://www.prefect.io/), or an application server like [Granian](https://github.com/emmett-framework/granian) or [Gunicorn](https://gunicorn.org/). To reliably handle long-running processes at scale, you can use a container system with one container per process, such as Kubernetes or [Amazon ECS](https://aws.amazon.com/ecs/).
-
-To use asynchronous I/O in your code, use a Python library or framework that supports it. Some support writing both synchronous and asynchronous functions in the same application. For example, the [FastAPI](https://fastapi.tiangolo.com/) Web framework [supports both types of function](https://fastapi.tiangolo.com/async/), as does [Dramatiq](https://dramatiq.io/guide.html#actors).
-
-Code that uses asynchronous I/O must not call _any_ function that uses synchronous I/O, such as _open()_, or the _logging_ module in the standard library. Instead, you need to use either the equivalent functions from _asyncio_ in the standard library or ensure that the third-party library that you use is designed to support asynchronous code.
-
-> If you use a framework that supports asynchronous I/O it may provide safe functions for services like logging, but you must still ensure that asynchronous functions never call any synchronous functions.
-
-If you need to build a custom application that manages multiple processes, consider using the [multiprocessing](https://docs.python.org/3/library/multiprocessing.html) package in the Python standard library.
-
-### Configuration: Use Environment Variables or TOML
-
-Use environment variables for options that must be passed to an application each time that it starts. If your application is a command-line tool, you should also provide options that can override the environment variables.
-
-Use [TOML](https://toml.io/) for configuration files that must be written or edited by human beings. This format is an open standard that is used across Python projects and is also supported by other programming languages. For example, TOML is the default configuration file format for Rust projects.
-
-Python 3.11 and above include [tomllib](https://docs.python.org/3/library/tomllib.html) to read the TOML format. If your Python software must generate TOML, you need to add [Tomli-W](https://pypi.org/project/tomli-w/) to your project.
-
-TOML replaces the INI format. Avoid using INI for projects, even though the [module for INI support](https://docs.python.org/3/library/configparser.html) has not yet been removed from the Python standard library.
-
-### Use Logging for Diagnostic Messages, Rather Than print()
-
-The built-in _print()_ statement is convenient for adding debugging information, but you should use logging in applications.
-
-Use a [structured format for your logs](https://www.structlog.org/en/stable/why.html) so that they can be parsed and analyzed later. The format should always include timestamps with timezones. We include the timezones so that the data can be accurately searched and analyzed by other systems. We should expect servers and shared systems to use the UTC timezone, but log analyzers can never make this assumption.
-
-Many frameworks use the [logging module](https://docs.python.org/3/library/logging.html) in the Python standard library, but this module was not designed to modern standards and requires some configuration to produce well-formatted logs. When you implement logging, consider using [loguru](https://loguru.readthedocs.io/en/stable/) or [structlog](https://www.structlog.org/).
-
-### Use httpx for Web Clients
-
-Use [httpx](https://www.python-httpx.org/) for Web client applications. Many Python applications include [requests](https://requests.readthedocs.io/en/latest/), but you should use httpx for new projects.
-
-The httpx package supersedes _requests_. It supports [HTTP/2](https://www.python-httpx.org/http2/) and [async](https://www.python-httpx.org/async/), which are not available with requests.
-
-Avoid using [urllib.request](https://docs.python.org/3/library/urllib.request.html) from the Python standard library. It was designed as a low-level library, and lacks the features of requests and _httpx_.
-
-## Data Formats and Storage
-
-There are now data file formats that are open, standardized and portable. If possible, use these formats, and avoid older formats. Modern formats are standardized, can be reliably read by many different systems and can be processed efficiently, even with large quantities of data. Some older formats are not standardized, which means that different systems can write different variations, which then cause errors when you move data between systems.
-
-### Modern Data Formats
-
-If possible, use these formats for structured data:
-
-- [JSON](https://en.wikipedia.org/wiki/JSON) - Plain-text format for data objects
-- [SQLite](https://sqlite.org) - Binary format for self-contained and robust database files
-- [Apache Parquet](https://parquet.apache.org/) - Binary format for efficient storage of tabular data
-
-All of the versions of Python 3 include modules for [JSON](https://docs.python.org/3/library/json.html) and [SQLite](https://docs.python.org/3/library/sqlite3.html). The [Pandas](https://pandas.pydata.org) dataframe library supports Parquet, JSON and SQLite. [DuckDB](https://duckdb.org/docs/stable/clients/python/overview) also supports all three formats.
-
-If you need to work with other data formats, consider using a modern file format in your application and adding features to import data or generate exports in other formats when necessary. For example, DuckDB and Pandas include features to import and export data to files in the Excel format.
-
-In most cases, you should use the JSON format to transfer data between systems, especially if the systems must communicate with HTTP. JSON documents can be used for any kind of data. Since JSON is plain-text, data in this format can be stored in either files or in a database. Every programming language and modern SQL database supports JSON.
-
-> You can validate JSON documents with [JSON Schemas](https://json-schema.org/). [Pydantic](https://docs.pydantic.dev/) enables you to export your Python data objects to JSON and generate JSON Schemas from the data models.
-
-Each SQLite database is a single file. Use SQLite files for [data and configuration for applications](https://sqlite.org/appfileformat.html) as well as for queryable databases. They are arguably more portable and resilient than sets of plain-text files. SQLite is widely-supported, [robust](https://sqlite.org/hirely.html) and the file format is [guaranteed to be stable and portable for decades](https://sqlite.org/lts.html). Each SQLite database file can safely be gigabytes in size.
-
-> You can use SQLite databases for any kind of data. They can be used to [store and query data in JSON format](https://sqlite.org/json1.html), they hold plain text with [optional full-text search](sqlite.org/fts5.html), and they can store binary data.
-
-If you need to query a large set of tabular data, put a copy in [Apache Parquet](https://parquet.apache.org/) files and use that copy for your work. The Parquet format is specifically designed for large-scale data operations, and scales to tables with millions of rows. Parquet can store data that is in JSON format, as well as standard data types.
-
-> I provide a separate article with more details about [modern data formats](https://www.stuartellis.name/articles/modern-data-file-formats/).
-
-### Avoid Problematic File Formats
-
-Avoid these older file formats:
-
-- INI - Use TOML instead
-- CSV - Use SQLite or Apache Parquet instead
-- YAML - Use TOML or JSON instead
-
-Systems can implement legacy formats in different ways, which means that there is a risk that data will not be read correctly when you use a file that has been created by another system. Files that are edited by humans are also more likely to contain errors, due to the complexities and inconsistency of these formats.
-
-### Working with YAML Files
-
-If you need to work with YAML in Python, use [ruamel.yaml](https://pypi.org/project/ruamel.yaml/). This supports YAML version 1.2. Avoid using [PyYAML](https://pypi.org/project/PyYAML/), because it only supports version 1.1 of the YAML format.
-
-Avoid creating YAML files, because modern formats offer better options. Consider using [TOML](#configuration-use-environment-variables-or-toml) for application configuration, and JSON or table-based storage like SQLite for larger sets of data.
-
-### Working with CSV Files
-
-Python does include [a module for CSV files](https://docs.python.org/3/library/csv.html), but consider using DuckDB instead. DuckDB provides [CSV support](https://duckdb.org/docs/stable/data/csv/overview.html) that is [tested for its ability to handle incorrectly formatted files](https://duckdb.org/2025/04/16/duckdb-csv-pollock-benchmark.html).
-
-Avoid creating CSV files, because modern data formats are all more capable. If you use DuckDB or Pandas then you can import and export data to Parquet, SQLite and Excel file formats. Unlike CSV, these file formats store explicit data types for items.
