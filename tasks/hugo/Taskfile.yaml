@@ -40,3 +40,13 @@ tasks:
     desc: Run Website in development server
     cmds:
       - hugo server
+
+  setup:
+    desc: Set up Hugo installation
+    cmds:
+      - hugo mod init github.com/jpanther/congo
+
+  update:
+    desc: Update Hugo installation
+    cmds:
+      - hugo mod get -u
