@@ -1,7 +1,7 @@
 +++
 title = "Python Semantic Release with GitLab"
 slug = "python-semantic-release-gitlab"
-date = "2025-12-27T17:13:00+00:00"
+date = "2025-12-30T00:53:00+00:00"
 description = "Python Semantic Release with GitLab"
 draft = true
 categories = ["programming", "python"]
@@ -23,13 +23,13 @@ To use Python Semantic Release with GitLab, you will need:
 
 ## Using Personal Access Tokens
 
-Python Semantic Release must use a token with these permissions:
+Python Semantic Release must use a token that has a Maintainer role and these permissions:
 
 - api
 - read_repository
 - write_repository
 
-Register this token as a CI variable with the name _GITLAB_TOKEN_. Set the variable as _Protected_ and _Masked_.
+Register this token as a CI variable with the name _GITLAB_TOKEN_. Set the variable as _Protected_, _Masked_ and _Expanded_.
 
 ## Example .gitlab-ci.yml for GitLab
 
