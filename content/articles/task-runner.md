@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2025-10-25T08:45:00+01:00"
+date = "2026-01-01T17:46:00+00:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -13,11 +13,11 @@ tags = ["automation", "devops"]
 
 ## How Task Works
 
-A copy of Task is a single executable file, with versions for Linux, macOS, Windows and FreeBSD. It uses no configuration files apart from _Taskfiles_, YAML files that describe the tasks.
+A copy of Task is a single executable file, with versions for Linux, macOS, Windows and FreeBSD. It uses no configuration files apart from _Taskfiles_, YAML files that describe the tasks. Each task in a Taskfile defines templates for one or more UNIX shell commands, with cross-platform [template functions](https://taskfile.dev/reference/templating/#functions).
 
-Each task in a Taskfile defines templates for one or more UNIX shell commands, with cross-platform [template functions](https://taskfile.dev/reference/templating/#functions). The commands for tasks are then run with a UNIX shell script interpreter that is built into Task itself, rather than using shells that are already installed on your systems. Task also includes implementations of [UNIX utilities](https://taskfile.dev/docs/faq#are-shell-core-utilities-available-on-windows) that it can use, instead of relying on copies of tools on the system.
+The commands in tasks are run with a UNIX shell script interpreter that is built into Task itself, rather than using shells that are already installed on your systems. Task also includes implementations of [UNIX utilities](https://taskfile.dev/docs/faq#are-shell-core-utilities-available-on-windows) that it can use, instead of relying on copies of tools on the system.
 
-This means that you can use Task in any environment with only a copy of the Task executable and the Taskfiles, and the behavior will be consistent on every system. If necessary, you can define [operating system specific files](https://taskfile.dev/usage/#os-specific-taskfiles), so that Task uses task definitions that for the current platform.
+This means that you can use Task in any environment with only a copy of the Task executable and the Taskfiles, and the behavior will be consistent on every system. If necessary, you can define [operating system specific Taskfiles](https://taskfile.dev/usage/#os-specific-taskfiles), so that Task only loads those sets of task definitions when it runs on a particular operating system.
 
 Task also includes several other key features:
 
@@ -76,7 +76,9 @@ Task uses a [versioned and published schema](#checking-taskfiles) for these YAML
 
 ## Installing Task
 
-If possible, use a tool that enables you to specify which versions of Task to install and activate different versions of Task for different projects. These options enable you to specify a version of Task for each project:
+Task can be installed on all of the popular operating systems through [packages](#installing-task-with-operating-system-packages). You can also [use Homebrew to install Task](#installing-task-with-homebrew) on macOS and Linux.
+
+If possible, consider using other tools that also enable you to specify a version of Task for each project. These include:
 
 1. Tool version managers like [mise](#installing-task-with-mise)
 2. [Installation with npm](#installing-task-with-npm)
@@ -84,28 +86,55 @@ If possible, use a tool that enables you to specify which versions of Task to in
 4. [Installation script](#installing-task-with-a-script)
 5. The official [GitHub Action](https://github.com/go-task/setup-task)
 
-Tool version managers, `npm` and the installation script also enable you to install Task so that it is globally available for all of your work, not just a single project.
+If you install a global copy of Task through any method then [you can integrate it with your shell](#integrating-task-with-your-shell).
 
-You can install Task with [Homebrew](#installing-task-with-homebrew) or [operating system packages](#installing-task-with-operating-system-packages). These methods only provide a single global copy of Task.
+> If your organization has private artifact or package repositories, consider distributing Task through these. This ensures that your preferred versions of Task are available.
 
-> If you install a global copy of Task then [you can integrate it with your shell](#integrating-task-with-your-shell).
+### Installing Task with Operating System Packages
 
-If your organization has private package repositories, consider distributing Task through these. This ensures that your preferred versions of Task are available.
+The Task project provide packages for popular operating systems through [GitHub Releases](https://github.com/go-task/task/releases). These can be used on any operating system that supports one of the provided package formats.
+
+Some operating systems have packages for Task that are available through their own repositories. For example, these commands install Task:
+
+```shell
+winget install Task.Task  # winget on Microsoft Windows
+sudo dnf install go-task  # dnf on Fedora Linux
+```
+
+Task is available through the _community_ package repository for Alpine Linux. To install Task on Alpine Linux, run this command:
+
+```shell
+doas apk add go-task --repository=http://dl-cdn.alpinelinux.org/alpine/latest-stable/community/
+```
+
+> _The Alpine Linux package installs Task as go-task._ This means that you need to use the name _go-task_ rather than _task_ on the command-line. For example _go-task --list_.
+
+The packages that are provided by operating system vendors may not be the current version of Task. Use the packages from GitHub to be able to manage the version of Task that you install.
+
+### Installing Task with Homebrew
+
+You can install Task with Homebrew on macOS and Linux. This command installs Task with [Homebrew](https://brew.sh/) and makes it available to your user account:
+
+```shell
+brew install go-task
+```
+
+This will install the most recent version of Task that is known to Homebrew. Use other methods to be able to manage the version of Task that you install.
 
 ### Installing Task with mise
 
-This command installs version 3.45.4 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
+This command installs version 3.46.3 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
 
 ```shell
-mise use -gy task@3.45.4
+mise use -gy task@3.46.3
 ```
 
 ### Installing Task with npm
 
-This command installs version 3.45.4 of Task with [npm](https://docs.npmjs.com/) and makes it available to your user account:
+This command installs version 3.46.3 of Task with [npm](https://docs.npmjs.com/) and makes it available to your user account:
 
 ```shell
-npm install -g @go-task/cli@3.45.4
+npm install -g @go-task/cli@3.46.3
 ```
 
 ### Adding Task to a Dev Container
@@ -115,7 +144,7 @@ If you are using a Dev Container with Visual Studio Code, you can add the featur
 ```json
     "features": {
         "ghcr.io/devcontainers-contrib/features/go-task:1": {
-            "version": "3.45.4"
+            "version": "3.46.3"
         }
     }
 ```
@@ -150,41 +179,12 @@ curl -L https://taskfile.dev/install.sh > install-task.sh
 To use the installation script, call it with the Git tag and the _-b_ option. The Git tag specifies the version of Task. The _-b_ option specifies which directory to install it to:
 
 ```shell
-./install-task.sh -b $HOME/.local/bin v3.45.4
+./install-task.sh -b $HOME/.local/bin v3.46.3
 ```
 
 {{< alert >}}
 _Exclude the path for the Task executable file from version control._ If you use the script to download a copy of Task into a development project, make sure that the _.gitignore_ (or equivalent) excludes it from version control.
 {{< /alert >}}
-
-### Installing Task with Homebrew
-
-You can install Task with Homebrew on macOS and Linux. This command installs Task with [Homebrew](https://brew.sh/) and makes it available to your user account:
-
-```shell
-brew install go-task
-```
-
-This will install the most recent version of Task that is known to Homebrew.
-
-### Installing Task with Operating System Packages
-
-The Task project provide packages for popular operating systems through [GitHub Releases](https://github.com/go-task/task/releases). These can be used on any operating system that supports one of the provided package formats.
-
-Some operating systems have packages for Task that are available through their own repositories. For example, these commands install Task:
-
-```shell
-winget install Task.Task  # winget on Microsoft Windows
-sudo dnf install go-task  # dnf on Fedora Linux
-```
-
-Task is available through the _community_ package repository for Alpine Linux. To install Task on Alpine Linux, run this command:
-
-```shell
-doas apk add go-task --repository=http://dl-cdn.alpinelinux.org/alpine/latest-stable/community/
-```
-
-> _The Alpine Linux package installs Task as go-task._ This means that you need to use the name _go-task_ rather than _task_ on the command-line. For example _go-task --list_.
 
 ## Integrating Task with Your Shell
 
