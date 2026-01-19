@@ -137,7 +137,7 @@ prek run --all-files
 To update all of the hooks to their current version, run this command:
 
 ```shell
-prek autoupdate
+prek auto-update
 ```
 
 It automatically edits the `.pre-commit-config.yaml` file to update the versions of the hooks. You then commit this change to source control, so that other copies of the repository will use the same versions.

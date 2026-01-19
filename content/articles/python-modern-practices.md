@@ -32,11 +32,11 @@ Use _pipx install_ or _uv tool install_ for tools that are essential for your de
 For example, if you use a manager like [prek](https://prek.j178.dev/) or [pre-commit](https://pre-commit.com/) for Git hooks you should install it, rather than use a temporary copy. Git hooks automatically run every time that we commit a change to version control, so we need the hook manager to be consistent and always available. To install _pre-commit_, run the appropriate command for _pipx_ or _uv_:
 
 ```shell
-pipx install pre-commit
+pipx install prek
 ```
 
 ```shell
-uv tool install pre-commit
+uv tool install prek
 ```
 
 ## Using Python for Development
