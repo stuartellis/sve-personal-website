@@ -29,7 +29,7 @@ The _bpytop_ tool is cached after the first download, which means that the secon
 
 Use _pipx install_ or _uv tool install_ for tools that are essential for your development process. These options install the tool on to your system. This ensures that the tool is available if you have no Internet access, and that you keep the same version of the tool until you decide to upgrade it.
 
-For example, if you use a manager like [prek](https://prek.j178.dev/) or [pre-commit](https://pre-commit.com/) for Git hooks you should install it, rather than use a temporary copy. Git hooks automatically run every time that we commit a change to version control, so we need the hook manager to be consistent and always available. To install _pre-commit_, run the appropriate command for _pipx_ or _uv_:
+For example, if you use a manager like [prek](https://prek.j178.dev/) or [pre-commit](https://pre-commit.com/) for Git hooks you should install it, rather than use a temporary copy. Git hooks automatically run every time that we commit a change to version control, so we need the hook manager to be consistent and always available. To install _prek_, run the appropriate command for _pipx_ or _uv_:
 
 ```shell
 pipx install prek
