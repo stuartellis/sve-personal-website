@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2026-01-01T17:46:00+00:00"
+date = "2026-01-26T20:01:00+00:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -123,18 +123,18 @@ This will install the most recent version of Task that is known to Homebrew. Use
 
 ### Installing Task with mise
 
-This command installs version 3.46.3 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
+This command installs version 3.48.0 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
 
 ```shell
-mise use -gy task@3.46.3
+mise use -gy task@3.48.0
 ```
 
 ### Installing Task with npm
 
-This command installs version 3.46.3 of Task with [npm](https://docs.npmjs.com/) and makes it available to your user account:
+This command installs version 3.48.0 of Task with [npm](https://docs.npmjs.com/) and makes it available to your user account:
 
 ```shell
-npm install -g @go-task/cli@3.46.3
+npm install -g @go-task/cli@3.48.0
 ```
 
 ### Adding Task to a Dev Container
@@ -144,7 +144,7 @@ If you are using a Dev Container with Visual Studio Code, you can add the featur
 ```json
     "features": {
         "ghcr.io/devcontainers-contrib/features/go-task:1": {
-            "version": "3.46.3"
+            "version": "3.48.0"
         }
     }
 ```
@@ -179,7 +179,7 @@ curl -L https://taskfile.dev/install.sh > install-task.sh
 To use the installation script, call it with the Git tag and the _-b_ option. The Git tag specifies the version of Task. The _-b_ option specifies which directory to install it to:
 
 ```shell
-./install-task.sh -b $HOME/.local/bin v3.46.3
+./install-task.sh -b $HOME/.local/bin v3.48.0
 ```
 
 {{< alert >}}
