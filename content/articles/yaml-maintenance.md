@@ -118,7 +118,7 @@ prek install
 
 ### Using Hooks
 
-The tools automatically run on the staged changes each time that you commit. To run a tool without commiting a change, use `precommit run`. If you add the option `--all-files` it will check the current files in the project, not just staged changes.
+The tools automatically run on the staged changes each time that you commit. To run a tool without commiting a change, use `prek run`. If you add the option `--all-files` it will check the current files in the project, not just staged changes.
 
 For example, to run the `check-github-workflows` hook on the project, use this command:
 
