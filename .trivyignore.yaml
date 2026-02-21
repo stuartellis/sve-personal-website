@@ -11,9 +11,9 @@
 misconfigurations:
   - id: DS002
     paths:
-      - '.devcontainer/devcontainer.dockerfile'
+      - ".devcontainer/devcontainer.dockerfile"
     statement: Dev Container images build with root privileges
   - id: DS026
     paths:
-      - '.devcontainer/devcontainer.dockerfile'
+      - ".devcontainer/devcontainer.dockerfile"
     statement: Dev Container images do not require HEALTHCHECK
