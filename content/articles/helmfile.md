@@ -13,7 +13,7 @@ Many administrators use [GitOps](https://www.gitops.tech/) systems like [Flux](h
 
 Helmfile is particularly useful for clusters that are temporary or should change rapidly as part of another process. For example, you might use it to configure development Kubernetes clusters on laptops, or in a CI pipeline that deploys test clusters on demand.
 
-> This article is written for Helmfile 1.1 and above.
+> This article is written for Helmfile 1.3.0 and above.
 
 ## How It Works
 
@@ -121,7 +121,7 @@ This project also includes a [Task file](https://github.com/stuartellis/eks-auto
 
 ## Requirements
 
-Helmfile itself is a single executable file. It relies on [Helm](https://helm.sh) and several Helm plugins. It also uses the `kustomize` command-line tool when working with kustomizations. This means that both Helm and Kustomize must be installed on the system.
+Helmfile itself is a single executable file. It relies on [Helm](https://helm.sh) and several Helm plugins. It also uses the [kustomize](https://kustomize.io/) command-line tool when working with kustomizations. This means that both Helm and Kustomize must be installed on the system.
 
 To install Helmfile on macOS and Linux, you can use [Homebrew](https://brew.sh/):
 
@@ -129,7 +129,7 @@ To install Helmfile on macOS and Linux, you can use [Homebrew](https://brew.sh/)
 brew install helmfile kustomize
 ```
 
-> Homebrew will install Helm as a dependency of Helmfile.
+> Homebrew will install Helm 4 as a dependency of Helmfile.
 
 Once you have Helmfile, use `init` to add the required plugins to your Helm installation. Run this command in a terminal window:
 
