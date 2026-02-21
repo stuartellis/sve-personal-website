@@ -20,15 +20,15 @@ repos:
     hooks:
       - id: reuse
   - repo: https://github.com/rbubley/mirrors-prettier
-    rev: "v3.8.0"
+    rev: "v3.8.1"
     hooks:
       - id: prettier
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: "0.36.0"
+    rev: "0.36.2"
     hooks:
       - id: check-taskfile
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: "v0.20.0"
+    rev: "v0.21.0"
     hooks:
       - id: markdownlint-cli2
   - repo: https://github.com/adrienverge/yamllint.git
