@@ -159,6 +159,8 @@ sudo dnf install just                   # dnf on Fedora Linux
 sudo apt install just                   # apt on Debian and Ubuntu
 ```
 
+For Red Hat based systems, use the [EPEL](https://docs.fedoraproject.org/en-US/epel/) repository.
+
 To install Task on Alpine Linux, you need to use the _community_ package repository:
 
 ```shell
