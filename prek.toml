@@ -1,0 +1,87 @@
+# SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
+#
+# SPDX-License-Identifier: CC0-1.0
+#
+# Configuration file for `prek`, a git hook framework written in Rust.
+# See https://prek.j178.dev for more information.
+#:schema https://www.schemastore.org/prek.json
+
+[[repos]]
+repo = "builtin"
+hooks = [
+  { id = "trailing-whitespace" },
+  { id = "end-of-file-fixer" },
+  { id = "check-json" },
+  { id = "check-toml" },
+  { id = "check-yaml" },
+  { id = "check-added-large-files" }
+]
+
+[[repos]]
+repo = "https://github.com/fsfe/reuse-tool"
+rev = "v6.2.0"
+hooks = [
+  { id = "reuse" }
+]
+
+[[repos]]
+repo = "https://github.com/rbubley/mirrors-prettier"
+rev = "v3.8.1"
+hooks = [
+  { id = "prettier" }
+]
+
+[[repos]]
+repo = "https://github.com/python-jsonschema/check-jsonschema"
+rev = "0.36.2"
+hooks = [
+  { id = "check-taskfile" }
+]
+
+[[repos]]
+repo = "https://github.com/DavidAnson/markdownlint-cli2"
+rev = "v0.21.0"
+hooks = [
+  { id = "markdownlint-cli2" }
+]
+
+[[repos]]
+repo = "https://github.com/adrienverge/yamllint.git"
+rev = "v1.38.0"
+hooks = [
+  {
+    id = "yamllint",
+    args = ["--strict"]
+  }
+]
+
+[[repos]]
+repo = "local"
+hooks = [
+  {
+    id = "trivy-config",
+    name = "trivy config",
+    entry = "trivy",
+    language = "system",
+    args = [
+      "config",
+      "--exit-code",
+      "1",
+      "."
+    ],
+    pass_filenames = false
+  },
+  {
+    id = "trivy-fs",
+    name = "trivy filesystem",
+    entry = "trivy",
+    language = "system",
+    args = [
+      "fs",
+      "--exit-code",
+      "1",
+      "."
+    ],
+    pass_filenames = false
+  }
+]
