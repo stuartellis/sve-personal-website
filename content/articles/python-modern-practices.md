@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2025-12-28T23:21:00+00:00"
+date = "2026-03-17T07:21:00+00:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -43,7 +43,7 @@ uv tool install prek
 
 ### Use a Project Tool
 
-Use a project tool when you work with Python. There are several of these tools, which all provide the key features for managing Python projects. All of them can generate a directory structure that follows best practices, manage package dependencies and automate Python virtual environments, so that you do not need to manually create and activate environments as you work.
+Use a project tool when you work with Python. There are several of these tools, which all provide the key features for managing Python projects. They generate directory structures that follow best practices, manage package dependencies and automate Python virtual environments, so that you do not need to manually create and activate environments as you work.
 
 Project tools can also manage the versions of Python, so that you will automatically have the correct version of Python for each project. Your project tool can install copies of Python as needed. The [section below](#install-python-with-tools-that-support-multiple-versions) explains in more detail.
 
@@ -57,9 +57,9 @@ You may need to create projects that include Python but cannot use Python projec
 
 ### Install Python With Tools That Support Multiple Versions
 
-Instead of manually installing Python on to your development systems with packages from [the Python Website](https://www.python.org), use tools that provide copies of Python on demand. This means that you can choose a Python version for each of your projects, and upgrade projects to new versions of Python later without interfering with other tools and projects that use Python.
+Instead of manually installing Python on to your development systems with packages from [the Python Website](https://www.python.org), use tools that provide copies of Python on demand. This means that you can choose a Python version for each of your projects, and upgrade projects to new versions of Python later without interfering with other tools and projects that use Python. The official [Python Install Manager](https://docs.python.org/dev/using/windows.html) for Microsoft Windows supports multiple Python versions, but does not have the other features of a project tool.
 
-The project tools can install copies of Python as needed. They use [standalone builds](https://github.com/astral-sh/python-build-standalone), which are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project. The standalone builds have [some limitations](https://gregoryszorc.com/docs/python-build-standalone/main/quirks.html) that are not present with other copies of Python.
+The project tools can install copies of Python as needed, in addition to their other features. They use [standalone builds](https://github.com/astral-sh/python-build-standalone), which are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project. The standalone builds have [some limitations](https://gregoryszorc.com/docs/python-build-standalone/main/quirks.html) that are not present with other copies of Python.
 
 Version manager tools like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv) also allow you to switch between different versions of Python at will, as well as providing the defined version for each of your projects. I provide a separate [article on using version managers](https://www.stuartellis.name/articles/version-managers/).
 
@@ -85,13 +85,15 @@ If your operating system includes a Python installation, avoid using it for your
 
 Consider using the [Cyclopts](https://cyclopts.readthedocs.io/en/latest/) framework or the [Typer](https://typer.tiangolo.com/) library for building new CLI applications. Both of these use type hints and are built for modern Python. Many projects still use the older [Click](https://click.palletsprojects.com/) framework.
 
-If you must limit your project to only use the Python standard library, use the [argparse](https://docs.python.org/3/library/argparse.html) module. The _optparse_ module is officially deprecated, so update code that uses _optparse_ or _getopt_ to use _argparse_ instead. Refer to [the argparse tutorial](https://docs.python.org/3/howto/argparse.html) in the official documentation for more details.
+To add a simple command-line interface to a script or library, use the [argparse](https://docs.python.org/3/library/argparse.html) module. Refer to [the argparse tutorial](https://docs.python.org/3/howto/argparse.html) in the official documentation for more details.
+
+> The _optparse_ module is officially deprecated, so update code that uses _optparse_ or _getopt_ to use _argparse_ instead.
 
 ### Use Products That Enable Concurrency and async
 
-When you need to run concurrent operations, look for existing products that suit your needs. For example, you can use a workflow engine such as [Apache Airflow](https://airflow.apache.org/) or [Prefect](https://www.prefect.io/) to run tasks, or build a Web application by combining a framework like [FastAPI](https://fastapi.tiangolo.com/) with an application server, such as [Granian](https://github.com/emmett-framework/granian) or [Gunicorn](https://gunicorn.org/). These products enable you to run your Python code concurrently on multiple CPUs or multiple computers, and can use asynchronous code when it makes sense to do so.
-
 By default, each Python process uses a single thread on a single CPU, so that it can can only perform one operation at a time. You can have multiple threads within a process, but this only enables switching between threads. To achieve full concurrency with Python, you must run multiple Python processes so that each process can run its threads on a separate CPU.
+
+When you need to run operations at any scale, look for existing products that suit your needs. For example, you can use a workflow engine such as [Apache Airflow](https://airflow.apache.org/) or [Prefect](https://www.prefect.io/) to run tasks, or build a Web application by combining a framework like [FastAPI](https://fastapi.tiangolo.com/) with an application server, such as [Granian](https://github.com/emmett-framework/granian) or [Gunicorn](https://gunicorn.org/). These products enable you to run your Python code concurrently on multiple CPUs or multiple computers, and can use asynchronous code when it makes sense to do so.
 
 The [asynchronous features of Python](https://docs.python.org/3/library/asyncio.html) enable threads to avoid blocking on I/O operations. To use asynchronous I/O in your code, you must use a Python library or framework that supports it. For example, the FastAPI Web framework [supports both types of function](https://fastapi.tiangolo.com/async/) in the same application. Code that uses asynchronous I/O must not call _any_ other function that uses synchronous I/O, such as _open()_, or the _logging_ module in the standard library. Instead, you need to use either the equivalent functions from _asyncio_ in the standard library or ensure that the products and libraries that you use are designed to support asynchronous code.
 
@@ -117,9 +119,9 @@ Use [PyInstaller](https://pyinstaller.org/) or [Nuitka](https://nuitka.net) to c
 
 ### Configuration: Use Environment Variables or TOML
 
-Use environment variables for options that must be passed to an application each time that it starts. If your application is a command-line tool, you should also provide options that can override the environment variables.
+Use environment variables for options that must be passed to an application each time that it starts. If your application is a command-line tool, you should also provide options that can override the environment variables. Use [python-dotenv](https://saurabh-kumar.com/python-dotenv/) for projects that only need to use environment variables, or [Pydantic Settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) for a full configuration system that supports files and environment variables.
 
-Use [TOML](https://toml.io/) for configuration files that must be written or edited by human beings. This format is an open standard that is used across Python projects and is also supported by other programming languages. For example, TOML is the default configuration file format for Rust projects.
+Use the [TOML](https://toml.io/) format for configuration files that must be written or edited by human beings. This format is an open standard that is used across Python projects and is also supported by other programming languages. For example, TOML is the default configuration file format for Rust projects.
 
 Python 3.11 and above include [tomllib](https://docs.python.org/3/library/tomllib.html) to read the TOML format. If your Python software must generate TOML, you need to add [Tomli-W](https://pypi.org/project/tomli-w/) to your project.
 
@@ -149,7 +151,7 @@ If possible, use these formats for structured data:
 
 - [JSON](https://en.wikipedia.org/wiki/JSON) - Plain-text format for data objects
 - [SQLite](https://sqlite.org) - Binary format for self-contained and robust database files
-- [Apache Parquet](https://parquet.apache.org/) - Binary format for efficient storage of tabular data
+- [Apache Parquet](https://parquet.apache.org/) - Binary format for efficient storage of tabular data in files
 
 All of the versions of Python 3 include modules for [JSON](https://docs.python.org/3/library/json.html) and [SQLite](https://docs.python.org/3/library/sqlite3.html). The [Pandas](https://pandas.pydata.org) dataframe library supports Parquet, JSON and SQLite. [DuckDB](https://duckdb.org/docs/stable/clients/python/overview) also supports all three formats.
 
