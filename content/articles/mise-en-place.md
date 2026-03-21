@@ -1,7 +1,7 @@
 +++
 title = "mise-en-place for Managing Development Tooling"
 slug = "mise-en-place"
-date = "2025-08-03T07:21:00+01:00"
+date = "2026-03-21T08:01:00+00:00"
 description = "Using mise-en-place"
 categories = ["automation", "devops", "programming", "python"]
 tags = ["automation", "devops", "golang", "linux", "macos", "javascript", "python"]
@@ -13,7 +13,7 @@ You can also set a default mise configuration for your user account. This enable
 
 To enable mise to manage software, you define the expected versions of the [programming languages](https://mise.jdx.dev/core-tools.html) and other [tools](https://mise.jdx.dev/registry.html#tools). It then downloads copies of the required products to a cache as needed, and can switch the active version of each language and tool when you change projects or request a different version.
 
-Similarly, you can define [environment variables](https://mise.jdx.dev/environments/), so that mise adds and removes them as needed. It supports multiple profiles for a project, so that you can switch between sets of environment variables as you work.
+Similarly, you can define [environment variables](https://mise.jdx.dev/environments/), so that mise adds and removes them as needed. It supports multiple profiles for a project, so that you can switach between sets of environment variables as you work.
 
 Current versions of mise allow you to define [tasks](https://mise.jdx.dev/tasks/) as part of mise configurations. This means that you may not need to use a separate task runner such as [just](https://www.stuartellis.name/articles/just-task-runner/) to maintain a shared set of tasks for projects that use mise.
 
@@ -25,9 +25,9 @@ The mise tool is a single executable file that is written in Rust. This enables 
 
 It is an evergreen tool, which means that [mise is regularly updated and you can always use the latest version](https://mise.jdx.dev/roadmap.html#versioning). New versions of mise should not cause errors with existing configurations, and new features are opt-in. Updating mise never changes the versions of software that your projects use.
 
-The configuration for mise is defined by text files in the TOML format. These store information about tool versions, task definitions and variables. You can place configuration files in the root directory of a project to set project-level options, in your home directory for global defaults, or in [other locations](https://mise.jdx.dev/configuration.html) to handle particular requirements.
+The configuration for mise is defined by text files in the [TOML](https://toml.io/) format. These store information about tool versions, task definitions and variables. You can place configuration files in the root directory of a project to set project-level options, in your home directory for global defaults, or in [other locations](https://mise.jdx.dev/configuration.html) to handle particular requirements.
 
-You can also add [lockfiles](https://mise.jdx.dev/dev-tools/mise-lock.html) to pin the exact versions of the software that mise installs and uses. This feature is currently marked as _experimental_, which means that the format of the lockfiles may change with future versions of mise.
+ Add [lockfiles](https://mise.jdx.dev/dev-tools/mise-lock.html) to pin the exact versions of the software that mise installs and uses. You should always commit lock files to version control. Use the [strict lockfile mode](https://mise.jdx.dev/dev-tools/mise-lock.html#strict-lockfile-mode) to ensure that builds are reproducible.
 
 Where possible, mise uses [secure installation methods](https://mise.jdx.dev/registry.html#backends) for software, and verifies the content of downloads. Unfortunately, some software can only be supported with legacy _asdf_ plugins. These plugins only run on UNIX-based systems, and may not support verifying downloads. Refer to the [mise registry](https://mise.jdx.dev/registry.html#tools) for a list of available tools and the installation methods that are used.
 
@@ -79,6 +79,8 @@ brew upgrade mise
 ## Using mise with Continuous Integration (CI)
 
 You can use mise with [any continuous integration system](https://mise.jdx.dev/continuous-integration.html). The next sections provide suggestions to consider when you set up mise and CI systems.
+
+> Always use lock files with CI. Use the [strict lockfile mode](https://mise.jdx.dev/dev-tools/mise-lock.html#strict-lockfile-mode) to ensure that builds are reproducible.
 
 ### Using Separate Configuration Files or mise Environments with CI
 
