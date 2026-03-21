@@ -295,9 +295,17 @@ $HOME/.cargo/bin
 
 This process installs all of the tools into your home directory, and does not add any files into system directories.
 
-### JavaScript Development: Node.js
+### JavaScript Development: Node.js and fnm
 
-Use [mise](https://mise.jdx.dev/) to manage your Node.js installations.
+Use [fnm](https://github.com/Schniz/fnm) to manage your Node.js installations. To install it with Homebrew, enter this command:
+
+```shell
+brew install fnm
+```
+
+Then [add it to your shell profile](https://github.com/Schniz/fnm#shell-setup).
+
+You can also use [mise](https://mise.jdx.dev/) to manage Node.js and Deno installations.
 
 ### Go Development
 
