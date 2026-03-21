@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2026-03-17T07:21:00+00:00"
+date = "2026-03-21T08:41:00+00:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -57,7 +57,9 @@ You may need to create projects that include Python but cannot use Python projec
 
 ### Install Python With Tools That Support Multiple Versions
 
-Instead of manually installing Python on to your development systems with packages from [the Python Website](https://www.python.org), use tools that provide copies of Python on demand. This means that you can choose a Python version for each of your projects, and upgrade projects to new versions of Python later without interfering with other tools and projects that use Python. The official [Python Install Manager](https://docs.python.org/dev/using/windows.html) for Microsoft Windows supports multiple Python versions, but does not have the other features of a project tool.
+Instead of manually installing Python on to your development systems, use tools that provide copies of Python on demand. This means that you can choose a Python version for each of your projects, and upgrade projects to new versions of Python later without interfering with other tools and projects that use Python.
+
+> The official [Python Install Manager](https://docs.python.org/dev/using/windows.html) for Microsoft Windows supports multiple Python versions, but does not have the other features of a project tool.
 
 The project tools can install copies of Python as needed, in addition to their other features. They use [standalone builds](https://github.com/astral-sh/python-build-standalone), which are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project. The standalone builds have [some limitations](https://gregoryszorc.com/docs/python-build-standalone/main/quirks.html) that are not present with other copies of Python.
 
@@ -75,7 +77,7 @@ Upgrade your projects as new Python versions are released. The Python developmen
 
 > _Avoid using Python 2._ Older operating systems include Python 2, but it is not supported by the Python development team or by the developers of most popular Python libraries.
 
-### Avoid Using the Python Installation in Your Operating System
+### Avoid Using the Python Installation for Your Operating System
 
 If your operating system includes a Python installation, avoid using it for your projects. This Python installation is for system tools. It is likely to use an older version of Python, and may not include all of the standard features. An operating system copy of Python should be [marked](https://packaging.python.org/en/latest/specifications/externally-managed-environments/#externally-managed-environments) to prevent you from installing packages into it, but not all operating systems set this marker.
 
@@ -91,9 +93,9 @@ To add a simple command-line interface to a script or library, use the [argparse
 
 ### Use Products That Enable Concurrency and async
 
-By default, each Python process uses a single thread on a single CPU, so that it can can only perform one operation at a time. You can have multiple threads within a process, but this only enables switching between threads. To achieve full concurrency with Python, you must run multiple Python processes so that each process can run its threads on a separate CPU.
+By default, each Python process uses a single thread on a single CPU. This means that each process only performs one operation at a time. You can have multiple threads within a process, but this only enables switching between threads. If you need to achieve full concurrency with Python, you must run multiple Python processes, so that each process can run its threads on a separate CPU.
 
-When you need to run operations at any scale, look for existing products that suit your needs. For example, you can use a workflow engine such as [Apache Airflow](https://airflow.apache.org/) or [Prefect](https://www.prefect.io/) to run tasks, or build a Web application by combining a framework like [FastAPI](https://fastapi.tiangolo.com/) with an application server, such as [Granian](https://github.com/emmett-framework/granian) or [Gunicorn](https://gunicorn.org/). These products enable you to run your Python code concurrently on multiple CPUs or multiple computers, and can use asynchronous code when it makes sense to do so.
+When you need to run operations at any scale, look for existing products that suit your needs. For example, you can use a workflow engine such as [Apache Airflow](https://airflow.apache.org/) or [Prefect](https://www.prefect.io/) to run sets of tasks, and build a Web application by combining a framework like [FastAPI](https://fastapi.tiangolo.com/) with an application server such as [Granian](https://github.com/emmett-framework/granian) or [Gunicorn](https://gunicorn.org/). The [Dask](https://www.dask.org/) and [Ray](https://docs.ray.io/en/latest/index.html) frameworks enable you to distribute computations at large scale. All of these products enable you to run your Python code concurrently on multiple CPUs and on multiple computers, and can use asynchronous code.
 
 The [asynchronous features of Python](https://docs.python.org/3/library/asyncio.html) enable threads to avoid blocking on I/O operations. To use asynchronous I/O in your code, you must use a Python library or framework that supports it. For example, the FastAPI Web framework [supports both types of function](https://fastapi.tiangolo.com/async/) in the same application. Code that uses asynchronous I/O must not call _any_ other function that uses synchronous I/O, such as _open()_, or the _logging_ module in the standard library. Instead, you need to use either the equivalent functions from _asyncio_ in the standard library or ensure that the products and libraries that you use are designed to support asynchronous code.
 
@@ -113,7 +115,7 @@ For other cases, you should use extra tools to package your work into a format t
 
 Use OCI container images to package Python applications that are intended to be run by a service, such as Docker or a workflow engine, especially if the application provides a network service itself, such as a Web application. You can build OCI container images with Docker, [buildah](https://buildah.io/) and other tools to include a copy of Python, along with your code and the required dependencies. OCI container images can run on any system that uses Docker, Podman or Kubernetes, as well as on cloud infrastructure. Consider using the [official Python container image](https://hub.docker.com/_/python) as the base image for your application container images.
 
-Use [PyInstaller](https://pyinstaller.org/) or [Nuitka](https://nuitka.net) to compile desktop and command-line applications as a single executable file. Each executable file includes a copy of Python, along with your code and the required dependencies. Optionally, you can then put the executable in an operating system package, such as an RPM or DEB package for Linux. Each executable will only run on the type of operating system and CPU that it was compiled to use. For example, an executable for Microsoft Windows on Intel-compatible machines will work on all editions of Windows, but it will not run on macOS.
+Use [PyInstaller](https://pyinstaller.org/) or [Nuitka](https://nuitka.net) to compile desktop and command-line applications as a single executable file. Each executable file includes a copy of Python, along with your code and the required dependencies. Each executable will only run on the type of operating system and CPU that it was compiled to use. For example, an executable for Microsoft Windows on Intel-compatible machines will work on all editions of Windows, but it will not run on macOS. Optionally, you can put executables in an operating system package to work with package management tools, such as an RPM or DEB package for Linux.
 
 > _Requirements files:_ If you use requirements files to build or deploy projects then configure your tools to [use hashes](#ensure-that-requirements-files-include-hashes).
 
@@ -147,9 +149,8 @@ There are now data file formats that are open, standardized and portable. If pos
 
 ### Modern Data Formats
 
-If possible, use these formats for structured data:
+If possible, use [JSON](https://en.wikipedia.org/wiki/JSON) for structured data. It is a plain-text format for data objects. You can then also use these file formats:
 
-- [JSON](https://en.wikipedia.org/wiki/JSON) - Plain-text format for data objects
 - [SQLite](https://sqlite.org) - Binary format for self-contained and robust database files
 - [Apache Parquet](https://parquet.apache.org/) - Binary format for efficient storage of tabular data in files
 
@@ -197,7 +198,7 @@ Avoid creating YAML files, because modern formats offer better options. Consider
 
 Use a formatting tool with a plugin to your editor, so that your code is automatically formatted to a consistent style.
 
-Consider using [Ruff](https://docs.astral.sh/ruff/), which provides both code formatting and quality checks for Python code. [Black](https://black.readthedocs.io/en/stable/) was the most popular code formatting tool for Python before the release of Ruff.
+Consider using [Ruff](https://docs.astral.sh/ruff/), which provides both code formatting and quality checks for Python code. [Black](https://black.readthedocs.io/en/stable/) is supported by the Python Software Foundation, and was the most popular code formatting tool for Python before the release of Ruff.
 
 Use Git hooks to run the formatting tool before each commit to source control. You should also run the formatting tool with your CI system, so that it rejects any code that does not match the format for your project.
 
@@ -205,7 +206,7 @@ Use Git hooks to run the formatting tool before each commit to source control. Y
 
 Use a code linting tool with a plugin to your editor, so that your code is automatically checked for issues.
 
-Consider using [Ruff](https://docs.astral.sh/ruff/) for linting Python code. The previous standard linter was [flake8](https://flake8.pycqa.org/en/latest/). Ruff includes the features of both flake8 and the most popular plugins for flake8, along with many other capabilities.
+Consider using [Ruff](https://docs.astral.sh/ruff/) for linting Python code. Before Ruff, the most popular code linter was [flake8](https://flake8.pycqa.org/en/latest/). Ruff includes the features of both flake8 and the most popular plugins for flake8, along with many other capabilities.
 
 Use Git hooks to run the linting tool before each commit to source control. You should also run the linting tool with your CI system, so that it rejects any code that does not meet the standards for your project.
 
@@ -215,7 +216,7 @@ Current versions of Python support type hinting. Consider using type hints in an
 
 Once you add type hints, type checkers like [mypy](http://www.mypy-lang.org/) and [pyright](https://microsoft.github.io/pyright/) can check your code as you develop it. Code editors will read type hints to display information about the code that you are working with. You can also add a type checker to your Git hooks and CI to validate that the code in your project is consistent.
 
-If you use [Pydantic](https://docs.pydantic.dev/) in your application, it can work with type hints. If you use mypy, add the [plugin for Pydantic](https://docs.pydantic.dev/latest/integrations/mypy/) to improve the integration between mypy and Pydantic.
+If you use [attrs](https://www.attrs.org/en/stable/index.html) or [Pydantic](https://docs.pydantic.dev/) in your application, they can work with type hints. If you use mypy, add the [plugin for Pydantic](https://docs.pydantic.dev/latest/integrations/mypy/) to improve the integration between mypy and Pydantic.
 
 > [PEP 484 - Type Hints](https://peps.python.org/pep-0484/) and [PEP 526 – Syntax for Variable Annotations](https://peps.python.org/pep-0526/) define the notation for type hinting.
 
@@ -251,11 +252,11 @@ generate-hashes = true
 
 ### Create Data Classes for Custom Data Objects
 
-Python code frequently has classes for _data objects_: items that exist to store values, but do not carry out actions. If you are creating classes for data objects in your Python code, consider using either [Pydantic](https://docs.pydantic.dev/) or the built-in [data classes](https://docs.python.org/3/library/dataclasses.html) feature.
+Python code frequently has classes for _data objects_: items that exist to store values, but do not carry out actions. If you are creating classes for data objects in your Python code, consider using [Pydantic](https://docs.pydantic.dev/), [attrs](https://www.attrs.org/en/stable/index.html) or the built-in [data classes](https://docs.python.org/3/library/dataclasses.html) feature.
 
-Pydantic provides validation, serialization and other features for data objects. You need to define the classes for Pydantic data objects with type hints.
+Pydantic provides validation, serialization and other features for data objects. You need to define the classes for Pydantic data objects with type hints. Classes that use attrs may use type hints, but it is optional.
 
-The built-in Python syntax for data classes offers fewer capabilities than Pydantic. The data class syntax does enable you to reduce the amount of code that you need to define data objects. Each data class acts as a standard Python class. Data classes also provide a limited set of extra features, such as the ability to mark instances of a data class as [frozen](https://docs.python.org/3/library/dataclasses.html#frozen-instances).
+The built-in Python syntax for data classes offers fewer capabilities than Pydantic or attrs. The data class syntax does enable you to reduce the amount of code that you need to define data objects. Each data class acts as a standard Python class. Data classes also provide a limited set of extra features, such as the ability to mark instances of a data class as [frozen](https://docs.python.org/3/library/dataclasses.html#frozen-instances).
 
 > [PEP 557](https://www.python.org/dev/peps/pep-0557/) describes data classes.
 
