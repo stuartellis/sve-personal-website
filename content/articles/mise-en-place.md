@@ -27,7 +27,7 @@ It is an evergreen tool, which means that [mise is regularly updated and you can
 
 The configuration for mise is defined by text files in the [TOML](https://toml.io/) format. These store information about tool versions, task definitions and variables. You can place configuration files in the root directory of a project to set project-level options, in your home directory for global defaults, or in [other locations](https://mise.jdx.dev/configuration.html) to handle particular requirements.
 
- Add [lockfiles](https://mise.jdx.dev/dev-tools/mise-lock.html) to pin the exact versions of the software that mise installs and uses. You should always commit lock files to version control. Use the [strict lockfile mode](https://mise.jdx.dev/dev-tools/mise-lock.html#strict-lockfile-mode) to ensure that builds are reproducible.
+Add [lockfiles](https://mise.jdx.dev/dev-tools/mise-lock.html) to pin the exact versions of the software that mise installs and uses. You should always commit lock files to version control. Use the [strict lockfile mode](https://mise.jdx.dev/dev-tools/mise-lock.html#strict-lockfile-mode) to ensure that builds are reproducible.
 
 Where possible, mise uses [secure installation methods](https://mise.jdx.dev/registry.html#backends) for software, and verifies the content of downloads. Unfortunately, some software can only be supported with legacy _asdf_ plugins. These plugins only run on UNIX-based systems, and may not support verifying downloads. Refer to the [mise registry](https://mise.jdx.dev/registry.html#tools) for a list of available tools and the installation methods that are used.
 
