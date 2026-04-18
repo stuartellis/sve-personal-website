@@ -26,21 +26,21 @@ hooks = [
 
 [[repos]]
 repo = "https://github.com/rbubley/mirrors-prettier"
-rev = "v3.8.1"
+rev = "v3.8.3"
 hooks = [
   { id = "prettier" }
 ]
 
 [[repos]]
 repo = "https://github.com/python-jsonschema/check-jsonschema"
-rev = "0.36.2"
+rev = "0.37.1"
 hooks = [
   { id = "check-taskfile" }
 ]
 
 [[repos]]
 repo = "https://github.com/DavidAnson/markdownlint-cli2"
-rev = "v0.21.0"
+rev = "v0.22.0"
 hooks = [
   { id = "markdownlint-cli2" }
 ]
