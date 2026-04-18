@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Diverse Systems with just"
 slug = "just-task-runner"
-date = "2026-03-21T08:01:00+00:00"
+date = "2026-04-18T09:01:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -82,21 +82,21 @@ If you use Python, you can install _just_ into your user account with your exist
 To install _just_ with [uv](https://docs.astral.sh/uv/), run this command:
 
 ```shell
-uv tool install rust-just==1.47.1
+uv tool install rust-just==1.49.0
 ```
 
 To install _just_ with [pipx](https://pipx.pypa.io), run this command:
 
 ```shell
-pipx install rust-just==1.47.1
+pipx install rust-just==1.49.0
 ```
 
 ### Installing just with mise
 
-This command installs version 1.47.1 of _just_ with [mise](https://mise.jdx.dev/) and makes it available to your user account:
+This command installs version 1.49.0 of _just_ with [mise](https://mise.jdx.dev/) and makes it available to your user account:
 
 ```shell
-mise use -gy just@1.47.1
+mise use -gy just@1.49.0
 ```
 
 You can also use _mise_ to specify alternate versions of _just_ for specific projects, in the same ways that it manages other tools.
@@ -108,7 +108,7 @@ If you are using a Visual Studio Code Dev Container, you can add the feature [gu
 ```json
     "features": {
         "ghcr.io/guiyomh/features/just:0": {
-            "version": "1.47.1"
+            "version": "1.49.0"
         }
     }
 ```
@@ -136,7 +136,7 @@ curl -L https://just.systems/install.sh > scripts/install-just.sh
 To use the installation script, call it with _--tag_ and _--to_ The _--tag_ specifies the version of _just_. The _--to_ specifies which directory to install it to:
 
 ```shell
-./scripts/install-just.sh --tag 1.47.1 --to $HOME/.local/bin
+./scripts/install-just.sh --tag 1.49.0 --to $HOME/.local/bin
 ```
 
 ### Installing just with Homebrew
