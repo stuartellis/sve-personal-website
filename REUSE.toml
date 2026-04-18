@@ -16,3 +16,15 @@ path = "content/**/**.md"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "Stuart Ellis"
 SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+
+[[annotations]]
+path = "go.sum"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Stuart Ellis"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = "layouts/_partials/**/**.html"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Stuart Ellis"
+SPDX-License-Identifier = "MIT"
