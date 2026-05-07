@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
+#
+# SPDX-License-Identifier: MIT
+#
+# Tasks for Vale:
+#
+# https://vale.sh/
+
+version: "3.38"
+
+silent: true
+
+tasks:
+  default:
+    cmds:
+      - task: lint
+
+  lint:
+    desc: Lint content with Vale
+    cmds:
+      - vale content/
+
+  sync:
+    desc: Download Vale style packages
+    cmds:
+      - vale sync

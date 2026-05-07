@@ -20,3 +20,6 @@ tmp/
 .hugo_build.lock
 public
 resources
+
+# Vale
+.vale/styles/
