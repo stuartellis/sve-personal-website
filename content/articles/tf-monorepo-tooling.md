@@ -1,20 +1,20 @@
 +++
 title = "Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2025-09-07T17:30:00+01:00"
-description = "Tooling for Terraform and OpenTofu in monorepos"
+date = "2026-05-17T07:25:00+01:00"
+description = "Tooling for OpenTofu and Terraform in monorepos"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 +++
 
-This article describes an example of tooling for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) using a [general-purpose task runner utility](https://www.stuartellis.name/articles/task-runner/). The tooling supports these features without any other third-party software:
+This article describes an example of tooling for [OpenTofu](https://opentofu.org/) and [Terraform](https://developer.hashicorp.com/terraform) using a [general-purpose task runner utility](https://www.stuartellis.name/articles/task-runner/). The tooling supports these features without any other third-party software:
 
 - [Monorepo](https://en.wikipedia.org/wiki/Monorepo) projects that contain the code for infrastructure and applications.
 - Multiple infrastructure components in the same code repository. Each of these _units_ is a complete [root module](https://opentofu.org/docs/language/modules/).
 - Multiple instances of the same infrastructure component with different configurations. The TF configurations are called [contexts](#creating-a-context).
 - [Deploying extra instances of a component](#using-extra-instances) with the same set of configuration. Use this to deploy instances from version control branches for development, or to create temporary instances.
 - [Integration testing](#testing) for every component.
-- [Migrating from Terraform to OpenTofu](#migrating-to-opentofu). You use the same commands for both.
+- [Moving from Terraform to OpenTofu](#using-terraform). You can use the same commands for both, and migrate to OpenTofu at any time.
 
 > If we separate out our infrastructure code into components then we avoid create a [terralith](https://masterpoint.io/blog/terralith-monolithic-terraform-architecture/), where all of the TF code for all of the resources is in a single root module. Monolithic root modules complicate development and testing, and they grow slower and more brittle over time as resources are added to them.
 
@@ -24,7 +24,7 @@ The code for this example tooling is available on GitHub:
 
 For more details about how this tooling works and the design decisions, read my [article on designing a wrapper for TF](https://www.stuartellis.name/articles/tf-wrapper-design/).
 
-> This article uses the identifier _TF_ or _tf_ for Terraform and OpenTofu. Both tools accept the same commands and have the same behavior. The tooling itself is just called `tft` (_TF Tasks_).
+> This article uses the identifier _TF_ or _tf_ for OpenTofu and Terraform. Both tools accept the same commands and have the same behavior. The tooling itself is just called `tft` (_TF Tasks_).
 
 ## Quick Examples
 
@@ -44,15 +44,15 @@ pipx run copier copy git+https://github.com/stuartellis/tf-tasks my-project
 # Go to the working directory for the project
 cd my-project
 
-# Ask tenv to detect and install the correct version of Terraform for the project
-tenv terraform install
+# Ask tenv to detect and install the correct version of OpenTofu for the project
+tenv opentofu install
 
 # Create a configuration and a root module for the project
 TFT_CONTEXT=dev task tft:context:new
 TFT_UNIT=my-app task tft:new
 ```
 
-The `tft:new` task creates a _unit_, a complete Terraform root module. Each new root module includes example code for AWS, so that it can work immediately. The context is a configuration profile. You only need to set:
+The `tft:new` task creates a _unit_, a complete TF root module. Each new root module includes example code for AWS, so that it can work immediately. The context is a configuration profile. You only need to set:
 
 1. Either the [remote state storage](#setting-the-remote-state-for-a-context), OR use [local state](#using-local-tf-state)
 2. The AWS IAM role for TF itself. This is the variable `tf_exec_role_arn` in the tfvars files for the context.
@@ -108,7 +108,7 @@ TFT_CONTEXT=dev TFT_UNIT=my-app task tft:test
 
 The integration tests can create and then destroy unique copies of the resources for every test run.
 
-To pass extra options to Terraform or OpenTofu, add `--` to the end of the command, followed by the options:
+To pass extra options to OpenTofu or Terraform, add `--` to the end of the command, followed by the options:
 
 ```shell
 task tft:init -- -upgrade
@@ -160,7 +160,7 @@ To use the tasks in a generated project you will need:
 - A UNIX shell
 - [Git](https://git-scm.com/)
 - [Task](https://taskfile.dev)
-- [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/)
+- [OpenTofu](https://opentofu.org/) or [Terraform](https://developer.hashicorp.com/terraform)
 
 The TF tasks in the template do not use Python or Copier. This means that they can be run in a restricted environment, such as a continuous integration system.
 
@@ -182,7 +182,7 @@ TFT_CONTEXT=dev task tft:context:new
 
 Edit the `context.json` file in the directory `tf/contexts/<CONTEXT>/` to set the `environment` name and specify the settings for the [remote state](https://opentofu.org/docs/language/state/remote/) storage that you want to use.
 
-> This tooling currently only supports Amazon S3 for remote state storage.
+> This tooling currently only supports Amazon S3 and Cloudflare R2 for remote state storage.
 
 ### Setting the Remote State for a Context
 
@@ -200,23 +200,58 @@ The `context.json` file is the configuration file for the context. It specifies 
       "tfstate_dir": "dev",
       "region": "eu-west-2",
       "role_arn": "arn:aws:iam::789000123456:role/my-tf-state-role"
-    },
+    }
+}
+```
+
+The `backends.s3` section specifies the settings for a TF backend that uses S3 for storage. This uses the [S3 native locking feature](https://opentofu.org/docs/language/settings/backends/s3/) in current versions of OpenTofu and Terraform. It does not use DynamoDB. The tooling will use this backend by default.
+
+To use Amazon S3 with DynamoDB for locking, specify an `s3ddb` backend:
+
+```json
+{
+  "metadata": {
+    "description": "Cloud development environment",
+    "environment": "dev"
+  },
+  "backends": {
     "s3ddb": {
-      "tfstate_bucket": "",
-      "tfstate_ddb_table": "",
-      "tfstate_dir": "",
-      "region": "",
-      "role_arn": ""
+      "tfstate_bucket": "789000123456-tf-state-dev-eu-west-2",
+      "tfstate_ddb_table": "789000123456-tf-lock-dev-eu-west-2",
+      "tfstate_dir": "dev",
+      "region": "eu-west-2",
+      "role_arn": "arn:aws:iam::789000123456:role/my-tf-state-role"
     }
   }
 }
 ```
 
-The `backends.s3` section specifies the settings for a TF backend that uses S3 for storage. This uses the [S3 native locking feature](https://opentofu.org/docs/language/settings/backends/s3/) in current versions of Terraform and OpenTofu. It does not use DynamoDB. The tooling will use this backend by default.
+> The tooling automatically enables encryption for S3 backends.
 
-The `backends.s3ddb` section specifies the settings for a legacy TF backend that uses S3 for storage and DynamoDB for locking. Only use this type of backend if you need to use an older version of Terraform or OpenTofu.
+This tooling also supports [Cloudflare R2](https://developers.cloudflare.com/r2/) for remote state storage. To use Cloudflare R2, specify the backend as `r2` in the `context.json` file:
 
-> The tooling automatically enables encryption for both types of S3 backend.
+```json
+{
+  "metadata": {
+    "description": "Cloud development environment",
+    "environment": "dev"
+  },
+  "backends": {
+    "r2": {
+      "tfstate_bucket": "my-weur-tf-state-dev",
+      "tfstate_dir": "dev",
+      "region": "auto",
+      "s3_api_endpoint": "https://6e7cec464fcd44fcbeeca32776a5fd3f.r2.cloudflarestorage.com"
+    }
+  }
+}
+```
+
+> Always set the region as `auto` for R2.
+
+Cloudflare R2 implements the S3 API, so you use the same `backend "s3"` block in your TF module with R2 as you would with Amazon S3. You specify an HTTPS endpoint for the S3 API, which is your Cloudflare account ID, followed by `.r2.cloudflarestorage.com`.
+
+This compatibility with S3 means that you also need to specify an Access Key ID and a Secret Access Key for TF to connect to the R2 bucket. Each API token for R2 is given an Access Key ID and a Secret Access Key for compatibility with S3, but other types of Cloudflare API tokens do not. Create an bucket-scoped API token for this purpose, with `Read` and `Edit` permissions. The Cloudflare documentation explains [how to get S3 credentials for an R2 API token](https://developers.cloudflare.com/r2/api/tokens/). Set these S3 credentials as environment variables: `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`. If you use the Cloudflare TF provider to manage resources then you must specify a separate API token with administrative permissions through the `CLOUDFLARE_API_TOKEN` environment variable.
 
 ### Setting the tfvars for a Context
 
@@ -247,9 +282,9 @@ task tft:plan
 task tft:apply
 ```
 
-### Customising the Module Code
+### Customizing the Module Code
 
-This tooling creates each new unit as a copy of the files in `tf/units/template/`. If the provided code is not appropriate, you can customise the contents of a module in any way that you need. The provided code is for AWS, but you can replace this code and use this tooling for any cloud service.
+This tooling creates each new unit as a copy of the files in `tf/units/template/`. If the provided code is not appropriate, you can customize the contents of a module in any way that you need. The provided code is for AWS, but you can replace this code and use this tooling for any cloud service.
 
 The tooling only requires that a module is a valid TF root module in the directory `tf/units/` and accepts these input variables:
 
@@ -288,7 +323,7 @@ task tft:forget
 
 ### Formatting
 
-To check whether _terraform fmt_ needs to be run on the module, use the `tft:check-fmt` task:
+To check whether _tofu fmt_ needs to be run on the module, use the `tft:check-fmt` task:
 
 ```shell
 TFT_UNIT=my-app task tft:check-fmt
@@ -379,7 +414,7 @@ Similarly, there are no restrictions on how you run tasks on multiple units. You
 
 ## Suggestions About Names
 
-Cloud systems use tags or labels to enable you to categorise and manage resources. However, we do have to give names to the groups of resources, as well as setting identifiers for individual resources.
+Cloud systems use tags or labels to enable you to categorize and manage resources. However, we do have to give names to the groups of resources, as well as setting identifiers for individual resources.
 
 Every type of cloud resource may have a different set of rules about acceptable names. To avoid compatibility issues between systems, we should use names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter.
 
@@ -392,25 +427,25 @@ The length of names can also become an issue when a resource name includes sever
 
 This tooling provides an `edition_id` hash that is based on these groups, so that every instance of a set of resources has a unique identifier. You can place the `edition_id` anywhere in a resource name.
 
-## Migrating to OpenTofu
+## Using Terraform
 
-By default, this tooling currently uses Terraform. Set `TFT_CLI_EXE` as an environment variable to specify the path to the tool that you wish to use. To use [OpenTofu](https://opentofu.org/), set `TFT_CLI_EXE` with the value `tofu`:
+By default, this tooling uses OpenTofu. If you want to use this tooling with Terraform, you can configure it to use Terraform, and then remove the override to migrate to OpenTofu later. Set `TFT_CLI_EXE` as an environment variable to specify the path to the tool that you wish to use. To use [Terraform](https://developer.hashicorp.com/terraform), set `TFT_CLI_EXE` with the value `terraform`:
 
 ```shell
-export TFT_CLI_EXE=tofu
+export TFT_CLI_EXE=terraform
 
 TFT_CONTEXT=dev TFT_UNIT=my-app tft:init
 ```
 
-To specify which version of OpenTofu to use, create a `.opentofu-version` file. This file should contain the version of OpenTofu and nothing else, like this:
+To specify which version of Terraform to use, create a `.terraform-version` file. This file should contain the version of Terraform and nothing else, like this:
 
 ```shell
-1.10.3
+1.15.3
 ```
 
-The `tenv` tool reads this file when installing or running OpenTofu.
+The `tenv` tool reads this file when installing or running Terraform.
 
-> Remember that if you switch between Terraform and OpenTofu, you will need to initialise your unit again, and when you run `apply` it will migrate the TF state. The OpenTofu Website provides [migration guides](https://opentofu.org/docs/intro/migration/), which includes information about code changes that you may need to make.
+> Remember that if you switch between Terraform and OpenTofu, the state may not be compatible. You will need to initialize your unit again, and when you run `apply` it will attempt to migrate the TF state.
 
 ## Going Further
 

@@ -1,13 +1,13 @@
 +++
-title = "Designing a Wrapper for Terraform & OpenTofu"
+title = "Designing a Wrapper for OpenTofu & Terraform"
 slug = "tf-wrapper-design"
-date = "2025-09-07T17:25:00+01:00"
-description = "Designing a wrapper for working with Terraform & OpenTofu components"
+date = "2026-05-17T07:20:00+01:00"
+description = "Designing a wrapper for working with OpenTofu & Terraform components"
 categories = ["automation", "aws", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "devops", "opentofu", "terraform"]
 +++
 
-This article describes [an implementation of a wrapper](https://www.stuartellis.name/articles/tf-monorepo-tooling/) for [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/). This implementation is for [monorepos](https://en.wikipedia.org/wiki/Monorepo), where the infrastructure configurations can be maintained in the same project along with other code. The wrapper uses a [general-purpose task runner tool](https://www.stuartellis.name/articles/task-runner/) and has no other dependencies.
+This article describes [an implementation of a wrapper](https://www.stuartellis.name/articles/tf-monorepo-tooling/) for [OpenTofu](https://opentofu.org/) and [Terraform](https://developer.hashicorp.com/terraform). This implementation is for [monorepos](https://en.wikipedia.org/wiki/Monorepo), where the infrastructure configurations can be maintained in the same project along with other code. The wrapper uses a [general-purpose task runner tool](https://www.stuartellis.name/articles/task-runner/) and has no other dependencies.
 
 The design enables projects to support:
 
@@ -15,7 +15,7 @@ The design enables projects to support:
 - Multiple instances of the same component with [different configurations](#contexts---configuration-profiles)
 - [Deploying extra instances](#extra-instances---workspaces-and-tests) of a component for development and testing.
 - Integration testing for every component.
-- Migrating from Terraform to OpenTofu. You use the same commands for both.
+- Migrating from Terraform to OpenTofu. You can use the same commands for both, and switch to OpenTofu at any time.
 
 If we separate out our infrastructure code into components then we can also avoid creating a [terralith](https://masterpoint.io/blog/terralith-monolithic-terraform-architecture/), where all of the TF code for all of the resources is in a single root module. Monolithic root modules complicate development and testing, and they grow slower and more brittle over time as resources are added to them.
 
@@ -25,9 +25,9 @@ The code for this example tooling is available on GitHub:
 
 For practical walk-through of using the example tooling, see [this article](https://www.stuartellis.name/articles/tf-monorepo-tooling/).
 
-This wrapper is specifically for Terraform and OpenTofu. You could write a similar wrapper for other Infrastructure as Code (IaC) tools. Many of the same design considerations will apply for other tools, such as CloudFormation.
+This wrapper is specifically for OpenTofu and Terraform. You could write a similar wrapper for other Infrastructure as Code (IaC) tools. Many of the same design considerations will apply for other tools, such as CloudFormation.
 
-> These articles uses the identifier _TF_ or _tf_ for Terraform and OpenTofu. Both tools accept the same commands and have the same behavior. The tooling itself is just called `tft` (_TF Tasks_).
+> These articles uses the identifier _TF_ or _tf_ for OpenTofu and Terraform. Both tools accept the same commands and have the same behavior. The tooling itself is just called `tft` (_TF Tasks_).
 
 ## Goals
 
@@ -59,17 +59,17 @@ To achieve the goals, the tooling follows three specific rules:
 
 ## Technology Decisions
 
-This tooling uses a wrapper to interact with Terraform and OpenTofu. A wrapper is a tool that generates commands and sends them to the executable for you. This is a common idea, and wrappers have been written with a variety of technologies and programming languages.
+This tooling uses a wrapper to interact with OpenTofu and Terraform. A wrapper is a tool that generates commands and sends them to the executable for you. This is a common idea, and wrappers have been written with a variety of technologies and programming languages.
 
 The wrapper itself is a single [Task](https://www.stuartellis.name/articles/task-runner/) file. Task is a command-line tool that generates and runs _tasks_, shell commands that are defined in a Taskfile. Each Taskfile is a YAML document that defines templates for the commands. Task uses a versioned and published schema so that we can [validate Taskfiles](https://www.stuartellis.name/articles/task-runner/#checking-taskfiles). If necessary, we can replace Task with any other tool that generates the same commands.
 
-Each task in the Taskfile uses standard UNIX commands, and they do not include any code in a programming language, such as Python or Go. Since the UNIX commands and the command-line interfaces of [Terraform](https://www.terraform.io/) and [OpenTofu](https://opentofu.org/) are stable, the tasks are not tied to particular versions of these tools, and they do not need updates as new versions are released.
+Each task in the Taskfile uses standard UNIX commands, and they do not include any code in a programming language, such as Python or Go. Since the UNIX commands and the command-line interfaces of [OpenTofu](https://opentofu.org/) and [Terraform](https://www.terraform.io/) are stable, the tasks are not tied to particular versions of these tools, and they do not need updates as new versions are released.
 
 The tooling is built as a [Copier](https://copier.readthedocs.io/en/stable/) template that includes the Task file. Copier enables us to create new projects from the template, add the tooling to any existing project, and synchronize the copies of the tooling in our projects with newer versions as needed. Copier uses Git and tracks releases by tags, so that templates can be distributed through any code hosting service.
 
 I have avoided requiring extra configuration as much as possible. The tooling uses the files and directories in the project, so that you do not need to maintain a separate set of configuration. There are [small configuration files](#contexts---configuration-profiles) alongside the TF variables files, since they are needed to handle the settings for TF remote state and allow us to define named environments as simple attributes. These files are JSON documents, since JSON is the most standard and universally supported format for structured data. Task itself has built-in support for parsing JSON.
 
-These decisions mean that the tooling will run on any UNIX-based system, including restricted environments like continuous integration runners and Alpine Linux containers. The wrapper works with any UNIX shell, using Task. We can install Terraform or OpenTofu through any method that we prefer, although [I usually recommend tenv](#working-with-tf-versions). We only need Python and Copier when we create and update projects.
+These decisions mean that the tooling will run on any UNIX-based system, including restricted environments like continuous integration runners and Alpine Linux containers. The wrapper works with any UNIX shell, using Task. We can install OpenTofu or Terraform through any method that we prefer, although [I usually recommend tenv](#working-with-tf-versions). We only need Python and Copier when we create and update projects.
 
 ## How It Works
 
@@ -107,7 +107,7 @@ The tooling uses specific files and directories:
 |    |- tf/
 |
 |- .gitignore
-|- .terraform-version
+|- .opentofu-version
 |- README.md
 |- Taskfile.yaml
 ```
@@ -115,7 +115,7 @@ The tooling uses specific files and directories:
 This Copier template:
 
 - Adds a `.gitignore` file, a `README.md` file and a `Taskfile.yaml` file to the root directory of the project, if these do not already exist.
-- Provides a `.terraform-version` file.
+- Provides a `.opentofu-version` file.
 - Provides the file `tasks/tft/Taskfile.yaml` to the project. This file contains the task definitions.
 - Provides a `tf/` directory structure for TF files and configuration.
 
@@ -208,19 +208,22 @@ Here is an example of a `context.json` file:
       "tfstate_dir": "dev",
       "region": "eu-west-2",
       "role_arn": "arn:aws:iam::789000123456:role/my-tf-state-role"
-    },
-    "s3ddb": {
-      "tfstate_bucket": "",
-      "tfstate_ddb_table": "",
-      "tfstate_dir": "",
-      "region": "",
-      "role_arn": ""
+    }
+    "r2": {
+      "tfstate_bucket": "my-weur-tf-state-dev",
+      "tfstate_dir": "dev",
+      "region": "auto",
+      "s3_api_endpoint": "https://6e7cec464fcd44fcbeeca32776a5fd3f.r2.cloudflarestorage.com"
     }
   }
 }
 ```
 
-Each `context.json` file specifies two items of metadata:
+This configuration file uses the JSON format because JSON documents can be read and written by the widest range of tools and programming languages. For example, we can work directly with JSON in UNIX shell scripts by using [jq](https://jqlang.org/).
+
+The `context.json` file stores configuration for TF remote state storage. It can specify multiple backend configurations, and currently supports [Cloudflare R2](https://developers.cloudflare.com/r2/) and the legacy Amazon S3 with DynamoDB locking backend, as well as native S3. The tooling define the correct backend settings at runtime, using the relevant set of configuration and dynamically constructing the name of the TF state file. We could have tried to define the remote state with TF _backend_ configuration files, but this would have made it more complex for us to programmatically change or validate the configuration for the remote state.
+
+Each `context.json` file also specifies two items of metadata:
 
 - `environment`
 - `description`
@@ -230,10 +233,6 @@ The `environment` is a string that is automatically provided to TF as the tfvar 
 > Contexts exist to provide configurations for TF. To avoid coupling live resources directly to contexts, the tooling does not pass the name of the active context to the TF code, only the `environment` name that the context specifies.
 
 The `description` is deliberately not used by the tooling, so that you can leave it empty, or do whatever you wish with it.
-
-The `context.json` file stores configuration for TF remote state storage. We could have tried to define the remote state with TF _backend_ configuration files and set the generated commands to use these directly. This would have made it more complex for us to programmatically change or validate the configuration for the remote state.
-
-The configuration file uses JSON because JSON documents can be read and written by the widest range of tools and programming languages. For example, we can work directly with JSON in UNIX shell scripts by using [jq](https://jqlang.org/).
 
 ### Managing TF Variables for a Context
 
@@ -312,17 +311,17 @@ To share modules between projects, [publish them to a registry](https://opentofu
 
 ## Working with TF Versions
 
-You will need to use different versions of Terraform and OpenTofu for different projects. The state files will change when you use new versions, so each project must specify the current version that is in use.
+You will need to use different versions of OpenTofu and Terraform for different projects. The state files will change when you use new versions, so each project must specify the current version that is in use.
 
 The best way to handle this is to use a version manager. This will install the versions that you specify in a configuration file and automatically switch between them as needed.
 
-This tooling is designed to work with version managers and to not complicate version changes. It does not install or manage copies of Terraform and OpenTofu. Unlike other wrappers, it is also not dependent on specific versions of Terraform or OpenTofu. It supports new features by new tasks, but never hard-codes references to specific versions. For example, it supports both types of S3 remote backend by having a separate `init` task for each.
+This tooling is designed to work with version managers and to not complicate version changes. It does not install or manage copies of OpenTofu and Terraform. Unlike other wrappers, it is also not dependent on specific versions of OpenTofu or Terraform. It supports new features by new tasks, but never hard-codes references to specific versions. For example, it supports both types of S3 remote backend by having a separate `init` task for each.
 
-For convenience, the generated projects include a `.terraform-version` file, so that your tool version manager will install and use the Terraform version that you specify. To use OpenTofu, add an `.opentofu-version` file to enable your tool version manager to install and use the OpenTofu version that you specify. Once the version file is generated, you change the version as you need.
+For convenience, the generated projects include an `.opentofu-version` file, so that your tool version manager will install and use the OpenTofu version that you specify. To use Terraform, add an `.opentofu-version` file to enable your tool version manager to install and use that Terraform version. Once the version file is generated, you change the version as you need.
 
-> This tooling can switch between Terraform and OpenTofu. This is specifically to help you migrate projects from one of these tools to the other.
+> This tooling can switch between OpenTofu and Terraform. This is specifically to help you migrate projects from one of these tools to the other.
 
-You are free to manage versions in any way that wish. If you do not have any specific requirements for a project, consider using [tenv](https://tofuutils.github.io/tenv/), which is a version manager that is specifically designed for TF tools. For some projects, [mise](https://mise.jdx.dev/) may be a good choice, because it control all of the tools for a project, not just Terraform and OpenTofu.
+You are free to manage versions in any way that wish. If you do not have any specific requirements for a project, consider using [tenv](https://tofuutils.github.io/tenv/), which is a version manager that is specifically designed for TF tools. For some projects, [mise](https://mise.jdx.dev/) may be a good choice, because it control all of the tools for a project, not just OpenTofu and Terraform.
 
 ## Dependencies Between Units
 
@@ -332,25 +331,27 @@ Similarly, there are no restrictions on how we run tasks on multiple units. We c
 
 > This tooling does not explicitly support or conflict with the [stacks feature of Terraform](https://developer.hashicorp.com/terraform/language/stacks). I do not currently test with the stacks feature. It is unclear if this feature will be permanently tied to Hashicorp cloud services in Terraform, or what equivalent will be implemented by OpenTofu.
 
-## Migrating to OpenTofu
+## Switching to Terraform
 
-By default, this tooling currently uses Terraform. [OpenTofu](https://opentofu.org/) accepts the same commands, which means that we can switch between the two. Set `TFT_CLI_EXE` as an environment variable to specify the path to the tool that you wish to use. To use OpenTofu, set `TFT_CLI_EXE` with the value `tofu`:
+By default, this tooling uses [OpenTofu](https://opentofu.org/). [Terraform](https://developer.hashicorp.com/terraform) accepts the same commands, which means that we can switch between the two. Set `TFT_CLI_EXE` as an environment variable to specify the path to the tool that you wish to use. To use Terraform, set `TFT_CLI_EXE` with the value `terraform`:
 
 ```shell
-export TFT_CLI_EXE=tofu
+export TFT_CLI_EXE=terraform
 
 TFT_CONTEXT=dev TFT_UNIT=my-app tft:init
 ```
 
-To specify which version of OpenTofu to use, create a `.opentofu-version` file. This file should contain the version of OpenTofu and nothing else, like this:
+To specify which version of Terraform to use, create a `.terraform-version` file. This file should contain the version of Terraform and nothing else, like this:
 
 ```shell
-1.10.2
+1.15.3
 ```
 
-The `tenv` tool reads this file when installing or running OpenTofu.
+The `tenv` tool reads this file when installing or running Terraform.
 
-> Remember that if you switch between Terraform and OpenTofu, you will need to initialise your unit again, and when you run `apply` it will migrate the TF state. The OpenTofu Website provides [migration guides](https://opentofu.org/docs/intro/migration/), which includes information about code changes that you may need to make.
+This feature was designed to simplify migration to OpenTofu. You can configure the tooling to use Terraform, and then remove the override to migrate to OpenTofu.
+
+Migrating from Terraform back to OpenTofu may be more challenging. If you switch between Terraform and OpenTofu, the state may not be compatible. You will need to initialize your unit again, and when you run `apply` it will attempt to migrate the TF state. There are also features in OpenTofu that are not implemented in Terraform.
 
 ## Going Further
 
