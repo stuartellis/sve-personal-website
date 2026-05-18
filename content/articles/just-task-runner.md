@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Diverse Systems with just"
 slug = "just-task-runner"
-date = "2026-04-18T09:01:00+01:00"
+date = "2026-05-18T11:50:00+01:00"
 description = "Using the just task runner"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -59,19 +59,19 @@ serve:
 
 ### The Backwards Compatibility Guarantee
 
-The behaviour of _just_ is covered by a [backwards compatibility guarantee](https://just.systems/man/en/backwards-compatibility.html). This means that new versions of _just_ will not introduce backwards incompatible changes that break existing _justfiles_. New features are only available when you use the _unstable_ flag, until it can be guaranteed that they will not change. To verify that new versions of _just_ do not break compatibility, the _just_ project maintain automation to test against _justfiles_ that are published as Open Source.
+The behavior of _just_ is covered by a [backwards compatibility guarantee](https://just.systems/man/en/backwards-compatibility.html). This means that new versions of _just_ will not introduce backwards incompatible changes that break existing _justfiles_. New features are only available when you use the _unstable_ flag, until it can be guaranteed that they will not change. To verify that new versions of _just_ do not break compatibility, the _just_ project maintain automation to test against _justfiles_ that are published as Open Source.
 
 These decisions enable _just_ to be an evergreen tool. Project maintainers simply decide the minimum version of _just_ that they will require. Users can install and update their copies of _just_ with whatever method they prefer, as long as it provides versions that is more recent than the minimum version that is required by the project.
 
 ## Installing just
 
-If possible, use a tool that enables you to specify which versions of _just_ to install. This means that you can install the most recent version of _just_ that is available. You can use [Python tools](#installing-just-with-python-tools), [Rust and Node.js packages](#adding-a-copy-of-just-to-a-project), a tool version manager like [mise](#installing-just-with-mise), or [the feature for Dev Containers](#adding-just-to-a-dev-container).
+If possible, use a tool that enables you to specify which versions of _just_ to install. This means that you can install the most recent version of _just_ that is available. You can use [Python tools](#installing-just-with-python-tools), [container images](https://just.systems/man/en/docker.html), [Rust and Node.js packages](#adding-a-copy-of-just-to-a-project), a tool version manager like [mise](#installing-just-with-mise), or [the feature for Dev Containers](#adding-just-to-a-dev-container).
 
 If you do not wish to use a tool, see the section on [how to install _just_ with a script](#installing-just-with-a-script).
 
 These methods also enable you to either add a copy of _just_ to a specific project, or install _just_ into a user account so that it is available for all of your work. If you install a copy of _just_ into a user account you can [integrate it with your shell](#integrating-just-with-your-shell).
 
-> Consider using the [Python](#installing-just-with-python-tools) or Rust tools to install _just_. The Python and Rust packages contain a copy of the _just_ executable, and can be distributed from private package repositories. Other tools may download files from GitHub.
+> Consider using either the [Python](#installing-just-with-python-tools) or Rust tools to install _just_, or [container images](https://just.systems/man/en/docker.html). The container images, Python and Rust packages contain a copy of the _just_ executable, and can be distributed from private repositories. Other tools may download files from GitHub.
 
 You can also install _just_ with [operating system packages](#installing-just-with-operating-system-packages). These packages may provide older versions of _just_.
 
@@ -82,21 +82,21 @@ If you use Python, you can install _just_ into your user account with your exist
 To install _just_ with [uv](https://docs.astral.sh/uv/), run this command:
 
 ```shell
-uv tool install rust-just==1.49.0
+uv tool install rust-just==1.51.0
 ```
 
 To install _just_ with [pipx](https://pipx.pypa.io), run this command:
 
 ```shell
-pipx install rust-just==1.49.0
+pipx install rust-just==1.51.0
 ```
 
 ### Installing just with mise
 
-This command installs version 1.49.0 of _just_ with [mise](https://mise.jdx.dev/) and makes it available to your user account:
+This command installs version 1.51.0 of _just_ with [mise](https://mise.jdx.dev/) and makes it available to your user account:
 
 ```shell
-mise use -gy just@1.49.0
+mise use -gy just@1.51.0
 ```
 
 You can also use _mise_ to specify alternate versions of _just_ for specific projects, in the same ways that it manages other tools.
@@ -108,7 +108,7 @@ If you are using a Visual Studio Code Dev Container, you can add the feature [gu
 ```json
     "features": {
         "ghcr.io/guiyomh/features/just:0": {
-            "version": "1.49.0"
+            "version": "1.51.0"
         }
     }
 ```
@@ -136,7 +136,7 @@ curl -L https://just.systems/install.sh > scripts/install-just.sh
 To use the installation script, call it with _--tag_ and _--to_ The _--tag_ specifies the version of _just_. The _--to_ specifies which directory to install it to:
 
 ```shell
-./scripts/install-just.sh --tag 1.49.0 --to $HOME/.local/bin
+./scripts/install-just.sh --tag 1.51.0 --to $HOME/.local/bin
 ```
 
 ### Installing just with Homebrew
@@ -291,10 +291,8 @@ Follow these guidelines when writing _justfiles_ and _mod.just_ modules:
 - Use **--fmt** to format your _justfiles_. To use this option, run this command in the same directory as the _justfile_ that you want to format:
 
 ```shell
-just --unstable --fmt
+just --fmt
 ```
-
-> **--fmt is Currently Unstable:** The **--fmt** subcommand is _unstable_, which means that it is expected to work correctly, but it is not subject to the standard compatibility guarantees of _just_.
 
 ### Writing Recipes
 
@@ -302,7 +300,7 @@ Follow these guidelines when writing recipes:
 
 - Set a [default recipe](https://just.systems/man/en/the-default-recipe.html). When _just_ is invoked without the name of a recipe, it runs the default recipe. If there no default recipe, it will run the first recipe in the _justfile_.
 - Use [parameters](https://just.systems/man/en/recipe-parameters.html) to get inputs for a recipe from the command-line.
-- Use [dotenv files](https://just.systems/man/en/settings.html#dotenv-settings) to get configuration from files.
+- Use a tool like [fnox](https://fnox.jdx.dev/) to provide environment variables. Avoid using [dotenv files](https://just.systems/man/en/settings.html#dotenv-settings) for usernames, passwords, API tokens, or any other kind of secret.
 - Remember to use POSIX shell (_sh_) syntax for single-line recipes. By default, _just_ uses the _sh_ shell on the system.
 - When it is possible, use the [built-in functions](https://just.systems/man/en/functions.html) instead of shell commands, because these will behave consistently across different environments.
 - Use [shebang recipes](https://just.systems/man/en/shebang-recipes.html) for multi-line shell recipes, as well as recipes in other languages.
@@ -338,10 +336,8 @@ just example-recipe my-var=my-var-value
 To validate a _justfile_, run **--fmt** with **--check**. This returns an exit code of 0 if the _justfile_ is formatted correctly. If the _justfile_ is not correctly formatted, it returns an exit code of 1 and prints a diff.
 
 ```shell
-just --unstable --fmt --check
+just --fmt --check
 ```
-
-> **--fmt is Currently Unstable:** The **--fmt** subcommand is _unstable_, which means that it is expected to work correctly, but it is not subject to the standard compatibility guarantees of _just_.
 
 You may also use these two options to check the behavior of _just_:
 

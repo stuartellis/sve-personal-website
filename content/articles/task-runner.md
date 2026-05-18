@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2026-04-18T09:02:00+01:00"
+date = "2026-05-18T11:50:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -425,7 +425,7 @@ Follow [the style guidelines](https://taskfile.dev/styleguide/) when writing tas
 - Consider adding a [summary](https://taskfile.dev/usage/#display-summary-of-task) attribute for each task. The summary appears in the output of _task --summary TASK-NAME_.
 - Use [argument forwarding](https://taskfile.dev/usage/#forwarding-cli-arguments-to-commands) or [wildcard task names](https://taskfile.dev/usage/#wildcard-arguments) to get inputs for a task from the command-line.
 - Specify the [requires](https://taskfile.dev/usage/#ensuring-required-variables-are-set) attribute for each task that uses a variable. This ensures that the task has the necessary variables.
-- Use [dotenv files](https://taskfile.dev/usage/#env-files) to get configuration from files.
+- Use a tool like [fnox](https://fnox.jdx.dev/) to provide environment variables. Avoid using [dotenv files](https://taskfile.dev/usage/#env-files) for usernames, passwords, API tokens, or any other kind of secret.
 - Use Bash shell syntax for tasks. Task uses [mvdan/sh](https://github.com/mvdan/sh) to provide the equivalent of the _bash_ shell.
 - To ensure that your tasks are portable, check the options for UNIX commands that you call in tasks, or [enable using the UNIX commands built-in to Task](https://taskfile.dev/docs/faq#are-shell-core-utilities-available-on-windows). Different operating systems and Linux distributions provide different implementations of these commands, which means that the options may not be consistent across environments.
 - When it is possible, use the [template functions](https://taskfile.dev/reference/templating/#functions) instead of shell commands, because these will behave consistently across different environments.
