@@ -61,14 +61,10 @@ The [prek](https://prek.j178.dev/) tool manages Git hooks and enables you to run
 
 ### Installing prek
 
-To install `prek`, use either [pipx](https://pipx.pypa.io) or [uv](https://docs.astral.sh/uv/):
+To install `prek`, use either [Homebrew](https://brew.sh/) or a [version manager tool](https://www.stuartellis.name/articles/version-managers/):
 
 ```shell
-pipx install prek
-```
-
-```shell
-uv tool install prek
+brew install prek
 ```
 
 ### Adding Hooks To a Project
