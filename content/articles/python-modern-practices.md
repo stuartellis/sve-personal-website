@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2026-03-21T08:41:00+00:00"
+date = "2026-05-18T13:30:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -9,11 +9,59 @@ tags = ["python"]
 
 [Python](https://www.python.org/) has a long history, and it has evolved over time. This article describes some modern good practices.
 
-## Use a Helper to Run Python Tools
+## Use a Helper to Run Python Scripts and Tools
 
-Use either [pipx](https://pipx.pypa.io) or [uv](https://docs.astral.sh/uv/) to run Python tools on development systems, rather than installing these applications with _pip_ or another method. Both _pipx_ and _uv_ automatically put each application into a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
+Use either [pipx](https://pipx.pypa.io) or [uv](https://docs.astral.sh/uv/) to run your single-file scripts and existing Python tools on development systems. Both _pipx_ and _uv_ automatically provide each script and application with a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
 
-Follow the instructions on the [Website](https://pipx.pypa.io) to install _pipx_ on your operating system. This will ensure that _pipx_ works correctly with an appropriate Python installation. The _uv_ tool is a single executable file that is written in Rust, which means that you do not need to install any version of Python yourself before you use it.
+Follow the instructions on the [pipx Website](https://pipx.pypa.io) to install _pipx_ on your operating system. This will ensure that _pipx_ works correctly with an appropriate Python installation. The [uv](https://docs.astral.sh/uv/) tool is a single executable file that is written in Rust, which means that you do not need to install any version of Python yourself before you use it.
+
+### Running Python Scripts
+
+A Python script is a single file that has the extension `.py` at the end of the name. Optionally, it can start with a [metadata block](https://packaging.python.org/en/latest/specifications/inline-script-metadata/) that specifies the packages that it needs to use:
+
+```python
+# /// script
+# requires-python = ">=3.12.*"
+# dependencies = [
+#     "requests<3",
+#     "rich<16"
+# ]
+# ///
+
+import requests
+from rich.console import Console
+from rich.table import Table
+
+table = Table(title="Cat Facts")
+table.add_column("Fact", style="magenta")
+
+response = requests.get("https://catfact.ninja/facts?limit=5")
+items = response.json()["data"]
+
+for item in items:
+    table.add_row(item["fact"])
+
+console = Console()
+console.print(table)
+```
+
+Use `pipx` or `uv` to run Python scripts. These tools will automatically download the required dependencies for each script into a separate Python virtual environment before running the code. For example:
+
+```shell
+pipx run my_script.py
+```
+
+```shell
+uvx my_script.py
+```
+
+> Avoid using the `python` or `py` commands to run single-file scripts. Python interpreters do not support metadata blocks and cannot manage dependencies.
+
+Python scripts should be a single file that you have created to run on development systems. If you need more than this, [create a Python project](#use-a-project-tool). The project configuration enables you manage the code and dependencies, as well as providing support for [packaging it for distribution to other systems](#plan-for-distributing-your-work).
+
+> You can add a [shebang line](https://www.datacamp.com/tutorial/python-shebang) to a script file, to tell operating systems to automatically use the tool specified by the shebang to run the script. This has two risks. Firstly, it means that the script file itself must be marked as executable, and the content of the script could be changed or replaced later. It can also tie the script to a specific tool.
+
+### Running Python Tools
 
 Use the [pipx run](https://pipx.pypa.io/stable/#walkthrough-running-an-application-in-a-temporary-virtual-environment) feature of _pipx_ for most Python applications, or [uvx](https://docs.astral.sh/uv/#tool-management), which is the equivalent command for _uv_. These download the application to a cache and run it. For example, these commands download and run the latest version of [bpytop](https://github.com/aristocratos/bpytop), a system monitoring tool:
 
@@ -27,16 +75,14 @@ uvx bpytop
 
 The _bpytop_ tool is cached after the first download, which means that the second use of it will run as quickly as an installed application.
 
-Use _pipx install_ or _uv tool install_ for tools that are essential for your development process. These options install the tool on to your system. This ensures that the tool is available if you have no Internet access, and that you keep the same version of the tool until you decide to upgrade it.
-
-For example, if you use a manager like [prek](https://prek.j178.dev/) or [pre-commit](https://pre-commit.com/) for Git hooks you should install it, rather than use a temporary copy. Git hooks automatically run every time that we commit a change to version control, so we need the hook manager to be consistent and always available. To install _prek_, run the appropriate command for _pipx_ or _uv_:
+Use _pipx install_ or _uv tool install_ for tools that are essential for your development process. These options install the tool on to your system. This ensures that the tool is available if you have no Internet access, and that you keep the same version of the tool until you decide to upgrade it. For example, if you use [Posting](https://posting.sh/) to test services that you develop on your laptop then you should install it, rather than use a temporary copy. To install _posting_ as a Python package, run the appropriate command for _pipx_ or _uv_:
 
 ```shell
-pipx install prek
+pipx install posting
 ```
 
 ```shell
-uv tool install prek
+uv tool install posting
 ```
 
 ## Using Python for Development
@@ -107,7 +153,7 @@ If you need to build a custom application with concurrency, consider using the [
 
 Always plan for how you will distribute the work that you produce in a project. The simplest method is through version control, but packages enable people to use your code with the operating systems and tools that they prefer to work with, rather than requiring that each system has developer tools installed.
 
-Project tools like Poetry include support for building [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages. The _wheel_ format is for sharing between Python installations. You can use _wheel_ packages to publish tools for other developers, as well as libraries for use in other Python projects. If you publish your Python application as a _wheel_, other people can run it with the _pipx_ and _uv_ tools, as explained in the section on [helpers](#use-a-helper-to-run-python-tools).
+Project tools like Poetry include support for building [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages. The _wheel_ format is for sharing between Python installations. You can use _wheel_ packages to publish tools for other developers, as well as libraries for use in other Python projects. If you publish your Python application as a _wheel_, other people can run it with the _pipx_ and _uv_ tools, as explained in the section on [helpers](#use-a-helper-to-run-python-scripts-and-tools).
 
 > Read the [Python Packaging User Guide](https://packaging.python.org/en/latest/flow/) for more about wheel packages.
 
@@ -121,13 +167,15 @@ Use [PyInstaller](https://pyinstaller.org/) or [Nuitka](https://nuitka.net) to c
 
 ### Configuration: Use Environment Variables or TOML
 
-Use environment variables for options that must be passed to an application each time that it starts. If your application is a command-line tool, you should also provide options that can override the environment variables. Use [python-dotenv](https://saurabh-kumar.com/python-dotenv/) for projects that only need to use environment variables, or [Pydantic Settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) for a full configuration system that supports files and environment variables.
+Use environment variables for options that must be passed to an application each time that it starts, especially secrets like API tokens. If your application is a command-line tool, you should also provide options that can override the environment variables.
 
-Use the [TOML](https://toml.io/) format for configuration files that must be written or edited by human beings. This format is an open standard that is used across Python projects and is also supported by other programming languages. For example, TOML is the default configuration file format for Rust projects.
+This approach enables you to set the variables in whatever way is appropriate for the current environment without changing the code. For example, you can use a tool like [fnox](https://fnox.jdx.dev/) to manage environment variables in development, and configure the orchestration system that runs the code on cloud services to set the variables as needed.
 
-Python 3.11 and above include [tomllib](https://docs.python.org/3/library/tomllib.html) to read the TOML format. If your Python software must generate TOML, you need to add [Tomli-W](https://pypi.org/project/tomli-w/) to your project.
+Use [python-dotenv](https://saurabh-kumar.com/python-dotenv/) for environment variables that are defined in files, or [Pydantic Settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) for a full configuration system that supports files, environment variables and getting credentials from secure services.
 
-TOML replaces the INI format. Avoid using INI for projects, even though the [module for INI support](https://docs.python.org/3/library/configparser.html) has not yet been removed from the Python standard library.
+If you need configuration files that are written or edited by human beings, use the [TOML](https://toml.io/) format. This format is an open standard that is used across Python projects and is also supported by other programming languages. For example, TOML is the default configuration file format for Rust projects. Python 3.11 and above include [tomllib](https://docs.python.org/3/library/tomllib.html) to read the TOML format. If your Python software must generate TOML, you need to add [Tomli-W](https://pypi.org/project/tomli-w/) to your project.
+
+> TOML replaces the INI format. Avoid using INI for projects, even though the [module for INI support](https://docs.python.org/3/library/configparser.html) has not yet been removed from the Python standard library.
 
 ### Set Up Logging for Diagnostic Messages, Rather Than print()
 
