@@ -16,6 +16,9 @@ bin/
 logs/
 tmp/
 
+# fnox
+fnox.local.toml
+
 # Hugo
 .hugo_build.lock
 public
