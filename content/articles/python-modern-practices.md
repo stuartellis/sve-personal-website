@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2026-05-18T13:30:00+01:00"
+date = "2026-05-18T19:01:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -9,19 +9,45 @@ tags = ["python"]
 
 [Python](https://www.python.org/) has a long history, and it has evolved over time. This article describes some modern good practices.
 
+## Installing Python
+
+### Install Python With Tools That Support Multiple Versions
+
+Instead of manually installing Python on to your development systems, use tools that provide copies of Python on demand. This means that you can choose a Python version for each of your projects, and upgrade projects to new versions of Python later without interfering with other tools and projects that use Python.
+
+The official [Python Install Manager](https://docs.python.org/dev/using/windows.html) for Microsoft Windows does this. It supports multiple Python versions, and you can use the `py.exe` tool to choose which version of Python to run. Version manager tools like [pyenv](https://github.com/pyenv/pyenv) also allow you to switch between different versions of Python at will, as well as providing the defined version for each of your projects. I provide a separate [article on using version managers](https://www.stuartellis.name/articles/version-managers/).
+
+Modern [project development tools](#use-a-project-tool) like `uv` can install copies of Python as needed, in addition to their other features. They do this by using [standalone builds](https://github.com/astral-sh/python-build-standalone), which are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project. These standalone builds have [some limitations](https://gregoryszorc.com/docs/python-build-standalone/main/quirks.html) that are not present with other copies of Python.
+
+> If you use [Development Containers](https://containers.dev/) you define a complete environment for a software project, which means that the project will always have a separate installation of Python. Development containers are a feature of Visual Studio Code and Jetbrains IDEs.
+
+Both the `pyenv` tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) automatically compile Python from source code, rather than using the third-party standalone builds. If you use [mise](https://www.stuartellis.name/articles/mise-en-place/), you will need to [change the configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to compile Python from the official sources rather than downloading standalone builds.
+
+### Use the Most Recent Version of Python That You Can
+
+For new projects, choose the most recent stable version of Python 3. This ensures that you have the latest security fixes, as well as the fastest performance.
+
+Upgrade your projects as new Python versions are released. The Python development team usually support each version for five years, but some Python libraries may only support each version of Python for a shorter period of time. If you use tools that support multiple versions of Python and automated testing, you can test your projects on new Python versions with little risk.
+
+> _Avoid using Python 2._ Older operating systems include Python 2, but it is not supported by the Python development team or by the developers of most popular Python libraries.
+
+### Avoid Using the Python Installation for Your Operating System
+
+If your operating system includes a Python installation, avoid using it for your projects. This Python installation will be for system tools. It is likely to use an older version of Python, and may not include all of the standard features. An operating system copy of Python should be [marked](https://packaging.python.org/en/latest/specifications/externally-managed-environments/#externally-managed-environments) to prevent you from installing packages into it, but not all operating systems set this marker.
+
 ## Use a Helper to Run Python Scripts and Tools
 
-Use either [pipx](https://pipx.pypa.io) or [uv](https://docs.astral.sh/uv/) to run your single-file scripts and existing Python tools on development systems. Both _pipx_ and _uv_ automatically provide each script and application with a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
+Use either [pipx](https://pipx.pypa.io) or [uv](https://docs.astral.sh/uv/) to run Python tools and your single-file scripts on development systems. Both _pipx_ and _uv_ automatically provide each script and application with a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
 
-Follow the instructions on the [pipx Website](https://pipx.pypa.io) to install _pipx_ on your operating system. This will ensure that _pipx_ works correctly with an appropriate Python installation. The [uv](https://docs.astral.sh/uv/) tool is a single executable file that is written in Rust, which means that you do not need to install any version of Python yourself before you use it.
+> To install _pipx_ on your operating system, follow the instructions on the [pipx Website](https://pipx.pypa.io). This will ensure that _pipx_ works correctly with an appropriate Python installation. The _uv_ tool is a single executable file that is written in Rust, which means that it does not rely on an existing installation of Python.
 
 ### Running Python Scripts
 
-A Python script is a single file that has the extension `.py` at the end of the name. Optionally, it can start with a [metadata block](https://packaging.python.org/en/latest/specifications/inline-script-metadata/) that specifies the packages that it needs to use:
+A Python script is a file that has the extension `.py` at the end of the name. Optionally, it can start with a [metadata block](https://packaging.python.org/en/latest/specifications/inline-script-metadata/) that specifies the packages that it needs to use. This example script uses [requests](https://requests.readthedocs.io/en/latest/) and [rich](https://github.com/willmcgugan/rich):
 
 ```python
 # /// script
-# requires-python = ">=3.12.*"
+# requires-python = ">=3.12"
 # dependencies = [
 #     "requests<3",
 #     "rich<16"
@@ -52,14 +78,14 @@ pipx run my_script.py
 ```
 
 ```shell
-uvx my_script.py
+uv run my_script.py
 ```
 
 > Avoid using the `python` or `py` commands to run single-file scripts. Python interpreters do not support metadata blocks and cannot manage dependencies.
 
-Python scripts should be a single file that you have created to run on development systems. If you need more than this, [create a Python project](#use-a-project-tool). The project configuration enables you manage the code and dependencies, as well as providing support for [packaging it for distribution to other systems](#plan-for-distributing-your-work).
+You can add a [shebang line](https://www.datacamp.com/tutorial/python-shebang) to a script file, to tell operating systems to automatically use the tool specified by the shebang to run the script. Avoid using a shebang for your Python scripts unless you have a specific need to do so. The script file itself must be marked as executable for a shebang to work, and this is a security risk because the content of the script could be changed or replaced later. A shebang can also tie the script to a specific tool.
 
-> You can add a [shebang line](https://www.datacamp.com/tutorial/python-shebang) to a script file, to tell operating systems to automatically use the tool specified by the shebang to run the script. This has two risks. Firstly, it means that the script file itself must be marked as executable, and the content of the script could be changed or replaced later. It can also tie the script to a specific tool.
+A Python script should be a single file that you have created to run on development systems. If you need more than this, [create a Python project](#use-a-project-tool). The project configuration will enable you to manage the code and dependencies, as well as providing support for [packaging applications for distribution to other systems](#plan-for-distributing-your-work). To minimize complexity, you can use the [flat project layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/) for applications.
 
 ### Running Python Tools
 
@@ -85,7 +111,7 @@ pipx install posting
 uv tool install posting
 ```
 
-## Using Python for Development
+## Application Design
 
 ### Use a Project Tool
 
@@ -101,41 +127,13 @@ There are currently several other well-known project tools for Python. The [PDM]
 
 You may need to create projects that include Python but cannot use Python project tools. In these cases, think carefully about the tools and directory structure that you will need, and ensure that you are familiar with the current [best practices for Python projects](https://www.stuartellis.name/articles/python-project-setup).
 
-### Install Python With Tools That Support Multiple Versions
+### Use a Modern Framework for Command-Line Applications
 
-Instead of manually installing Python on to your development systems, use tools that provide copies of Python on demand. This means that you can choose a Python version for each of your projects, and upgrade projects to new versions of Python later without interfering with other tools and projects that use Python.
+> If you building a command-line application, you can use the [flat project layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/).
 
-> The official [Python Install Manager](https://docs.python.org/dev/using/windows.html) for Microsoft Windows supports multiple Python versions, but does not have the other features of a project tool.
-
-The project tools can install copies of Python as needed, in addition to their other features. They use [standalone builds](https://github.com/astral-sh/python-build-standalone), which are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project. The standalone builds have [some limitations](https://gregoryszorc.com/docs/python-build-standalone/main/quirks.html) that are not present with other copies of Python.
-
-Version manager tools like [mise](https://mise.jdx.dev) or [pyenv](https://github.com/pyenv/pyenv) also allow you to switch between different versions of Python at will, as well as providing the defined version for each of your projects. I provide a separate [article on using version managers](https://www.stuartellis.name/articles/version-managers/).
-
-[Development Containers](https://containers.dev/) enable you to define a complete environment for a software project, which means that the project will always have a separate installation of Python. Development containers are a feature of Visual Studio Code and Jetbrains IDEs.
-
-Both the pyenv tool and the [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md) automatically compile Python from source code, rather than using the third-party standalone builds. For mise, you will need to [change the configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) if you prefer to compile Python from the official sources rather than downloading standalone builds.
-
-### Use the Most Recent Version of Python That You Can
-
-For new projects, choose the most recent stable version of Python 3. This ensures that you have the latest security fixes, as well as the fastest performance.
-
-Upgrade your projects as new Python versions are released. The Python development team usually support each version for five years, but some Python libraries may only support each version of Python for a shorter period of time. If you use tools that support multiple versions of Python and automated testing, you can test your projects on new Python versions with little risk.
-
-> _Avoid using Python 2._ Older operating systems include Python 2, but it is not supported by the Python development team or by the developers of most popular Python libraries.
-
-### Avoid Using the Python Installation for Your Operating System
-
-If your operating system includes a Python installation, avoid using it for your projects. This Python installation is for system tools. It is likely to use an older version of Python, and may not include all of the standard features. An operating system copy of Python should be [marked](https://packaging.python.org/en/latest/specifications/externally-managed-environments/#externally-managed-environments) to prevent you from installing packages into it, but not all operating systems set this marker.
-
-## Application Design
-
-### Use a Modern Framework for CLI Applications
-
-Consider using the [Cyclopts](https://cyclopts.readthedocs.io/en/latest/) framework or the [Typer](https://typer.tiangolo.com/) library for building new CLI applications. Both of these use type hints and are built for modern Python. Many projects still use the older [Click](https://click.palletsprojects.com/) framework.
+Consider using the [Cyclopts](https://cyclopts.readthedocs.io/en/latest/) framework or the [Typer](https://typer.tiangolo.com/) library for building new command-line applications. Both of these use type hints and are built for modern Python. Many projects still use the older [Click](https://click.palletsprojects.com/) framework.
 
 To add a simple command-line interface to a script or library, use the [argparse](https://docs.python.org/3/library/argparse.html) module. Refer to [the argparse tutorial](https://docs.python.org/3/howto/argparse.html) in the official documentation for more details.
-
-> The _optparse_ module is officially deprecated, so update code that uses _optparse_ or _getopt_ to use _argparse_ instead.
 
 ### Use Products That Enable Concurrency and async
 
@@ -190,55 +188,6 @@ Many frameworks use the [logging module](https://docs.python.org/3/library/loggi
 Avoid using [urllib.request](https://docs.python.org/3/library/urllib.request.html) from the Python standard library. It was designed as a low-level library for HTTP, and lacks the features of modern Web client libraries. Many Python applications include [requests](https://requests.readthedocs.io/en/latest/), but this only supports HTTP/1.1, and cannot be used with async code. Consider alternative Web client libraries like [aiohttp](https://pypi.org/project/aiohttp/) when you want to use async I/O.
 
 > Python SDKs for cloud services will have a dependency on a Web client library. Check which client library an SDK uses before you include it in your project.
-
-## Data Formats and Storage
-
-There are now data file formats that are open, standardized and portable. If possible, use these formats, and avoid older formats. Modern formats are standardized, can be reliably read by many different systems and can be processed efficiently, even with large quantities of data. Some older formats are not standardized, which means that different systems can write different variations, which then cause errors when you move data between systems.
-
-### Modern Data Formats
-
-If possible, use [JSON](https://en.wikipedia.org/wiki/JSON) for structured data. It is a plain-text format for data objects. You can then also use these file formats:
-
-- [SQLite](https://sqlite.org) - Binary format for self-contained and robust database files
-- [Apache Parquet](https://parquet.apache.org/) - Binary format for efficient storage of tabular data in files
-
-All of the versions of Python 3 include modules for [JSON](https://docs.python.org/3/library/json.html) and [SQLite](https://docs.python.org/3/library/sqlite3.html). The [Pandas](https://pandas.pydata.org) dataframe library supports Parquet, JSON and SQLite. [DuckDB](https://duckdb.org/docs/stable/clients/python/overview) also supports all three formats.
-
-If you need to work with other data formats, consider using a modern file format in your application and adding features to import data or generate exports in other formats when necessary. For example, DuckDB and Pandas include features to import and export data to files in the Excel format.
-
-In most cases, you should use the JSON format to transfer data between systems, especially if the systems must communicate with HTTP. JSON documents can be used for any kind of data. Since JSON is plain-text, data in this format can be stored in either files or in a database. Every programming language and modern SQL database supports JSON.
-
-> You can validate JSON documents with [JSON Schemas](https://json-schema.org/). [Pydantic](https://docs.pydantic.dev/) enables you to export your Python data objects to JSON and generate JSON Schemas from the data models.
-
-Each SQLite database is a single file. Use SQLite files for [data and configuration for applications](https://sqlite.org/appfileformat.html) as well as for queryable databases. They are arguably more portable and resilient than sets of plain-text files. SQLite is widely-supported, [robust](https://sqlite.org/hirely.html) and the file format is [guaranteed to be stable and portable for decades](https://sqlite.org/lts.html). Each SQLite database file can safely be gigabytes in size.
-
-> You can use SQLite databases for any kind of data. They can be used to [store and query data in JSON format](https://sqlite.org/json1.html), they hold plain text with [optional full-text search](sqlite.org/fts5.html), and they can store binary data.
-
-If you need to query a large set of tabular data, put a copy in [Apache Parquet](https://parquet.apache.org/) files and use that copy for your work. The Parquet format is specifically designed for large-scale data operations, and scales to tables with millions of rows. Parquet can store data that is in JSON format, as well as standard data types.
-
-> I provide a separate article with more details about [modern data formats](https://www.stuartellis.name/articles/modern-data-file-formats/).
-
-### Avoid Problematic File Formats
-
-Avoid these older file formats:
-
-- INI - Use TOML instead
-- CSV - Use SQLite or Apache Parquet instead
-- YAML - Use TOML or JSON instead
-
-Systems can implement legacy formats in different ways, which means that there is a risk that data will not be read correctly when you use a file that has been created by another system. Files that are edited by humans are also more likely to contain errors, due to the complexities and inconsistency of these formats.
-
-### Working with CSV Files
-
-Python does include [a module for CSV files](https://docs.python.org/3/library/csv.html), but consider using DuckDB instead. DuckDB provides [CSV support](https://duckdb.org/docs/stable/data/csv/overview.html) that is [tested for its ability to handle incorrectly formatted files](https://duckdb.org/2025/04/16/duckdb-csv-pollock-benchmark.html).
-
-Avoid creating CSV files, because modern data formats are all more capable. If you use DuckDB or Pandas then you can import and export data to Parquet, SQLite and Excel file formats. Unlike CSV, these file formats store explicit data types for items.
-
-### Working with YAML Files
-
-If you need to work with YAML in Python, use [ruamel.yaml](https://pypi.org/project/ruamel.yaml/). This supports YAML version 1.2. Avoid using [PyYAML](https://pypi.org/project/PyYAML/), because it only supports version 1.1 of the YAML format.
-
-Avoid creating YAML files, because modern formats offer better options. Consider using [TOML](#configuration-use-environment-variables-or-toml) for application configuration, and JSON or table-based storage like SQLite for larger sets of data.
 
 ## Developing Python Projects
 
@@ -391,3 +340,52 @@ This function drops you into the debugger at the point where it is called. Both 
 The [breakpoint()](https://docs.python.org/3/library/functions.html#breakpoint) feature was added in version 3.7 of Python.
 
 > [PEP 553](https://www.python.org/dev/peps/pep-0553/) describes the _breakpoint()_ function.
+
+## Data Formats and Storage
+
+There are now data file formats that are open, standardized and portable. If possible, use these formats, and avoid older formats. Modern formats are standardized, can be reliably read by many different systems and can be processed efficiently, even with large quantities of data. Some older formats are not standardized, which means that different systems can write different variations, which then cause errors when you move data between systems.
+
+### Modern Data Formats
+
+If possible, use [JSON](https://en.wikipedia.org/wiki/JSON) for structured data. It is a plain-text format for data objects. You can then also use these file formats:
+
+- [SQLite](https://sqlite.org) - Binary format for self-contained and robust database files
+- [Apache Parquet](https://parquet.apache.org/) - Binary format for efficient storage of tabular data in files
+
+All of the versions of Python 3 include modules for [JSON](https://docs.python.org/3/library/json.html) and [SQLite](https://docs.python.org/3/library/sqlite3.html). The [Pandas](https://pandas.pydata.org) dataframe library supports Parquet, JSON and SQLite. [DuckDB](https://duckdb.org/docs/stable/clients/python/overview) also supports all three formats.
+
+If you need to work with other data formats, consider using a modern file format in your application and adding features to import data or generate exports in other formats when necessary. For example, DuckDB and Pandas include features to import and export data to files in the Excel format.
+
+In most cases, you should use the JSON format to transfer data between systems, especially if the systems must communicate with HTTP. JSON documents can be used for any kind of data. Since JSON is plain-text, data in this format can be stored in either files or in a database. Every programming language and modern SQL database supports JSON.
+
+> You can validate JSON documents with [JSON Schemas](https://json-schema.org/). [Pydantic](https://docs.pydantic.dev/) enables you to export your Python data objects to JSON and generate JSON Schemas from the data models.
+
+Each SQLite database is a single file. Use SQLite files for [data and configuration for applications](https://sqlite.org/appfileformat.html) as well as for queryable databases. They are arguably more portable and resilient than sets of plain-text files. SQLite is widely-supported, [robust](https://sqlite.org/hirely.html) and the file format is [guaranteed to be stable and portable for decades](https://sqlite.org/lts.html). Each SQLite database file can safely be gigabytes in size.
+
+> You can use SQLite databases for any kind of data. They can be used to [store and query data in JSON format](https://sqlite.org/json1.html), they hold plain text with [optional full-text search](sqlite.org/fts5.html), and they can store binary data.
+
+If you need to query a large set of tabular data, put a copy in [Apache Parquet](https://parquet.apache.org/) files and use that copy for your work. The Parquet format is specifically designed for large-scale data operations, and scales to tables with millions of rows. Parquet can store data that is in JSON format, as well as standard data types.
+
+> I provide a separate article with more details about [modern data formats](https://www.stuartellis.name/articles/modern-data-file-formats/).
+
+### Avoid Problematic File Formats
+
+Avoid these older file formats:
+
+- INI - Use TOML instead
+- CSV - Use SQLite or Apache Parquet instead
+- YAML - Use TOML or JSON instead
+
+Systems can implement legacy formats in different ways, which means that there is a risk that data will not be read correctly when you use a file that has been created by another system. Files that are edited by humans are also more likely to contain errors, due to the complexities and inconsistency of these formats.
+
+### Working with CSV Files
+
+Python does include [a module for CSV files](https://docs.python.org/3/library/csv.html), but consider using DuckDB instead. DuckDB provides [CSV support](https://duckdb.org/docs/stable/data/csv/overview.html) that is [tested for its ability to handle incorrectly formatted files](https://duckdb.org/2025/04/16/duckdb-csv-pollock-benchmark.html).
+
+Avoid creating CSV files, because modern data formats are all more capable. If you use DuckDB or Pandas then you can import and export data to Parquet, SQLite and Excel file formats. Unlike CSV, these file formats store explicit data types for items.
+
+### Working with YAML Files
+
+If you need to work with YAML in Python, use [ruamel.yaml](https://pypi.org/project/ruamel.yaml/). This supports YAML version 1.2. Avoid using [PyYAML](https://pypi.org/project/PyYAML/), because it only supports version 1.1 of the YAML format.
+
+Avoid creating YAML files, because modern formats offer better options. Consider using [TOML](#configuration-use-environment-variables-or-toml) for application configuration, and JSON or table-based storage like SQLite for larger sets of data.
