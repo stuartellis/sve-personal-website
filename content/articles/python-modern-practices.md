@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2026-05-18T19:01:00+01:00"
+date = "2026-05-18T20:05:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -37,13 +37,11 @@ If your operating system includes a Python installation, avoid using it for your
 
 ## Use a Helper to Run Python Scripts and Tools
 
-Use either [pipx](https://pipx.pypa.io) or [uv](https://docs.astral.sh/uv/) to run Python tools and your single-file scripts on development systems. Both _pipx_ and _uv_ automatically provide each script and application with a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
-
-> To install _pipx_ on your operating system, follow the instructions on the [pipx Website](https://pipx.pypa.io). This will ensure that _pipx_ works correctly with an appropriate Python installation. The _uv_ tool is a single executable file that is written in Rust, which means that it does not rely on an existing installation of Python.
+Use either [pipx](https://pipx.pypa.io) or [uv](https://docs.astral.sh/uv/) to run Python tools and your single-file scripts on your computer. Both _pipx_ and _uv_ automatically provide each script and application with a separate [Python virtual environment](https://docs.python.org/3/tutorial/venv.html).
 
 ### Running Python Scripts
 
-A Python script is a file that has the extension `.py` at the end of the name. Optionally, it can start with a [metadata block](https://packaging.python.org/en/latest/specifications/inline-script-metadata/) that specifies the packages that it needs to use. This example script uses [requests](https://requests.readthedocs.io/en/latest/) and [rich](https://github.com/willmcgugan/rich):
+A Python script is a file that has the extension `.py` at the end of the name. Python reads and executes the script file from the top to the bottom. Optionally, the script can start with a [metadata block](https://packaging.python.org/en/latest/specifications/inline-script-metadata/) that specifies the packages that it needs to use. This example script uses the packages [requests](https://requests.readthedocs.io/en/stable/) and [rich](https://rich.readthedocs.io/en/stable/):
 
 ```python
 # /// script
@@ -83,9 +81,9 @@ uv run my_script.py
 
 > Avoid using the `python` or `py` commands to run single-file scripts. Python interpreters do not support metadata blocks and cannot manage dependencies.
 
-You can add a [shebang line](https://www.datacamp.com/tutorial/python-shebang) to a script file, to tell operating systems to automatically use the tool specified by the shebang to run the script. Avoid using a shebang for your Python scripts unless you have a specific need to do so. The script file itself must be marked as executable for a shebang to work, and this is a security risk because the content of the script could be changed or replaced later. A shebang can also tie the script to a specific tool.
+You can add a [shebang line](https://www.datacamp.com/tutorial/python-shebang) to a script file, to tell operating systems to to run the script by using the tool that is specified by the shebang. Avoid using a shebang for your Python scripts unless you have a specific need to do so. The script file itself must be marked as executable for a shebang to work, and this is a security risk because the content of the script could be changed or replaced later. A shebang can also tie the script to a specific tool.
 
-A Python script should be a single file that you have created to run on development systems. If you need more than this, [create a Python project](#use-a-project-tool). The project configuration will enable you to manage the code and dependencies, as well as providing support for [packaging applications for distribution to other systems](#plan-for-distributing-your-work). To minimize complexity, you can use the [flat project layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/) for applications.
+A Python script should be a single file that you have created to run on computers that are used for development. If you need more than this, [create a Python application](#use-a-project-tool). To minimize complexity, you can use the [flat project layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/) for applications. The project configuration will enable you to manage the code and dependencies, as well as providing support for [packaging applications for distribution to other systems](#plan-for-distributing-your-work).
 
 ### Running Python Tools
 
@@ -129,17 +127,23 @@ You may need to create projects that include Python but cannot use Python projec
 
 ### Use a Modern Framework for Command-Line Applications
 
-> If you building a command-line application, you can use the [flat project layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/).
+> If you are building a command-line application, you can use the [flat project layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/). This is the default layout for projects that are created by `uv`.
 
 Consider using the [Cyclopts](https://cyclopts.readthedocs.io/en/latest/) framework or the [Typer](https://typer.tiangolo.com/) library for building new command-line applications. Both of these use type hints and are built for modern Python. Many projects still use the older [Click](https://click.palletsprojects.com/) framework.
 
-To add a simple command-line interface to a script or library, use the [argparse](https://docs.python.org/3/library/argparse.html) module. Refer to [the argparse tutorial](https://docs.python.org/3/howto/argparse.html) in the official documentation for more details.
+To add a command-line interface to a script or library, use the [argparse](https://docs.python.org/3/library/argparse.html) module. Refer to [the argparse tutorial](https://docs.python.org/3/howto/argparse.html) in the official documentation for more details.
 
 ### Use Products That Enable Concurrency and async
 
 By default, each Python process uses a single thread on a single CPU. This means that each process only performs one operation at a time. You can have multiple threads within a process, but this only enables switching between threads. If you need to achieve full concurrency with Python, you must run multiple Python processes, so that each process can run its threads on a separate CPU.
 
-When you need to run operations at any scale, look for existing products that suit your needs. For example, you can use a workflow engine such as [Apache Airflow](https://airflow.apache.org/) or [Prefect](https://www.prefect.io/) to run sets of tasks, and build a Web application by combining a framework like [FastAPI](https://fastapi.tiangolo.com/) with an application server such as [Granian](https://github.com/emmett-framework/granian) or [Gunicorn](https://gunicorn.org/). The [Dask](https://www.dask.org/) and [Ray](https://docs.ray.io/en/latest/index.html) frameworks enable you to distribute computations at large scale. All of these products enable you to run your Python code concurrently on multiple CPUs and on multiple computers, and can use asynchronous code.
+When you need to run operations at any scale, look for existing products that suit your needs. For example:
+
+- Use _workflow platforms_ such as [Apache Airflow](https://airflow.apache.org/) or [Prefect](https://www.prefect.io/) to run sets of tasks.
+- Build a _Web application_ by combining a framework like [FastAPI](https://fastapi.tiangolo.com/) with an application server such as [Granian](https://github.com/emmett-framework/granian) or [Gunicorn](https://gunicorn.org/).
+- Run computations that are distributed across many computers with the [Dask](https://www.dask.org/) or [Ray](https://docs.ray.io/en/latest/index.html) frameworks.
+
+All of these products enable you to run your Python code concurrently on multiple CPUs and on multiple computers, and can use asynchronous code.
 
 The [asynchronous features of Python](https://docs.python.org/3/library/asyncio.html) enable threads to avoid blocking on I/O operations. To use asynchronous I/O in your code, you must use a Python library or framework that supports it. For example, the FastAPI Web framework [supports both types of function](https://fastapi.tiangolo.com/async/) in the same application. Code that uses asynchronous I/O must not call _any_ other function that uses synchronous I/O, such as _open()_, or the _logging_ module in the standard library. Instead, you need to use either the equivalent functions from _asyncio_ in the standard library or ensure that the products and libraries that you use are designed to support asynchronous code.
 
@@ -151,7 +155,7 @@ If you need to build a custom application with concurrency, consider using the [
 
 Always plan for how you will distribute the work that you produce in a project. The simplest method is through version control, but packages enable people to use your code with the operating systems and tools that they prefer to work with, rather than requiring that each system has developer tools installed.
 
-Project tools like Poetry include support for building [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages. The _wheel_ format is for sharing between Python installations. You can use _wheel_ packages to publish tools for other developers, as well as libraries for use in other Python projects. If you publish your Python application as a _wheel_, other people can run it with the _pipx_ and _uv_ tools, as explained in the section on [helpers](#use-a-helper-to-run-python-scripts-and-tools).
+Project tools like Poetry include support for building [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages. The _wheel_ format is for sharing between Python installations. You can use _wheel_ packages to publish tools for other developers, as well as libraries for use in other Python projects. If you publish your Python application as a _wheel_, other people can run it with the _pipx_ and _uv_ tools, as explained in the section on [helpers](#running-python-tools).
 
 > Read the [Python Packaging User Guide](https://packaging.python.org/en/latest/flow/) for more about wheel packages.
 
@@ -185,7 +189,7 @@ Many frameworks use the [logging module](https://docs.python.org/3/library/loggi
 
 ### Decide On A HTTP Client Library
 
-Avoid using [urllib.request](https://docs.python.org/3/library/urllib.request.html) from the Python standard library. It was designed as a low-level library for HTTP, and lacks the features of modern Web client libraries. Many Python applications include [requests](https://requests.readthedocs.io/en/latest/), but this only supports HTTP/1.1, and cannot be used with async code. Consider alternative Web client libraries like [aiohttp](https://pypi.org/project/aiohttp/) when you want to use async I/O.
+Avoid using [urllib.request](https://docs.python.org/3/library/urllib.request.html) from the Python standard library. It was designed as a low-level library for HTTP, and lacks the features of modern Web client libraries. Many Python applications include [requests](https://requests.readthedocs.io/en/stable/), but this only supports HTTP/1.1, and cannot be used with async code. Consider alternative Web client libraries like [aiohttp](https://pypi.org/project/aiohttp/) when you want to use async I/O.
 
 > Python SDKs for cloud services will have a dependency on a Web client library. Check which client library an SDK uses before you include it in your project.
 
