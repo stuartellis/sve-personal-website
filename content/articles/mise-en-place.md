@@ -13,7 +13,7 @@ You can also set a default mise configuration for your user account. This enable
 
 To enable mise to manage software, you define the expected versions of the [programming languages](https://mise.jdx.dev/core-tools.html) and other [tools](https://mise.jdx.dev/registry.html#tools). It then downloads copies of the required products to a cache as needed, and can switch the active version of each language and tool when you change projects or request a different version.
 
-Similarly, you can define [environment variables](https://mise.jdx.dev/environments/), so that mise adds and removes them as needed. It supports multiple profiles for a project, so that you can switach between sets of environment variables as you work.
+Similarly, you can define [environment variables](https://mise.jdx.dev/environments/), so that mise adds and removes them as needed. It supports multiple profiles for a project, so that you can switch between sets of environment variables as you work.
 
 Current versions of mise allow you to define [tasks](https://mise.jdx.dev/tasks/) as part of mise configurations. This means that you may not need to use a separate task runner such as [just](https://www.stuartellis.name/articles/just-task-runner/) to maintain a shared set of tasks for projects that use mise.
 

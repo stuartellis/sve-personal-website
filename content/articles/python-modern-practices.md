@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2026-05-18T20:05:00+01:00"
+date = "2026-05-21T08:05:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -115,23 +115,13 @@ uv tool install posting
 
 Use a project tool when you work with Python. There are several of these tools, which all provide the key features for managing Python projects. They generate directory structures that follow best practices, manage package dependencies and automate Python virtual environments, so that you do not need to manually create and activate environments as you work.
 
-Project tools can also manage the versions of Python, so that you will automatically have the correct version of Python for each project. Your project tool can install copies of Python as needed. The [section below](#install-python-with-tools-that-support-multiple-versions) explains in more detail.
+Project tools can also manage the versions of Python, so that you will automatically have the correct version of Python for each project. Your project tool can install copies of Python as needed. The [section above](#install-python-with-tools-that-support-multiple-versions) explains in more detail.
 
-[Poetry](https://python-poetry.org/) is currently the most popular tool for managing Python projects, and it is a good choice for most cases. It is well-supported and has been steadily developed. The feature to provide versions of Python is currently [experimental](https://python-poetry.org/docs/cli/#python), so you should use a version manager alongside Poetry for significant projects.
+[Poetry](https://python-poetry.org/) is currently the most popular tool for managing Python projects, and it is a good choice for most cases. It is well-supported and has been steadily developed. The feature to provide versions of Python is currently [experimental](https://python-poetry.org/docs/cli/#python), so you should use a version manager alongside Poetry.
 
 There are currently several other well-known project tools for Python. The [PDM](https://pdm-project.org) project and [uv](https://docs.astral.sh/uv/) from [Astral](https://astral.sh/) are less conservative than Poetry, adopting new features and standards more rapidly. Some teams use [Hatch](https://hatch.pypa.io), which provides a well-integrated set of features for building and testing Python software products.
 
-> _Avoid using [Rye](https://rye.astral.sh/)_. Rye has been superseded by _uv_.
-
 You may need to create projects that include Python but cannot use Python project tools. In these cases, think carefully about the tools and directory structure that you will need, and ensure that you are familiar with the current [best practices for Python projects](https://www.stuartellis.name/articles/python-project-setup).
-
-### Use a Modern Framework for Command-Line Applications
-
-> If you are building a command-line application, you can use the [flat project layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/). This is the default layout for projects that are created by `uv`.
-
-Consider using the [Cyclopts](https://cyclopts.readthedocs.io/en/latest/) framework or the [Typer](https://typer.tiangolo.com/) library for building new command-line applications. Both of these use type hints and are built for modern Python. Many projects still use the older [Click](https://click.palletsprojects.com/) framework.
-
-To add a command-line interface to a script or library, use the [argparse](https://docs.python.org/3/library/argparse.html) module. Refer to [the argparse tutorial](https://docs.python.org/3/howto/argparse.html) in the official documentation for more details.
 
 ### Use Products That Enable Concurrency and async
 
@@ -139,17 +129,17 @@ By default, each Python process uses a single thread on a single CPU. This means
 
 When you need to run operations at any scale, look for existing products that suit your needs. For example:
 
-- Use _workflow platforms_ such as [Apache Airflow](https://airflow.apache.org/) or [Prefect](https://www.prefect.io/) to run sets of tasks.
+- Use _workflow platforms_ such as [Apache Airflow](https://airflow.apache.org/), [Prefect](https://www.prefect.io/) or [Windmill](https://www.windmill.dev/) to run sets of tasks.
 - Build a _Web application_ by combining a framework like [FastAPI](https://fastapi.tiangolo.com/) with an application server such as [Granian](https://github.com/emmett-framework/granian) or [Gunicorn](https://gunicorn.org/).
-- Run computations that are distributed across many computers with the [Dask](https://www.dask.org/) or [Ray](https://docs.ray.io/en/latest/index.html) frameworks.
+- _Distribute work across many computers_ by using the [Dask](https://www.dask.org/) or [Ray](https://docs.ray.io/en/latest/index.html) frameworks.
 
-All of these products enable you to run your Python code concurrently on multiple CPUs and on multiple computers, and can use asynchronous code.
+All of these products allow you to run your Python code concurrently on multiple CPUs and on multiple computers, and can use asynchronous code.
 
 The [asynchronous features of Python](https://docs.python.org/3/library/asyncio.html) enable threads to avoid blocking on I/O operations. To use asynchronous I/O in your code, you must use a Python library or framework that supports it. For example, the FastAPI Web framework [supports both types of function](https://fastapi.tiangolo.com/async/) in the same application. Code that uses asynchronous I/O must not call _any_ other function that uses synchronous I/O, such as _open()_, or the _logging_ module in the standard library. Instead, you need to use either the equivalent functions from _asyncio_ in the standard library or ensure that the products and libraries that you use are designed to support asynchronous code.
 
 > If you use a framework that supports asynchronous I/O it may provide safe functions for services like logging, but you must still ensure that asynchronous functions never call any synchronous functions.
 
-If you need to build a custom application with concurrency, consider using the [concurrent.futures](https://docs.python.org/3/library/concurrent.futures.html) package in the Python standard library. This includes executors for distributing work across a pool of multiple threads or separate CPUs.
+If you need to create a script or custom application with concurrency, consider using the [concurrent.futures](https://docs.python.org/3/library/concurrent.futures.html) package in the Python standard library. This includes executors for distributing work across a pool of multiple threads or separate CPUs.
 
 ### Plan for Distributing Your Work
 
@@ -167,7 +157,15 @@ Use [PyInstaller](https://pyinstaller.org/) or [Nuitka](https://nuitka.net) to c
 
 > _Requirements files:_ If you use requirements files to build or deploy projects then configure your tools to [use hashes](#ensure-that-requirements-files-include-hashes).
 
-### Configuration: Use Environment Variables or TOML
+### Use a Modern Framework for Your Command-Line Applications
+
+> If you are building a command-line application, you can use the [flat project layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/). This is the default layout for projects that are created by `uv`.
+
+Consider using the [Cyclopts](https://cyclopts.readthedocs.io/en/latest/) framework or the [Typer](https://typer.tiangolo.com/) library for building new command-line applications. Both of these use type hints and are built for modern Python. Many projects still use the older [Click](https://click.palletsprojects.com/) framework.
+
+To add a command-line interface to a script or library, use the [argparse](https://docs.python.org/3/library/argparse.html) module. Refer to [the argparse tutorial](https://docs.python.org/3/howto/argparse.html) in the official documentation for more details.
+
+### Use Environment Variables or TOML for Configuration
 
 Use environment variables for options that must be passed to an application each time that it starts, especially secrets like API tokens. If your application is a command-line tool, you should also provide options that can override the environment variables.
 
@@ -187,7 +185,7 @@ Use a [structured format for your logs](https://www.structlog.org/en/stable/why.
 
 Many frameworks use the [logging module](https://docs.python.org/3/library/logging.html) in the Python standard library, but this module was not designed to modern standards and requires some configuration to produce well-formatted logs. When you implement logging, consider using [loguru](https://loguru.readthedocs.io/en/stable/) or [structlog](https://www.structlog.org/).
 
-### Decide On A HTTP Client Library
+### Choose The Appropriate HTTP Client Library
 
 Avoid using [urllib.request](https://docs.python.org/3/library/urllib.request.html) from the Python standard library. It was designed as a low-level library for HTTP, and lacks the features of modern Web client libraries. Many Python applications include [requests](https://requests.readthedocs.io/en/stable/), but this only supports HTTP/1.1, and cannot be used with async code. Consider alternative Web client libraries like [aiohttp](https://pypi.org/project/aiohttp/) when you want to use async I/O.
 
