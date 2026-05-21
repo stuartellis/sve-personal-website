@@ -390,4 +390,4 @@ Avoid creating CSV files, because modern data formats are all more capable. If y
 
 If you need to work with YAML in Python, use [ruamel.yaml](https://pypi.org/project/ruamel.yaml/). This supports YAML version 1.2. Avoid using [PyYAML](https://pypi.org/project/PyYAML/), because it only supports version 1.1 of the YAML format.
 
-Avoid creating YAML files, because modern formats offer better options. Consider using [TOML](#configuration-use-environment-variables-or-toml) for application configuration, and JSON or table-based storage like SQLite for larger sets of data.
+Avoid creating YAML files, because modern formats offer better options. Consider using [TOML](#use-environment-variables-or-toml-for-configuration) for application configuration, and JSON or table-based storage like SQLite for larger sets of data.
