@@ -3,8 +3,8 @@ title = "Using Version Managers for Your Tools"
 slug = "version-managers"
 date = "2025-08-02T19:11:00+01:00"
 description = "Using version managers"
-categories = ["automation", "devops", "programming", "python"]
-tags = ["automation", "devops", "golang", "linux", "macos", "javascript", "python"]
+categories = ["automation", "devops", "javascript", "programming", "python"]
+tags = ["automation", "devops", "golang", "javascript", "linux", "macos", "python"]
 +++
 
 Avoid installing stand-alone packages for tools and programming languages. Instead, use version managers. These enable you to use the correct version of the required tools and dependencies for each of your projects. A version manager can download all of the versions of a product that your projects need and switch the active version as you move between projects, as well as letting you set a default version.

@@ -3,8 +3,8 @@ title = "mise-en-place for Managing Development Tooling"
 slug = "mise-en-place"
 date = "2026-03-21T08:01:00+00:00"
 description = "Using mise-en-place"
-categories = ["automation", "devops", "programming", "python"]
-tags = ["automation", "devops", "golang", "linux", "macos", "javascript", "python"]
+categories = ["automation", "devops", "javascript", "programming", "python"]
+tags = ["automation", "devops", "golang", "javascript", "linux", "macos", "python"]
 +++
 
 [mise-en-place](https://mise.jdx.dev/) (mise) provides a framework for development tooling, so that you can have a consistent set of configuration, tools and task definitions for every copy of a project. It can run in Continuous Integration (CI) environments as well as on developer systems.
