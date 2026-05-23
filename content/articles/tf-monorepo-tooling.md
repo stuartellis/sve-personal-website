@@ -3,8 +3,8 @@ title = "Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
 date = "2026-05-17T07:25:00+01:00"
 description = "Tooling for OpenTofu and Terraform in monorepos"
-categories = ["automation", "aws", "devops", "opentofu", "terraform"]
-tags = ["automation", "aws", "devops", "opentofu", "terraform"]
+categories = ["automation", "aws", "cloudflare", "devops", "opentofu", "terraform"]
+tags = ["automation", "aws", "cloudflare", "devops", "opentofu", "terraform"]
 +++
 
 This article describes an example of tooling for [OpenTofu](https://opentofu.org/) and [Terraform](https://developer.hashicorp.com/terraform) using a [general-purpose task runner utility](https://www.stuartellis.name/articles/task-runner/). The tooling supports these features without any other third-party software:

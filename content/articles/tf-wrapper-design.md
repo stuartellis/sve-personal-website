@@ -3,8 +3,8 @@ title = "Designing a Wrapper for OpenTofu & Terraform"
 slug = "tf-wrapper-design"
 date = "2026-05-17T07:20:00+01:00"
 description = "Designing a wrapper for working with OpenTofu & Terraform components"
-categories = ["automation", "aws", "devops", "opentofu", "terraform"]
-tags = ["automation", "aws", "devops", "opentofu", "terraform"]
+categories = ["automation", "aws", "cloudflare", "devops", "opentofu", "terraform"]
+tags = ["automation", "aws", "cloudflare", "devops", "opentofu", "terraform"]
 +++
 
 This article describes [an implementation of a wrapper](https://www.stuartellis.name/articles/tf-monorepo-tooling/) for [OpenTofu](https://opentofu.org/) and [Terraform](https://developer.hashicorp.com/terraform). This implementation is for [monorepos](https://en.wikipedia.org/wiki/Monorepo), where the infrastructure configurations can be maintained in the same project along with other code. The wrapper uses a [general-purpose task runner tool](https://www.stuartellis.name/articles/task-runner/) and has no other dependencies.
