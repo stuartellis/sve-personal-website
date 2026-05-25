@@ -1,7 +1,7 @@
 +++
 title = "Designing a Wrapper for OpenTofu & Terraform"
 slug = "tf-wrapper-design"
-date = "2026-05-17T07:20:00+01:00"
+date = "2026-05-25T09:47:00+01:00"
 description = "Designing a wrapper for working with OpenTofu & Terraform components"
 categories = ["automation", "aws", "cloudflare", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "cloudflare", "devops", "opentofu", "terraform"]
@@ -17,7 +17,9 @@ The design enables projects to support:
 - Integration testing for every component.
 - Migrating from Terraform to OpenTofu. You can use the same commands for both, and switch to OpenTofu at any time.
 
-If we separate out our infrastructure code into components then we can also avoid creating a [terralith](https://masterpoint.io/blog/terralith-monolithic-terraform-architecture/), where all of the TF code for all of the resources is in a single root module. Monolithic root modules complicate development and testing, and they grow slower and more brittle over time as resources are added to them.
+Using tooling like this avoids the problems of a [terralith](https://masterpoint.io/blog/terralith-monolithic-terraform-architecture/), a situation where all of the TF code for all of the resources is in a single root module. Monolithic root modules complicate development and testing, and they grow slower and more brittle over time as resources are added to them.
+
+If you are working in a larger organization, consider using [Terramate](https://terramate.io/docs/) or other orchestration tools to maintain your Infrastructure as Code projects. Tooling like that described here enables you to have some of the benefits of an orchestration tool without committing to a larger product.
 
 The code for this example tooling is available on GitHub:
 
@@ -325,11 +327,9 @@ You are free to manage versions in any way that wish. If you do not have any spe
 
 ## Dependencies Between Units
 
-This tooling does not specify or enforce any dependencies between infrastructure components. We are free to run operations on separate components in parallel whenever you believe that this is safe. If we need to execute changes in a particular order, we can specify that order in whichever system we are using to carry out deployments.
+This tooling deliberately does not specify or enforce any dependencies between infrastructure components. Dependency orchestration is a major feature of [Terramate](https://terramate.io/docs/), [Terragrunt](https://terragrunt.com/), [stacks in HCP Terraform](https://developer.hashicorp.com/terraform/language/stacks) and similar tools. Here, you are free to implement dependencies in whatever way that you choose. For example, you can create your own Taskfiles that call the supplied tasks, write a script, define jobs for your CI system, or use [Terramate](https://terramate.io/docs/).
 
-Similarly, there are no restrictions on how we run tasks on multiple units. We can use any method that can call Task several times with the required variables. For example, we can create your own Taskfiles that call the supplied tasks, write a script, or define jobs for a CI system.
-
-> This tooling does not explicitly support or conflict with the [stacks feature of Terraform](https://developer.hashicorp.com/terraform/language/stacks). I do not currently test with the stacks feature. It is unclear if this feature will be permanently tied to Hashicorp cloud services in Terraform, or what equivalent will be implemented by OpenTofu.
+The absence of a required dependency system means that you can run operations on separate components in parallel whenever you believe that this is safe. If you need to execute changes in a particular order, specify that order in whichever system you use to carry out deployments. Similarly, there are no restrictions on how you run tasks on multiple units. You can use any method that can call Task several times with the required variables.
 
 ## Switching to Terraform
 

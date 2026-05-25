@@ -1,7 +1,7 @@
 +++
 title = "Tooling for Terraform & OpenTofu in Monorepos"
 slug = "tf-monorepo-tooling"
-date = "2026-05-17T07:25:00+01:00"
+date = "2026-05-25T09:48:00+01:00"
 description = "Tooling for OpenTofu and Terraform in monorepos"
 categories = ["automation", "aws", "cloudflare", "devops", "opentofu", "terraform"]
 tags = ["automation", "aws", "cloudflare", "devops", "opentofu", "terraform"]
@@ -16,7 +16,9 @@ This article describes an example of tooling for [OpenTofu](https://opentofu.org
 - [Integration testing](#testing) for every component.
 - [Moving from Terraform to OpenTofu](#using-terraform). You can use the same commands for both, and migrate to OpenTofu at any time.
 
-> If we separate out our infrastructure code into components then we avoid create a [terralith](https://masterpoint.io/blog/terralith-monolithic-terraform-architecture/), where all of the TF code for all of the resources is in a single root module. Monolithic root modules complicate development and testing, and they grow slower and more brittle over time as resources are added to them.
+Using tooling like this avoids the problems of a [terralith](https://masterpoint.io/blog/terralith-monolithic-terraform-architecture/), a situation where all of the TF code for all of the resources is in a single root module. Monolithic root modules complicate development and testing, and they grow slower and more brittle over time as resources are added to them.
+
+If you are working in a larger organization, consider using [Terramate](https://terramate.io/docs/) or other orchestration tools to maintain your Infrastructure as Code projects. Tooling like that described here enables you to have some of the benefits of an orchestration tool without committing to a larger product.
 
 The code for this example tooling is available on GitHub:
 
@@ -28,26 +30,27 @@ For more details about how this tooling works and the design decisions, read my 
 
 ## Quick Examples
 
-First, install the tools on Linux or macOS with [Homebrew](https://brew.sh/):
+The tooling is a single [Task](https://taskfile.dev) file. You can see it here:
+
+- [https://github.com/stuartellis/tf-tasks/blob/main/template/tasks/tft/Taskfile.yaml.jinja](https://github.com/stuartellis/tf-tasks/blob/main/template/tasks/tft/Taskfile.yaml.jinja)
+
+It is provided as a [Copier](https://copier.readthedocs.io/en/stable/) template, so that you can run one command to a create a project that works with the tooling. This also enables [updates](#updating-tf-tasks).
+
+To start a new project:
 
 ```shell
-brew install git pipx go-task cosign tenv
-```
-
-Start a new project:
-
-```shell
-# Use pipx to fetch Copier and run it to create a new project
-# Enter your details when prompted
-pipx run copier copy git+https://github.com/stuartellis/tf-tasks my-project
+# Use uv to fetch the Copier tool and create a new project from the template.
+# Enter details for the project when prompted.
+uvx copier copy git+https://github.com/stuartellis/tf-tasks my-project
 
 # Go to the working directory for the project
 cd my-project
 
-# Ask tenv to detect and install the correct version of OpenTofu for the project
+# The tasks automatically work with OpenTofu.
+# You can use tenv to detect and install the correct version of OpenTofu for the project:
 tenv opentofu install
 
-# Create a configuration and a root module for the project
+# Run tasks to create a configuration and a root module for the project:
 TFT_CONTEXT=dev task tft:context:new
 TFT_UNIT=my-app task tft:new
 ```
@@ -132,14 +135,14 @@ The tooling does not use or rely on the [stacks feature of HCP Terraform](https:
 
 ## Setting Up a Project
 
-To create a new project, run Copier. I recommend that you use either [pipx](https://pipx.pypa.io/) or [uv](https://docs.astral.sh/uv/) to run Copier, because they will automatically fetch and use Copier without needing to install it. These commands both create a new project:
-
-```shell
-pipx run copier copy git+https://github.com/stuartellis/tf-tasks my-project
-```
+To create a new project, run Copier. I recommend that you use either [uv](https://docs.astral.sh/uv/) or [pipx](https://pipx.pypa.io/) to run Copier, because they will automatically fetch and use Copier without needing to install it. These commands both create a new project:
 
 ```shell
 uvx copier copy git+https://github.com/stuartellis/tf-tasks my-project
+```
+
+```shell
+pipx run copier copy git+https://github.com/stuartellis/tf-tasks my-project
 ```
 
 Enter your details when prompted. These values are written into the generated files for the project.
@@ -162,7 +165,7 @@ To use the tasks in a generated project you will need:
 - [Task](https://taskfile.dev)
 - [OpenTofu](https://opentofu.org/) or [Terraform](https://developer.hashicorp.com/terraform)
 
-The TF tasks in the template do not use Python or Copier. This means that they can be run in a restricted environment, such as a continuous integration system.
+The tasks in the template do not use Python or Copier. This means that they can be run in a restricted environment, such as a continuous integration system.
 
 To see a list of the available tasks in a project, enter _task_ in a terminal window:
 
@@ -204,29 +207,11 @@ The `context.json` file is the configuration file for the context. It specifies 
 }
 ```
 
-The `backends.s3` section specifies the settings for a TF backend that uses S3 for storage. This uses the [S3 native locking feature](https://opentofu.org/docs/language/settings/backends/s3/) in current versions of OpenTofu and Terraform. It does not use DynamoDB. The tooling will use this backend by default.
+The `backends.s3` section specifies the settings for a TF backend that uses S3 for storage. The tooling will use this backend by default.
 
-To use Amazon S3 with DynamoDB for locking, specify an `s3ddb` backend:
+> This backend uses the [S3 native locking feature](https://opentofu.org/docs/language/settings/backends/s3/) in current versions of OpenTofu and Terraform.
 
-```json
-{
-  "metadata": {
-    "description": "Cloud development environment",
-    "environment": "dev"
-  },
-  "backends": {
-    "s3ddb": {
-      "tfstate_bucket": "789000123456-tf-state-dev-eu-west-2",
-      "tfstate_ddb_table": "789000123456-tf-lock-dev-eu-west-2",
-      "tfstate_dir": "dev",
-      "region": "eu-west-2",
-      "role_arn": "arn:aws:iam::789000123456:role/my-tf-state-role"
-    }
-  }
-}
-```
-
-> The tooling automatically enables encryption for S3 backends.
+#### Using Cloudflare R2 for Remote State
 
 This tooling also supports [Cloudflare R2](https://developers.cloudflare.com/r2/) for remote state storage. To use Cloudflare R2, specify the backend as `r2` in the `context.json` file:
 
@@ -251,7 +236,33 @@ This tooling also supports [Cloudflare R2](https://developers.cloudflare.com/r2/
 
 Cloudflare R2 implements the S3 API, so you use the same `backend "s3"` block in your TF module with R2 as you would with Amazon S3. You specify an HTTPS endpoint for the S3 API, which is your Cloudflare account ID, followed by `.r2.cloudflarestorage.com`.
 
-This compatibility with S3 means that you also need to specify an Access Key ID and a Secret Access Key for TF to connect to the R2 bucket. Each API token for R2 is given an Access Key ID and a Secret Access Key for compatibility with S3, but other types of Cloudflare API tokens do not. Create an bucket-scoped API token for this purpose, with `Read` and `Edit` permissions. The Cloudflare documentation explains [how to get S3 credentials for an R2 API token](https://developers.cloudflare.com/r2/api/tokens/). Set these S3 credentials as environment variables: `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`. If you use the Cloudflare TF provider to manage resources then you must specify a separate API token with administrative permissions through the `CLOUDFLARE_API_TOKEN` environment variable.
+This compatibility with S3 means that you also need to specify an Access Key ID and a Secret Access Key for TF to connect to the R2 bucket. Each API token for R2 is given an Access Key ID and a Secret Access Key for compatibility with S3, but other types of Cloudflare API tokens do not. Create an bucket-scoped API token for this purpose, with `Read` and `Edit` permissions. The Cloudflare documentation explains [how to get S3 credentials for an R2 API token](https://developers.cloudflare.com/r2/api/tokens/).
+
+Set the S3 credentials for your R2 token as environment variables: `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`. If you use the Cloudflare TF provider to manage resources then you must specify a separate API token with administrative permissions through the `CLOUDFLARE_API_TOKEN` environment variable.
+
+#### Using S3 with DynamoDB for Remote State
+
+If you need to use old versions of Terraform or OpenTofu, you may need to use the legacy support for S3 with DynamoDB for locking.
+
+To use Amazon S3 with DynamoDB for locking, specify an `s3ddb` backend:
+
+```json
+{
+  "metadata": {
+    "description": "Cloud development environment",
+    "environment": "dev"
+  },
+  "backends": {
+    "s3ddb": {
+      "tfstate_bucket": "789000123456-tf-state-dev-eu-west-2",
+      "tfstate_ddb_table": "789000123456-tf-lock-dev-eu-west-2",
+      "tfstate_dir": "dev",
+      "region": "eu-west-2",
+      "role_arn": "arn:aws:iam::789000123456:role/my-tf-state-role"
+    }
+  }
+}
+```
 
 ### Setting the tfvars for a Context
 
@@ -369,16 +380,16 @@ To use local state, you will also need to comment out the `backend "s3" {}` bloc
 
 ## Updating TF Tasks
 
-To update a project with the latest version of the template, we use the [update feature of Copier](https://copier.readthedocs.io/en/stable/updating/). We can use either [pipx](https://pipx.pypa.io/) or [uv](https://docs.astral.sh/uv/) to run Copier:
-
-```shell
-cd my-project
-pipx run copier update -A -a .copier-answers-tf-task.yaml .
-```
+To update a project with the latest version of the template, we use the [update feature of Copier](https://copier.readthedocs.io/en/stable/updating/). We can use either [uv](https://docs.astral.sh/uv/) or [pipx](https://pipx.pypa.io/) to run Copier:
 
 ```shell
 cd my-project
 uvx copier update -A -a .copier-answers-tf-task.yaml .
+```
+
+```shell
+cd my-project
+pipx run copier update -A -a .copier-answers-tf-task.yaml .
 ```
 
 Copier `update` synchronizes the files in the project that the template manages with the latest release of the template.
@@ -406,11 +417,9 @@ To share modules between projects, [publish them to a registry](https://opentofu
 
 ## What About Dependencies Between Components?
 
-This tooling does not specify or enforce any dependencies between infrastructure components. You are free to run operations on separate components in parallel whenever you believe that this is safe. If you need to execute changes in a particular order, specify that order in whichever system you use to carry out deployments.
+This tooling deliberately does not specify or enforce any dependencies between infrastructure components. Dependency orchestration is a major feature of [Terramate](https://terramate.io/docs/), [Terragrunt](https://terragrunt.com/), [stacks in HCP Terraform](https://developer.hashicorp.com/terraform/language/stacks) and similar tools. Here, you are free to implement dependencies in whatever way that you choose. For example, you can create your own Taskfiles that call the supplied tasks, write a script, define jobs for your CI system, or use [Terramate](https://terramate.io/docs/).
 
-Similarly, there are no restrictions on how you run tasks on multiple units. You can use any method that can call Task several times with the required variables. For example, you can create your own Taskfiles that call the supplied tasks, write a script, or define jobs for your CI system.
-
-> This tooling does not explicitly support or conflict with the [stacks feature of Terraform](https://developer.hashicorp.com/terraform/language/stacks). I do not currently test with the stacks feature. This feature is specific to HCP, and not available in OpenTofu.
+The absence of a required dependency system means that you can run operations on separate components in parallel whenever you believe that this is safe. If you need to execute changes in a particular order, specify that order in whichever system you use to carry out deployments. Similarly, there are no restrictions on how you run tasks on multiple units. You can use any method that can call Task several times with the required variables.
 
 ## Suggestions About Names
 
