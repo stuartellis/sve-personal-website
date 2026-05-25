@@ -1,7 +1,7 @@
 +++
 title = "Creating Container Images with Buildah and GitLab"
 slug = "buildah-gitlab"
-date = "2026-05-25T13:54:00+01:00"
+date = "2026-05-25T19:41:00+01:00"
 description = "Creating container images with Buildah and GitLab"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -76,6 +76,11 @@ To configure Buildah to create images in the Docker format, specify the Docker f
 
 - [A Complete Overview of Buildah](https://mkdev.me/posts/buildah-a-complete-overview)
 - [Red Hat Linux documentation on using Buildah](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/building_running_and_managing_containers/working-with-containers#building-a-container)
+
+### GitLab
+
+- [GitLab Pipelines documentation](https://docs.gitlab.com/ci/pipelines/)
+- [How to Use Container Registry in GitLab CI](https://oneuptime.com/blog/post/2026-01-28-container-registry-gitlab-ci/view) - Article by Nawaz Dhandala
 
 ### Buildah on GitLab
 
