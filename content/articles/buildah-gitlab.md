@@ -1,7 +1,7 @@
 +++
 title = "Creating Container Images with Buildah and GitLab"
 slug = "buildah-gitlab"
-date = "2026-05-26T07:34:00+01:00"
+date = "2026-05-27T16:13:00+01:00"
 description = "Creating container images with Buildah and GitLab"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -54,21 +54,23 @@ build-image-amd64:
 
 > A Containerfile uses the Dockerfile format. The name indicates that this file is intended by used by standards-compliant tools, and does not include any features that are specific to Docker.
 
-This example file creates an Alpine Linux container that includes [OpenTofu](https://opentofu.org/):
+This example file creates an Alpine Linux container that includes [OpenTofu](https://opentofu.org/) and [Terramate](https://terramate.io/docs/):
 
 ```dockerfile
 FROM ghcr.io/opentofu/opentofu:1.12.0-minimal AS tofu
+FROM ghcr.io/terramate-io/terramate:0.17.1 AS terramate
 
 FROM alpine:3.23
 
 RUN apk update && apk upgrade --no-cache && apk add --no-cache git
 
 COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
+COPY --from=terramate /usr/local/bin/terramate /usr/local/bin/terramate
 ```
 
 ## More on Container Image Formats
 
-By default, Buildah creates images in the OCI Image Specification format. This is an open standard that is based on the Docker Version 2 format for images. Modern container tools support both the OCI format and the Docker Version 2 format. You can only use features that are specific to Docker if you use the Docker format. For example, only container images that are in the Docker format can use the `ONBUILD` instruction.
+By default, Buildah creates images in the [OCI Image Specification format](https://github.com/opencontainers/image-spec). This is an open standard that is based on the Docker Version 2 format for images. Modern container tools support both the OCI format and the Docker Version 2 format. You can only use features that are specific to Docker if you use the Docker format. For example, only container images that are in the Docker format can use the `ONBUILD` instruction.
 
 To configure Buildah to create images in the Docker format, specify the Docker format with the `--format=docker` command-line option, or by setting the `BUILDAH_FORMAT` environment variable to `docker`.
 
