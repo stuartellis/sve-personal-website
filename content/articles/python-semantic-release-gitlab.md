@@ -1,39 +1,45 @@
 +++
-title = "Python Semantic Release with GitLab"
+title = "Using Python Semantic Release with GitLab"
 slug = "python-semantic-release-gitlab"
-date = "2025-12-30T00:53:00+00:00"
+date = "2026-05-27T22:24:00+01:00"
 description = "Python Semantic Release with GitLab"
-draft = true
 categories = ["programming", "python"]
 tags = ["automation", "python"]
 +++
 
-[Python Semantic Release](https://python-semantic-release.readthedocs.io/en/stable/) enables you to automate the release of Python projects. By default, it assumes that you are hosting your project on GitHub.
+[Python Semantic Release](https://python-semantic-release.readthedocs.io/en/stable/) enables you to automate the release of software projects. This can include projects do not use Python. By default, Python Semantic Release assumes that you are hosting your project on GitHub. This article explains how to set up Python Semantic Release to work with GitLab projects.
 
 ## Set Up
 
-To use Python Semantic Release with GitLab, you will need:
+You will need these files in the GitLab project:
 
-- A Personal Access Token with the appropriate permissions
-- A GitLab project with _Allow Git push requests to the repository_ enabled in _Settings > CI/CD > Job token permissions_.
-- A `.gitlab-ci.yml` file in the root directory of the project. See below for an example.
-- A `releaserc.toml` file in the root directory of the project. See below for an example.
+- _CI Pipeline configuration:_ A `.gitlab-ci.yml` file in the root directory of the project. See below for an example.
+- _Python Semantic Release configuration:_ A `pyproject.toml` or `releaserc.toml` file in the root directory of the project. See below for an example.
+- _Changelog:_ A `CHANGELOG.md` file in the root directory of the project. Create this as an empty file, because Python Semantic Release maintains the contents of this file.
 
-> Avoid using a `pyproject.toml` file to configure Python Semantic Release. It can significantly extend the length of this file.
+> Use a `releaserc.toml` file for projects that do not have a `pyproject.toml` file.
+
+The GitLab project must have _Allow Git push requests to the repository_ enabled in _Settings > CI/CD > Job token permissions_.
+
+If you are using a free GitLab account, then you will also need to set up a Personal Access Token that Python Semantic Release can use. See the next section for details.
 
 ## Using Personal Access Tokens
 
-Python Semantic Release must use a token that has a Maintainer role and these permissions:
+Python Semantic Release must use a GitLab token to carry out operations on the project repositories. If you are using a free GitLab account, then you will need to set up a Personal Access Token that Python Semantic Release can use.
+
+Use a legacy personal access token. This must be attached to user account with the _Maintainer_ role for the project, and the API token itself must have these permissions:
 
 - api
 - read_repository
 - write_repository
 
-Register this token as a CI variable with the name _GITLAB_TOKEN_. Set the variable as _Protected_, _Masked_ and _Expanded_.
+> If you cannot automate the rotation of this token you must give it an expiration date that is long enough for you to manage manual rotations.
+
+Register this access token as a CI variable. Set the CI variable as _Protected_, _Masked_ and _Expanded_. By default, Python Semantic Release reads the environment variable _GITLAB_TOKEN_ to get an access token.
 
 ## Example .gitlab-ci.yml for GitLab
 
-This `.gitlab-ci.yml` file runs Python Semantic Release:
+This `.gitlab-ci.yml` file runs Python Semantic Release, using the configuration from the `releaserc.toml` file:
 
 ```yaml
 ---
@@ -47,21 +53,16 @@ variables:
 semantic-release:
   stage: release
   image: python:3.14-slim-trixie
-
   variables:
+    # Git must create a full clone
     GIT_STRATEGY: clone
     GIT_DEPTH: 0
-    GIT_AUTHOR_NAME: "GitLab CI"
-    GIT_AUTHOR_EMAIL: "$GITLAB_USER_EMAIL"
-    GIT_COMMITTER_NAME: "GitLab CI"
-    GIT_COMMITTER_EMAIL: "$GITLAB_USER_EMAIL"
-
+    # Set variable for python-semantic-release to use
+    GIT_COMMIT_AUTHOR: "$GITLAB_USER_NAME <$GITLAB_USER_EMAIL>"
   before_script:
     - apt-get -qy update
     - apt-get install -qy git
     - pip install python-semantic-release==10.5.3
-    - git config --global user.name "GitLab CI"
-    - git config --global user.email "$GITLAB_USER_EMAIL"
     - git checkout -B "$CI_COMMIT_REF_NAME"
 
   script:
@@ -79,73 +80,37 @@ semantic-release:
       when: on_success
 ```
 
+> Remove the `-c releaserc.toml` option from calls to `semantic-release` if you use `pyproject.toml` to hold the project settings for Python Semantic Release.
+
 ## Example releaserc.toml for GitLab
 
-This `releaserc.toml` file provides a configuration for Python Semantic Release:
+This `releaserc.toml` file provides a minimum configuration for Python Semantic Release with GitLab:
 
 ```toml
 [semantic_release]
-assets = []
-build_command_env = []
-commit_message = "{version}\n\nAutomatically generated by python-semantic-release"
-commit_parser = "conventional"
-logging_use_named_masks = false
-major_on_zero = true
-allow_zero_version = false
-no_git_verify = false
-tag_format = "v{version}"
-add_partial_tags = false
-
-[semantic_release.branches.main]
-match = "(main|master)"
-prerelease_token = "rc"
-prerelease = false
-
-[semantic_release.changelog]
-exclude_commit_patterns = []
-mode = "update"
-insertion_flag = "<!-- version list -->"
-template_dir = "templates"
-
-[semantic_release.changelog.default_templates]
-changelog_file = "CHANGELOG.md"
-output_format = "md"
-mask_initial_release = true
-
-[semantic_release.changelog.environment]
-block_start_string = "{%"
-block_end_string = "%}"
-variable_start_string = "{{"
-variable_end_string = "}}"
-comment_start_string = "{#"
-comment_end_string = "#}"
-trim_blocks = false
-lstrip_blocks = false
-newline_sequence = "\n"
-keep_trailing_newline = false
-extensions = []
-autoescape = false
+# Allow 0.x.x versions
+allow_zero_version = true
+major_on_zero = false
+# Do not trigger Git hooks
+no_git_verify = true
 
 [semantic_release.commit_author]
 env = "GIT_COMMIT_AUTHOR"
 default = "semantic-release <semantic-release>"
 
-[semantic_release.commit_parser_options]
-minor_tags = ["feat"]
-patch_tags = ["fix", "perf"]
-other_allowed_tags = ["build", "chore", "ci", "docs", "style", "refactor", "test"]
-allowed_tags = ["feat", "fix", "perf", "build", "chore", "ci", "docs", "style", "refactor", "test"]
-default_bump_level = 0
-parse_squash_commits = true
-ignore_merge_commits = true
+[semantic_release.publish]
+# Use an empty list to avoid errors with GitLab
+dist_glob_patterns = []
 
 [semantic_release.remote]
-name = "origin"
 type = "gitlab"
-ignore_token_for_push = true
-insecure = false
-
-[semantic_release.publish]
-dist_glob_patterns = ["dist/*"]
-upload_to_vcs_release = true
+# Must be set as false for releases to be published to GitLab Releases
+upload_to_vcs_release = false
 ```
+
+> By default, Python Semantic Release uses the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format. This means that commits that are marked as a _chore_ do not produce a new version number.
+
+## Resources
+
+- [Python Semantic Release documentation](https://python-semantic-release.readthedocs.io/en/stable/)
+- [Example Python Semantic Release configuration for GitLab](https://gitlab.com/kolumdium/python-semantic-release-gitlab-example) by Martin Plank
