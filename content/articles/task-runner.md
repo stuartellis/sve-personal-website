@@ -111,16 +111,6 @@ doas apk add go-task --repository=http://dl-cdn.alpinelinux.org/alpine/latest-st
 
 The packages that are provided by operating system vendors may not be the current version of Task. Use the packages from GitHub to be able to manage the version of Task that you install.
 
-### Installing Task with Homebrew
-
-You can install Task with Homebrew on macOS and Linux. This command installs Task with [Homebrew](https://brew.sh/) and makes it available to your user account:
-
-```shell
-brew install go-task
-```
-
-This will install the most recent version of Task that is known to Homebrew. Use other methods to be able to manage the version of Task that you install.
-
 ### Installing Task with mise
 
 This command installs version 3.50.0 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
@@ -136,6 +126,16 @@ This command installs version 3.50.0 of Task with [npm](https://docs.npmjs.com/)
 ```shell
 npm install -g @go-task/cli@3.50.0
 ```
+
+### Installing Task with Homebrew
+
+You can install Task with Homebrew on macOS and Linux. This command installs Task with [Homebrew](https://brew.sh/) and makes it available to your user account:
+
+```shell
+brew install go-task
+```
+
+This will install the most recent version of Task that is known to Homebrew. Use other methods to be able to manage the version of Task that you install.
 
 ### Adding Task to a Dev Container
 
@@ -463,11 +463,11 @@ Visual Studio Code will both validate and format Task files when the [redhat.vsc
 
 To validate Task files on the command-line, use [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/index.html). The _check-jsonschema_ tool automatically includes the schema for Task files. The [yamllint](https://yamllint.readthedocs.io) command-line tool provides format and quality checks for all types of YAML file.
 
-The _check-jsonschema_ and _yamllint_ projects also provide hooks for [pre-commit](https://pre-commit.com). The next section files explains how to configure `pre-commit` so that Task files are automatically checked before changes are committed to source control.
+The _check-jsonschema_ and _yamllint_ projects also provide hooks for [prek](https://prek.j178.dev/) nd [pre-commit](https://pre-commit.com). The next section files explains how to configure `pre-commit` so that Task files are automatically checked before changes are committed to source control.
 
-### Maintaining Task files with pre-commit
+### Maintaining Task files with prek or pre-commit
 
-To maintain Task files in your project, add these lines to the _.pre-commit-config.yaml_ configuration file:
+To maintain Task files in your project, add these lines to the `.pre-commit-config.yaml` configuration file:
 
 ```yaml
 - repo: https://github.com/rbubley/mirrors-prettier
@@ -487,43 +487,10 @@ To maintain Task files in your project, add these lines to the _.pre-commit-conf
 
 These hooks automatically run [Prettier](https://prettier.io/) to format your files, and check all YAML files with [yamllint](https://yamllint.readthedocs.io/en/stable/integration.html#integration-with-pre-commit). The [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/precommit_usage.html) hook validates Task files.
 
-To ensure that _yamllint_ handles Task files correctly, add a _.yamllint.yaml_ file with this content:
-
-```yaml
----
-# Begin with yamllint default settings
-extends: default
-
-rules:
-  # Rules for curly braces: {}
-  braces:
-    forbid: false
-    min-spaces-inside: 0
-    max-spaces-inside: 1
-    min-spaces-inside-empty: 0
-    max-spaces-inside-empty: 0
-
-  # Rules for round brackets: ()
-  brackets:
-    forbid: false
-    min-spaces-inside: 0
-    max-spaces-inside: 0
-    min-spaces-inside-empty: 0
-    max-spaces-inside-empty: 0
-
-  # Do not require three dashes at the start of a YAML document
-  document-start: disable
-
-  # Rules for line length
-  line-length:
-    max: 88
-    level: error
-```
-
-The _pre-commit_ checks automatically run when you commit code. You may also run the checks yourself at any time, with the _pre-commit_ command-line tool. For example, this command validates all of the Task files in your project:
+The hooks automatically run when you commit code. You may also run the checks yourself at any time, with the [prek](https://prek.j178.dev/) command-line tool. For example, this command validates all of the Task files in your project:
 
 ```shell
-pre-commit run check-taskfile --all-files
+prek run check-taskfile --all-files
 ```
 
 ### Testing a Task
