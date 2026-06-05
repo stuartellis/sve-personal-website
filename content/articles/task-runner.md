@@ -78,13 +78,31 @@ Task uses a [versioned and published schema](#checking-taskfiles) for these YAML
 
 > If your organization has private artifact or package repositories, consider distributing Task through these. This ensures that your preferred versions of Task are available.
 
-If possible, consider using tools that enable you to specify the version of Task that you use. For developer systems, you can use any tool that supports [npm](#installing-task-with-npm) packages. If you use a tool version manager like [mise](#installing-task-with-mise) then it can also manage Task. These tools enable you to specify different versions for different projects, as well as having a global installation. You can set up Task for CI jobs with the same methods, or with the official [GitHub Action](https://github.com/go-task/setup-task).
+If possible, consider using tools that enable you to specify the version of Task that you use. These tools enable you to specify different versions for different projects, as well as having a global installation.
 
-Task can be installed on all of the popular operating systems through [packages](#installing-task-with-operating-system-packages). You can [use Homebrew to install Task](#installing-task-with-homebrew) on macOS and Linux, but this means that you cannot specify the exact version of Task that is installed.
+For developer systems, you can use any tool that supports [npm](#installing-task-with-npm) packages. If you use a tool version manager like [mise](#installing-task-with-mise) then it can also manage Task. You can also set up Task for CI jobs with the same methods, or with the official [GitHub Action](https://github.com/go-task/setup-task).
+
+Task can be installed on all of the popular operating systems through [packages](#installing-task-with-operating-system-packages). These only provide a single global installation of Task. You can [use Homebrew to install Task](#installing-task-with-homebrew) on macOS and Linux, but this provides a single copy of Task and means that you cannot specify the exact version of Task that is installed.
 
 If none of these methods are suitable, you can get Task with an [installation script](#installing-task-with-a-script).
 
 > If you install a global copy of Task then [you can integrate it with your shell](#integrating-task-with-your-shell).
+
+### Installing Task with npm
+
+This command installs version 3.50.0 of Task with [npm](https://docs.npmjs.com/) and makes it available to your user account:
+
+```shell
+npm install -g @go-task/cli@3.50.0
+```
+
+### Installing Task with mise
+
+This command installs version 3.50.0 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
+
+```shell
+mise use -gy task@3.50.0
+```
 
 ### Installing Task with Operating System Packages
 
@@ -106,22 +124,6 @@ doas apk add go-task --repository=http://dl-cdn.alpinelinux.org/alpine/latest-st
 > _The Alpine Linux package installs Task as go-task._ This means that you need to use the name _go-task_ rather than _task_ on the command-line. For example _go-task --list_.
 
 The packages that are provided by operating system vendors may not be the current version of Task. Use the packages from GitHub to be able to manage the version of Task that you install.
-
-### Installing Task with npm
-
-This command installs version 3.50.0 of Task with [npm](https://docs.npmjs.com/) and makes it available to your user account:
-
-```shell
-npm install -g @go-task/cli@3.50.0
-```
-
-### Installing Task with mise
-
-This command installs version 3.50.0 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
-
-```shell
-mise use -gy task@3.50.0
-```
 
 ### Installing Task with Homebrew
 
