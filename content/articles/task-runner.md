@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2026-05-18T11:50:00+01:00"
+date = "2026-06-05T06:18:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -76,19 +76,15 @@ Task uses a [versioned and published schema](#checking-taskfiles) for these YAML
 
 ## Installing Task
 
-Task can be installed on all of the popular operating systems through [packages](#installing-task-with-operating-system-packages). You can also [use Homebrew to install Task](#installing-task-with-homebrew) on macOS and Linux.
-
-If possible, consider using other tools that also enable you to specify a version of Task for each project. These include:
-
-1. Tool version managers like [mise](#installing-task-with-mise)
-2. [Installation with npm](#installing-task-with-npm)
-3. [Dev Containers](#adding-task-to-a-dev-container)
-4. [Installation script](#installing-task-with-a-script)
-5. The official [GitHub Action](https://github.com/go-task/setup-task)
-
-If you install a global copy of Task through any method then [you can integrate it with your shell](#integrating-task-with-your-shell).
-
 > If your organization has private artifact or package repositories, consider distributing Task through these. This ensures that your preferred versions of Task are available.
+
+If possible, consider using tools that enable you to specify the version of Task that you use. For developer systems, you can use any tool that supports [npm](#installing-task-with-npm) packages. If you use a tool version manager like [mise](#installing-task-with-mise) then it can also manage Task. These tools enable you to specify different versions for different projects, as well as having a global installation. You can set up Task for CI jobs with the same methods, or with the official [GitHub Action](https://github.com/go-task/setup-task).
+
+Task can be installed on all of the popular operating systems through [packages](#installing-task-with-operating-system-packages). You can [use Homebrew to install Task](#installing-task-with-homebrew) on macOS and Linux, but this means that you cannot specify the exact version of Task that is installed.
+
+If none of these methods are suitable, you can get Task with an [installation script](#installing-task-with-a-script).
+
+> If you install a global copy of Task then [you can integrate it with your shell](#integrating-task-with-your-shell).
 
 ### Installing Task with Operating System Packages
 
@@ -111,20 +107,20 @@ doas apk add go-task --repository=http://dl-cdn.alpinelinux.org/alpine/latest-st
 
 The packages that are provided by operating system vendors may not be the current version of Task. Use the packages from GitHub to be able to manage the version of Task that you install.
 
-### Installing Task with mise
-
-This command installs version 3.50.0 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
-
-```shell
-mise use -gy task@3.50.0
-```
-
 ### Installing Task with npm
 
 This command installs version 3.50.0 of Task with [npm](https://docs.npmjs.com/) and makes it available to your user account:
 
 ```shell
 npm install -g @go-task/cli@3.50.0
+```
+
+### Installing Task with mise
+
+This command installs version 3.50.0 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
+
+```shell
+mise use -gy task@3.50.0
 ```
 
 ### Installing Task with Homebrew
@@ -136,33 +132,6 @@ brew install go-task
 ```
 
 This will install the most recent version of Task that is known to Homebrew. Use other methods to be able to manage the version of Task that you install.
-
-### Adding Task to a Dev Container
-
-If you are using a Dev Container with Visual Studio Code, you can add the feature [go-task](https://github.com/devcontainers-contrib/features/blob/main/src/go-task/README.md) to your _devcontainer.json_ file to download Task from GitHub:
-
-```json
-    "features": {
-        "ghcr.io/devcontainers-contrib/features/go-task:1": {
-            "version": "3.50.0"
-        }
-    }
-```
-
-Ensure that you also include the [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) and [task.vscode-task](https://marketplace.visualstudio.com/items?itemName=task.vscode-task) extensions in the _devcontainer.json_ file:
-
-```json
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "redhat.vscode-yaml",
-                "task.vscode-task"
-            ]
-        }
-    }
-```
-
-The _vscode-yaml_ extension enables YAML formatting and validation, and _vscode-task_ adds a graphical integration for running tasks.
 
 ### Installing Task with a Script
 
@@ -463,23 +432,25 @@ Visual Studio Code will both validate and format Task files when the [redhat.vsc
 
 To validate Task files on the command-line, use [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/index.html). The _check-jsonschema_ tool automatically includes the schema for Task files. The [yamllint](https://yamllint.readthedocs.io) command-line tool provides format and quality checks for all types of YAML file.
 
-The _check-jsonschema_ and _yamllint_ projects also provide hooks for [prek](https://prek.j178.dev/) nd [pre-commit](https://pre-commit.com). The next section files explains how to configure `pre-commit` so that Task files are automatically checked before changes are committed to source control.
+The _check-jsonschema_ and _yamllint_ projects also provide Git hooks for [prek](https://prek.j178.dev/) and [pre-commit](https://pre-commit.com). The next section explains how to configure these tools so that Task files are automatically checked before changes are committed to source control.
 
 ### Maintaining Task files with prek or pre-commit
 
-To maintain Task files in your project, add these lines to the `.pre-commit-config.yaml` configuration file:
+To automate the maintenance of Task files in your project, add Git hooks for a formatter and linters. The most popular tools for managing hooks are [prek](https://prek.j178.dev/) and [pre-commit](https://pre-commit.com/). The [prek](https://prek.j178.dev/) tool supersedes [pre-commit](https://pre-commit.com/). It can use hooks that are written for `pre-commit`, and works with existing `pre-commit` project configurations.
+
+Here is an example `.pre-commit-config.yaml` configuration file:
 
 ```yaml
 - repo: https://github.com/rbubley/mirrors-prettier
-  rev: "v3.5.2"
+  rev: "v3.8.3"
   hooks:
     - id: prettier
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: "0.33.3"
+  rev: "0.37.2"
   hooks:
     - id: check-taskfile
-- repo: https://github.com/adrienverge/yamllint.git
-  rev: "v1.37.1"
+- repo: https://github.com/adrienverge/yamllint
+  rev: "v1.38.0"
   hooks:
     - id: yamllint
       args: ["--strict"]
@@ -487,7 +458,7 @@ To maintain Task files in your project, add these lines to the `.pre-commit-conf
 
 These hooks automatically run [Prettier](https://prettier.io/) to format your files, and check all YAML files with [yamllint](https://yamllint.readthedocs.io/en/stable/integration.html#integration-with-pre-commit). The [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/precommit_usage.html) hook validates Task files.
 
-The hooks automatically run when you commit code. You may also run the checks yourself at any time, with the [prek](https://prek.j178.dev/) command-line tool. For example, this command validates all of the Task files in your project:
+The hooks automatically run when you commit code. You may also run the checks yourself at any time. For example, this command validates all of the Task files in your project by running the `check-taskfile` hook with [prek](https://prek.j178.dev/):
 
 ```shell
 prek run check-taskfile --all-files
