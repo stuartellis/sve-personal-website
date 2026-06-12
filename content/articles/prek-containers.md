@@ -1,7 +1,7 @@
 +++
 title = "Using Container Images with prek and pre-commit"
 slug = "prek-containers"
-date = "2026-06-01T22:35:00+01:00"
+date = "2026-06-13T00:35:00+01:00"
 description = "Using container images with Git hooks"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -15,7 +15,7 @@ For security and consistency, use container images to provide the tools that are
 
 ## Installing prek
 
-> Running [docker_image](https://prek.j178.dev/languages/#docker_image) or [docker](https://prek.j178.dev/languages/#docker) hooks requires Podman, Docker or Apple Container. By default, the [container runtime will automatically be detected](https://prek.j178.dev/reference/environment-variables/#prek_container_runtime).
+> Running [docker_image](https://prek.j178.dev/languages/#docker_image) or [docker](https://prek.j178.dev/languages/#docker) hooks requires a container runtime such as Podman, Docker or Apple Container. By default, the [container runtime will automatically be detected](https://prek.j178.dev/reference/environment-variables/#prek_container_runtime).
 
 To install `prek` on a development system, use the packages from the [npm](https://www.npmjs.com/package/@j178/prek) or [Python](https://pypi.org/project/prek/) registries. If you use a package management tool like [npm](https://docs.npmjs.com/cli), [pipx](https://pipx.pypa.io/stable/), or [uv](https://docs.astral.sh/uv/), you can specify which version of `prek` it installs:
 
@@ -69,7 +69,9 @@ prek install
 
 To add a hook that uses a container image, you can either specify a remote hook configuration that uses containers, or define the hook directly in the configuration file. Many Open Source projects provide remote hook configurations for the tools that they produce.
 
-Avoid using remote hook configurations. Instead, create hooks in your `prek` configuration files. This enables you to have full control over the configuration of the hook and which container image it runs.
+If possible, avoid using remote hook configurations. Instead, create hooks in your `prek` configuration files. This enables you to have full control over the configuration of the hook and which container image it runs.
+
+> Once you create a configuration file with remote Git hooks, run `prek auto-update --freeze`. This replaces the version `refs` of any remote hooks with hashes, which protects you from supply-chain attacks against the remote hook repositories.
 
 For example, you may want to use a hook to detect secrets in code, and decide to use [gitleaks](https://gitleaks.io/) for this. The Gitleaks project provides three hooks in the [remote hook configuration](https://raw.githubusercontent.com/gitleaks/gitleaks/refs/heads/master/.pre-commit-hooks.yaml) that it publishes:
 
@@ -147,10 +149,10 @@ You can replace the container image that a hook uses at any time. This example u
 
 The hooks automatically run on the staged changes each time that you commit. To run a tool without commiting a change, use `prek run`. If you add the option `--all-files` it will check the current files in the project, not just staged changes.
 
-For example, to run the `check-json` hook on the project, use this command:
+For example, to run the `gitleaks-docker` hook on the project, use this command:
 
 ```shell
-prek run check-json --all-files
+prek run gitleaks-docker --all-files
 ```
 
 To run all of the hooks on the project, use this command:
