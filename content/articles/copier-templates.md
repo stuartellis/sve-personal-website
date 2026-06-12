@@ -14,7 +14,7 @@ tags = ["automation", "devops"]
 
 > Copier requires Git for all operations.
 
-To run Copier on a development system, use a tool like [pipx](https://pipx.pypa.io/stable/) or [uv](https://docs.astral.sh/uv/).
+To run Copier on a development system, use a tool like [pipx](https://pipx.pypa.io/stable/) or [uv](https://docs.astral.sh/uv/). If you are using `uv`, call Copier with `uvx`:
 
 ```shell
 uvx copier copy git+https://github.com/my-username/copier-mynamespace-mytemplate my-project
@@ -22,16 +22,20 @@ uvx copier copy git+https://github.com/my-username/copier-mynamespace-mytemplate
 
 > You can specify which version of Copier it runs.
 
+You can safely use multiple Copier templates on the same project.
+
 ## Creating a Copier Template
 
-1. First, create a Git repository. By convention, the name of the repository should start with `copier-`. Add a namespace and a name for the specific template to the full name of the repository. For example: `copier-mynamespace-mytemplate`.
-2. Create a `copier.yaml` configuration file in the root of the Git repository. The `_answers_file` must specify a unique name to avoid conflicts with other Copier templates. See below for an example.
-3. Create a directory called `template/` to hold the template files and directories.
+1. First, create a Git repository to hold the template. By convention, the name of this template repository should start with `copier-`. Add a namespace and a name for the specific template to the full name of the repository. For example: `copier-mynamespace-mytemplate`.
+2. Create a `copier.yaml` configuration file in the root of the template repository. To avoid conflicts with other Copier templates that are in use, the `_answers_file` must specify a unique name. See below for an example.
+3. Create a directory called `template/` in the repository to hold the files and directories that make up the template.
 4. Create a template answers file called `{{_copier_conf.answers_file}}.jinja` in the `template/` directory. See below for an example.
-5. Optional: Set up a project release tool for the repository, such as [Python Semantic Release](https://python-semantic-release.readthedocs.io/en/stable/).
-6. Optional: Add metadata to the project for the repository. For example, if it is hosted on GitHub, add the GitHub Topic _copier-template_.
+5. _Optional:_ Set up a project release tool for the template repository, such as [Python Semantic Release](https://python-semantic-release.readthedocs.io/en/stable/).
+6. _Optional:_ Add metadata to the project for the template repository. For example, if it is hosted on GitHub, add the GitHub Topic _copier-template_.
 
 ### Example Configuration File for the Template
+
+This is an example of a `copier.yaml` file:
 
 ```yaml
 ---
@@ -54,7 +58,7 @@ _answers_file: .copier-answers-mynamespace-mytemplate.yaml
 
 ### Example Template Answers File
 
-Create a template answers file called `{{_copier_conf.answers_file}}.jinja` in the `template/` directory. It must have these contents:
+Always create a template answers file called `{{_copier_conf.answers_file}}.jinja` in the `template/` directory. It must render the answers that are provided to YAML:
 
 ```yaml
 ---
@@ -69,9 +73,11 @@ Create a template answers file called `{{_copier_conf.answers_file}}.jinja` in t
 
 ## Versioning Your Copier Templates
 
-By default, Copier will copy from the last release found in template Git tags, sorted as [a Python version specifier](https://packaging.python.org/en/latest/specifications/version-specifiers/), regardless of whether the template is from a URL or a local clone of a Git repository. This means that we should use Semantic Versioning. Each Git tag should be a version.
+Copier treats each Git tag on a template repository as a version. By default, it will copy from the last release found in template Git tags, sorted as [a Python version specifier](https://packaging.python.org/en/latest/specifications/version-specifiers/). regardless of whether the template is from a URL or a local clone of a Git repository.
 
-> [A preceding v character is permitted](https://packaging.python.org/en/latest/specifications/version-specifiers/#preceding-v-character). Tools like [Python Semantic Release](https://python-semantic-release.readthedocs.io/en/stable/) create Git tags that have a _v_ prefix.
+> [Version tags may have a prefix of v](https://packaging.python.org/en/latest/specifications/version-specifiers/#preceding-v-character). Tools like [Python Semantic Release](https://python-semantic-release.readthedocs.io/en/stable/) create Git tags that have a _v_ prefix, e.g. _v1.2.3_.
+
+This means that we should use Semantic Versioning for template repositories.
 
 ## Resources
 
