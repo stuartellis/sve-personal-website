@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2026-06-05T06:18:00+01:00"
+date = "2026-06-13T00:44:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -34,7 +34,7 @@ Here is an example of a _Taskfile.yaml_, with a _build_ task that only runs when
 #
 # Hugo: https://gohugo.io
 
-version: "3.38"
+version: "3.45"
 
 set: [pipefail]
 
@@ -90,18 +90,18 @@ If none of these methods are suitable, you can get Task with an [installation sc
 
 ### Installing Task with npm
 
-This command installs version 3.50.0 of Task with [npm](https://docs.npmjs.com/) and makes it available to your user account:
+This command installs version 3.51.1 of Task with [npm](https://docs.npmjs.com/) and makes it available to your user account:
 
 ```shell
-npm install -g @go-task/cli@3.50.0
+npm install -g @go-task/cli@3.51.1
 ```
 
 ### Installing Task with mise
 
-This command installs version 3.50.0 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
+This command installs version 3.51.1 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
 
 ```shell
-mise use -gy task@3.50.0
+mise use -gy task@3.51.1
 ```
 
 ### Installing Task with Operating System Packages
@@ -150,7 +150,7 @@ curl -L https://taskfile.dev/install.sh > install-task.sh
 To use the installation script, call it with the Git tag and the _-b_ option. The Git tag specifies the version of Task. The _-b_ option specifies which directory to install it to:
 
 ```shell
-./install-task.sh -b $HOME/.local/bin v3.50.0
+./install-task.sh -b $HOME/.local/bin v3.51.1
 ```
 
 {{< alert >}}
@@ -178,7 +178,7 @@ Create a task in the _Taskfile.yaml_ with the name _default_. When Task is invok
 This example user _Taskfile.yaml_ includes a _default_ task that lists the available tasks:
 
 ```yaml
-version: "3.38"
+version: "3.45"
 
 set: [pipefail]
 
@@ -280,7 +280,7 @@ This diagram shows the suggested directory structure for a project with task inc
 #
 # https://taskfile.dev
 
-version: "3.38"
+version: "3.45"
 
 set: [pipefail]
 
@@ -342,7 +342,7 @@ task
 #
 # https://pre-commit.com/
 
-version: "3.38"
+version: "3.45"
 
 tasks:
   default:
@@ -457,6 +457,8 @@ Here is an example `.pre-commit-config.yaml` configuration file:
     - id: yamllint
       args: ["--strict"]
 ```
+
+> Once you create a configuration file with remote Git hooks, run `prek auto-update --freeze`. This replaces the version numbers of remote hooks with hashes, which protects you from supply-chain attacks against the hook repositories.
 
 These hooks automatically run [Prettier](https://prettier.io/) to format your files, and check all YAML files with [yamllint](https://yamllint.readthedocs.io/en/stable/integration.html#integration-with-pre-commit). The [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/precommit_usage.html) hook validates Task files.
 
