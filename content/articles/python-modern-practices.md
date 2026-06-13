@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2026-06-12T23:19:00+01:00"
+date = "2026-06-13T07:54:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -15,9 +15,11 @@ tags = ["python"]
 
 Instead of manually installing Python on to your development systems, use tools that provide copies of Python on demand. This means that you can choose a Python version for each of your projects, and upgrade projects to new versions of Python later without interfering with other tools and projects that use Python.
 
-The official [Python Install Manager](https://docs.python.org/dev/using/windows.html) for Microsoft Windows does this. It supports multiple Python versions, and you can use the `py.exe` tool to choose which version of Python to run. Version manager tools like [pyenv](https://github.com/pyenv/pyenv) also allow you to switch between different versions of Python at will, as well as providing the defined version for each of your projects. I provide a separate [article on using version managers](https://www.stuartellis.name/articles/version-managers/).
+The official [Python Install Manager](https://docs.python.org/dev/using/windows.html) for Microsoft Windows does this. It supports multiple Python versions, and you can use the `py.exe` tool to choose which version of Python to run.
 
-Modern [project development tools](#use-a-project-tool) like `uv` can install copies of Python as needed, in addition to their other features. They do this by using [standalone builds](https://github.com/astral-sh/python-build-standalone), which are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project. These standalone builds have [some limitations](https://gregoryszorc.com/docs/python-build-standalone/main/quirks.html) that are not present with other copies of Python.
+Version manager tools like [pyenv](https://github.com/pyenv/pyenv) also allow you to switch between different versions of Python at will, as well as providing the defined version for each of your projects. I provide a separate [article on using version managers](https://www.stuartellis.name/articles/version-managers/), such as [mise](https://www.stuartellis.name/articles/mise-en-place/).
+
+In most cases, you should use a modern [project development tool](#use-a-project-tool) like `uv` for your work. These can install copies of Python as needed, in addition to their other features. They do this by using [standalone builds](https://github.com/astral-sh/python-build-standalone), which are modified versions of Python that are maintained by [Astral](https://astral.sh/), not the Python project. These standalone builds have [some limitations](https://gregoryszorc.com/docs/python-build-standalone/main/quirks.html) that are not present with other copies of Python.
 
 > If you use [Development Containers](https://containers.dev/) you define a complete environment for a software project, which means that the project will always have a separate installation of Python. Development containers are a feature of Visual Studio Code and Jetbrains IDEs.
 
@@ -81,15 +83,15 @@ uv run my_script.py
 
 > Avoid using the `python` or `py` commands to run single-file scripts. Python interpreters do not support metadata blocks and cannot manage dependencies.
 
-A Python script should be a single file that you have created to run on computers that are used for development. When you need anything more than this, [create a Python project](#use-a-project-tool). To minimize complexity, you can use the [flat project layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/) for applications. The project configuration will enable you to manage the code and dependencies, as well as providing support for [packaging applications for distribution to other systems](#plan-for-distributing-your-work).
+A Python script should be a single file that you have created to run on computers that are used for development. When you need anything more than this, [create a Python project](#use-a-project-tool). To minimize complexity, you can use the [flat project layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/) for simple applications. The project configuration will enable you to manage the code and dependencies, as well as providing support for [packaging applications for distribution to other systems](#plan-for-distributing-your-work).
 
-> By default, the `init` feature of `uv` creates Python projects with the flat layout.
+> By default, the `init` feature of `uv` creates Python projects with the flat layout. If you use Poetry, you need to use the `--flat` option with `poetry new` to create flat layout projects.
 
 Avoid using a [shebang line](https://www.datacamp.com/tutorial/python-shebang) for your Python scripts unless you have a specific need to do so. You can add a shebang line to a Python script file to tell operating systems to to run the script by using the tool that is specified by the shebang. The script file itself must be marked as executable for a shebang to work, and this is a security risk because the content of the script could be changed or replaced later. A shebang can also tie the script to a specific tool.
 
 ### Running Python Tools
 
-Use the [pipx run](https://pipx.pypa.io/stable/#walkthrough-running-an-application-in-a-temporary-virtual-environment) feature of _pipx_ for most Python applications, or [uvx](https://docs.astral.sh/uv/#tool-management), which is the equivalent command for _uv_. These download the application to a cache and run it. For example, these commands download and run the latest version of [bpytop](https://github.com/aristocratos/bpytop), a system monitoring tool:
+You can use the [pipx run](https://pipx.pypa.io/stable/#walkthrough-running-an-application-in-a-temporary-virtual-environment) feature of _pipx_ to run most Python applications, or [uvx](https://docs.astral.sh/uv/#tool-management), which is the equivalent command for _uv_. These download the application to a cache and run it. For example, these commands download and run the latest version of [bpytop](https://github.com/aristocratos/bpytop), a system monitoring tool:
 
 ```shell
 pipx run bpytop
@@ -110,6 +112,8 @@ pipx install posting
 ```shell
 uv tool install posting
 ```
+
+> Use OCI container images to run Python command-line tools and applications in controlled environments, such as servers, cloud infrastructure and CI systems. Containers provide consistent, isolated environments for each task that they run.
 
 ## Application Design
 
@@ -152,15 +156,17 @@ Always plan for how you will distribute the work that you produce. The standard 
 - OCI container images
 - Executable files
 
-The simplest method of distribution is to use a version control system, such as Git. If you store Python scripts and projects in version control, anyone with access to the repository can get a copy of this code. They will need to have a version control tool and Python tools installed on a system to run this code.
+The simplest method of distribution is to use a version control system, such as Git. If you store Python scripts and projects in a version control repository, anyone with access to the repository can get a copy of this code. They will need to have a version control tool and Python tools installed on a system.
 
-Python [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages enable people to use your code with the operating systems and tools that they prefer to work with, rather than requiring that each system has developer tools installed. Project tools like Poetry include support for building wheel packages. The _wheel_ format is for sharing between Python installations. You can use _wheel_ packages to publish tools for other developers, as well as libraries for use in other Python projects. If you publish your Python application as a _wheel_, other people can run it with the _pipx_ and _uv_ tools, as explained in the section on [helpers](#running-python-tools).
+Use [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages to publish projects to the [Python Package Index](https://pypi.org/) and equivalent services. Project tools like Poetry include support for building wheel packages. Their main purpose is to distribute code libraries, but you can also use wheel packages to publish tools and applications for other developers. If your Python application as a _wheel_, other people can run it with the _pipx_ and _uv_ tools, as explained in the section on [helpers](#running-python-tools).
 
 > Read the [Python Packaging User Guide](https://packaging.python.org/en/latest/flow/) for more about wheel packages.
 
 For other cases, use extra tools to package your work into a format that includes a copy of the required version of Python as well as your code and the dependencies. This ensures that your code runs with the expected version of Python, and that it has the correct version of each dependency.
 
-OCI container images can run on any system that has a container runtime such as Docker, Podman or Apple Container, as well as on cloud infrastructure. Use OCI container images to package Python applications that are intended to be run by a service, such as Docker or a workflow engine, especially if the application provides a network service itself, such as a Web application. You can build OCI container images with [buildah](https://buildah.io/), Docker and other tools to include a copy of Python, along with your code and the required dependencies. Consider using the [official Python container image](https://hub.docker.com/_/python) as the base image for your application container images.
+OCI container images will run on any system that has a container runtime such as Docker, Podman, Apple Container or WSL container, as well as on cloud infrastructure You can build OCI container images to include a copy of Python, along with your code and the required dependencies. Use OCI container images to package applications that are intended to be run in controlled environments, such as servers, cloud infrastructure, and CI systems. You can use Podman, [buildah](https://buildah.io/) or Docker to create OCI images.
+
+> Consider using the [official Python container image](https://hub.docker.com/_/python) as the base image for your application container images.
 
 Use [PyInstaller](https://pyinstaller.org/), [Briefcase](https://briefcase.beeware.org/en/stable/) or [Nuitka](https://nuitka.net) to compile desktop and command-line applications as a single executable file. Each executable file includes a copy of Python, along with your code and the required dependencies. Each executable will only run on the type of operating system and CPU that it was compiled to use. For example, an executable for Microsoft Windows on Intel-compatible machines will work on all editions of Windows, but it will not run on macOS. Optionally, you can put executables in an operating system package to work with package management tools, such as an RPM or DEB package for Linux.
 
@@ -170,7 +176,7 @@ Use [PyInstaller](https://pyinstaller.org/), [Briefcase](https://briefcase.beewa
 
 > If you are building a command-line application, you can use the [flat project layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/). This is the default layout for projects that are created by `uv`.
 
-When you build new command-line applications, consider using that a framework or library that supports type hints. Both [Typer](https://typer.tiangolo.com/) and the [Cyclopts](https://cyclopts.readthedocs.io/en/latest/) use type hints and are built for modern Python.
+When you build new command-line applications, consider using a framework or library that supports type hints. Both [Typer](https://typer.tiangolo.com/) and [Cyclopts](https://cyclopts.readthedocs.io/en/latest/) use type hints and are built for modern Python.
 
 > Many existing projects still use the older [Click](https://click.palletsprojects.com/) framework. Typer extends Click.
 
@@ -180,7 +186,7 @@ To add a command-line interface to a script or library, use the [argparse](https
 
 Use environment variables for options that must be passed to an application each time that it starts, especially secrets like API tokens. If your application is a command-line tool, you should also provide options that can override the environment variables.
 
-This approach enables you to set the variables in whatever way is appropriate for the current environment without changing the code. For example, you can use a tool like [fnox](https://fnox.jdx.dev/) or a service like [Infisical](https://infisical.com/) to manage environment variables in development, and configure the orchestration system that runs the code on cloud services to set the same variables as needed.
+This approach enables you to set the variables in whatever way is appropriate for the current environment without changing the code. For example, you can use a tool like [fnox](https://fnox.jdx.dev/) or a service like [Infisical](https://infisical.com/) to manage environment variables in development, and then configure the orchestration system that runs the code on cloud services to set the same variables as needed.
 
 Use [Pydantic Settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) when you need a full configuration system that supports files, environment variables and getting credentials from remote services. The [python-dotenv](https://saurabh-kumar.com/python-dotenv/) library only supports environment variables that are defined in files.
 
@@ -206,6 +212,16 @@ Avoid using [urllib.request](https://docs.python.org/3/library/urllib.request.ht
 
 ## Developing Python Projects
 
+### Use Type Hinting
+
+Consider using type hints in any significant application. Once you add type hints, type checkers like [Pyrefly](https://pyrefly.org/) and [pyright](https://microsoft.github.io/pyright/) can check your code as you develop it. If you maintain a shared library, use type hints, because other developers that use your library will then see the type information in their code editors.
+
+Code editors automatically read type hints to display information about the code that you are working with. The [official Python extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python) for Microsoft Visual Studio Code provides Pylance for type checking, which is built on pyright. The Zed editor includes a variant of pyright called [basedpyright](https://docs.basedpyright.com/).
+
+Use Git hooks to run the type checker before each commit to source control. You should also run the type checker with your CI system, to validate that the code in your project is consistent.
+
+> The [mypy](http://www.mypy-lang.org/) tool is the oldest implementation of type checking for Python. Newer implementations of type checking provide faster and more accurate results. If you use `mypy`, add the [plugin for Pydantic](https://docs.pydantic.dev/latest/integrations/mypy/) to improve the integration between mypy and Pydantic.
+
 ### Format Your Code
 
 Use a formatting tool with a plugin to your editor, so that your code is automatically formatted to a consistent style.
@@ -222,21 +238,9 @@ Consider using [Ruff](https://docs.astral.sh/ruff/) for linting Python code. Bef
 
 Use Git hooks to run the linting tool before each commit to source control. You should also run the linting tool with your CI system, so that it rejects any code that does not meet the standards for your project.
 
-### Use Type Hinting
-
-Current versions of Python support type hinting. Consider using type hints in any critical application. If you develop a shared library, use type hints.
-
-Once you add type hints, type checkers like [Pyrefly](https://pyrefly.org/) and [pyright](https://microsoft.github.io/pyright/) can check your code as you develop it. Code editors will read type hints to display information about the code that you are working with. You can also add a type checker to your Git hooks and CI to validate that the code in your project is consistent.
-
-> The [mypy](http://www.mypy-lang.org/) tool is the oldest implementation of type checking for Python. Newer implementations of type checking provide faster and more accurate results.
-
-If you use [attrs](https://www.attrs.org/en/stable/index.html) or [Pydantic](https://docs.pydantic.dev/) in your application, they can work with type hints. If you use `mypy`, add the [plugin for Pydantic](https://docs.pydantic.dev/latest/integrations/mypy/) to improve the integration between mypy and Pydantic.
-
-> [PEP 484 - Type Hints](https://peps.python.org/pep-0484/) and [PEP 526 – Syntax for Variable Annotations](https://peps.python.org/pep-0526/) define the notation for type hinting.
-
 ### Test with pytest
 
-Use [pytest](http://pytest.org) for testing. Use the _unittest_ module in the standard library for situations where you cannot add _pytest_ to the project.
+Use [pytest](http://pytest.org) for testing, rather than the _unittest_ module in the Python standard library. The pytest framework is the standard for testing with Python. Many other tools and systems will integrate with it.
 
 By default, _pytest_ runs tests in the order that they appear in the test code. To avoid issues where tests interfere with each other, always add the [pytest-randomly](https://pypi.org/project/pytest-randomly/) plugin to _pytest_. This plugin causes _pytest_ to run tests in random order. Randomizing the order of tests is a common good practice for software development.
 
