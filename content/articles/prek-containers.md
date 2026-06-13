@@ -69,9 +69,9 @@ prek install
 
 To add a hook that uses a container image, you can either specify a remote hook configuration that uses containers, or define the hook directly in the configuration file. Many Open Source projects provide remote hook configurations for the tools that they produce.
 
-If possible, avoid using remote hook configurations. Instead, create hooks in your `prek` configuration files. This enables you to have full control over the configuration of the hook and which container image it runs.
-
 > Once you create a configuration file with remote Git hooks, run `prek auto-update --freeze`. This replaces the version `refs` of any remote hooks with hashes, which protects you from supply-chain attacks against the remote hook repositories.
+
+If possible, avoid using remote hook configurations altogether. Instead, create hooks in your `prek` configuration files. This enables you to have full control over the configuration of the hook and which container image it runs.
 
 For example, you may want to use a hook to detect secrets in code, and decide to use [gitleaks](https://gitleaks.io/) for this. The Gitleaks project provides three hooks in the [remote hook configuration](https://raw.githubusercontent.com/gitleaks/gitleaks/refs/heads/master/.pre-commit-hooks.yaml) that it publishes:
 
