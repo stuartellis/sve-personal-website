@@ -23,7 +23,7 @@ To use Buildah with GitLab, you will need a `.gitlab-ci.yml` file in the root di
 
 Buildah can build container images from command-line instructions, but we usually provide a configuration file in the `Dockerfile` format. By convention this file should be called `Containerfile`. See below for an example.
 
-Once an image has been publisheded to the container registry for the project, it is visible in the Web interface for GitLab. To view a project container registry in the GitLab Web interface, go to the project and select _Deploy > Container registry_.
+Once an image has been pushed to the container registry for the project, it is visible in the Web interface for GitLab. To view a project container registry in the GitLab Web interface, go to the project and select _Deploy > Container registry_.
 
 ### Example .gitlab-ci.yml for GitLab
 
@@ -54,18 +54,23 @@ build-image-amd64:
 
 > A Containerfile uses the Dockerfile format. The name indicates that this file is intended by used by standards-compliant tools, and does not include any features that are specific to Docker.
 
-This example file creates an Alpine Linux container that includes [OpenTofu](https://opentofu.org/) and [Terramate](https://terramate.io/docs/):
-
 ```dockerfile
-FROM ghcr.io/opentofu/opentofu:1.12.0-minimal AS tofu
-FROM ghcr.io/terramate-io/terramate:0.17.1 AS terramate
+FROM node:24-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
 
-FROM alpine:3.23
+FROM node:24-alpine
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./
 
-RUN apk update && apk upgrade --no-cache && apk add --no-cache git
-
-COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
-COPY --from=terramate /usr/local/bin/terramate /usr/local/bin/terramate
+EXPOSE 3000
+USER node
+CMD ["node", "dist/server.js"]
 ```
 
 ## More on Container Image Formats
