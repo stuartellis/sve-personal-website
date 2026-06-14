@@ -1,7 +1,7 @@
 +++
 title = "Setting Up Fedora Workstation for Software Development"
 slug = "fedora-workstation-setup"
-date = "2025-03-22T09:18:00+00:00"
+date = "2026-06-14T01:11:00+01:00"
 description = "Setting up a Fedora Workstation for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
@@ -64,15 +64,9 @@ Useful software that you can install as Flatpaks include:
 Fedora includes the command-line editor [nano](https://www.nano-editor.org/) and a small version of [vim](http://www.vim.org/) with a limited set of features, as well as a
 desktop text editor with basic support for programming. Add the code editors or IDEs that you would prefer to use.
 
-If you do not have a preferred editor, consider using [Zed](https://zed.dev/) or a version of [Visual Studio Code](https://code.visualstudio.com). Read the next section for more details on Visual Studio Code.
+If you do not have a preferred editor, consider using [Zed](https://zed.dev/) or a version of [Visual Studio Code](https://code.visualstudio.com). These are powerful desktop editors for programming, with built-in support for version control, debugging and working with LLMs. Their large range of extensions enable them to work with every popular programming language and framework. They are available free of charge.
 
-To use a modern code editor that works like Vim, install [Neovim](https://neovim.io). The default configuration for Neovim follows best practices for Vim, but you can customise it as you wish.
-
-#### Visual Studio Code
-
-[Visual Studio Code](https://code.visualstudio.com) is a powerful desktop editor for programming, with built-in support for version control and debugging. The large range of extensions for Visual Studio Code enable it to work with every popular programming language and framework. It is available free of charge.
-
-The Microsoft releases of Visual Studio Code are proprietary software with telemetry enabled by default, and download extensions from a proprietary Microsoft app store. if you have issues or concerns about the Microsoft releases, use the RPM packages that are provided by the [vscodium](https://vscodium.com) project.
+The Microsoft releases of Visual Studio Code are proprietary software with telemetry enabled by default, and download extensions from a proprietary Microsoft app store. if you have issues or concerns about the Microsoft releases, use the packages that are provided by the [vscodium](https://vscodium.com) project.
 
 {{< alert >}}
 Extensions may fail if you use the [Visual Studio Code OSS](https://flathub.org/apps/details/com.visualstudio.code.oss) Flatpak.
@@ -123,10 +117,10 @@ To keep your projects tidy, I would recommend following these guidelines. They m
 slightly fussy, but they pay off when you have many projects, some of which are on
 different version control hosts.
 
-First create a top-level directory with a short, generic name like _repos_. For each repository host, create a subdirectory in _repos_. Add a subdirectory that matches your username. The final directory structure looks like this:
+First, create a top-level directory with the name `Projects`. For each repository host, create a subdirectory in `Projects`. Add a subdirectory that matches your username. The final directory structure looks like this:
 
 ```text
-repos/
+Projects/
     codeberg.org/
         my-codeberg-username/
             a-project/
@@ -136,17 +130,21 @@ repos/
             another-project/
 ```
 
+> _Projects_ is a recognised directory name that will be used by Open Source tools, in the same way that _Downloads_ and _Music_ are standard locations.
+
 ### Creating SSH Keys
 
 You may use SSH to access Git repositories or remote UNIX systems. Fedora includes the standard OpenSSH suite of tools.
 
-To create an SSH key, run the _ssh-keygen_ command in a terminal window. For example:
+To create an SSH key with OpenSSH, run the _ssh-keygen_ command in a terminal window. For example:
 
 ```shell
 ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
 ```
 
 Create a separate SSH key for each set of systems that you access.
+
+> OpenSSH stores your SSH keys in the _.ssh_ directory within your home directory. For security, consider replacing the OpenSSH agent with a SSH key agent that stores your keys in an encrypted store. For example, the Bitwarden and 1Password password managers can hold SSH keys as well as passwords, and provide SSH key agents.
 
 ## Setting Up Homebrew
 
@@ -166,6 +164,16 @@ To update the index of available packages, run this command in a terminal window
 brew update
 ```
 
+## Managing Credentials and Environment Variables
+
+You may frequently need to use API tokens and other sensitive credentials, keeping them secure whilst making them available to development tools when they are required. Various tools enable you to store credentials and set them as environment variables as needed. One of the most powerful of these is [fnox](https://fnox.jdx.dev/), which can use a range of local and remote providers for credentials.
+
+To install _fnox_ with Homebrew, run this command in a terminal window:
+
+```shell
+brew install fnox
+```
+
 ## Working with Programming Languages
 
 Avoid using the Fedora packages for programming languages. Instead, use [version manager tools](https://www.stuartellis.name/articles/version-managers/). These enable you to install the correct version of the required programming language and dependencies for each of your projects. Use Homebrew to install version manager tools.
@@ -182,7 +190,7 @@ Fedora Workstation automatically has support for running containers with [Podman
 
 To use a graphical interface for working with containers, add [Podman Desktop](https://podman-desktop.io) to your system. To install Podman Desktop, go to _Software_, search for _Podman Desktop_, select the entry from the list, and choose _Install_.
 
-To create container images, install [buildah](https://buildah.io). This command-line tool provides the same features as Docker for building container images.
+> [Docker Desktop](https://www.docker.com/products/docker-desktop/) is the most well-known tool for working with container images. It is proprietary software, and the license terms require you to purchase a subscription for commercial use in a larger organization. Podman Desktop provides equivalent features to Docker Desktop.
 
 ### Using Podman
 

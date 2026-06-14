@@ -1,7 +1,7 @@
 +++
 title = "How to Set up an Apple Mac for Software Development"
 slug = "mac-setup"
-date = "2025-03-22T09:17:00+00:00"
+date = "2026-06-14T01:10:00+01:00"
 description = "Setting up an Apple Mac for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "macos", "golang", "java", "javascript", "python"]
@@ -103,7 +103,7 @@ The first step is to install the _Command Line Tools for Xcode_. Once you have i
 
 ### Getting Xcode
 
-Apple now provide the Xcode suite as a free download from the App Store. To install the Command Line Tools, install Xcode from the App Store, then open a Terminal window and enter the following command:
+Apple now provide the Xcode suite as a free download from the App Store. To install the Command Line Tools, install Xcode from the App Store, then open a terminal window and enter the following command:
 
 ```shell
 xcode-select --install
@@ -156,7 +156,7 @@ To enable auto completion, edit the file _.zshrc_ in your home directory to incl
 autoload bashcompinit && bashcompinit
 ```
 
-Close all of the Terminal windows. Every new Terminal window will support autocompletion.
+Close any terminal windows that you currently have open. Every new terminal window will support autocompletion.
 
 To use auto completion, type the name of the command, and press the Tab key on your keyboard. You will see a list of possible completions. Press the Tab key to cycle through the completions, and press the Enter key to accept a completion.
 
@@ -200,10 +200,10 @@ To keep your projects tidy, I would recommend following these guidelines. They m
 slightly fussy, but they pay off when you have many projects, some of which are on
 different version control hosts.
 
-First create a top-level directory with a short name like _repos_. For each repository host, create a subdirectory in _repos_. Add a subdirectory that matches your username. The final directory structure looks like this:
+First, create a top-level directory with the name _Projects_. For each repository host, create a subdirectory in _Projects_. Add a subdirectory that matches your username. The final directory structure looks like this:
 
 ```text
-repos/
+Projects/
     codeberg.org/
         my-codeberg-username/
             a-project/
@@ -213,17 +213,13 @@ repos/
             another-project/
 ```
 
+> _Projects_ is a recognised directory name that will be used by Open Source tools, in the same way that _Downloads_ and _Music_ are standard locations.
+
 ### Text Editors
 
 Installations of macOS include a command-line version of [vim](http://www.vim.org/) and TextEdit, a desktop text editor. TextEdit is designed for light-weight word processing, and it has no support for programming. Add the code editors or IDEs that you would prefer to use.
 
-If you do not have a preferred editor, consider using [Zed](https://zed.dev/) or a version of [Visual Studio Code](https://code.visualstudio.com). Read the next section for more details on Visual Studio Code.
-
-To use a modern code editor that works like Vim, install [Neovim](https://neovim.io). The default configuration for Neovim follows best practices for Vim, but you can customise it as you wish.
-
-#### Visual Studio Code
-
-[Visual Studio Code](https://code.visualstudio.com) is a powerful desktop editor for programming, with built-in support for version control and debugging. The large range of extensions for Visual Studio Code enable it to work with every popular programming language and framework. It is available free of charge.
+If you do not have a preferred editor, consider using [Zed](https://zed.dev/) or a version of [Visual Studio Code](https://code.visualstudio.com). These are powerful desktop editors for programming, with built-in support for version control, debugging and working with LLMs. Their large range of extensions enable them to work with every popular programming language and framework. They are available free of charge.
 
 The Microsoft releases of Visual Studio Code are proprietary software with telemetry enabled by default, and download extensions from a proprietary Microsoft app store. if you have issues or concerns about the Microsoft releases, use the packages that are provided by the [vscodium](https://vscodium.com) project.
 
@@ -249,13 +245,25 @@ mkdir $HOME/.ssh
 chmod 0700 $HOME/.ssh
 ```
 
-To create an SSH key, run the _ssh-keygen_ command in a terminal window. For example:
+To create an SSH key in the _.ssh_ directory, run the _ssh-keygen_ command in a terminal window. For example:
 
 ```shell
 ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
 ```
 
 Create a separate SSH key for each set of systems that you access.
+
+> For security, consider replacing the OpenSSH agent with a SSH key agent that stores your keys in an encrypted store. For example, the Bitwarden and 1Password password managers can hold SSH keys as well as passwords, and provide SSH key agents.
+
+### Managing Credentials and Environment Variables
+
+You may frequently need to use API tokens and other sensitive credentials, keeping them secure whilst making them available to development tools when they are required. Various tools enable you to store credentials and set them as environment variables as needed. One of the most powerful of these is [fnox](https://fnox.jdx.dev/), which can use a range of local and remote providers for credentials.
+
+To install _fnox_ with Homebrew, run this command in a terminal window:
+
+```shell
+brew install fnox
+```
 
 ## Programming Languages
 
@@ -267,7 +275,7 @@ If possible, avoid using Homebrew itself to install programming languages. Homeb
 
 The copy of Python 3 that is supplied with macOS is never the latest version of Python. Use either [mise](https://mise.jdx.dev/) or [pyenv](https://github.com/pyenv/pyenv) to install newer versions of Python. Both of these tools enable you to use multiple versions of Python.
 
-To install pyenv with Homebrew, run this command in a terminal window:
+To install _pyenv_ with Homebrew, run this command in a terminal window:
 
 ```shell
 brew install pyenv
@@ -421,6 +429,22 @@ brew install tenv cosign
 ```
 
 Always install _cosign_ along with _tenv_. If _cosign_ is present, _tenv_ automatically uses it to carry out signature verification on the binaries that it downloads.
+
+## Working with Containers
+
+[Docker Desktop](https://www.docker.com/products/docker-desktop/) is the most well-known tool for working with container images. It is proprietary software, and the license terms require you to purchase a subscription for commercial use in a larger organization. Consider using the Podman tools instead. These are Open Source products that are maintained by a project of the Cloud Native Computing Foundation.
+
+For a graphical interface for working with containers, add [Podman Desktop](https://podman-desktop.io) to your system. It provides equivalent features to Docker Desktop.
+
+[Podman](https://podman.io/) itself provides the features of the Docker command-line tool for running container images. By design, Podman accepts the same syntax as the `docker` command-line tool, and will read Dockerfiles, so that is a drop-in replacement. The [Usage Transfer](https://github.com/podman-container-tools/podman/blob/main/transfer.md) page lists Docker commands, and the equivalents for Podman.
+
+To install the Podman command-line tool with Homebrew, enter this command in a terminal window:
+
+```shell
+brew install podman
+```
+
+> Apple are now developing [Container](https://opensource.apple.com/projects/container/), a command-line tool for working with container images. This tool is not yet shipped as part of macOS.
 
 ## Databases
 
