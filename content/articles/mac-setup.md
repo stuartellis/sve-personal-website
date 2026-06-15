@@ -1,7 +1,7 @@
 +++
 title = "How to Set up an Apple Mac for Software Development"
 slug = "mac-setup"
-date = "2026-06-14T01:10:00+01:00"
+date = "2026-06-16T00:22:00+01:00"
 description = "Setting up an Apple Mac for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "macos", "golang", "java", "javascript", "python"]
@@ -80,7 +80,7 @@ Set a password to stop access to the
 [Recovery](https://support.apple.com/en-us/HT201314) mode. Otherwise, any malicious
 individual can change the firmware settings to boot from a disc or device of their
 choosing. If you did not enable File Vault, then the attacker will have complete access
-to all of the files on the system.
+to the files on the system.
 
 [Apple Knowledge Base article HT204455](https://support.apple.com/en-gb/HT204455)
 provides full details.
@@ -114,19 +114,18 @@ If you want to install just the Command Line Tools, you can download a package f
 ### Setting Up Homebrew
 
 [Homebrew](http://brew.sh/) provides a package management system for macOS. It enables you
-to quickly install the tools and libraries that you need and regularly update all of them. Always use Homebrew for tools that have frequently have new releases, like the [AWS CLI](https://aws.amazon.com/cli/) and [Trivy](https://aquasecurity.github.io/trivy).
+to quickly install the tools and libraries that you need and regularly update them. Always use Homebrew for tools that have frequently have new releases, like the [AWS CLI](https://aws.amazon.com/cli/).
 
 To install Homebrew, download and open the latest PKG file from [the Releases on GitHub](https://github.com/Homebrew/brew/releases/latest).
 
-You should also amend your PATH, so that the versions of tools that are installed with
-Homebrew take precedence over others. To do this, edit the file _.zshrc_ in
+You should also amend your PATH, so that the versions of tools that Homebrew provides will take precedence over others. To do this, edit the file _.zshrc_ in
 your home directory to include this line:
 
 ```shell
 export PATH="/usr/local/bin:/usr/local/sbin:~/bin:$PATH"
 ```
 
-You need to close all of your terminal windows for this change to take effect.
+You need to close your terminal windows for this change to take effect.
 
 To check that Homebrew is installed correctly, run this command in a terminal window:
 
@@ -160,6 +159,39 @@ Close any terminal windows that you currently have open. Every new terminal wind
 
 To use auto completion, type the name of the command, and press the Tab key on your keyboard. You will see a list of possible completions. Press the Tab key to cycle through the completions, and press the Enter key to accept a completion.
 
+### Managing Credentials and Environment Variables
+
+You may frequently need to use API tokens and other sensitive credentials, keeping them secure whilst making them available to development tools. Various tools enable you to store credentials and set them as environment variables as needed. One of the most powerful of these is [fnox](https://fnox.jdx.dev/), which can use a range of local and remote providers for credentials.
+
+To install _fnox_ with Homebrew, run this command in a terminal window:
+
+```shell
+brew install fnox
+```
+
+### Managing SSH
+
+You may use SSH to access Git repositories or remote UNIX systems. macOS includes the standard OpenSSH suite of tools.
+
+OpenSSH requires a _.ssh_ directory within your home directory. To create this directory, run these commands in a terminal window:
+
+```shell
+mkdir $HOME/.ssh
+chmod 0700 $HOME/.ssh
+```
+
+For security, consider replacing the OpenSSH agent with an SSH key agent that stores your keys in an encrypted store. For example, the KeePassXC, Bitwarden, Proton Pass and 1Password password managers can hold SSH keys as well as passwords, and provide SSH key agents.
+
+If you use the OpenSSH key agent, use the _ssh-keygen_ command to create new SSH keys. For example:
+
+```shell
+ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
+```
+
+> The OpenSSH key agent uses the _.ssh_ directory to store your keys.
+
+Use a separate SSH key for each set of systems that you access.
+
 ### Installing the Git Version Control System
 
 The Xcode Command Line Tools include a copy of [Git](http://www.git-scm.com/), but this will be out of date.
@@ -171,7 +203,7 @@ brew install git
 ```
 
 If you do not use Homebrew, go to the [Web site](http://www.git-scm.com/) and follow the
-link for _Other Download Options_ to obtain a macOS disk image. Open your downloaded
+link for _Other Download Options_ to get a macOS disk image. Open your downloaded
 copy of the disk image and run the enclosed installer in the usual way, then dismount
 the disk image.
 
@@ -186,13 +218,32 @@ git config --global user.email "you@your-domain.com"
 The _global_ option means that the setting will apply to every repository that you work
 with in the current user account.
 
-To enable colors in the output, which can be very helpful, enter this command:
+To enable colors in the output, enter this command:
 
 ```shell
 git config --global color.ui auto
 ```
 
 > Enable commit signing in Git before you work on shared projects. Follow the steps in [this article on signing code commits](https://www.stuartellis.name/articles/signing-code-commits/) to enable Git to sign your commits with a GPG key.
+
+### Text Editors
+
+Installations of macOS include a command-line version of [vim](http://www.vim.org/) and TextEdit, a desktop text editor. TextEdit is designed for light-weight word processing, and it has no support for programming. Add the code editors or IDEs that you would prefer to use.
+
+If you do not have a preferred editor, consider using [Zed](https://zed.dev/) or a version of [Visual Studio Code](https://code.visualstudio.com). These powerful desktop editors for programming, with built-in support for version control, debugging and working with LLMs. Their large range of extensions enable them to work with every popular programming language and framework. They are available free of charge.
+
+The Microsoft releases of Visual Studio Code are proprietary software with telemetry enabled by default, and download extensions from a proprietary Microsoft app store. if you have issues or concerns about the Microsoft releases, use [vscodium](https://vscodium.com) instead.
+
+#### Setting The EDITOR Environment Variable
+
+Whichever text editor you choose, remember to set the EDITOR environment variable in
+your _~/.zshrc_ file, so that this editor is automatically invoked by command-line
+tools like your version control system. For example, put this line in your profile to
+make Visual Studio Code the favored text editor:
+
+```shell
+export EDITOR="code"
+```
 
 ### Setting Up A Directory Structure for Projects
 
@@ -215,57 +266,7 @@ Projects/
 
 > _Projects_ is a recognised directory name that will be used by Open Source tools, in the same way that _Downloads_ and _Music_ are standard locations.
 
-### Text Editors
-
-Installations of macOS include a command-line version of [vim](http://www.vim.org/) and TextEdit, a desktop text editor. TextEdit is designed for light-weight word processing, and it has no support for programming. Add the code editors or IDEs that you would prefer to use.
-
-If you do not have a preferred editor, consider using [Zed](https://zed.dev/) or a version of [Visual Studio Code](https://code.visualstudio.com). These are powerful desktop editors for programming, with built-in support for version control, debugging and working with LLMs. Their large range of extensions enable them to work with every popular programming language and framework. They are available free of charge.
-
-The Microsoft releases of Visual Studio Code are proprietary software with telemetry enabled by default, and download extensions from a proprietary Microsoft app store. if you have issues or concerns about the Microsoft releases, use the packages that are provided by the [vscodium](https://vscodium.com) project.
-
-#### Setting The EDITOR Environment Variable
-
-Whichever text editor you choose, remember to set the EDITOR environment variable in
-your _~/.zshrc_ file, so that this editor is automatically invoked by command-line
-tools like your version control system. For example, put this line in your profile to
-make Visual Studio Code the favored text editor:
-
-```shell
-export EDITOR="code"
-```
-
-### Creating SSH Keys
-
-You may use SSH to access Git repositories or remote UNIX systems. macOS includes the standard OpenSSH suite of tools.
-
-OpenSSH stores your SSH keys in a _.ssh_ directory. To create this directory, run these commands in a terminal window:
-
-```shell
-mkdir $HOME/.ssh
-chmod 0700 $HOME/.ssh
-```
-
-To create an SSH key in the _.ssh_ directory, run the _ssh-keygen_ command in a terminal window. For example:
-
-```shell
-ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
-```
-
-Create a separate SSH key for each set of systems that you access.
-
-> For security, consider replacing the OpenSSH agent with a SSH key agent that stores your keys in an encrypted store. For example, the Bitwarden and 1Password password managers can hold SSH keys as well as passwords, and provide SSH key agents.
-
-### Managing Credentials and Environment Variables
-
-You may frequently need to use API tokens and other sensitive credentials, keeping them secure whilst making them available to development tools when they are required. Various tools enable you to store credentials and set them as environment variables as needed. One of the most powerful of these is [fnox](https://fnox.jdx.dev/), which can use a range of local and remote providers for credentials.
-
-To install _fnox_ with Homebrew, run this command in a terminal window:
-
-```shell
-brew install fnox
-```
-
-## Programming Languages
+## Working with Programming Languages
 
 Avoid using the installations of programming languages that are included in macOS. Instead, use [version manager tools](https://www.stuartellis.name/articles/version-managers/). These enable you to use the correct versions and dependencies for each project that you work on. Follow the advice in the sections below to install version managers for popular programming languages with Homebrew.
 

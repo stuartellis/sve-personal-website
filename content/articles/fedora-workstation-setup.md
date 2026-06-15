@@ -1,7 +1,7 @@
 +++
 title = "Setting Up Fedora Workstation for Software Development"
 slug = "fedora-workstation-setup"
-date = "2026-06-14T01:11:00+01:00"
+date = "2026-06-16T00:23:00+01:00"
 description = "Setting up a Fedora Workstation for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "linux", "fedora", "golang", "javascript", "python"]
@@ -17,9 +17,7 @@ A guide to setting up [Fedora Workstation](https://fedoraproject.org/workstation
 Enable disk encryption when prompted during the setup process.
 
 Disk encryption is the only protection against anyone with physical access to your
-computer. All other security measures will be completely bypassed if someone with
-physical access either restarts your computer with a bootable pen drive, or removes the
-internal hard drive and attaches it to another computer.
+computer. Someone with physical access bypass all other security measures by either restarting your computer with a bootable pen drive, or removing the internal hard drive and attaching it to another computer.
 
 ### Set a Password for UEFI or BIOS
 
@@ -31,7 +29,7 @@ an administrator password to protect the firmware menus.
 ## Do This First
 
 Log in once, run the Software utility, and ensure that the operating system has
-the latest updates. After all of the updates have been applied, restart the computer.
+the latest updates. After the updates have completed, restart the computer.
 
 ## User Settings
 
@@ -43,7 +41,7 @@ Select _Settings \> Privacy & Security_. Check these settings:
 
 ## Installing Desktop Applications with Flatpak
 
-[Flatpak](https://flatpak.org) is now the standard for desktop software packages on Linux. Flatpak offers newer versions of products than Fedora itself, as well as providing software that is not available from Fedora RPM repositories, such as Slack.
+[Flatpak](https://flatpak.org) is now the standard for desktop software packages on Linux. Flatpak offers newer versions of products than Fedora itself. It also provides software that is not available from Fedora RPM repositories, such as Slack.
 
 The Software utility uses the [Flathub](https://flathub.org/) service for Flatpak packages. Software shows both Flatpak and RPM packages for apps. If a Flatpak is available, use that package rather than RPM.
 
@@ -57,22 +55,58 @@ Useful software that you can install as Flatpaks include:
 - [Draw.io](https://www.drawio.com/) for drawing diagrams
 - [Joplin](https://joplinapp.org/) for note-taking
 
-## Setting Up for Development
+## Setting Up Homebrew
 
-### Text Editors
+The [Homebrew](http://brew.sh/) package management system provides the latest versions of tools. Always use Homebrew to install tools that are frequently updated, like the [AWS CLI](https://aws.amazon.com/cli/).
+
+Follow the instructions on the Homebrew site to install it.
+
+To check that Homebrew is installed correctly, run this command in a terminal window:
+
+```shell
+brew doctor
+```
+
+To update the index of available packages, run this command in a terminal window:
+
+```shell
+brew update
+```
+
+## Managing Credentials and Environment Variables
+
+You may frequently need to use API tokens and other sensitive credentials, keeping them secure whilst making them available to development tools when required. Several tools enable you to store credentials and set them as environment variables as needed.
+
+Consider using [fnox](https://fnox.jdx.dev/), which can use a range of local and remote providers for credentials. To install _fnox_ with Homebrew, run this command in a terminal window:
+
+```shell
+brew install fnox
+```
+
+## Managing SSH Keys
+
+You may use SSH to access Git repositories or remote UNIX systems. Fedora includes the standard OpenSSH suite of tools.
+
+For security, consider replacing the OpenSSH agent with an SSH key agent that stores your keys in an encrypted store. For example, the KeePassXC, Bitwarden, Proton Pass and 1Password password managers can hold SSH keys as well as passwords, and provide SSH key agents.
+
+If you use the OpenSSH key agent, use the _ssh-keygen_ command to create new SSH keys. For example:
+
+```shell
+ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
+```
+
+> Use a separate SSH key for each set of systems that you access.
+
+## Text Editors
 
 Fedora includes the command-line editor [nano](https://www.nano-editor.org/) and a small version of [vim](http://www.vim.org/) with a limited set of features, as well as a
 desktop text editor with basic support for programming. Add the code editors or IDEs that you would prefer to use.
 
-If you do not have a preferred editor, consider using [Zed](https://zed.dev/) or a version of [Visual Studio Code](https://code.visualstudio.com). These are powerful desktop editors for programming, with built-in support for version control, debugging and working with LLMs. Their large range of extensions enable them to work with every popular programming language and framework. They are available free of charge.
+If you do not have a preferred editor, consider using [Zed](https://zed.dev/) or a version of [Visual Studio Code](https://code.visualstudio.com). Both of these editors are designed for programming, and have built-in support for version control, debugging and working with LLMs. Their large range of extensions enable them to work with every popular programming language and framework. They are available free of charge.
 
-The Microsoft releases of Visual Studio Code are proprietary software with telemetry enabled by default, and download extensions from a proprietary Microsoft app store. if you have issues or concerns about the Microsoft releases, use the packages that are provided by the [vscodium](https://vscodium.com) project.
+The Microsoft releases of Visual Studio Code are proprietary software with telemetry enabled by default, and download extensions from a proprietary Microsoft app store. If you have issues or concerns about the Microsoft releases, use [vscodium](https://vscodium.com) instead.
 
-{{< alert >}}
-Extensions may fail if you use the [Visual Studio Code OSS](https://flathub.org/apps/details/com.visualstudio.code.oss) Flatpak.
-{{< /alert >}}
-
-#### Neovim
+### Neovim
 
 If you would like a modern Vim editor with a good default configuration, set up Neovim. To install Neovim, enter this command in a terminal window:
 
@@ -80,7 +114,7 @@ If you would like a modern Vim editor with a good default configuration, set up 
 sudo dnf install neovim
 ```
 
-#### Setting The EDITOR Environment Variable
+### Setting The EDITOR Environment Variable
 
 Whichever text editor you choose, remember to set the EDITOR environment variable in
 your _~/.bashrc_ file, so that this editor is automatically invoked by command-line
@@ -91,7 +125,7 @@ make Visual Studio Code the favored text editor:
 export EDITOR="code"
 ```
 
-### Configuring Git
+## Configuring Git
 
 Fedora Workstation includes the [Git version control system](http://www.git-scm.com/). Always set your details for Git before you create or clone repositories on a new system. This requires two commands in a terminal window:
 
@@ -103,7 +137,7 @@ git config --global user.email "you@your-domain.com"
 The _global_ option means that the setting will apply to every repository that you work
 with in the current user account.
 
-To enable colors in the output, which can be very helpful, enter this command:
+To enable colors in the output, enter this command:
 
 ```shell
 git config --global color.ui auto
@@ -111,7 +145,7 @@ git config --global color.ui auto
 
 > Enable commit signing in Git before you work on shared projects. Follow the steps in [this article on signing code commits](https://www.stuartellis.name/articles/signing-code-commits/) to enable Git to sign your commits with a GPG key.
 
-### Setting Up A Directory Structure for Projects
+## Setting Up A Directory Structure for Projects
 
 To keep your projects tidy, I would recommend following these guidelines. They may seem
 slightly fussy, but they pay off when you have many projects, some of which are on
@@ -132,53 +166,11 @@ Projects/
 
 > _Projects_ is a recognised directory name that will be used by Open Source tools, in the same way that _Downloads_ and _Music_ are standard locations.
 
-### Creating SSH Keys
-
-You may use SSH to access Git repositories or remote UNIX systems. Fedora includes the standard OpenSSH suite of tools.
-
-To create an SSH key with OpenSSH, run the _ssh-keygen_ command in a terminal window. For example:
-
-```shell
-ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
-```
-
-Create a separate SSH key for each set of systems that you access.
-
-> OpenSSH stores your SSH keys in the _.ssh_ directory within your home directory. For security, consider replacing the OpenSSH agent with a SSH key agent that stores your keys in an encrypted store. For example, the Bitwarden and 1Password password managers can hold SSH keys as well as passwords, and provide SSH key agents.
-
-## Setting Up Homebrew
-
-The [Homebrew](http://brew.sh/) package management system provides the latest versions of tools. Always use Homebrew to install tools that are frequently updated, like the [AWS CLI](https://aws.amazon.com/cli/) and [Trivy](https://aquasecurity.github.io/trivy).
-
-Follow the instructions on the Homebrew site to install it.
-
-To check that Homebrew is installed correctly, run this command in a terminal window:
-
-```shell
-brew doctor
-```
-
-To update the index of available packages, run this command in a terminal window:
-
-```shell
-brew update
-```
-
-## Managing Credentials and Environment Variables
-
-You may frequently need to use API tokens and other sensitive credentials, keeping them secure whilst making them available to development tools when they are required. Various tools enable you to store credentials and set them as environment variables as needed. One of the most powerful of these is [fnox](https://fnox.jdx.dev/), which can use a range of local and remote providers for credentials.
-
-To install _fnox_ with Homebrew, run this command in a terminal window:
-
-```shell
-brew install fnox
-```
-
 ## Working with Programming Languages
 
 Avoid using the Fedora packages for programming languages. Instead, use [version manager tools](https://www.stuartellis.name/articles/version-managers/). These enable you to install the correct version of the required programming language and dependencies for each of your projects. Use Homebrew to install version manager tools.
 
-Alternatively, Fedora Workstation includes [toolbx](https://containertoolbx.org/) to help you manage container environments for developing your projects. Container environments also enable you to have separate versions of software for each of your projects.
+Fedora Workstation also includes [toolbx](https://containertoolbx.org/) to help you manage container environments for developing your projects. Container environments enable you to have separate versions of software for each of your projects.
 
 ### Avoid Using The System Python Installation
 
@@ -208,9 +200,7 @@ This will redirect any call to Docker, so that it uses Podman instead.
 
 The [Usage Transfer](https://github.com/containers/libpod/blob/master/transfer.md) page lists Docker commands, and the equivalents for Podman. [This article](https://developers.redhat.com/blog/2019/02/21/podman-and-buildah-for-docker-users/) explains the relationship between Podman, Buildah and Docker in more detail.
 
-{{< alert >}}
-Use [pods](https://developers.redhat.com/blog/2019/01/15/podman-managing-containers-pods/) to run groups of containers. This feature of Podman replaces _docker\-compose_.
-{{< /alert >}}
+Use [pods](https://developers.redhat.com/blog/2019/01/15/podman-managing-containers-pods/) to run groups of containers. These support features of Podman, such as systemd integration and the facility to generate Kubernetes configurations from pod definitions. Podman pods replace _docker\-compose_.
 
 If you need to run existing Docker Compose configurations, install _podman-compose_:
 
@@ -219,8 +209,6 @@ sudo dnf install podman-compose
 ```
 
 The _podman compose_ subcommand uses _podman-compose_ to substitute for Docker Compose.
-
-This enables you to convert Docker Compose configurations into Podman pod definitions at a later time. Use pods to benefit from the features of Podman, such as systemd integration and the facility to generate Kubernetes configurations from pod definitions.
 
 ## Working with Virtual Machines
 
@@ -249,8 +237,7 @@ sudo systemctl enable postgresql
 sudo systemctl start postgresql
 ```
 
-These commands install the server, the command-line tools, and the client libraries that
-are needed to compile adapters for programming languages.
+These commands install the server and the command-line tools. These packages also provide the client libraries that you will use to compile database drivers for programming languages.
 
 To create a user account for yourself in PostgreSQL with administrative rights, enter
 this command in a terminal window:
