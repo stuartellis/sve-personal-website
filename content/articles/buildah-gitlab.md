@@ -1,17 +1,17 @@
 +++
 title = "Creating Container Images with Buildah and GitLab"
 slug = "buildah-gitlab"
-date = "2026-05-27T16:13:00+01:00"
+date = "2026-06-20T12:54:00+01:00"
 description = "Creating container images with Buildah and GitLab"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
 +++
 
-[Buildah](https://buildah.io/) is an Open Source command-line tool that builds OCI container images. Consider using Buildah to create your container images, instead of Docker or BuildKit. Buildah is safer than other options, because it does not use root privileges and never runs as a network service. It is also more flexible. You can provide configuration files in the `Dockerfile` format, or drive builds from the command-line.
+[Buildah](https://buildah.io/) is an Open Source command-line tool that builds OCI container images. Consider using Buildah to create your container images, instead of Docker or BuildKit. Buildah is safer than other options, because it does not use root privileges and never runs as a network service. It is also more flexible. You can provide configuration files in the `Dockerfile` format, or [drive builds from the command-line](https://github.com/podman-container-tools/buildah/blob/main/docs/tutorials/01-intro.md#building-a-container-from-scratch).
 
 > Buildah is part of the [CNCF Podman container tools project](https://www.cncf.io/projects/podman-container-tools/).
 
-By design, Buildah can be run inside a container. This means that you can run Buildah on any development system as well as with any CI service, including GitHub Actions, GitLab Pipelines, Forgejo Actions and Tekton.
+By design, you can run Buildah inside a container. This means that you can use it on any development system as well as with any CI service, including GitHub Actions, GitLab Pipelines, Forgejo Actions and Tekton.
 
 GitLab provides a range of services for containers, so that you can build, store and use container images without needing any other systems. By default, the [GitLab Pipelines](https://docs.gitlab.com/ci/pipelines/) CI service itself uses containers, which means that it can run Buildah from a container image, and use the images that you build as environments for other CI jobs. A Pipelines component for [container scanning](https://docs.gitlab.com/ee/user/application_security/container_scanning/) can check your container images for security issues on each build. GitLab instances can also provide a [container registry](https://docs.gitlab.com/ee/user/packages/container_registry/) for each project that they host.
 
@@ -21,9 +21,9 @@ GitLab provides a range of services for containers, so that you can build, store
 
 To use Buildah with GitLab, you will need a `.gitlab-ci.yml` file in the root directory of the project. This provides the configuration for GitLab Pipelines. See below for an example.
 
-Buildah can build container images from command-line instructions, but we usually provide a configuration file in the `Dockerfile` format. By convention this file should be called `Containerfile`. See below for an example.
+Buildah can build container images from command-line instructions, or you can provide a configuration file in the `Dockerfile` format. See below for an example.
 
-Once an image has been pushed to the container registry for the project, it is visible in the Web interface for GitLab. To view a project container registry in the GitLab Web interface, go to the project and select _Deploy > Container registry_.
+Once you push an image to the container registry for the project it becomes visible in the Web interface for GitLab. To view a project container registry in the GitLab Web interface, go to the project and select _Deploy > Container registry_.
 
 ### Example .gitlab-ci.yml for GitLab
 
@@ -87,6 +87,7 @@ To configure Buildah to create images in the Docker format, specify the Docker f
 
 - [A Complete Overview of Buildah](https://mkdev.me/posts/buildah-a-complete-overview)
 - [Red Hat Linux documentation on using Buildah](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/building_running_and_managing_containers/working-with-containers#building-a-container)
+- [Using ONBUILD in Buildah](https://github.com/podman-container-tools/buildah/blob/main/docs/tutorials/03-on-build.md)
 
 ### GitLab
 
@@ -95,6 +96,6 @@ To configure Buildah to create images in the Docker format, specify the Docker f
 
 ### Buildah on GitLab
 
-- [GitLab documentation on using Buildah](https://docs.gitlab.com/ci/docker/buildah_rootless_multi_arch/)
+- [GitLab documentation on using Buildah for multi-platform images](https://docs.gitlab.com/ci/docker/buildah_rootless_multi_arch/) - Official documentation on using Buildah for multiarch images
 - [Using Buildah over DinD for building container images](https://arcsoft.uvic.ca/log/2025-08-07-buildah-over-dind/) - Article by Paurav Hosur Param on replacing Docker-in-Docker (DinD) for container builds
 - [Build containers in GitLab CI with buildah](https://major.io/p/build-containers-in-gitlab-ci-with-buildah/) - Example by Major Hayden
