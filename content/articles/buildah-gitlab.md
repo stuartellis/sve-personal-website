@@ -1,7 +1,7 @@
 +++
 title = "Creating Container Images with Buildah and GitLab"
 slug = "buildah-gitlab"
-date = "2026-06-20T18:07:00+01:00"
+date = "2026-06-21T00:03:00+01:00"
 description = "Creating container images with Buildah and GitLab"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -21,11 +21,11 @@ By default, the [GitLab Pipelines](https://docs.gitlab.com/ci/pipelines/) CI ser
 
 GitLab instances can provide a [container registry](https://docs.gitlab.com/ee/user/packages/container_registry/) for each project that they host. You can use this registry as either a private store for images that you also push to other registries, or allow external access, so that this registry can act as the main store for the images that the project maintains.
 
-You can test the images with any tool that you wish. The GitLab company offer a component for [container scanning](https://docs.gitlab.com/ee/user/application_security/container_scanning/), so that you can include this feature in any GitLab Pipeline without any extra maintenance.
+The GitLab company offer a component for [container scanning](https://docs.gitlab.com/ee/user/application_security/container_scanning/), so that you can add this feature in any GitLab Pipeline without any extra maintenance.
 
 ## Set Up
 
-> By default, projects on [GitLab.com](https://gitlab.com) have the container registry feature enabled. If you use a private instance of GitLab, the administrators of the instance will need to configure support by the container registry.
+> By default, projects on [GitLab.com](https://gitlab.com) have the container registry feature enabled. If you use a private instance of GitLab, the administrators of the instance will need to configure container registry support.
 
 To use Buildah with GitLab, you will need a `.gitlab-ci.yml` file in the root directory of the project. This provides the configuration for GitLab Pipelines. See below for an example.
 
@@ -60,7 +60,7 @@ build-image-amd64:
 
 ### Example Containerfile
 
-> A Containerfile uses the Dockerfile format. The name indicates that this file is intended by used by standards-compliant tools, and does not include any features that are specific to Docker.
+> A Containerfile uses the Dockerfile format. The name indicates that this file may by used by standards-compliant tools like Buildah, and does not include any features that are specific to Docker.
 
 ```dockerfile
 FROM node:24-alpine AS builder
@@ -83,7 +83,7 @@ CMD ["node", "dist/server.js"]
 
 ## More on Container Image Formats
 
-By default, Buildah creates images in the [OCI Image Specification format](https://github.com/opencontainers/image-spec). This is an open standard that is based on the Docker Version 2 format for images. Modern container tools support both the OCI format and the Docker Version 2 format. You can only use features that are specific to Docker if you use the Docker format. For example, only container images that are in the Docker format can use the `ONBUILD` instruction.
+Modern container tools support both the [OCI Image Specification format](https://github.com/opencontainers/image-spec) and the Docker Version 2 format for container images. By default, Buildah creates images in the OCI format. This specification standardises the Docker Version 2 format for images, but it does not include features that only Docker implements. For example, only Docker supports the [ONBUILD](https://docs.docker.com/reference/dockerfile/#onbuild) instruction, so you need to use the Docker Version 2 format to apply this instruction when building container images.
 
 To configure Buildah to create images in the Docker format, specify the Docker format with the `--format=docker` command-line option, or by setting the `BUILDAH_FORMAT` environment variable to `docker`.
 
@@ -95,7 +95,7 @@ To configure Buildah to create images in the Docker format, specify the Docker f
 
 - [A Complete Overview of Buildah](https://mkdev.me/posts/buildah-a-complete-overview) - Part of [the Dockerless Course](https://mkdev.me/posts/what-s-wrong-with-docker-introduction-to-the-dockerless-course), by Kirill Shirinkin
 - [Red Hat Linux documentation on using Buildah](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/building_running_and_managing_containers/working-with-containers#building-a-container)
-- [How to Set Up Buildah for Rootless Container Image Builds](https://oneuptime.com/blog/post/2026-02-09-buildah-rootless-builds-kubernetes/) - Using Buildah on Kubernetes with Tekton, by Nawaz Dhandala
+- [How to Set Up Buildah for Rootless Container Image Builds](https://oneuptime.com/blog/post/2026-02-09-buildah-rootless-builds-kubernetes/) - Using Buildah, in the context of Kubernetes and Tekton, by Nawaz Dhandala
 - [Using ONBUILD in Buildah](https://github.com/podman-container-tools/buildah/blob/main/docs/tutorials/03-on-build.md)
 
 ### GitLab
