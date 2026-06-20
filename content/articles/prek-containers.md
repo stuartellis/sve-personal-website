@@ -1,7 +1,7 @@
 +++
 title = "Using Container Images with prek and pre-commit"
 slug = "prek-containers"
-date = "2026-06-13T00:35:00+01:00"
+date = "2026-06-20T07:10:00+01:00"
 description = "Using container images with Git hooks"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -9,7 +9,7 @@ tags = ["automation", "devops"]
 
 The [prek](https://prek.j178.dev/) tool manages Git hooks, and enables you to run the same hooks at any time, not just when you commit changes. It downloads the tools and runtimes for the hooks as needed. This means that it can provide a cross-platform way to install and run a complete set of tools for formatting and checking code.
 
-For security and consistency, use container images to provide the tools that are used by these hooks. This ensures that all of the contributors to a project run the same container images, and that CI systems also use those same images. For better supply chain security, you can specify images that are distributed through your own container registries.
+For security and consistency, use container images to provide the tools for these hooks. This ensures that the contributors to a project run the same container images, and that CI systems also use those same images. For better supply chain security, you can specify images that are distributed through your own container registries.
 
 > The [prek](https://prek.j178.dev/) tool supersedes [pre-commit](https://pre-commit.com/). It can use hooks that are written for `pre-commit`, and works with existing `pre-commit` project configurations.
 
@@ -20,11 +20,11 @@ For security and consistency, use container images to provide the tools that are
 To install `prek` on a development system, use the packages from the [npm](https://www.npmjs.com/package/@j178/prek) or [Python](https://pypi.org/project/prek/) registries. If you use a package management tool like [npm](https://docs.npmjs.com/cli), [pipx](https://pipx.pypa.io/stable/), or [uv](https://docs.astral.sh/uv/), you can specify which version of `prek` it installs:
 
 ```shell
-npm install -g @j178/prek@0.4.3
+npm install -g @j178/prek@0.4.5
 ```
 
 ```shell
-pipx install prek==0.4.3
+pipx install prek==0.4.5
 ```
 
 The `prek` project releases [container images](https://prek.j178.dev/integrations/#docker), so that you can run the same hooks on your CI system, using the same version of `prek` that you run on development systems.
@@ -37,7 +37,7 @@ brew install prek
 
 ## Adding prek To a Project
 
-By default, the configuration file for `prek` is `prek.toml`. Both `prek` and `pre-commit` use a `.pre-commit-config.yaml` file, if it is present. Consider using the YAML format, because it can automatically be formatted and checked by the same YAML maintenance tools that the hook manager runs for other products that use YAML.
+By default, `prek` uses the configuration file `prek.toml`. Both `prek` and `pre-commit` can use a `.pre-commit-config.yaml` file. Consider using the YAML format, because the YAML maintenance tools that the hook manager runs for other products will then run on the configuration.
 
 Create the hooks configuration in a file called `.pre-commit-config.yaml` file. Save this file in the root directory of your project:
 
@@ -48,15 +48,23 @@ minimum_prek_version: "0.4.0"
 repos:
   - repo: builtin
     hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-json
-      - id: check-toml
-      - id: check-yaml
       - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-vcs-permalinks
+      - id: check-xml
+      - id: check-yaml
+      - id: destroyed-symlinks
+      - id: end-of-file-fixer
+      - id: fix-byte-order-marker
+      - id: mixed-line-ending
+      - id: trailing-whitespace
 ```
 
-This configuration enables hooks that are [built-in to `prek`](https://prek.j178.dev/builtin/). You can then add [docker_image](https://prek.j178.dev/languages/#docker_image) hooks to run other tools with container images.
+This configuration enables [built-in to `prek`](https://prek.j178.dev/builtin/) hooks. You can then add [docker_image](https://prek.j178.dev/languages/#docker_image) hooks to run other tools with container images.
 
 To activate the configuration, run `prek install`. This adds the hooks to the Git configuration for your copy of the project, so that the tools automatically run on the staged changes each time that you commit.
 
@@ -95,7 +103,7 @@ For example, you may want to use a hook to detect secrets in code, and decide to
   language: system
 ```
 
-You could call the `docker_image` hook as a remote hook, but it would be safer to copy the hook into your own configuration file. You can then specify the exact container image that your project hook uses. Here is an example of a complete configuration file:
+You could call the `docker_image` hook as a remote hook, but it is safer to copy the hook into your own configuration file. You can then specify the exact container image that your project hook uses. Here is an example of a complete configuration file:
 
 ```yaml
 ---
@@ -104,12 +112,20 @@ minimum_prek_version: "0.4.0"
 repos:
   - repo: builtin
     hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-json
-      - id: check-toml
-      - id: check-yaml
       - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-vcs-permalinks
+      - id: check-xml
+      - id: check-yaml
+      - id: destroyed-symlinks
+      - id: end-of-file-fixer
+      - id: fix-byte-order-marker
+      - id: mixed-line-ending
+      - id: trailing-whitespace
 
   - repo: local
     hooks:
