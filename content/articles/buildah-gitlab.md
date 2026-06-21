@@ -1,7 +1,7 @@
 +++
 title = "Creating Container Images with Buildah and GitLab"
 slug = "buildah-gitlab"
-date = "2026-06-21T10:20:00+01:00"
+date = "2026-06-21T20:26:00+01:00"
 description = "Creating container images with Buildah and GitLab"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -13,7 +13,7 @@ This article explains how to use [Buildah](https://buildah.io/) with GitLab proj
 
 Buildah is a command-line tool for building and publishing images that can run within a container. This means that you can run it on any development system as well as with any CI service, including GitHub Actions, GitLab Pipelines, Forgejo Actions and Tekton. Unlike Docker, it does not require network services or root access.
 
-> Buildah is part of the [CNCF Podman container tools project](https://www.cncf.io/projects/podman-container-tools/). This project also provides the [Skopeo](https://skopeo.org/) and [Podman](https://podman.io/) command-line tools. These tools can all run inside containers to automate operations for images.
+> Buildah is part of the [CNCF Podman Container Tools Project](https://www.cncf.io/projects/podman-container-tools/). This project also provides the [Skopeo](https://github.com/podman-container-tools/skopeo) and [Podman](https://podman.io/) command-line tools. These tools can all run inside containers to automate operations for images.
 
 GitLab includes a range of services for containers, so that you can build, store and use container images without needing any other systems.
 
@@ -48,7 +48,6 @@ build-image-amd64:
     - saas-linux-small-amd64
   image: quay.io/buildah/stable
   variables:
-    BUILDAH_FORMAT: docker
     FQ_IMAGE_NAME: "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA"
     STORAGE_DRIVER: vfs
   before_script:
@@ -83,11 +82,13 @@ CMD ["node", "dist/server.js"]
 
 ## More on Container Image Formats
 
-Modern container tools support both the [OCI Image Specification format](https://github.com/opencontainers/image-spec) and the Docker Version 2 format for container images. By default, Buildah creates images in the OCI format. This specification standardises the Docker Version 2 format for images, but it does not include features that were originally specific to Docker. For example, both Docker and Buildah now support the [ONBUILD](https://docs.docker.com/reference/dockerfile/#onbuild) instruction, but you need to use the Docker Version 2 format to apply this instruction when building container images with Buildah.
+Modern container tools support two formats for images: the [OCI Image Specification format](https://github.com/opencontainers/image-spec) and the [Docker Version 2 (Schema 2)](https://distribution.github.io/distribution/spec/manifest-v2-2/) format. The OCI specification formalises the older Docker format, which means that you can convert images between the formats. By default, Buildah creates images in the OCI format.
+
+In some cases, you will need to build images in the Docker format. For example, you must build images with the Docker format to use the [ONBUILD](https://docs.docker.com/reference/dockerfile/#onbuild) instruction.
 
 To configure Buildah to create images in the Docker format, specify the Docker format with the `--format=docker` command-line option, or by setting the `BUILDAH_FORMAT` environment variable to `docker`.
 
-> You can see which format an image uses by looking at the `media type` manifest property.
+> [GitLab container registries support both container image formats](https://docs.gitlab.com/user/packages/container_registry/#supported-image-types).
 
 ## Resources
 
