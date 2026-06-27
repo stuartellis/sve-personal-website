@@ -12,18 +12,12 @@ Every technical user frequently needs to use API tokens and other sensitive cred
 
 This means that you will need to manage these types of secrets:
 
-- Passwords and passkeys - To identify yourself to systems
-- API tokens - To access APIs for services
-- SSH keys - To access Git repositories and remote systems
 - GPG keys - To digitally sign files, messages and code commits
+- Passwords and passkeys - To identify yourself to systems
+- SSH keys - To access Git repositories and remote systems
+- API tokens - To access APIs for services
 
-### Passwords and Passkeys
-
-The [KeePassXC](https://keepassxc.org/) password manager runs on Windows, macOS, and Linux systems. It stores credentials in a database file. If you use KeePassX you will need to use a third-party app such as [KeePassDX](https://www.keepassdx.com/) on mobile devices, along with an extra tool to synchronize password databases.
-
-Consider using the [Proton Pass](https://proton.me/pass) or [Bitwarden](https://bitwarden.com/) services if you need to share passwords or synchronize them across devices. Both of these services provide apps for mobile devices as well as desktop operating systems, Open Source the code for their apps and have successfully passed security audits.
-
-### Managing GPG Keys
+## Managing GPG Keys
 
 Set up your GPG key and enable commit signing in Git before you work on shared projects.
 
@@ -33,7 +27,13 @@ The GnuPG suite stores keys as files on your local device. For this reason, alwa
 
 If you need to digitally sign your emails, consider using an email client that includes support for GPG, rather than relying on plugins. The GNOME and KDE desktops for Linux include email clients with GPG support. The [Thunderbird](https://www.thunderbird.net) email and calendar client supports GPG and runs on all popular operating systems.
 
-### Managing SSH Keys
+## Managing Passwords and Passkeys
+
+The [KeePassXC](https://keepassxc.org/) password manager runs on Windows, macOS, and Linux systems. It stores credentials in a database file. If you use KeePassX you will need to use a third-party app such as [KeePassDX](https://www.keepassdx.com/) on mobile devices, along with an extra tool to synchronize password databases.
+
+Consider using the [Proton Pass](https://proton.me/pass) or [Bitwarden](https://bitwarden.com/) services if you need to share passwords or synchronize them across devices. Both of these services provide apps for mobile devices as well as desktop operating systems, Open Source the code for their apps and have successfully passed security audits.
+
+## Managing SSH Keys
 
 Linux distributions and macOS include the standard [OpenSSH](https://www.openssh.org/) suite of tools for SSH.
 
@@ -49,14 +49,16 @@ Always set a strong passphrase for a SSH key that you create with `ssh-keygen`. 
 
 > Use a separate SSH key for each set of systems that you access.
 
-### Working with Environment Variables
+## Working with API Tokens
 
-You will need make API tokens and other sensitive credentials available to development tools when required. If you work for an organization, they should provide a solution for you to use. Otherwise, consider using [fnox](https://fnox.jdx.dev/) or [dotenvx](https://dotenvx.com/) for this.
+You will need make API tokens and other sensitive credentials available to development tools when required, without storing them in unencrypted files. If you work for an organization, they should provide a solution for you to use. Otherwise, consider using [fnox](https://fnox.jdx.dev/) or [dotenvx](https://dotenvx.com/) for this.
 
-The `fnox` tool works with a range of local and remote [providers](https://fnox.jdx.dev/providers/overview.html) to get credentials and set them as environment variables.
+The `fnox` tool works with a range of local and remote [providers](https://fnox.jdx.dev/providers/overview.html) to get credentials and set them as environment variables. For example, it supports KeepPassXC, AWS Secrets Manager and Hashicorp Vault as providers. This means that you can store API tokens in the provider of your choice.
 
 To install `fnox` with Homebrew, run this command in a terminal window:
 
 ```shell
 brew install fnox
 ```
+
+> Rotate your API tokens regularly. If you work for an organization, they should rotate the API tokens for their services and the tools that they specify should automatically fetch the current API tokens for you.
