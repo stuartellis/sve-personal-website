@@ -1,0 +1,62 @@
++++
+title = "Handling Credentials and Secrets"
+slug = "tech-credentials-and-secrets"
+date = "2026-06-27T09:31:00+01:00"
+description = "Handling credentials and secrets for development and systems administration"
+categories = ["devops", "programming"]
+tags = ["devops", "fedora", "linux", "macos"]
+
++++
+
+Every technical user frequently needs to use API tokens and other sensitive credentials, keeping them secure whilst making them available when required.
+
+This means that you will need to manage these types of secrets:
+
+- Passwords and passkeys - To identify yourself to systems
+- API tokens - To access APIs for services
+- SSH keys - To access Git repositories and remote systems
+- GPG keys - To digitally sign files, messages and code commits
+
+### Passwords and Passkeys
+
+The [KeePassXC](https://keepassxc.org/) password manager runs on Windows, macOS, and Linux systems. It stores credentials in a database file. If you use KeePassX you will need to use a third-party app such as [KeePassDX](https://www.keepassdx.com/) on mobile devices, along with an extra tool to synchronize password databases.
+
+Consider using the [Proton Pass](https://proton.me/pass) or [Bitwarden](https://bitwarden.com/) services if you need to share passwords or synchronize them across devices. Both of these services provide apps for mobile devices as well as desktop operating systems, Open Source the code for their apps and have successfully passed security audits.
+
+### Managing GPG Keys
+
+Set up your GPG key and enable commit signing in Git before you work on shared projects.
+
+We should always sign the commits that we make in source code repositories, especially for shared projects like Open Source software. This ensures that each commit specifies the author in verifiable way. Follow the steps in [this article on signing code commits](https://www.stuartellis.name/articles/signing-code-commits/) to enable Git to sign your commits with a GPG key.
+
+The GnuPG suite stores keys as files on your local device. For this reason, always set a strong passphrase for your GPG key. If someone has a copy of your private key and the passphrase, they can use the key to sign with your identity.
+
+If you need to digitally sign your emails, consider using an email client that includes support for GPG, rather than relying on plugins. The GNOME and KDE desktops for Linux include email clients with GPG support. The [Thunderbird](https://www.thunderbird.net) email and calendar client supports GPG and runs on all popular operating systems.
+
+### Managing SSH Keys
+
+Linux distributions and macOS include the standard [OpenSSH](https://www.openssh.org/) suite of tools for SSH.
+
+Consider using an SSH key agent that stores your keys in an encrypted store, rather than the OpenSSH key agent. The KeePassXC, Bitwarden, Proton Pass and 1Password password managers can hold SSH keys as well as passwords, and provide SSH key agents.
+
+If you use the OpenSSH key agent, use the `ssh-keygen` command to create new SSH keys. For example:
+
+```shell
+ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
+```
+
+Always set a strong passphrase for a SSH key that you create with `ssh-keygen`. It stores the files in the `.ssh` directory within your home directory. If someone has a copy of your private key and the passphrase, they can use the key to log in to systems as you.
+
+> Use a separate SSH key for each set of systems that you access.
+
+### Working with Environment Variables
+
+You will need make API tokens and other sensitive credentials available to development tools when required. If you work for an organization, they should provide a solution for you to use. Otherwise, consider using [fnox](https://fnox.jdx.dev/) or [dotenvx](https://dotenvx.com/) for this.
+
+The `fnox` tool works with a range of local and remote [providers](https://fnox.jdx.dev/providers/overview.html) to get credentials and set them as environment variables.
+
+To install `fnox` with Homebrew, run this command in a terminal window:
+
+```shell
+brew install fnox
+```
