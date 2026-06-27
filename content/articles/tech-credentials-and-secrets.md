@@ -1,7 +1,7 @@
 +++
 title = "Handling Credentials and Secrets"
 slug = "tech-credentials-and-secrets"
-date = "2026-06-27T09:31:00+01:00"
+date = "2026-06-27T13:15:00+01:00"
 description = "Handling credentials and secrets for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "fedora", "linux", "macos"]
@@ -12,18 +12,20 @@ Every technical user frequently needs to use API tokens and other sensitive cred
 
 This means that you will need to manage these types of secrets:
 
-- GPG keys - To digitally sign files, messages and code commits
-- Passwords and passkeys - To identify yourself to systems
-- SSH keys - To access Git repositories and remote systems
-- API tokens - To access APIs for services
+- _GPG keys_ - To digitally sign files, messages and code commits
+- _Passwords_ and _passkeys_ - To identify yourself to systems
+- _SSH keys_ - To access Git repositories and remote systems
+- _API tokens_ - To access APIs for services
 
 ## Managing GPG Keys
 
-Set up your GPG key and enable commit signing in Git before you work on shared projects.
+> _GPG_: This article refers to GPG, because GnuPG is the main implementation of the OpenPGP standards. Many existing documents use the term _GPG_ instead of _GnuPG_ or _OpenPGP_. [Sequoia PGP](https://sequoia-pgp.org/) may supersede GnuPG in future.
 
-We should always sign the commits that we make in source code repositories, especially for shared projects like Open Source software. This ensures that each commit specifies the author in verifiable way. Follow the steps in [this article on signing code commits](https://www.stuartellis.name/articles/signing-code-commits/) to enable Git to sign your commits with a GPG key.
+Set up your GPG key and enable commit signing in Git before you work on shared projects. We should always sign the commits that we make in source code repositories, especially for shared projects like Open Source software. This ensures that every commit includes a signature that links it to a specific author.
 
-The GnuPG suite stores keys as files on your local device. For this reason, always set a strong passphrase for your GPG key. If someone has a copy of your private key and the passphrase, they can use the key to sign with your identity.
+Many Linux distributions automatically include GPG. To install GPG on macOS, use [Homebrew](http://brew.sh/). Follow the steps in [this article on signing code commits](https://www.stuartellis.name/articles/signing-code-commits/) to enable Git to sign your commits with a GPG key.
+
+The GnuPG suite stores keys as files on your local device. For this reason, always set a strong passphrase for your GPG key. If someone has a copy of your private key and the passphrase, they can use the key to sign items with your identity.
 
 If you need to digitally sign your emails, consider using an email client that includes support for GPG, rather than relying on plugins. The GNOME and KDE desktops for Linux include email clients with GPG support. The [Thunderbird](https://www.thunderbird.net) email and calendar client supports GPG and runs on all popular operating systems.
 
@@ -32,6 +34,8 @@ If you need to digitally sign your emails, consider using an email client that i
 The [KeePassXC](https://keepassxc.org/) password manager runs on Windows, macOS, and Linux systems. It stores credentials in a database file. If you use KeePassX you will need to use a third-party app such as [KeePassDX](https://www.keepassdx.com/) on mobile devices, along with an extra tool to synchronize password databases.
 
 Consider using the [Proton Pass](https://proton.me/pass) or [Bitwarden](https://bitwarden.com/) services if you need to share passwords or synchronize them across devices. Both of these services provide apps for mobile devices as well as desktop operating systems, Open Source the code for their apps and have successfully passed security audits.
+
+KeePassXC, Proton Pass and Bitwarden
 
 ## Managing SSH Keys
 
@@ -61,4 +65,4 @@ To install `fnox` with Homebrew, run this command in a terminal window:
 brew install fnox
 ```
 
-> Rotate your API tokens regularly. If you work for an organization, they should rotate the API tokens for their services and the tools that they specify should automatically fetch the current API tokens for you.
+> Rotate your API tokens regularly. If you work for an organization, they should automatically rotate the API tokens for their services and the tools that they specify should fetch the current API tokens for you.
