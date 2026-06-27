@@ -73,6 +73,12 @@ To update the index of available packages, run this command in a terminal window
 brew update
 ```
 
+## Setting Up Tools for Passwords and Secrets
+
+Every technical user frequently needs to use API tokens and other sensitive credentials, keeping them secure whilst making them available when required. Set up your tools for managing passwords and secrets before you begin to use a system for work.
+
+If you work for an organization, they should specify the tools that they require you to use. Otherwise, consider reading my article on [tools for credentials and secrets](https://www.stuartellis.name/articles/tech-credentials-and-secrets/).
+
 ## Configuring Git
 
 Fedora Workstation includes the [Git version control system](http://www.git-scm.com/). Always set your details for Git before you create or clone repositories on a new system. This requires two commands in a terminal window:

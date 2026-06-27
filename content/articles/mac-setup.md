@@ -159,6 +159,12 @@ Close any terminal windows that you currently have open. Every new terminal wind
 
 To use auto completion, type the name of the command, and press the Tab key on your keyboard. You will see a list of possible completions. Press the Tab key to cycle through the completions, and press the Enter key to accept a completion.
 
+### Setting Up Tools for Passwords and Secrets
+
+Every technical user frequently needs to use API tokens and other sensitive credentials, keeping them secure whilst making them available when required. Set up your tools for managing passwords and secrets before you begin to use a system for work.
+
+If you work for an organization, they should specify the tools that they require you to use. Otherwise, consider reading my article on [tools for credentials and secrets](https://www.stuartellis.name/articles/tech-credentials-and-secrets/).
+
 ### Installing the Git Version Control System
 
 The Xcode Command Line Tools include a copy of [Git](http://www.git-scm.com/), but this will be out of date.
