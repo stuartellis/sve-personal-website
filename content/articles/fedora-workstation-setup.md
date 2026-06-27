@@ -73,58 +73,6 @@ To update the index of available packages, run this command in a terminal window
 brew update
 ```
 
-## Managing Credentials and Environment Variables
-
-You may frequently need to use API tokens and other sensitive credentials, keeping them secure whilst making them available to development tools when required. Several tools enable you to store credentials and set them as environment variables as needed.
-
-Consider using [fnox](https://fnox.jdx.dev/), which can use a range of local and remote providers for credentials. To install _fnox_ with Homebrew, run this command in a terminal window:
-
-```shell
-brew install fnox
-```
-
-## Managing SSH Keys
-
-You may use SSH to access Git repositories or remote UNIX systems. Fedora includes the standard OpenSSH suite of tools.
-
-For security, consider replacing the OpenSSH agent with an SSH key agent that stores your keys in an encrypted store. For example, the KeePassXC, Bitwarden, Proton Pass and 1Password password managers can hold SSH keys as well as passwords, and provide SSH key agents.
-
-If you use the OpenSSH key agent, use the _ssh-keygen_ command to create new SSH keys. For example:
-
-```shell
-ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
-```
-
-> Use a separate SSH key for each set of systems that you access.
-
-## Text Editors
-
-Fedora includes the command-line editor [nano](https://www.nano-editor.org/) and a small version of [vim](http://www.vim.org/) with a limited set of features, as well as a
-desktop text editor with basic support for programming. Add the code editors or IDEs that you would prefer to use.
-
-If you do not have a preferred editor, consider using [Zed](https://zed.dev/) or a version of [Visual Studio Code](https://code.visualstudio.com). Both of these editors are designed for programming, and have built-in support for version control, debugging and working with LLMs. Their large range of extensions enable them to work with every popular programming language and framework. They are available free of charge.
-
-The Microsoft releases of Visual Studio Code are proprietary software with telemetry enabled by default, and download extensions from a proprietary Microsoft app store. If you have issues or concerns about the Microsoft releases, use [vscodium](https://vscodium.com) instead.
-
-### Neovim
-
-If you would like a modern Vim editor with a good default configuration, set up Neovim. To install Neovim, enter this command in a terminal window:
-
-```shell
-sudo dnf install neovim
-```
-
-### Setting The EDITOR Environment Variable
-
-Whichever text editor you choose, remember to set the EDITOR environment variable in
-your _~/.bashrc_ file, so that this editor is automatically invoked by command-line
-tools like your version control system. For example, put this line in your profile to
-make Visual Studio Code the favored text editor:
-
-```shell
-export EDITOR="code"
-```
-
 ## Configuring Git
 
 Fedora Workstation includes the [Git version control system](http://www.git-scm.com/). Always set your details for Git before you create or clone repositories on a new system. This requires two commands in a terminal window:
@@ -165,6 +113,36 @@ Projects/
 ```
 
 > _Projects_ is a recognised directory name that will be used by Open Source tools, in the same way that _Downloads_ and _Music_ are standard locations.
+
+## Text Editors
+
+Fedora includes the command-line editor [nano](https://www.nano-editor.org/) and a small version of [vim](http://www.vim.org/) with a limited set of features, as well as a
+desktop text editor with basic support for programming. Add the code editors or IDEs that you would prefer to use.
+
+If you do not have a preferred editor, consider using [Zed](https://zed.dev/) or a version of [Visual Studio Code](https://code.visualstudio.com). Both of these editors are designed for programming, and have built-in support for version control, debugging and working with LLMs. Their large range of extensions enable them to work with every popular programming language and framework. They are available free of charge.
+
+The Microsoft releases of Visual Studio Code are proprietary software with telemetry enabled by default, and download extensions from a proprietary Microsoft app store. If you have issues or concerns about the Microsoft releases, use [vscodium](https://vscodium.com) instead.
+
+> If you prefer to avoid using LLMs, consider using the [Gram editor](https://gram-editor.com/). Gram is a fork of [Zed](https://zed.dev/) that removes the support for LLMs.
+
+### Neovim
+
+If you would like a modern Vim editor with a good default configuration, set up Neovim. To install Neovim, enter this command in a terminal window:
+
+```shell
+sudo dnf install neovim
+```
+
+### Setting The EDITOR Environment Variable
+
+Whichever text editor you choose, remember to set the EDITOR environment variable in
+your _~/.bashrc_ file, so that this editor is automatically invoked by command-line
+tools like your version control system. For example, put this line in your profile to
+make Visual Studio Code the favored text editor:
+
+```shell
+export EDITOR="code"
+```
 
 ## Working with Programming Languages
 

@@ -159,39 +159,6 @@ Close any terminal windows that you currently have open. Every new terminal wind
 
 To use auto completion, type the name of the command, and press the Tab key on your keyboard. You will see a list of possible completions. Press the Tab key to cycle through the completions, and press the Enter key to accept a completion.
 
-### Managing Credentials and Environment Variables
-
-You may frequently need to use API tokens and other sensitive credentials, keeping them secure whilst making them available to development tools. Various tools enable you to store credentials and set them as environment variables as needed. One of the most powerful of these is [fnox](https://fnox.jdx.dev/), which can use a range of local and remote providers for credentials.
-
-To install _fnox_ with Homebrew, run this command in a terminal window:
-
-```shell
-brew install fnox
-```
-
-### Managing SSH
-
-You may use SSH to access Git repositories or remote UNIX systems. macOS includes the standard OpenSSH suite of tools.
-
-OpenSSH requires a _.ssh_ directory within your home directory. To create this directory, run these commands in a terminal window:
-
-```shell
-mkdir $HOME/.ssh
-chmod 0700 $HOME/.ssh
-```
-
-For security, consider replacing the OpenSSH agent with an SSH key agent that stores your keys in an encrypted store. For example, the KeePassXC, Bitwarden, Proton Pass and 1Password password managers can hold SSH keys as well as passwords, and provide SSH key agents.
-
-If you use the OpenSSH key agent, use the _ssh-keygen_ command to create new SSH keys. For example:
-
-```shell
-ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
-```
-
-> The OpenSSH key agent uses the _.ssh_ directory to store your keys.
-
-Use a separate SSH key for each set of systems that you access.
-
 ### Installing the Git Version Control System
 
 The Xcode Command Line Tools include a copy of [Git](http://www.git-scm.com/), but this will be out of date.
@@ -233,6 +200,8 @@ Installations of macOS include a command-line version of [vim](http://www.vim.or
 If you do not have a preferred editor, consider using [Zed](https://zed.dev/) or a version of [Visual Studio Code](https://code.visualstudio.com). These powerful desktop editors for programming, with built-in support for version control, debugging and working with LLMs. Their large range of extensions enable them to work with every popular programming language and framework. They are available free of charge.
 
 The Microsoft releases of Visual Studio Code are proprietary software with telemetry enabled by default, and download extensions from a proprietary Microsoft app store. if you have issues or concerns about the Microsoft releases, use [vscodium](https://vscodium.com) instead.
+
+> If you prefer to avoid using LLMs, consider using the [Gram editor](https://gram-editor.com/). Gram is a fork of [Zed](https://zed.dev/) that removes the support for LLMs.
 
 #### Setting The EDITOR Environment Variable
 
