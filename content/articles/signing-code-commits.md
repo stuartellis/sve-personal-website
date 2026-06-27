@@ -8,9 +8,11 @@ tags = ["devops"]
 
 +++
 
-We should always sign the commits that we make in source code repositories, especially for shared projects like Open Source software. This ensures that every commit includes a signature that links it to a specific author. Since I use more than one repository hosting service, I have written this article on how to set up commit signing in a way that works across services. This method uses [GnuPG](https://gnupg.org/), the current standard Open Source tool for signing code commits.
+We should always sign the commits that we make in source code repositories, especially for shared projects like Open Source software. This ensures that every commit includes a signature that links it to a specific author. Since I use more than one repository hosting service, I have written this article on how to set up commit signing in a way that works across services.
 
-> _GPG_: This article refers to GPG, because GnuPG is the main implementation of the OpenPGP standards. Many existing documents use the term _GPG_ instead of _GnuPG_ or _OpenPGP_. [Sequoia PGP](https://sequoia-pgp.org/) may supersede GnuPG in future.
+This method uses [GnuPG](https://gnupg.org/), the current standard Open Source tool for signing code commits. [Sequoia PGP](https://sequoia-pgp.org/) may supersede GnuPG in future.
+
+> _GPG_: Many existing documents use the term _GPG_ instead of _GnuPG_ or _OpenPGP_. To avoid confusion, this article follows the same convention.
 
 ## How Commit Signing Works
 

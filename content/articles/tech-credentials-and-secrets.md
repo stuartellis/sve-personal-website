@@ -35,7 +35,7 @@ The [KeePassXC](https://keepassxc.org/) password manager runs on Windows, macOS,
 
 Consider using the [Proton Pass](https://proton.me/pass) or [Bitwarden](https://bitwarden.com/) services if you need to share passwords or synchronize them across devices. Both of these services provide apps for mobile devices as well as desktop operating systems, Open Source the code for their apps and have successfully passed security audits.
 
-KeePassXC, Proton Pass and Bitwarden
+> KeePassXC, Proton Pass and Bitwarden all provide command-line tools as well as desktop applications.
 
 ## Managing SSH Keys
 
