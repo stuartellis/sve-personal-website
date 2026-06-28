@@ -1,7 +1,7 @@
 +++
 title = "Signing Code Commits"
 slug = "signing-code-commits"
-date = "2026-06-27T13:11:00+01:00"
+date = "2026-06-28T07:37:00+01:00"
 description = "Signing Code Commits"
 categories = ["devops", "programming"]
 tags = ["devops"]
@@ -16,15 +16,13 @@ This method uses [GnuPG](https://gnupg.org/), the current standard Open Source t
 
 ## How Commit Signing Works
 
-If you use a repository hosting service like [Codeberg](https://codeberg.org/), [GitHub](https://github.com/) or an instance of [GitLab](https://about.gitlab.com/), you will see that it shows commits as _Verified_. This means that it has successfully checked the signature on the commit.
+If you use a repository hosting service like [Codeberg](https://codeberg.org/), [GitHub](https://github.com/) or an instance of [GitLab](https://about.gitlab.com/), you will see that it can show commits as _Verified_. This means that it has successfully checked the signature on the commit. Git can also [verify signed commits](https://git-scm.com/docs/git-verify-commit).
 
-> GitHub and GitLab allow you to sign commit with SSH keys. Avoid using SSH keys to sign commits, because the SSH key standard does not support verification or revocation of keys across independent and distributed systems.
+> GitHub and GitLab allow you to sign commits with SSH keys. Avoid using SSH keys to sign commits, because the SSH key standard does not support verification or revocation of keys across independent and distributed systems.
 
-Use GPG to sign your Git commits as you create them, and register the same GPG key for every service that you use.
+To sign your commits, create a keypair with GPG and configure Git to use it. Once you do this, Git can automatically sign every commit and tag that you make. The private key in the keypair stays on your device. You publish the public key, so that other systems can use it to verify signed items.
 
-To do this, create a keypair with GPG, configure Git to use it, and then register the public key with the hosting services that you use.
-
-If you work on Open Source projects, publish your GPG public keys to open key servers as well. This enables other people to verify your commits without relying on the hosting service.
+Register the public key with the hosting services that you use, so that they can verify your commits. If you work on Open Source projects, publish your GPG public keys to open key servers as well. This enables other people to verify your commits without relying on the hosting service.
 
 The rest of this article leads you through the process to enable commit signing.
 
@@ -45,11 +43,11 @@ To create a GPG key, run the _gpg_ command in a terminal window, like this:
 gpg --full-gen-key
 ```
 
-GPG will prompt you for several options. Use these values:
+GPG will prompt you for information. Use these values:
 
 - Select the _RSA and RSA_ algorithm
 - Choose a key length of _4096_
-- Accept the default option to have no expiration date for your key
+- Accept the default option to have no expiry date for your key
 - Enter the same email address that you will use for code hosting sites, such as Codeberg or GitHub
 
 Once you have created a GPG key, configure Git to use it.
@@ -88,6 +86,6 @@ Add your GPG key to your accounts on code hosting services that you use. These s
 - [GitHub](https://docs.github.com/en/authentication/managing-commit-signature-verification/adding-a-gpg-key-to-your-github-account)
 - [GitLab](https://docs.gitlab.com/ee/user/project/repository/signed_commits/gpg.html#add-a-gpg-key-to-your-account)
 
-## Publishing Your GPG Key with
+## Publishing Your GPG Key to Key Servers
 
 If you work on Open Source projects, publish your GPG public key to [the OpenPGP key server](https://keys.openpgp.org/). If you contribute to an existing project, you might also publish your GPG public key to other servers that the project recommends. This enables other people to verify your commits without relying on a hosting service.
