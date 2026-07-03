@@ -3,8 +3,8 @@ title = "Running GitLab Pipelines Locally with gitlab-ci-local"
 slug = "gitlab-ci-local"
 date = "2026-03-23T06:56:00+00:00"
 description = "Running GitLab Pipelines on local systems with gitlab-ci-local"
-categories = ["automation", "devops", "programming"]
-tags = ["automation", "devops"]
+categories = ["automation", "devops", "gitlab", "programming"]
+tags = ["automation", "devops", "gitlab"]
 +++
 
 [gitlab-ci-local](https://github.com/firecow/gitlab-ci-local) is a command-line tool that enables you to run [GitLab Pipelines](https://docs.gitlab.com/ee/ci/pipelines/) on any computer. It works without a GitLab installation and only requires Docker or Podman on the system. This means that you can run the same pipelines on your laptop and on test systems, as well as on any instance of GitLab, including [GitLab.com](https://gitlab.com).

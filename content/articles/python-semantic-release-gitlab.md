@@ -3,8 +3,8 @@ title = "Using Python Semantic Release with GitLab"
 slug = "python-semantic-release-gitlab"
 date = "2026-05-27T22:24:00+01:00"
 description = "Python Semantic Release with GitLab"
-categories = ["programming", "python"]
-tags = ["automation", "python"]
+categories = ["gitlab","programming", "python"]
+tags = ["automation", "gitlab", "python"]
 +++
 
 [Python Semantic Release](https://python-semantic-release.readthedocs.io/en/stable/) enables you to automate the release of software projects. This can include projects do not use Python. By default, Python Semantic Release assumes that you are hosting your project on GitHub. This article explains how to set up Python Semantic Release to work with GitLab projects.

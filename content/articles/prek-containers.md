@@ -3,8 +3,8 @@ title = "Using Container Images with prek and pre-commit"
 slug = "prek-containers"
 date = "2026-06-20T07:10:00+01:00"
 description = "Using container images with Git hooks"
-categories = ["automation", "devops", "programming"]
-tags = ["automation", "devops"]
+categories = ["automation", "containers", "devops", "programming"]
+tags = ["automation", "containers", "devops"]
 +++
 
 The [prek](https://prek.j178.dev/) tool manages Git hooks, and enables you to run the same hooks at any time, not just when you commit changes. It downloads the tools and runtimes for the hooks as needed. This means that it can provide a cross-platform way to install and run a complete set of tools for formatting and checking code.

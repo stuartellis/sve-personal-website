@@ -3,8 +3,8 @@ title = "Creating Container Images with Buildah and GitLab"
 slug = "buildah-gitlab"
 date = "2026-06-21T20:26:00+01:00"
 description = "Creating container images with Buildah and GitLab"
-categories = ["automation", "devops", "programming"]
-tags = ["automation", "devops"]
+categories = ["automation", "containers", "devops", "gitlab", "programming"]
+tags = ["automation", "containers", "devops", "gitlab"]
 +++
 
 This article explains how to use [Buildah](https://buildah.io/) with GitLab projects to create and publish container images. Buildah provides a less complex and more secure option for image creation than Docker and BuildKit.
