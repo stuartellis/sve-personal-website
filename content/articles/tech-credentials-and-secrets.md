@@ -1,7 +1,7 @@
 +++
 title = "Handling Credentials and Secrets for Technical Work"
 slug = "tech-credentials-and-secrets"
-date = "2026-06-28T08:26:00+01:00"
+date = "2026-07-04T09:03:00+01:00"
 description = "Handling credentials and secrets for development and systems administration"
 categories = ["devops", "programming"]
 tags = ["devops", "fedora", "linux", "macos"]
@@ -14,6 +14,7 @@ This means that you will need to manage these types of secrets:
 
 - _GPG keys_ - To digitally sign files, messages and code commits
 - _Passwords_ and _passkeys_ - To identify yourself to systems
+- _Multifactor authentication (MFA)_ - To provide an extra proof of your identity
 - _SSH keys_ - To access remote systems, such as remote Git repositories
 - _API tokens_ - To access APIs for services
 
@@ -33,13 +34,21 @@ If you need to digitally sign your emails, consider using an email client that i
 
 ## Managing Passwords and Passkeys
 
-The [KeePassXC](https://keepassxc.org/) password manager runs on Windows, macOS, and Linux systems. It stores credentials in a database file. If you use KeePassX you will need to use a third-party app such as [KeePassDX](https://www.keepassdx.com/) on mobile devices, along with an extra tool to synchronize password databases.
+The [KeePassXC](https://keepassxc.org/) password manager runs on Windows, macOS, and Linux systems. It stores credentials in a database file. If you use KeePassXC you will need to use a third-party app such as [KeePassDX](https://www.keepassdx.com/) on mobile devices, along with an extra tool to synchronize password databases.
 
 Consider using the [Proton Pass](https://proton.me/pass) or [Bitwarden](https://bitwarden.com/) services if you need to share passwords or synchronize them across devices. Both of these services provide apps for mobile devices as well as desktop operating systems, Open Source the code for their apps, and have successfully passed security audits.
 
 > KeePassXC, Proton Pass and Bitwarden all provide command-line tools as well as desktop applications.
 
-Avoid using a password manager for Multifactor Authentication (MFA), also referred to as two-step verification. MFA ensures that attackers cannot log in to the protected service as you, even if the security of your password manager fails or your password for that service leaks in another way. If you use Android devices, consider using [Aegis Authenticator](https://getaegis.app/) for MFA.
+You should always use multifactor authentication for important services, along with a password. Avoid using a password manager for multifactor authentication, because storing the password and the MFA for a service in the same system removes the safety that MFA can provide.
+
+## Multifactor Authentication (MFA)
+
+> Documentation may also refer to multifactor authentication as two factor authentication or two-step verification.
+
+[Multifactor authentication (MFA)](https://en.wikipedia.org/wiki/Multi-factor_authentication) ensures that attackers cannot log in to the protected service as you, even if the security of your password manager fails or your password for that service leaks in another way.
+
+Avoid using a password manager for MFA. If you work for an organization, they should provide a solution for you to use, Otherwise, consider using [Aegis Authenticator](https://getaegis.app/) for MFA with Android devices.
 
 ## Managing SSH Keys
 
@@ -47,7 +56,7 @@ SSH supports remote log in, remote command execution, file transfers and secure 
 
 Linux distributions and macOS include the standard [OpenSSH](https://www.openssh.org/) suite of tools for SSH. The OpenSSH suite provides the tools to use SSH, including an agent for SSH keys.
 
-If you enable an SSH key agent, all software that requires SSH can automatically authenticate to remote systems as needed by using the relevant key. Consider using an SSH key agent that stores your keys in an encrypted store, rather than the OpenSSH key agent. KeePassXC, Bitwarden, Proton Pass and 1Password can all act as SSH key agents.
+If you enable an SSH key agent, all software that requires SSH can automatically authenticate to remote systems as needed by using the relevant key. Consider using an SSH key agent that stores your keys in an encrypted store, rather than the OpenSSH key agent. KeePassXC, Proton Pass, Bitwarden and 1Password can all act as SSH key agents.
 
 If you use the OpenSSH key agent, use the `ssh-keygen` command to create new SSH keys. For example:
 
@@ -55,20 +64,20 @@ If you use the OpenSSH key agent, use the `ssh-keygen` command to create new SSH
 ssh-keygen -t ed25519 -C "Me MyName (MyDevice) <me@mydomain.com>"
 ```
 
-Always set a strong passphrase for a SSH key that you create with `ssh-keygen`. It stores the files in the `.ssh` directory within your home directory. If someone has a copy of your private key and the passphrase, they can use the key to log in to systems as you.
+Always set a strong passphrase for a SSH key that you create with `ssh-keygen`. It stores the files in the `.ssh` directory within your home directory. If someone has a copy of your private key and the passphrase, they can use the key to log in to systems with your identity.
 
 > Use a separate SSH key for each set of systems that you access.
 
 ## Working with API Tokens
 
-You will need to make API tokens and other sensitive credentials available to development tools when required, without storing them in unencrypted files. If you work for an organization, they should provide a solution for you to use. Otherwise, consider using [fnox](https://fnox.jdx.dev/) or [dotenvx](https://dotenvx.com/) for this.
+You will need to make API tokens, credentials and other secrets available to development tools when required, without storing them in unencrypted files. If you work for an organization, they should provide a solution for you to use, such as [Infisical](https://infisical.com/) or [Hashicorp Vault](https://www.hashicorp.com/en/products/vault). Otherwise, consider using [fnox](https://fnox.jdx.dev/).
 
-The `fnox` tool works with a range of local and remote [providers](https://fnox.jdx.dev/providers/overview.html) to get credentials and set them as environment variables. For example, it supports KeePassXC as a local provider. This means that you can store API tokens in the providers of your choice.
+> Always rotate your API tokens regularly. If you work for an organization, they should automatically rotate the API tokens for their services and the tools that they specify should provide the current API tokens for you.
+
+The `fnox` tool works with a range of local and remote [providers](https://fnox.jdx.dev/providers/overview.html) to get credentials and set them as environment variables. For example, it supports KeePassXC as a local provider. This means that you can store secrets in the providers of your choice, with different providers for different secrets.
 
 To install `fnox` with Homebrew, run this command in a terminal window:
 
 ```shell
 brew install fnox
 ```
-
-> Rotate your API tokens regularly. If you work for an organization, they should automatically rotate the API tokens for their services and the tools that they specify should provide the current API tokens for you.
