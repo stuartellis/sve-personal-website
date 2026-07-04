@@ -4,7 +4,7 @@ slug = "yaml-maintenance"
 date = "2025-12-28T21:40:00+00:00"
 description = "Tooling for maintenance of YAML files"
 categories = ["automation", "devops", "kubernetes", "programming"]
-tags = ["automation", "devops", "kubernetes"]
+tags = ["automation", "devops", "kubernetes", "yaml"]
 +++
 
 [YAML](https://en.wikipedia.org/wiki/YAML) is an essential part of modern software development. It has been an established format for configurations for years, and is unlikely to be replaced for a long time to come. Many, many products now use YAML for configuration, from developer tools and continuous integration pipelines to tools for managing systems like Kubernetes and Ansible.

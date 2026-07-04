@@ -4,7 +4,7 @@ slug = "modern-data-file-formats"
 date = "2025-10-15T16:54:00+01:00"
 description = "Data file formats for modern systems"
 categories = ["programming", "python", "javascript"]
-tags = ["python", "javascript"]
+tags = ["python", "javascript", "yaml"]
 +++
 
 This article suggests data file formats for modern systems, and explains some of the well-known formats that they can replace.
