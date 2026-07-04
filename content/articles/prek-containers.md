@@ -1,7 +1,7 @@
 +++
 title = "Using Container Images with prek and pre-commit"
 slug = "prek-containers"
-date = "2026-06-20T07:10:00+01:00"
+date = "2026-07-04T18:13:00+01:00"
 description = "Using container images with Git hooks"
 categories = ["automation", "containers", "devops", "programming"]
 tags = ["automation", "containers", "devops"]
@@ -9,22 +9,22 @@ tags = ["automation", "containers", "devops"]
 
 The [prek](https://prek.j178.dev/) tool manages Git hooks, and enables you to run the same hooks at any time, not just when you commit changes. It downloads the tools and runtimes for the hooks as needed. This means that it can provide a cross-platform way to install and run a complete set of tools for formatting and checking code.
 
-For security and consistency, use container images to provide the tools for these hooks. This ensures that the contributors to a project run the same container images, and that CI systems also use those same images. For better supply chain security, you can specify images that are distributed through your own container registries.
+For security and consistency, use container images to provide the tools for these hooks. This ensures that the contributors to a project run the same container images, and that CI systems also use those same images. For better supply chain security, you can specify images that you distribute through your own container registries.
 
-> The [prek](https://prek.j178.dev/) tool supersedes [pre-commit](https://pre-commit.com/). It can use hooks that are written for `pre-commit`, and works with existing `pre-commit` project configurations.
+> The [prek](https://prek.j178.dev/) tool supersedes [pre-commit](https://pre-commit.com/). It can use the same hooks as `pre-commit`, and works with existing `pre-commit` project configurations.
 
 ## Installing prek
 
-> Running [docker_image](https://prek.j178.dev/languages/#docker_image) or [docker](https://prek.j178.dev/languages/#docker) hooks requires a container runtime such as Podman, Docker or Apple Container. By default, the [container runtime will automatically be detected](https://prek.j178.dev/reference/environment-variables/#prek_container_runtime).
+> Running [docker_image](https://prek.j178.dev/languages/#docker_image) or [docker](https://prek.j178.dev/languages/#docker) hooks requires a container runtime such as Podman, Docker or Apple Container. By default, `prek` [automatically detects the container runtime](https://prek.j178.dev/reference/environment-variables/#prek_container_runtime).
 
 To install `prek` on a development system, use the packages from the [npm](https://www.npmjs.com/package/@j178/prek) or [Python](https://pypi.org/project/prek/) registries. If you use a package management tool like [npm](https://docs.npmjs.com/cli), [pipx](https://pipx.pypa.io/stable/), or [uv](https://docs.astral.sh/uv/), you can specify which version of `prek` it installs:
 
 ```shell
-npm install -g @j178/prek@0.4.5
+npm install -g @j178/prek@0.4.8
 ```
 
 ```shell
-pipx install prek==0.4.5
+pipx install prek==0.4.8
 ```
 
 The `prek` project releases [container images](https://prek.j178.dev/integrations/#docker), so that you can run the same hooks on your CI system, using the same version of `prek` that you run on development systems.
@@ -77,7 +77,7 @@ prek install
 
 To add a hook that uses a container image, you can either specify a remote hook configuration that uses containers, or define the hook directly in the configuration file. Many Open Source projects provide remote hook configurations for the tools that they produce.
 
-> Once you create a configuration file with remote Git hooks, run `prek auto-update --freeze`. This replaces the version `refs` of any remote hooks with hashes, which protects you from supply-chain attacks against the remote hook repositories.
+> Once you create a configuration file with remote Git hooks, run `prek update --freeze`. This replaces the version `refs` of any remote hooks with hashes, which protects you from supply-chain attacks against the remote hook repositories.
 
 If possible, avoid using remote hook configurations altogether. Instead, create hooks in your `prek` configuration files. This enables you to have full control over the configuration of the hook and which container image it runs.
 
@@ -137,11 +137,11 @@ repos:
         pass_filenames: false
 ```
 
-Here, we use the SHA index digest to specify the version of the image, rather than `latest` or a version tag. If a container repository is compromised by an attacker, the attacker may change the image tags to point to images that contain malware. You can see the SHA digests for a container image in the Web interface of the container registry that publishes it. For example, Gitleaks is published to Docker Hub, and the tags are listed on [this page](https://hub.docker.com/r/zricethezav/gitleaks/tags).
+Here, we use the SHA index digest to specify the version of the image, rather than `latest` or a version tag. If an attacker gains access to the container registry they might change the image tags to point to images that contain malware. You can see the SHA digests for a container image in the Web interface of the container registry that publishes it. For example, the Gitleaks project publishes images on Docker Hub, and [this page](https://hub.docker.com/r/zricethezav/gitleaks/tags) lists the tags.
 
 > To avoid issues with different systems using different CPU architectures, use _multi-architecture_ container images where possible. If you cannot, container images may run with CPU emulation. Docker Desktop automatically emulates the required CPU architecture as needed, but other runtimes like Podman require extra configuration to run images with CPU emulation.
 
-If a project does not provide a `docker_image` hook, you can copy the configuration for a hook that they publish, and adapt it. To convert a hook configuration to use a container image, the `language` must be set to `docker_image` and the entry must start with the required container image, like this:
+If a project does not provide a `docker_image` hook, you can copy the configuration for a hook that they publish, and adapt it. To convert a hook configuration to use a container image, set the `language` to `docker_image` and update the entry to start with required container image, like this:
 
 ```yaml
 entry: zricethezav/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f git --pre-commit --redact --staged --verbose
@@ -171,7 +171,7 @@ For example, to run the `gitleaks-docker` hook on the project, use this command:
 prek run gitleaks-docker --all-files
 ```
 
-To run all of the hooks on the project, use this command:
+To run every hook on the project, use this command:
 
 ```shell
 prek run --all-files
