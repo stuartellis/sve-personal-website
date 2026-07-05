@@ -1,7 +1,7 @@
 +++
 title = "Using Python Semantic Release with GitLab"
 slug = "python-semantic-release-gitlab"
-date = "2026-05-27T22:24:00+01:00"
+date = "2026-07-05T13:35:00+01:00"
 description = "Python Semantic Release with GitLab"
 categories = ["gitlab","programming", "python"]
 tags = ["automation", "gitlab", "python"]
@@ -27,7 +27,7 @@ If you are using a free GitLab account, then you will also need to set up a Pers
 
 Python Semantic Release must use a GitLab token to carry out operations on the project repositories. If you are using a free GitLab account, then you will need to set up a Personal Access Token that Python Semantic Release can use.
 
-Use a legacy personal access token. This must be attached to user account with the _Maintainer_ role for the project, and the API token itself must have these permissions:
+Use a legacy personal access token. This must be attached to a user account with the _Maintainer_ role for the project, and the API token itself must have these permissions:
 
 - api
 - read_repository
@@ -62,7 +62,7 @@ semantic-release:
   before_script:
     - apt-get -qy update
     - apt-get install -qy git
-    - pip install python-semantic-release==10.5.3
+    - pip install python-semantic-release==10.6.0
     - git checkout -B "$CI_COMMIT_REF_NAME"
 
   script:
