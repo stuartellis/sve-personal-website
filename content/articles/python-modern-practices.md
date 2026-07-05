@@ -1,7 +1,7 @@
 +++
 title = "Modern Good Practices for Python Development"
 slug = "python-modern-practices"
-date = "2026-06-13T07:54:00+01:00"
+date = "2026-07-05T13:51:00+01:00"
 description = "Good development practices for modern Python"
 categories = ["programming", "python"]
 tags = ["python"]
@@ -35,7 +35,7 @@ Upgrade your projects as new Python versions are released. The Python developmen
 
 ### Avoid Using the Python Installation for Your Operating System
 
-If your operating system includes a Python installation, avoid using it for your projects. This Python installation will be for system tools. It is likely to use an older version of Python, and may not include all of the standard features. An operating system copy of Python should be [marked](https://packaging.python.org/en/latest/specifications/externally-managed-environments/#externally-managed-environments) to prevent you from installing packages into it, but not all operating systems set this marker.
+If your operating system includes a Python installation, avoid using it for your projects. This Python installation will be for system tools. It is likely to use an older version of Python, and may not include all of the standard features. Operating system copies of Python should be [marked](https://packaging.python.org/en/latest/specifications/externally-managed-environments/#externally-managed-environments) to prevent you from installing packages into it, but not all operating systems set this marker.
 
 ## Use a Helper to Run Python Scripts and Tools
 
@@ -164,11 +164,11 @@ Use [wheel](https://packaging.python.org/en/latest/specifications/binary-distrib
 
 For other cases, use extra tools to package your work into a format that includes a copy of the required version of Python as well as your code and the dependencies. This ensures that your code runs with the expected version of Python, and that it has the correct version of each dependency.
 
-OCI container images will run on any system that has a container runtime such as Docker, Podman, Apple Container or WSL container, as well as on cloud infrastructure You can build OCI container images to include a copy of Python, along with your code and the required dependencies. Use OCI container images to package applications that are intended to be run in controlled environments, such as servers, cloud infrastructure, and CI systems. You can use Podman, [buildah](https://buildah.io/) or Docker to create OCI images.
+OCI container images will run on any system that has a container runtime such as Docker, Podman, Apple Container or WSL container, as well as on cloud infrastructure You can build OCI container images to include a copy of Python, along with your code and the required dependencies. Use OCI container images to package applications that are intended to be run in controlled environments, such as servers, cloud infrastructure, and CI systems. You can use [Podman](https://podman.io/), [buildah](https://buildah.io/) or Docker to create OCI images.
 
 > Consider using the [official Python container image](https://hub.docker.com/_/python) as the base image for your application container images.
 
-Use [PyInstaller](https://pyinstaller.org/), [Briefcase](https://briefcase.beeware.org/en/stable/) or [Nuitka](https://nuitka.net) to compile desktop and command-line applications as a single executable file. Each executable file includes a copy of Python, along with your code and the required dependencies. Each executable will only run on the type of operating system and CPU that it was compiled to use. For example, an executable for Microsoft Windows on Intel-compatible machines will work on all editions of Windows, but it will not run on macOS. Optionally, you can put executables in an operating system package to work with package management tools, such as an RPM or DEB package for Linux.
+Use [PyInstaller](https://pyinstaller.org/), [Briefcase](https://briefcase.beeware.org/en/stable/) or [Nuitka](https://nuitka.net) to compile desktop and command-line applications as a single executable file. Each executable file includes a copy of Python, along with your code and the required dependencies. Each executable will only run on the type of operating system and CPU that it was compiled to use. For example, an executable for Microsoft Windows on Intel-compatible machines will work on all editions of Windows, but it will not run on macOS. Optionally, you can put executables in an operating system package to distribute them with package management tools, such as an RPM or DEB package for Linux.
 
 > _Requirements files:_ If you use requirements files to build or deploy projects then configure your tools to [use hashes](#ensure-that-requirements-files-include-hashes).
 
@@ -218,7 +218,7 @@ Consider using type hints in any significant application. Once you add type hint
 
 Code editors automatically read type hints to display information about the code that you are working with. The [official Python extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python) for Microsoft Visual Studio Code provides Pylance for type checking, which is built on pyright. The Zed editor includes a variant of pyright called [basedpyright](https://docs.basedpyright.com/).
 
-Use Git hooks to run the type checker before each commit to source control. You should also run the type checker with your CI system, to validate that the code in your project is consistent.
+Use Git hooks to run the type checker before each commit to source control. You should also run the type checker with your CI system, to check that the code in your project is consistent.
 
 > The [mypy](http://www.mypy-lang.org/) tool is the oldest implementation of type checking for Python. Newer implementations of type checking provide faster and more accurate results. If you use `mypy`, add the [plugin for Pydantic](https://docs.pydantic.dev/latest/integrations/mypy/) to improve the integration between mypy and Pydantic.
 
@@ -366,6 +366,10 @@ The [breakpoint()](https://docs.python.org/3/library/functions.html#breakpoint) 
 
 There are now data file formats that are open, standardized and portable. If possible, use these formats, and avoid older formats. Modern formats are standardized, can be reliably read by many different systems and can be processed efficiently, even with large quantities of data. Some older formats are not standardized, which means that different systems can write different variations, which then cause errors when you move data between systems.
 
+If you need to work with other data formats, consider using a modern file format in your application and adding features to import data or generate exports in other formats when necessary. For example, DuckDB and Pandas include features to import and export data to files in Excel formats.
+
+> Use [Markdown](https://en.wikipedia.org/wiki/Markdown) syntax for formatted text. Structured data formats can handle Markdown documents as strings, since Markdown uses plain-text.
+
 ### Modern Data Formats
 
 If possible, use [JSON](https://en.wikipedia.org/wiki/JSON) for structured data. It is a plain-text format for data objects. You can then also use these file formats:
@@ -375,13 +379,11 @@ If possible, use [JSON](https://en.wikipedia.org/wiki/JSON) for structured data.
 
 All of the versions of Python 3 include modules for [JSON](https://docs.python.org/3/library/json.html) and [SQLite](https://docs.python.org/3/library/sqlite3.html). The [Pandas](https://pandas.pydata.org) dataframe library supports Parquet, JSON and SQLite. [DuckDB](https://duckdb.org/docs/stable/clients/python/overview) also supports all three formats.
 
-If you need to work with other data formats, consider using a modern file format in your application and adding features to import data or generate exports in other formats when necessary. For example, DuckDB and Pandas include features to import and export data to files in Excel formats.
-
 In most cases, you should use the JSON format to transfer data between systems, especially if the systems must communicate with HTTP. JSON documents can be used for any kind of data. Since JSON is plain-text, data in this format can be stored in either files or in a database. Every programming language and modern SQL database supports JSON.
 
 > You can validate JSON documents with [JSON Schemas](https://json-schema.org/). [Pydantic](https://docs.pydantic.dev/) enables you to export your Python data objects to JSON and generate JSON Schemas from the data models.
 
-Each SQLite database is a single file. Use SQLite files for [data and configuration for applications](https://sqlite.org/appfileformat.html) as well as for queryable databases. They are arguably more portable and resilient than sets of plain-text files. SQLite is widely-supported, [robust](https://sqlite.org/hirely.html) and the file format is [guaranteed to be stable and portable for decades](https://sqlite.org/lts.html). Each SQLite database file can safely be gigabytes in size.
+Each SQLite database is a single file. Use SQLite files for [data and configuration for applications](https://sqlite.org/appfileformat.html) as well as for queryable databases. They are more portable and resilient than sets of plain-text files for storing structured data. SQLite is widely-supported, [robust](https://sqlite.org/hirely.html) and the file format is [guaranteed to be stable and portable for decades](https://sqlite.org/lts.html). Each SQLite database file can safely be gigabytes in size.
 
 > You can use SQLite databases for any kind of data. They can be used to [store and query data in JSON format](https://sqlite.org/json1.html), they hold plain text with [optional full-text search](sqlite.org/fts5.html), and they can store binary data.
 
