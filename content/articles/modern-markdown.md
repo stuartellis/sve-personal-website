@@ -4,7 +4,7 @@ slug = "modern-markdown"
 date = "2026-07-05T13:31:00+01:00"
 description = "Markdown formatted text for modern systems"
 draft = true
-categories = ["programming", "python", "javascript"]
+categories = ["documentation", "programming", "python", "javascript"]
 tags = ["python", "javascript", "markdown"]
 +++
 
