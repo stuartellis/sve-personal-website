@@ -109,7 +109,7 @@ If none of these methods are suitable, you can get Task with an [installation sc
 
 > If you install a global copy of Task then [you can integrate it with your shell](#integrating-task-with-your-shell).
 
-### Installing Task with Npm
+### Installing Task with `npm`
 
 This command installs version 3.52.0 of Task with [npm](https://docs.npmjs.com/) and makes it available to your user
 account:
