@@ -11,44 +11,17 @@ version: "3.38"
 silent: true
 
 includes:
-  hugo: tasks/hugo
-  pre-commit: tasks/pre-commit
-  project: tasks/project
-  vale: tasks/vale
+  hugo: .tasks/shared/hugo
+  pre-commit: .tasks/shared/pre-commit
+  project:
+    taskfile: .tasks/project
+    flatten: true
+  vale: .tasks/shared/vale
 
 tasks:
   default:
     cmds:
       - task: list
-
-  bootstrap:
-    desc: Set up environment for development
-    aliases: [setup]
-    cmds:
-      - task: pre-commit:setup
-
-  clean:
-    desc: Delete generated files
-    cmds:
-      - task: hugo:clean
-      - task: project:clean
-
-  deploy:
-    desc: Deploy Website
-    cmds:
-      - task: hugo:deploy
-
-  dev:
-    desc: Run generated Website
-    aliases: [run, site]
-    cmds:
-      - task: hugo:serve
-
-  lint:
-    desc: Run all checks
-    aliases: [check, test]
-    cmds:
-      - task: pre-commit:check
 
   list:
     desc: List available tasks
