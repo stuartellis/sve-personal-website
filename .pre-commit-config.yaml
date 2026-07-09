@@ -1,0 +1,47 @@
+---
+minimum_prek_version: "0.4.0"
+
+repos:
+  - repo: builtin
+    hooks:
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-vcs-permalinks
+      - id: check-xml
+      - id: check-yaml
+      - id: destroyed-symlinks
+      - id: end-of-file-fixer
+      - id: fix-byte-order-marker
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+  - repo: local
+    hooks:
+
+      - id: rumdl-fmt
+        name: rumdl fmt
+        description: Format Markdown files in place. Always exits 0; relies on pre-commit file-change detection.
+        entry: rumdl fmt
+        language: system
+        types: [markdown]
+        require_serial: true
+
+      - id: rumdl-check
+        name: rumdl check
+        description: Lint Markdown files. Exits 1 if violations are found. Run rumdl-fix to auto-fix in place.
+        entry: rumdl check
+        language: system
+        types: [markdown]
+        require_serial: true
+
+      - id: rumdl-fix
+        name: rumdl fix
+        description: Fix Markdown files.
+        entry: rumdl check --fix
+        language: system
+        types: [markdown]
+        require_serial: true
+        stages: [manual]
