@@ -1,7 +1,7 @@
 +++
 title = "Shared Tooling for Projects with Task"
 slug = "task-runner"
-date = "2026-06-13T00:44:00+01:00"
+date = "2026-07-09T00:44:00+01:00"
 description = "Using the Task Tool"
 categories = ["automation", "devops", "programming"]
 tags = ["automation", "devops"]
@@ -78,11 +78,9 @@ Task uses a [versioned and published schema](#checking-taskfiles) for these YAML
 
 > If your organization has private artifact or package repositories, consider distributing Task through these. This ensures that your preferred versions of Task are available.
 
-If possible, consider using tools that enable you to specify the version of Task that you use. These tools enable you to specify different versions for different projects, as well as having a global installation.
+If possible, use tools that enable you to specify the version of Task that you use. For developer systems, you can use any tool that supports [npm](#installing-task-with-npm) packages. If you use a tool version manager like [mise](#installing-task-with-mise) then it can also manage Task. You can set up Task in CI jobs with the same methods.
 
-For developer systems, you can use any tool that supports [npm](#installing-task-with-npm) packages. If you use a tool version manager like [mise](#installing-task-with-mise) then it can also manage Task. You can also set up Task for CI jobs with the same methods, or with the official [GitHub Action](https://github.com/go-task/setup-task).
-
-Task can be installed on all of the popular operating systems through [packages](#installing-task-with-operating-system-packages). These only provide a single global installation of Task. You can [use Homebrew to install Task](#installing-task-with-homebrew) on macOS and Linux, but this provides a single copy of Task and means that you cannot specify the exact version of Task that is installed.
+Task can be installed on all of the popular operating systems through [packages](#installing-task-with-operating-system-packages) or [Homebrew](#installing-task-with-homebrew) on macOS and Linux. These options only provide a single global installation of Task and mean that you cannot specify the exact version of Task.
 
 If none of these methods are suitable, you can get Task with an [installation script](#installing-task-with-a-script).
 
@@ -90,18 +88,18 @@ If none of these methods are suitable, you can get Task with an [installation sc
 
 ### Installing Task with npm
 
-This command installs version 3.51.1 of Task with [npm](https://docs.npmjs.com/) and makes it available to your user account:
+This command installs version 3.52.0 of Task with [npm](https://docs.npmjs.com/) and makes it available to your user account:
 
 ```shell
-npm install -g @go-task/cli@3.51.1
+npm install -g @go-task/cli@3.52.0
 ```
 
 ### Installing Task with mise
 
-This command installs version 3.51.1 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
+This command installs version 3.52.0 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user account:
 
 ```shell
-mise use -gy task@3.51.1
+mise use -gy task@3.52.0
 ```
 
 ### Installing Task with Operating System Packages
@@ -150,7 +148,7 @@ curl -L https://taskfile.dev/install.sh > install-task.sh
 To use the installation script, call it with the Git tag and the _-b_ option. The Git tag specifies the version of Task. The _-b_ option specifies which directory to install it to:
 
 ```shell
-./install-task.sh -b $HOME/.local/bin v3.51.1
+./install-task.sh -b $HOME/.local/bin v3.52.0
 ```
 
 {{< alert >}}
@@ -260,7 +258,7 @@ This diagram shows the suggested directory structure for a project with task inc
 |
 | - tasks/
 |    |
-|    |- pre-commit
+|    |- prek
 |    |    |
 |    |    |- Taskfile.yaml
 |    |
@@ -287,7 +285,7 @@ set: [pipefail]
 # Namespaces
 includes:
   package: tasks/package/Taskfile_{{OS}}.yaml
-  pre-commit: tasks/pre-commit
+  prek: tasks/prek
 
 # Top-level tasks
 tasks:
@@ -298,7 +296,7 @@ tasks:
   bootstrap:
     desc: Set up environment for development
     cmds:
-      - task: pre-commit:setup
+      - task: prek:setup
 
   build:
     desc: Build packages
@@ -314,14 +312,14 @@ tasks:
     desc: Format code
     aliases: [format]
     cmds:
-      - task: pre-commit:run
+      - task: prek:run
         vars: { HOOK_ID: "ruff-format" }
 
   lint:
     desc: Run all checks
     aliases: [check]
     cmds:
-      - task: pre-commit:check
+      - task: prek:check
 
   list:
     desc: List available tasks
@@ -338,9 +336,9 @@ task
 ### Example Namespace of Tasks for a Project
 
 ```yaml
-# Tasks for pre-commit
+# Tasks for prek
 #
-# https://pre-commit.com/
+# https://prek.j178.dev/
 
 version: "3.45"
 
@@ -350,38 +348,38 @@ tasks:
       - task: check
 
   check:
-    desc: Check the project with pre-commit
+    desc: Check the project with prek
     cmds:
-      - pre-commit run --all-files
+      - prek run --all-files
 
   run:
-    desc: Run a specific pre-commit check on the project
+    desc: Run a specific prek check on the project
     cmds:
-      - pre-commit run "{{.HOOK_ID}}" --all-files
+      - prek run "{{.HOOK_ID}}" --all-files
     requires:
       vars: [HOOK_ID]
 
   setup:
-    desc: Setup pre-commit for use
+    desc: Setup prek for use
     cmds:
-      - pre-commit install
+      - prek install
 
   update:
-    desc: Update pre-commit hooks to current versions
+    desc: Update prek hooks to current versions
     cmds:
-      - pre-commit autoupdate
+      - prek update
 ```
 
 The _default_ task in this file runs _check_, so this command runs the _check_ task:
 
 ```shell
-task pre-commit
+task prek
 ```
 
 The result is the same as this command:
 
 ```shell
-task pre-commit:check
+task prek:check
 ```
 
 ## Writing Taskfiles
@@ -434,13 +432,13 @@ Visual Studio Code will both validate and format Task files when the [redhat.vsc
 
 To validate Task files on the command-line, use [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/index.html). The _check-jsonschema_ tool automatically includes the schema for Task files. The [yamllint](https://yamllint.readthedocs.io) command-line tool provides format and quality checks for all types of YAML file.
 
-The _check-jsonschema_ and _yamllint_ projects also provide Git hooks for [prek](https://prek.j178.dev/) and [pre-commit](https://pre-commit.com). The next section explains how to configure these tools so that Task files are automatically checked before changes are committed to source control.
+The _check-jsonschema_ and _yamllint_ projects also provide Git hooks for [prek](https://prek.j178.dev/) and [prek](https://prek.com). The next section explains how to configure these tools so that Task files are automatically checked before changes are committed to source control.
 
-### Maintaining Task files with prek or pre-commit
+### Maintaining Task files with prek or prek
 
-To automate the maintenance of Task files in your project, add Git hooks for a formatter and linters. The most popular tools for managing hooks are [prek](https://prek.j178.dev/) and [pre-commit](https://pre-commit.com/). The [prek](https://prek.j178.dev/) tool supersedes [pre-commit](https://pre-commit.com/). It can use hooks that are written for `pre-commit`, and works with existing `pre-commit` project configurations.
+To automate the maintenance of Task files in your project, add Git hooks for a formatter and linters. The most popular tools for managing hooks are [prek](https://prek.j178.dev/) and [prek](https://prek.com/). The [prek](https://prek.j178.dev/) tool supersedes [prek](https://prek.com/). It can use hooks that are written for `prek`, and works with existing `prek` project configurations.
 
-Here is an example `.pre-commit-config.yaml` configuration file:
+Here is an example `.prek-config.yaml` configuration file:
 
 ```yaml
 - repo: https://github.com/rbubley/mirrors-prettier
@@ -448,7 +446,7 @@ Here is an example `.pre-commit-config.yaml` configuration file:
   hooks:
     - id: prettier
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: "0.37.2"
+  rev: "0.37.4"
   hooks:
     - id: check-taskfile
 - repo: https://github.com/adrienverge/yamllint
@@ -458,9 +456,9 @@ Here is an example `.pre-commit-config.yaml` configuration file:
       args: ["--strict"]
 ```
 
-> Once you create a configuration file with remote Git hooks, run `prek auto-update --freeze`. This replaces the version numbers of remote hooks with hashes, which protects you from supply-chain attacks against the hook repositories.
+> Once you create a configuration file with remote Git hooks, run `prek update --freeze`. This replaces the version numbers of remote hooks with hashes, which protects you from supply-chain attacks against the hook repositories.
 
-These hooks automatically run [Prettier](https://prettier.io/) to format your files, and check all YAML files with [yamllint](https://yamllint.readthedocs.io/en/stable/integration.html#integration-with-pre-commit). The [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/precommit_usage.html) hook validates Task files.
+These hooks automatically run [Prettier](https://prettier.io/) to format your files, and check all YAML files with [yamllint](https://yamllint.readthedocs.io/en/stable/integration.html#integration-with-prek). The [check-jsonschema](https://check-jsonschema.readthedocs.io/en/stable/precommit_usage.html) hook validates Task files.
 
 The hooks automatically run when you commit code. You may also run the checks yourself at any time. For example, this command validates all of the Task files in your project by running the `check-taskfile` hook with [prek](https://prek.j178.dev/):
 
