@@ -24,5 +24,8 @@ fnox.local.toml
 public
 resources
 
+# rumdl
+.rumdl_cache
+
 # Vale
 .vale/styles/

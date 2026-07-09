@@ -1,0 +1,25 @@
+# rumdl configuration file
+#
+# https://rumdl.dev/
+
+[global]
+
+enable = ["ALL"]
+
+exclude = [
+    ".git",
+    "LICENSES",
+    "public",
+    "LICENSE.md"
+]
+
+line-length = 120
+
+respect-gitignore = true
+
+[MD004]
+style = "dash"
+
+[MD013]
+reflow = true
+reflow-mode = "normalize"
