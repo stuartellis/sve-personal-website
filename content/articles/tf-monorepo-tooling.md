@@ -1,32 +1,47 @@
 +++
-title = "Tooling for Terraform & OpenTofu in Monorepos"
-slug = "tf-monorepo-tooling"
+categories = ["automation", "aws", "cloudflare", "devops", "opentofu", "terraform"]
 date = "2026-05-25T09:48:00+01:00"
 description = "Tooling for OpenTofu and Terraform in monorepos"
-categories = ["automation", "aws", "cloudflare", "devops", "opentofu", "terraform"]
+slug = "tf-monorepo-tooling"
 tags = ["automation", "aws", "cloudflare", "devops", "opentofu", "terraform"]
+title = "Tooling for Terraform & OpenTofu in Monorepos"
 +++
 
-This article describes an example of tooling for [OpenTofu](https://opentofu.org/) and [Terraform](https://developer.hashicorp.com/terraform) using a [general-purpose task runner utility](https://www.stuartellis.name/articles/task-runner/). The tooling supports these features without any other third-party software:
+This article describes an example of tooling for [OpenTofu](https://opentofu.org/) and
+[Terraform](https://developer.hashicorp.com/terraform) using a
+[general-purpose task runner utility](https://www.stuartellis.name/articles/task-runner/). The tooling supports these
+features without any other third-party software:
 
 - [Monorepo](https://en.wikipedia.org/wiki/Monorepo) projects that contain the code for infrastructure and applications.
-- Multiple infrastructure components in the same code repository. Each of these _units_ is a complete [root module](https://opentofu.org/docs/language/modules/).
-- Multiple instances of the same infrastructure component with different configurations. The TF configurations are called [contexts](#creating-a-context).
-- [Deploying extra instances of a component](#using-extra-instances) with the same set of configuration. Use this to deploy instances from version control branches for development, or to create temporary instances.
+- Multiple infrastructure components in the same code repository. Each of these _units_ is a complete
+  [root module](https://opentofu.org/docs/language/modules/).
+- Multiple instances of the same infrastructure component with different configurations. The TF configurations are
+  called [contexts](#creating-a-context).
+- [Deploying extra instances of a component](#using-extra-instances) with the same set of configuration. Use this to
+  deploy instances from version control branches for development, or to create temporary instances.
 - [Integration testing](#testing) for every component.
-- [Moving from Terraform to OpenTofu](#using-terraform). You can use the same commands for both, and migrate to OpenTofu at any time.
+- [Moving from Terraform to OpenTofu](#using-terraform). You can use the same commands for both, and migrate to OpenTofu
+  at any time.
 
-Using tooling like this avoids the problems of a [terralith](https://masterpoint.io/blog/terralith-monolithic-terraform-architecture/), a situation where all of the TF code for all of the resources is in a single root module. Monolithic root modules complicate development and testing, and they grow slower and more brittle over time as resources are added to them.
+Using tooling like this avoids the problems of a
+[terralith](https://masterpoint.io/blog/terralith-monolithic-terraform-architecture/), a situation where all of the TF
+code for all of the resources is in a single root module. Monolithic root modules complicate development and testing,
+and they grow slower and more brittle over time as resources are added to them.
 
-If you are working in a larger organization, consider using [Terramate](https://terramate.io/docs/) or other orchestration tools to maintain your Infrastructure as Code projects. Tooling like that described here enables you to have some of the benefits of an orchestration tool without committing to a larger product.
+If you are working in a larger organization, consider using [Terramate](https://terramate.io/docs/),
+[env zero](https://www.env0.com/) or other orchestration tools to maintain your Infrastructure as Code. Tooling like
+that described here enables you to have some of the benefits of an orchestration tool without committing to a larger
+product.
 
 The code for this example tooling is available on GitHub:
 
 - [https://github.com/stuartellis/tf-tasks](https://github.com/stuartellis/tf-tasks)
 
-For more details about how this tooling works and the design decisions, read my [article on designing a wrapper for TF](https://www.stuartellis.name/articles/tf-wrapper-design/).
+For more details about how this tooling works and the design decisions, read my
+[article on designing a wrapper for TF](https://www.stuartellis.name/articles/tf-wrapper-design/).
 
-> This article uses the identifier _TF_ or _tf_ for OpenTofu and Terraform. Both tools accept the same commands and have the same behavior. The tooling itself is just called `tft` (_TF Tasks_).
+> This article uses the identifier _TF_ or _tf_ for OpenTofu and Terraform. Both tools accept the same commands and have
+> the same behavior. The tooling itself is just called `tft` (_TF Tasks_).
 
 ## Quick Examples
 
@@ -34,7 +49,8 @@ The tooling is a single [Task](https://taskfile.dev) file. You can see it here:
 
 - [https://github.com/stuartellis/tf-tasks/blob/main/template/tasks/tft/Taskfile.yaml.jinja](https://github.com/stuartellis/tf-tasks/blob/main/template/tasks/tft/Taskfile.yaml.jinja)
 
-It is provided as a [Copier](https://copier.readthedocs.io/en/stable/) template, so that you can run one command to a create a project that works with the tooling. This also enables [updates](#updating-tf-tasks).
+It is provided as a [Copier](https://copier.readthedocs.io/en/stable/) template, so that you can run one command to a
+create a project that works with the tooling. This also enables [updates](#updating-tf-tasks).
 
 To start a new project:
 
@@ -55,9 +71,11 @@ TFT_CONTEXT=dev task tft:context:new
 TFT_UNIT=my-app task tft:new
 ```
 
-The `tft:new` task creates a _unit_, a complete TF root module. Each new root module includes example code for AWS, so that it can work immediately. The context is a configuration profile. You only need to set:
+The `tft:new` task creates a _unit_, a complete TF root module. Each new root module includes example code for AWS, so
+that it can work immediately. The context is a configuration profile. You only need to set:
 
-1. Either the [remote state storage](#setting-the-remote-state-for-a-context), OR use [local state](#using-local-tf-state)
+1. Either the [remote state storage](#setting-the-remote-state-for-a-context), OR use
+   [local state](#using-local-tf-state)
 2. The AWS IAM role for TF itself. This is the variable `tf_exec_role_arn` in the tfvars files for the context.
 
 You can then start working with your TF module:
@@ -78,14 +96,17 @@ You can always specifically set the unit and context for a task. This example ru
 TFT_CONTEXT=dev TFT_UNIT=my-app task tft:validate
 ```
 
-Code included in each TF module provides unique identifiers for instances, so that you can have multiple copies of the resources at the same time. The only requirement is that you include the `edition_id` for the instance as part of each resource name:
+Code included in each TF module provides unique identifiers for instances, so that you can have multiple copies of the
+resources at the same time. The only requirement is that you include the `edition_id` for the instance as part of each
+resource name:
 
 ```hcl
 resource "aws_dynamodb_table" "example_table" {
   name = "${local.meta_product_name}-${local.meta_component_name}-example-${local.edition_id}"
 ```
 
-To create an extra copy of the resources for a module, set the variable `TFT_EDITION` with a unique name for the copy. This example will deploy an extra instance called `copy2` alongside the main set of resources:
+To create an extra copy of the resources for a module, set the variable `TFT_EDITION` with a unique name for the copy.
+This example will deploy an extra instance called `copy2` alongside the main set of resources:
 
 ```shell
 export TFT_CONTEXT=dev TFT_UNIT=my-app
@@ -101,9 +122,13 @@ TFT_EDITION=copy2 task tft:destroy
 TFT_EDITION=copy2 task tft:forget
 ```
 
-These extra instances automatically have their own unique `edition_id`, which is a shortened SHA256 hash. They also each have their own TF state, using [workspaces](https://opentofu.org/docs/language/state/workspaces/). Use this feature to create disposable instances for the branches of your code as you need them, or to deploy temporary instances for any other purpose.
+These extra instances automatically have their own unique `edition_id`, which is a shortened SHA256 hash. They also each
+have their own TF state, using [workspaces](https://opentofu.org/docs/language/state/workspaces/). Use this feature to
+create disposable instances for the branches of your code as you need them, or to deploy temporary instances for any
+other purpose.
 
-The ability to have multiple copies of resources for the same module without conflicts also enables us to run [integration tests](#testing) at any time. This example runs tests for the module:
+The ability to have multiple copies of resources for the same module without conflicts also enables us to run
+[integration tests](#testing) at any time. This example runs tests for the module:
 
 ```shell
 TFT_CONTEXT=dev TFT_UNIT=my-app task tft:test
@@ -117,25 +142,38 @@ To pass extra options to OpenTofu or Terraform, add `--` to the end of the comma
 task tft:init -- -upgrade
 ```
 
-All of the commands are available through [Task](https://www.stuartellis.name/articles/task-runner/). To see a list of the available tasks in a project, enter _task_ in a terminal window:
+All of the commands are available through [Task](https://www.stuartellis.name/articles/task-runner/). To see a list of
+the available tasks in a project, enter _task_ in a terminal window:
 
 ```shell
 task
 ```
 
-If you set up [shell completions](https://taskfile.dev/installation/#setup-completions) for Task, you will see you suggestions as you type.
+If you set up [shell completions](https://taskfile.dev/installation/#setup-completions) for Task, you will see you
+suggestions as you type.
 
 ## How It Works
 
-This tooling is built as a [Copier](https://copier.readthedocs.io/en/stable/) template. Copier enables us to create new projects from the template, add the tooling to any existing project, and synchronize the copies of the tooling in our projects with newer versions as needed.
+This tooling is built as a [Copier](https://copier.readthedocs.io/en/stable/) template. Copier enables us to create new
+projects from the template, add the tooling to any existing project, and synchronize the copies of the tooling in our
+projects with newer versions as needed.
 
-The core is a single [Task](https://www.stuartellis.name/articles/task-runner/) file that Copier adds to projects. Task is a command-line tool that generates and runs _tasks_, shell commands that are defined in a Taskfile. Each Taskfile is a YAML document that defines templates for the commands. Task uses a versioned and published schema so that we can [validate Taskfiles](https://www.stuartellis.name/articles/task-runner/#checking-taskfiles). By design, we can replace Task with any other script or tool that generates the same commands.
+The core is a single [Task](https://www.stuartellis.name/articles/task-runner/) file that Copier adds to projects. Task
+is a command-line tool that generates and runs _tasks_, shell commands that are defined in a Taskfile. Each Taskfile is
+a YAML document that defines templates for the commands. Task uses a versioned and published schema so that we can
+[validate Taskfiles](https://www.stuartellis.name/articles/task-runner/#checking-taskfiles). By design, we can replace
+Task with any other script or tool that generates the same commands.
 
-The tooling does not use or rely on the [stacks feature of HCP Terraform](https://developer.hashicorp.com/terraform/language/stacks). Since the _units_ are standard modules, they can be used with stacks or [any other orchestration](#what-about-dependencies-between-components) that you wish.
+The tooling does not use or rely on the
+[stacks feature of HCP Terraform](https://developer.hashicorp.com/terraform/language/stacks). Since the _units_ are
+standard modules, they can be used with stacks or [any other orchestration](#what-about-dependencies-between-components)
+that you wish.
 
-## Setting Up a Project
+## Setting up a Project
 
-To create a new project, run Copier. I recommend that you use either [uv](https://docs.astral.sh/uv/) or [pipx](https://pipx.pypa.io/) to run Copier, because they will automatically fetch and use Copier without needing to install it. These commands both create a new project:
+To create a new project, run Copier. I recommend that you use either [uv](https://docs.astral.sh/uv/) or
+[pipx](https://pipx.pypa.io/) to run Copier, because they will automatically fetch and use Copier without needing to
+install it. These commands both create a new project:
 
 ```shell
 uvx copier copy git+https://github.com/stuartellis/tf-tasks my-project
@@ -154,7 +192,8 @@ cd my-project
 uvx copier copy git+https://github.com/stuartellis/tf-tasks .
 ```
 
-Copier only creates or updates the files and directories that are managed by the template. The template is configured to avoid updating these files if they already exist: `.gitignore`, `README.md` and `Taskfile.yaml`.
+Copier only creates or updates the files and directories that are managed by the template. The template is configured to
+avoid updating these files if they already exist: `.gitignore`, `README.md` and `Taskfile.yaml`.
 
 ## Using the Tasks
 
@@ -165,7 +204,8 @@ To use the tasks in a generated project you will need:
 - [Task](https://taskfile.dev)
 - [OpenTofu](https://opentofu.org/) or [Terraform](https://developer.hashicorp.com/terraform)
 
-The tasks in the template do not use Python or Copier. This means that they can be run in a restricted environment, such as a continuous integration system.
+The tasks in the template do not use Python or Copier. This means that they can be run in a restricted environment, such
+as a continuous integration system.
 
 To see a list of the available tasks in a project, enter _task_ in a terminal window:
 
@@ -183,13 +223,15 @@ Contexts provide configurations for TF. Before you manage resources with TF, fir
 TFT_CONTEXT=dev task tft:context:new
 ```
 
-Edit the `context.json` file in the directory `tf/contexts/<CONTEXT>/` to set the `environment` name and specify the settings for the [remote state](https://opentofu.org/docs/language/state/remote/) storage that you want to use.
+Edit the `context.json` file in the directory `tf/contexts/<CONTEXT>/` to set the `environment` name and specify the
+settings for the [remote state](https://opentofu.org/docs/language/state/remote/) storage that you want to use.
 
 > This tooling currently only supports Amazon S3 and Cloudflare R2 for remote state storage.
 
 ### Setting the Remote State for a Context
 
-The `context.json` file is the configuration file for the context. It specifies metadata and settings for TF [remote state](https://opentofu.org/docs/language/state/remote/). Here is an example of a `context.json` file:
+The `context.json` file is the configuration file for the context. It specifies metadata and settings for TF
+[remote state](https://opentofu.org/docs/language/state/remote/). Here is an example of a `context.json` file:
 
 ```json
 {
@@ -207,13 +249,16 @@ The `context.json` file is the configuration file for the context. It specifies 
 }
 ```
 
-The `backends.s3` section specifies the settings for a TF backend that uses S3 for storage. The tooling will use this backend by default.
+The `backends.s3` section specifies the settings for a TF backend that uses S3 for storage. The tooling will use this
+backend by default.
 
-> This backend uses the [S3 native locking feature](https://opentofu.org/docs/language/settings/backends/s3/) in current versions of OpenTofu and Terraform.
+> This backend uses the [S3 native locking feature](https://opentofu.org/docs/language/settings/backends/s3/) in current
+> versions of OpenTofu and Terraform.
 
 #### Using Cloudflare R2 for Remote State
 
-This tooling also supports [Cloudflare R2](https://developers.cloudflare.com/r2/) for remote state storage. To use Cloudflare R2, specify the backend as `r2` in the `context.json` file:
+This tooling also supports [Cloudflare R2](https://developers.cloudflare.com/r2/) for remote state storage. To use
+Cloudflare R2, specify the backend as `r2` in the `context.json` file:
 
 ```json
 {
@@ -234,15 +279,24 @@ This tooling also supports [Cloudflare R2](https://developers.cloudflare.com/r2/
 
 > Always set the region as `auto` for R2.
 
-Cloudflare R2 implements the S3 API, so you use the same `backend "s3"` block in your TF module with R2 as you would with Amazon S3. You specify an HTTPS endpoint for the S3 API, which is your Cloudflare account ID, followed by `.r2.cloudflarestorage.com`.
+Cloudflare R2 implements the S3 API, so you use the same `backend "s3"` block in your TF module with R2 as you would
+with Amazon S3. You specify an HTTPS endpoint for the S3 API, which is your Cloudflare account ID, followed by
+`.r2.cloudflarestorage.com`.
 
-This compatibility with S3 means that you also need to specify an Access Key ID and a Secret Access Key for TF to connect to the R2 bucket. Each API token for R2 is given an Access Key ID and a Secret Access Key for compatibility with S3, but other types of Cloudflare API tokens do not. Create an bucket-scoped API token for this purpose, with `Read` and `Edit` permissions. The Cloudflare documentation explains [how to get S3 credentials for an R2 API token](https://developers.cloudflare.com/r2/api/tokens/).
+This compatibility with S3 means that you also need to specify an Access Key ID and a Secret Access Key for TF to
+connect to the R2 bucket. Each API token for R2 is given an Access Key ID and a Secret Access Key for compatibility with
+S3, but other types of Cloudflare API tokens do not. Create an bucket-scoped API token for this purpose, with `Read` and
+`Edit` permissions. The Cloudflare documentation explains
+[how to get S3 credentials for an R2 API token](https://developers.cloudflare.com/r2/api/tokens/).
 
-Set the S3 credentials for your R2 token as environment variables: `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`. If you use the Cloudflare TF provider to manage resources then you must specify a separate API token with administrative permissions through the `CLOUDFLARE_API_TOKEN` environment variable.
+Set the S3 credentials for your R2 token as environment variables: `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`. If
+you use the Cloudflare TF provider to manage resources then you must specify a separate API token with administrative
+permissions through the `CLOUDFLARE_API_TOKEN` environment variable.
 
 #### Using S3 with DynamoDB for Remote State
 
-If you need to use old versions of Terraform or OpenTofu, you may need to use the legacy support for S3 with DynamoDB for locking.
+If you need to use old versions of Terraform or OpenTofu, you may need to use the legacy support for S3 with DynamoDB
+for locking.
 
 To use Amazon S3 with DynamoDB for locking, specify an `s3ddb` backend:
 
@@ -264,11 +318,14 @@ To use Amazon S3 with DynamoDB for locking, specify an `s3ddb` backend:
 }
 ```
 
-### Setting the tfvars for a Context
+### Setting the Tfvars for a Context
 
-Each context has one `.tfvars` file for each unit. This `.tfvars` file is automatically loaded when you run a task with that context for the unit.
+Each context has one `.tfvars` file for each unit. This `.tfvars` file is automatically loaded when you run a task with
+that context for the unit.
 
-To enable you to have variables for a unit that apply for every context, the directory `tf/contexts/all/` also contains one `.tfvars` file for each unit. The `.tfvars` file for a unit in the `tf/contexts/all/` directory is always used, along with the `.tfvars` for the current context.
+To enable you to have variables for a unit that apply for every context, the directory `tf/contexts/all/` also contains
+one `.tfvars` file for each unit. The `.tfvars` file for a unit in the `tf/contexts/all/` directory is always used,
+along with the `.tfvars` for the current context.
 
 ### Creating a Root Module (Unit)
 
@@ -278,7 +335,8 @@ To create a unit from the template, use `new`:
 TFT_UNIT=my-new-app task tft:new
 ```
 
-To create a unit as a copy of an existing unit, use `copy`. Specify the existing unit with `TFT_SOURCE_UNIT` and the name of the new unit with `TFT_UNIT`, like this:
+To create a unit as a copy of an existing unit, use `copy`. Specify the existing unit with `TFT_SOURCE_UNIT` and the
+name of the new unit with `TFT_UNIT`, like this:
 
 ```shell
 TFT_SOURCE_UNIT=my-first-app TFT_UNIT=my-new-app task tft:copy
@@ -295,20 +353,27 @@ task tft:apply
 
 ### Customizing the Module Code
 
-This tooling creates each new unit as a copy of the files in `tf/units/template/`. If the provided code is not appropriate, you can customize the contents of a module in any way that you need. The provided code is for AWS, but you can replace this code and use this tooling for any cloud service.
+This tooling creates each new unit as a copy of the files in `tf/units/template/`. If the provided code is not
+appropriate, you can customize the contents of a module in any way that you need. The provided code is for AWS, but you
+can replace this code and use this tooling for any cloud service.
 
-The tooling only requires that a module is a valid TF root module in the directory `tf/units/` and accepts these input variables:
+The tooling only requires that a module is a valid TF root module in the directory `tf/units/` and accepts these input
+variables:
 
 - `tft_product_name` (string) - The name of the product or project
 - `tft_environment_name` (string) - The name of the environment
 - `tft_unit_name` (string) - The name of the component
 - `tft_edition_name` (string) - An identifier for the specific instance of the resources
 
-These variables are only used to set locals in the file `meta_locals.tf`. Use the `edition_id` and the other locals in `meta_locals.tf` to define resource names, and create your own locals in another file for any other identifiers that the resources need.
+These variables are only used to set locals in the file `meta_locals.tf`. Use the `edition_id` and the other locals in
+`meta_locals.tf` to define resource names, and create your own locals in another file for any other identifiers that the
+resources need.
 
-You can change or completely replace the provided test code. For example, you might change the format of the random edition name identifier that the test setup generates.
+You can change or completely replace the provided test code. For example, you might change the format of the random
+edition name identifier that the test setup generates.
 
-> If you do not use the instance `edition_id` or an equivalent hash in the name of a resource, you must decide how to ensure that each copy of the resource will have a unique name.
+> If you do not use the instance `edition_id` or an equivalent hash in the name of a resource, you must decide how to
+> ensure that each copy of the resource will have a unique name.
 
 ### Using Extra Instances
 
@@ -320,9 +385,12 @@ task tft:plan
 task tft:apply
 ```
 
-This creates a complete and separate copy of the resources that are defined by the unit and the context. The tooling automatically sets the value of the tfvar `tft_edition_name` to match `TFT_EDITION`. The unique edition name means that the locals `meta_edition_name` and `edition_id` are also unique.
+This creates a complete and separate copy of the resources that are defined by the unit and the context. The tooling
+automatically sets the value of the tfvar `tft_edition_name` to match `TFT_EDITION`. The unique edition name means that
+the locals `meta_edition_name` and `edition_id` are also unique.
 
-Once you no longer need the extra instance, run `tft:destroy` to delete the resources, and then run `tft:forget` to delete the TF remote state for the extra instance:
+Once you no longer need the extra instance, run `tft:destroy` to delete the resources, and then run `tft:forget` to
+delete the TF remote state for the extra instance:
 
 ```shell
 export TFT_CONTEXT=dev TFT_UNIT=my-app TFT_EDITION=feature1
@@ -330,7 +398,9 @@ task tft:destroy
 task tft:forget
 ```
 
-> Only set `TFT_EDITION` when you want to create an extra copy of a unit. If you do not specify an edition identifier, the tooling uses the _default_ [workspace](https://opentofu.org/docs/language/state/workspaces/) to store the state, and the value of the tfvar `tft_edition_name` will be `default`.
+> Only set `TFT_EDITION` when you want to create an extra copy of a unit. If you do not specify an edition identifier,
+> the tooling uses the _default_ [workspace](https://opentofu.org/docs/language/state/workspaces/) to store the state,
+> and the value of the tfvar `tft_edition_name` will be `default`.
 
 ### Formatting
 
@@ -348,9 +418,14 @@ TFT_UNIT=my-app task tft:fmt
 
 ### Testing
 
-This tooling supports the [validate](https://opentofu.org/docs/cli/commands/validate/) and [test](https://opentofu.org/docs/cli/commands/test/) features of TF. Each unit includes a test configuration, so that you can run immediately run tests on the module as soon as it is created.
+This tooling supports the [validate](https://opentofu.org/docs/cli/commands/validate/) and
+[test](https://opentofu.org/docs/cli/commands/test/) features of TF. Each unit includes a test configuration, so that
+you can run immediately run tests on the module as soon as it is created.
 
-Each test specifies either `plan` or `apply`. Every run of an `apply` test will create and then destroy resources without storing the state. To ensure that these temporary copies do not conflict with other copies of the resources, the test setup in the units sets the value of `tft_edition_name` to a random string with the prefix `tt`. This means that the `edition_id` becomes a new value for each test run.
+Each test specifies either `plan` or `apply`. Every run of an `apply` test will create and then destroy resources
+without storing the state. To ensure that these temporary copies do not conflict with other copies of the resources, the
+test setup in the units sets the value of `tft_edition_name` to a random string with the prefix `tt`. This means that
+the `edition_id` becomes a new value for each test run.
 
 To validate a unit before any resources are deployed, use the `tft:validate` task:
 
@@ -364,11 +439,14 @@ To run tests on a unit, use the `tft:test` task:
 TFT_CONTEXT=dev TFT_UNIT=my-app task tft:test
 ```
 
-> Unless you set a test to only _plan_, it will create and destroy copies of resources. Check the expected behaviour of the types of resources that you are managing before you run tests, because cloud services may not immediately remove some resources.
+> Unless you set a test to only _plan_, it will create and destroy copies of resources. Check the expected behaviour of
+> the types of resources that you are managing before you run tests, because cloud services may not immediately remove
+> some resources.
 
 ### Using Local TF State
 
-By default, this tooling uses Amazon S3 for [remote state storage](https://opentofu.org/docs/language/state/remote/). To initialize a unit with local state storage, use the task `tft:init:local` rather than `tft:init`:
+By default, this tooling uses Amazon S3 for [remote state storage](https://opentofu.org/docs/language/state/remote/). To
+initialize a unit with local state storage, use the task `tft:init:local` rather than `tft:init`:
 
 ```shell
 task tft:init:local
@@ -376,11 +454,14 @@ task tft:init:local
 
 To use local state, you will also need to comment out the `backend "s3" {}` block in the `main.tf` file.
 
-> I highly recommend that you only use TF local state for prototyping. Local state means that the resources can only be managed from a computer that has access to the state files.
+> I highly recommend that you only use TF local state for prototyping. Local state means that the resources can only be
+> managed from a computer that has access to the state files.
 
 ## Updating TF Tasks
 
-To update a project with the latest version of the template, we use the [update feature of Copier](https://copier.readthedocs.io/en/stable/updating/). We can use either [uv](https://docs.astral.sh/uv/) or [pipx](https://pipx.pypa.io/) to run Copier:
+To update a project with the latest version of the template, we use the
+[update feature of Copier](https://copier.readthedocs.io/en/stable/updating/). We can use either
+[uv](https://docs.astral.sh/uv/) or [pipx](https://pipx.pypa.io/) to run Copier:
 
 ```shell
 cd my-project
@@ -400,45 +481,66 @@ Copier `update` synchronizes the files in the project that the template manages 
 
 The tooling sets the values of the required variables when it runs TF commands on a unit:
 
-- `tft_product_name` - Defaults to the name of the project. Set the environment variable `TFT_PRODUCT_NAME` to override this.
+- `tft_product_name` - Defaults to the name of the project. Set the environment variable `TFT_PRODUCT_NAME` to override
+  this.
 - `tft_environment_name` - The `environment` of the current context
 - `tft_unit_name` - Automatically set as name of the unit itself
-- `tft_edition_name` - Automatically set as the value `default`, except when using an [extra instance](#using-extra-instances) or running [tests](#testing)
+- `tft_edition_name` - Automatically set as the value `default`, except when using an
+  [extra instance](#using-extra-instances) or running [tests](#testing)
 
-These variables are only used to set locals in the file `meta_locals.tf`. Always use these locals in your TF code, rather than the `tft` variables. This ensures that deployed resources are not directly tied to the tooling.
+These variables are only used to set locals in the file `meta_locals.tf`. Always use these locals in your TF code,
+rather than the `tft` variables. This ensures that deployed resources are not directly tied to the tooling.
 
 ## Shared Modules
 
-The project structure includes a `tf/shared/` directory to hold TF modules that are shared between the root modules in the same project.
+The project structure includes a `tf/shared/` directory to hold TF modules that are shared between the root modules in
+the same project.
 
-This directory only exists to provide a simple way to share code between root modules. By design, the tooling does not manage any of the shared modules in this directory, and does not impose any requirements on them.
+This directory only exists to provide a simple way to share code between root modules. By design, the tooling does not
+manage any of the shared modules in this directory, and does not impose any requirements on them.
 
-To share modules between projects, [publish them to a registry](https://opentofu.org/docs/language/modules/#published-modules).
+To share modules between projects,
+[publish them to a registry](https://opentofu.org/docs/language/modules/#published-modules).
 
 ## What About Dependencies Between Components?
 
-This tooling deliberately does not specify or enforce any dependencies between infrastructure components. Dependency orchestration is a major feature of [Terramate](https://terramate.io/docs/), [Terragrunt](https://terragrunt.com/), [stacks in HCP Terraform](https://developer.hashicorp.com/terraform/language/stacks) and similar tools. Here, you are free to implement dependencies in whatever way that you choose. For example, you can create your own Taskfiles that call the supplied tasks, write a script, define jobs for your CI system, or use [Terramate](https://terramate.io/docs/).
+This tooling deliberately does not specify or enforce any dependencies between infrastructure components. Dependency
+orchestration is a major feature of [Terramate](https://terramate.io/docs/), [Terragrunt](https://terragrunt.com/),
+[stacks in HCP Terraform](https://developer.hashicorp.com/terraform/language/stacks) and similar tools. Here, you are
+free to implement dependencies in whatever way that you choose. For example, you can create your own Taskfiles that call
+the supplied tasks, write a script, define jobs for your CI system, or use [Terramate](https://terramate.io/docs/).
 
-The absence of a required dependency system means that you can run operations on separate components in parallel whenever you believe that this is safe. If you need to execute changes in a particular order, specify that order in whichever system you use to carry out deployments. Similarly, there are no restrictions on how you run tasks on multiple units. You can use any method that can call Task several times with the required variables.
+The absence of a required dependency system means that you can run operations on separate components in parallel
+whenever you believe that this is safe. If you need to execute changes in a particular order, specify that order in
+whichever system you use to carry out deployments. Similarly, there are no restrictions on how you run tasks on multiple
+units. You can use any method that can call Task several times with the required variables.
 
 ## Suggestions About Names
 
-Cloud systems use tags or labels to enable you to categorize and manage resources. However, we do have to give names to the groups of resources, as well as setting identifiers for individual resources.
+Cloud systems use tags or labels to enable you to categorize and manage resources. However, we do have to give names to
+the groups of resources, as well as setting identifiers for individual resources.
 
-Every type of cloud resource may have a different set of rules about acceptable names. To avoid compatibility issues between systems, we should use names that only include lowercase letters, numbers and hyphen characters, with the first character being a lowercase letter.
+Every type of cloud resource may have a different set of rules about acceptable names. To avoid compatibility issues
+between systems, we should use names that only include lowercase letters, numbers and hyphen characters, with the first
+character being a lowercase letter.
 
-The length of names can also become an issue when a resource name includes several names for groups or other things. Here are some suggestions about the lengths of names:
+The length of names can also become an issue when a resource name includes several names for groups or other things.
+Here are some suggestions about the lengths of names:
 
 - _Product or project names:_ - 12 characters or less
 - _Component names:_ - 12 characters or less
 - _Environment names:_ - 8 characters or less
 - _Instance (edition) names:_ - 8 characters or less
 
-This tooling provides an `edition_id` hash that is based on these groups, so that every instance of a set of resources has a unique identifier. You can place the `edition_id` anywhere in a resource name.
+This tooling provides an `edition_id` hash that is based on these groups, so that every instance of a set of resources
+has a unique identifier. You can place the `edition_id` anywhere in a resource name.
 
 ## Using Terraform
 
-By default, this tooling uses OpenTofu. If you want to use this tooling with Terraform, you can configure it to use Terraform, and then remove the override to migrate to OpenTofu later. Set `TFT_CLI_EXE` as an environment variable to specify the path to the tool that you wish to use. To use [Terraform](https://developer.hashicorp.com/terraform), set `TFT_CLI_EXE` with the value `terraform`:
+By default, this tooling uses OpenTofu. If you want to use this tooling with Terraform, you can configure it to use
+Terraform, and then remove the override to migrate to OpenTofu later. Set `TFT_CLI_EXE` as an environment variable to
+specify the path to the tool that you wish to use. To use [Terraform](https://developer.hashicorp.com/terraform), set
+`TFT_CLI_EXE` with the value `terraform`:
 
 ```shell
 export TFT_CLI_EXE=terraform
@@ -446,7 +548,8 @@ export TFT_CLI_EXE=terraform
 TFT_CONTEXT=dev TFT_UNIT=my-app tft:init
 ```
 
-To specify which version of Terraform to use, create a `.terraform-version` file. This file should contain the version of Terraform and nothing else, like this:
+To specify which version of Terraform to use, create a `.terraform-version` file. This file should contain the version
+of Terraform and nothing else, like this:
 
 ```shell
 1.15.3
@@ -454,12 +557,18 @@ To specify which version of Terraform to use, create a `.terraform-version` file
 
 The `tenv` tool reads this file when installing or running Terraform.
 
-> Remember that if you switch between Terraform and OpenTofu, the state may not be compatible. You will need to initialize your unit again, and when you run `apply` it will attempt to migrate the TF state.
+> Remember that if you switch between Terraform and OpenTofu, the state may not be compatible. You will need to
+> initialize your unit again, and when you run `apply` it will attempt to migrate the TF state.
 
 ## Going Further
 
-This tooling was built for my personal use. I am happy to consider feedback and suggestions, but I may decline to implement anything that makes it less useful for my needs. You are welcome to use this work as a basis for your own wrappers.
+This tooling was built for my personal use. I am happy to consider feedback and suggestions, but I may decline to
+implement anything that makes it less useful for my needs. You are welcome to use this work as a basis for your own
+wrappers.
 
-> For more details about how to develop your own tasks, see [my article on Task](https://www.stuartellis.name/articles/task-runner/).
+> For more details about how to develop your own tasks, see
+> [my article on Task](https://www.stuartellis.name/articles/task-runner/).
 
-The ideas in this wrapper can be implemented in any task runner or programming language. For more details about these ideas and the design decisions that I made for this implementation, read my [article on designing a wrapper for TF](https://www.stuartellis.name/articles/tf-wrapper-design/).
+The ideas in this wrapper can be implemented in any task runner or programming language. For more details about these
+ideas and the design decisions that I made for this implementation, read my
+[article on designing a wrapper for TF](https://www.stuartellis.name/articles/tf-wrapper-design/).
