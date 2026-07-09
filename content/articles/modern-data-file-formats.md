@@ -1,53 +1,90 @@
 +++
-title = "Modern Data File Formats"
-slug = "modern-data-file-formats"
+categories = ["programming", "python", "javascript"]
 date = "2025-10-15T16:54:00+01:00"
 description = "Data file formats for modern systems"
-categories = ["programming", "python", "javascript"]
+slug = "modern-data-file-formats"
 tags = ["python", "javascript", "yaml"]
+title = "Modern Data File Formats"
 +++
 
-This article suggests data file formats for modern systems, and explains some of the well-known formats that they can replace.
+This article suggests data file formats for modern systems, and explains some of the well-known formats that they can
+replace.
 
-All of the suggested formats are open, standardized and portable. If you need to work with other data formats, consider using a modern file format in your application and adding features to import data or generate exports in other formats when necessary.
+All of the suggested formats are open, standardized and portable. If you need to work with other data formats, consider
+using a modern file format in your application and adding features to import data or generate exports in other formats
+when necessary.
 
 ## JSON
 
-[JSON](https://en.wikipedia.org/wiki/JSON) is a plain-text format for defining data objects. In most cases, you should use this format to transfer data between systems, especially if they must communicate with HTTP. JSON documents can be used for any kind of data. Since JSON is plain-text, data in this format can be stored either in files or in any modern database.
+[JSON](https://en.wikipedia.org/wiki/JSON) is a plain-text format for defining data objects. In most cases, you should
+use this format to transfer data between systems, especially if they must communicate with HTTP. JSON documents can be
+used for any kind of data. Since JSON is plain-text, data in this format can be stored either in files or in any modern
+database.
 
-You can validate JSON documents with [JSON Schemas](https://json-schema.org/). Each schema is a JSON file, which means that they can be published in any Web site or stored in version control. Vendors publish the schemas for their products to the [public Schema Store](https://www.schemastore.org/). You can [write schemas yourself](https://json-schema.org/learn/getting-started-step-by-step), or generate them with tools. For example, [Pydantic](https://docs.pydantic.dev/) enables you to generate JSON Schemas for your Python data objects.
+You can validate JSON documents with [JSON Schemas](https://json-schema.org/). Each schema is a JSON file, which means
+that they can be published in any Web site or stored in version control. Vendors publish the schemas for their products
+to the [public Schema Store](https://www.schemastore.org/). You can
+[write schemas yourself](https://json-schema.org/learn/getting-started-step-by-step), or generate them with tools. For
+example, [Pydantic](https://docs.pydantic.dev/) enables you to generate JSON Schemas for your Python data objects.
 
-Every modern programming language and SQL database supports JSON. For example, all of the versions of Python 3 include [a module](https://docs.python.org/3/library/json.html) for JSON. [SQLite](https://sqlite.org/json1.html), [PostgreSQL](https://www.postgresql.org/docs/current/functions-json.html) and [DuckDB](https://duckdb.org/) all fully support storing and querying data in JSON format. You can use the [jq](https://jqlang.org/) tool to work with JSON in the shell.
+Every modern programming language and SQL database supports JSON. For example, all of the versions of Python 3 include
+[a module](https://docs.python.org/3/library/json.html) for JSON. [SQLite](https://sqlite.org/json1.html),
+[PostgreSQL](https://www.postgresql.org/docs/current/functions-json.html) and [DuckDB](https://duckdb.org/) all fully
+support storing and querying data in JSON format. You can use the [jq](https://jqlang.org/) tool to work with JSON in
+the shell.
 
 ## SQLite
 
-[SQLite](https://sqlite.org) is a binary format for self-contained SQL database files. Each SQLite database is a single file.
+[SQLite](https://sqlite.org) is a binary format for self-contained SQL database files. Each SQLite database is a single
+file.
 
-You can use SQLite databases for any kind of data. They can be used to [store and query data in JSON format](https://sqlite.org/json1.html), they hold plain text with [optional full-text search](sqlite.org/fts5.html), and they can store binary data. A SQLite database file can safely be several gigabytes in size.
+You can use SQLite databases for any kind of data. They can be used to
+[store and query data in JSON format](https://sqlite.org/json1.html), they hold plain text with
+[optional full-text search](https://sqlite.org/fts5.html), and they can store binary data. A SQLite database file can
+safely be several gigabytes in size.
 
-SQLite is widely-supported, [highly robust](https://sqlite.org/hirely.html) and the file format is [guaranteed to be stable and portable for decades](https://sqlite.org/lts.html).
+SQLite is widely-supported, [highly robust](https://sqlite.org/hirely.html) and provides better consistency than text
+files, which is essential for structured data. SQLite files are also arguably more portable than sets of plain-text
+files, since the file format is identical across operating systems and is
+[guaranteed to be stable and portable for decades](https://sqlite.org/lts.html)
 
-Since SQLite files are arguably more portable and resilient than sets of plain-text files, you can use them to store sets of data that must be available for a long time, such as [data and configuration for applications](https://sqlite.org/appfileformat.html).
+Use SQLite databases for sets of structured data that must be available for a long time, such as
+[data and configuration for applications](https://sqlite.org/appfileformat.html).
 
-Every modern programming language has libraries to support SQLite. All of the versions of Python 3 include [a module](https://docs.python.org/3/library/sqlite3.html) as part of the standard library. Node.js also now includes [support for SQLite](https://nodejs.org/api/sqlite.html), although this is currently marked as experimental.
+Every modern programming language has libraries to support SQLite. All of the versions of Python 3 include
+[a module](https://docs.python.org/3/library/sqlite3.html) as part of the standard library. Node.js also now includes
+[support for SQLite](https://nodejs.org/api/sqlite.html), although this is currently marked as experimental. The Bun
+runtime includes [support for SQLite](https://bun.com/docs/runtime/sqlite).
 
-> DuckDB can read and write SQLite databases if you install an [extension](https://duckdb.org/docs/stable/core_extensions/sqlite).
+> DuckDB can read and write SQLite databases if you install an
+> [extension](https://duckdb.org/docs/stable/core_extensions/sqlite).
 
 ## Specialized File Formats
 
+Use these file formats for the cases that they were designed for.
+
 ### Configuration: TOML
 
-[TOML](https://toml.io/) is a plain-text format for configuration files that must be written or edited by human beings. Use it instead of YAML or INI formats.
+[TOML](https://toml.io/) is a plain-text format for configuration files that must be written or edited by human beings.
+Use it instead of YAML or INI formats.
 
-TOML is the default configuration file format for Python and Rust projects. Python 3.11 and above include [tomllib](https://docs.python.org/3/library/tomllib.html) to read the TOML format. If your Python software must generate TOML, you need to add [Tomli-W](https://pypi.org/project/tomli-w/) to your project.
+TOML is the default configuration file format for Python, Rust and Bun projects. Python 3.11 and above include
+[tomllib](https://docs.python.org/3/library/tomllib.html) to read the TOML format. If your Python software must generate
+TOML, you need to add [Tomli-W](https://pypi.org/project/tomli-w/) to your project.
 
-> You can use [Taplo](https://taplo.tamasfe.dev/) to validate and format TOML files. It is both a command-line tool and a Rust library.
+> You can use [Taplo](https://taplo.tamasfe.dev/) to validate and format TOML files. It is both a command-line tool and
+> a Rust library.
 
 ### Tabular Data: Apache Parquet
 
-If you need to query a large set of tabular data, store a copy in [Apache Parquet](https://parquet.apache.org/) files. It is a binary file format that is specifically designed for large-scale operations on data, and supports features like indexing, compression and encryption. Parquet can store data that is in JSON format, as well as standard data types.
+If you need to query a large set of tabular data, store a copy in [Apache Parquet](https://parquet.apache.org/) files.
+It is a binary file format that is specifically designed for large-scale operations on data, and supports features like
+indexing, compression and encryption. Parquet can store data that is in JSON format, as well as standard data types.
 
-Parquet is portable and widely-supported. For example, [DuckDB](https://duckdb.org/) and dataframe libraries like [Pandas](https://pandas.pydata.org/) and [Polars](https://docs.pola.rs/user-guide/io/parquet/) support the Parquet format. Database systems that are based on [Apache Iceberg](https://iceberg.apache.org/) can use Parquet as the file format for storage.
+Parquet is portable and widely-supported. For example, [DuckDB](https://duckdb.org/) and dataframe libraries like
+[Pandas](https://pandas.pydata.org/) and [Polars](https://docs.pola.rs/user-guide/io/parquet/) support the Parquet
+format. Database systems that are based on [Apache Iceberg](https://iceberg.apache.org/) can use Parquet as the file
+format for storage.
 
 ## Problematic File Formats
 
@@ -57,30 +94,52 @@ Avoid these older file formats:
 - INI - Use [TOML](#configuration-toml) instead
 - YAML - Use [TOML](#configuration-toml) or [JSON](#json) instead
 
-Systems can implement these legacy formats in different ways, which means that there is a risk that data will not be read correctly when you use a file that has been created by another system. Files that are edited by humans are also more likely to contain errors, due to the complexities and inconsistency of these formats.
+Systems can implement these legacy formats in different ways, which means that there is a risk that data will not be
+read correctly when you use a file that has been created by another system. Files that are edited by humans are also
+more likely to contain errors, due to the complexities and inconsistency of these formats.
 
 ### CSV
 
-CSV formats are frequently used to create sets of data that are intended to be portable, so that the data can be copied between different systems. In practice, systems implement CSV formats in different ways, which means that it is possible that data will not be read correctly when you use a CSV file that has been created by another system. CSV files that are edited by humans are also very likely to contain errors.
+CSV formats are frequently used to create sets of data that are intended to be portable, so that the data can be copied
+between different systems. In practice, systems implement CSV formats in different ways, which means that it is possible
+that data will not be read correctly when you use a CSV file that has been created by another system. CSV files that are
+edited by humans are also very likely to contain errors.
 
-Use [Apache Parquet](#tabular-data-apache-parquet) or [SQLite](#sqlite) instead of CSV formats. These formats explicitly attach data types to columns and can be read by a wide range of modern software. For example, any software that uses Python dataframes or [DuckDB](https://duckdb.org/) can work with these formats.
+Use [Apache Parquet](#tabular-data-apache-parquet) or [SQLite](#sqlite) instead of CSV formats. These formats explicitly
+attach data types to columns and can be read by a wide range of modern software. For example, any software that uses
+Python dataframes or [DuckDB](https://duckdb.org/) can work with these formats.
 
-If you need to read CSV files, consider using DuckDB. DuckDB provides [CSV support](https://duckdb.org/docs/stable/data/csv/overview.html) that is [tested for its ability to handle incorrectly formatted files](https://duckdb.org/2025/04/16/duckdb-csv-pollock-benchmark.html).
+If you need to read CSV files, consider using DuckDB. DuckDB provides
+[CSV support](https://duckdb.org/docs/stable/data/csv/overview.html) that is
+[tested for its ability to handle incorrectly formatted files](https://duckdb.org/2025/04/16/duckdb-csv-pollock-benchmark.html).
 
 ### INI
 
-Avoid using INI files for new projects. The INI format is a configuration file format that was designed for old versions of Microsoft products. The format was then implemented in other systems, such as the Python programming language. INI is not a published standard.
+Avoid using INI files for new projects. The INI format is a configuration file format that was designed for old versions
+of Microsoft products. The format was then implemented in other systems, such as the Python programming language. INI is
+not a published standard.
 
-[TOML](#configuration-toml) replaces the INI file format. Python now includes and uses the TOML format, although [the INI support](https://docs.python.org/3/library/configparser.html) has not yet been removed from the Python standard library.
+[TOML](#configuration-toml) replaces the INI file format. Python now includes and uses the TOML format, although
+[the INI support](https://docs.python.org/3/library/configparser.html) has not yet been removed from the Python standard
+library.
 
 ### YAML
 
-The YAML format is commonly used for configuration files. Avoid using this format for new projects. Use [TOML](#configuration-toml) for configuration files instead. If your project requires large or complex sets of configuration, consider treating these configurations as sets of structured data that must be managed using modern tools and formats.
+The YAML format is commonly used for configuration files. Avoid using this format for new projects. Use
+[TOML](#configuration-toml) for configuration files instead. If your project requires large or complex sets of
+configuration, consider treating these configurations as sets of structured data that must be managed using modern tools
+and formats.
 
-YAML documents are very vulnerable to problems. The format itself has a large number of features and many parts of the syntax are optional. Systems also sometimes extend the format with custom features. The complexity of the format means that humans are also more likely to add errors to YAML configuration files that they edit.
+YAML documents are very vulnerable to problems. The format itself has a large number of features and many parts of the
+syntax are optional. Systems also sometimes extend the format with custom features. The complexity of the format means
+that humans are also more likely to add errors to YAML configuration files that they edit.
 
-If you need to create YAML, try to use version 1.2 of the YAML format, which removes some of the problems of older versions, such as [the Norway Problem](https://hitchdev.com/strictyaml/why/implicit-typing-removed/). Unfortunately, many products may accept or create YAML that does not strictly comply with version 1.2.
+If you need to create YAML, try to use version 1.2 of the YAML format, which removes some of the problems of older
+versions, such as [the Norway Problem](https://hitchdev.com/strictyaml/why/implicit-typing-removed/). Unfortunately,
+many products may accept or create YAML that does not strictly comply with version 1.2.
 
-> For Python, [ruamel.yaml](https://pypi.org/project/ruamel.yaml/) implements YAML 1.2. Avoid using [PyYAML](https://pypi.org/project/PyYAML/), because it only supports version 1.1 of the YAML format.
+> For Python, [ruamel.yaml](https://pypi.org/project/ruamel.yaml/) implements YAML 1.2. Avoid using
+> [PyYAML](https://pypi.org/project/PyYAML/), because it only supports version 1.1 of the YAML format.
 
-Some types of YAML documents do have published schemas that use the [JSON Schema](https://json-schema.org/) standard, but others either have no defined schema or extend the format in ways that are not compatible with the standards.
+Some types of YAML documents do have published schemas that use the [JSON Schema](https://json-schema.org/) standard,
+but others either have no defined schema or extend the format in ways that are not compatible with the standards.
