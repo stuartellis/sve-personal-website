@@ -1,6 +1,6 @@
 +++
 categories = ["programming", "python"]
-date = "2026-07-05T13:51:00+01:00"
+date = "2026-07-10T08:21:00+01:00"
 description = "Good development practices for modern Python"
 slug = "python-modern-practices"
 tags = ["python"]
@@ -18,15 +18,17 @@ Python later without interfering with other tools and projects that use Python.
 
 ### Installing Python with Tools That Support Multiple Versions
 
-The official [Python Install Manager](https://docs.python.org/dev/using/windows.html) for Microsoft Windows enables you
-run multiple Python versions on the same system, and you can use the `py.exe` tool to choose which version of Python to
-run. Version manager tools like [pyenv](https://github.com/pyenv/pyenv) also allow you to switch between different
-versions of Python at will, as well as providing the defined version for each of your projects. I provide a separate
-[article on using version managers](https://www.stuartellis.name/articles/version-managers/), such as
+Version manager tools like [pyenv](https://github.com/pyenv/pyenv) also allow you to switch between different versions
+of Python at will, as well as providing the defined version for each of your projects. If you use Microsoft Windows, you
+can use the official [Python Install Manager](https://docs.python.org/dev/using/windows.html). This enables you to run
+multiple Python versions on the same system, and you can use the `py.exe` tool to choose which version of Python to run.
+
+> I provide a separate [article on using version managers](https://www.stuartellis.name/articles/version-managers/),
+such as
 [mise](https://www.stuartellis.name/articles/mise-en-place/).
 
 In most cases, you should use a modern [project development tool](#use-a-project-tool) like `uv` for your work. These
-can install copies of Python as needed, in addition to their other features. They do this by using
+can also install copies of Python as needed, in addition to their other features. They do this by using
 [standalone builds](https://github.com/astral-sh/python-build-standalone), which are modified versions of Python that
 are maintained by [Astral](https://astral.sh/), not the Python project. These standalone builds have
 [some limitations](https://gregoryszorc.com/docs/python-build-standalone/main/quirks.html) that are not present with
@@ -39,9 +41,9 @@ other copies of Python.
 Both the `pyenv` tool and the
 [Visual Studio Code Dev Container feature](https://github.com/devcontainers/features/blob/main/src/python/README.md)
 automatically compile Python from source code, rather than using the third-party standalone builds. If you use
-[mise](https://www.stuartellis.name/articles/mise-en-place/), you will need to
-[change the configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) to compile Python from the
-official sources rather than downloading standalone builds.
+[mise](https://www.stuartellis.name/articles/mise-en-place/) it downloads standalone builds by default, and you will
+need to [change the configuration](https://mise.jdx.dev/lang/python.html#precompiled-python-binaries) if you want to
+compile Python from the official sources.
 
 ### Use the Most Recent Version of Python That You Can
 
