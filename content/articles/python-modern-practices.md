@@ -1,14 +1,16 @@
 +++
 categories = ["programming", "python"]
-date = "2026-07-10T08:21:00+01:00"
+date = "2026-07-11T08:21:00+01:00"
 description = "Good development practices for modern Python"
 slug = "python-modern-practices"
 tags = ["python"]
 title = "Modern Good Practices for Python Development"
 +++
 
-[Python](https://www.python.org/) has a long history, and it has evolved over time. This article describes some modern
-good practices.
+[Python](https://www.python.org/) has a long history, and it has evolved over time. This article attempts to provide a
+summary of modern good practices.
+
+> I update this article as tools and practices change.
 
 ## Installing Python
 
@@ -212,10 +214,16 @@ When you need to run operations at any scale, look for existing products that su
 
 - Use _workflow platforms_ such as [Apache Airflow](https://airflow.apache.org/), [Prefect](https://www.prefect.io/) or
   [Windmill](https://www.windmill.dev/) to run sets of tasks.
-- Build a _Web application_ by combining a framework like [FastAPI](https://fastapi.tiangolo.com/) with an application
-  server such as [Granian](https://github.com/emmett-framework/granian) or [Gunicorn](https://gunicorn.org/).
+- Build a _Web application_ by combining a framework like [FastAPI](https://fastapi.tiangolo.com/) or
+  [Django](https://www.djangoproject.com/) with an application server such as
+  [Granian](https://github.com/emmett-framework/granian) or [Gunicorn](https://gunicorn.org/).
 - _Distribute work across many computers_ by using the [Dask](https://www.dask.org/) or
   [Ray](https://docs.ray.io/en/latest/index.html) frameworks.
+- Use _serverless functions_ to run jobs on cloud platforms in response to events. Each cloud platform has its own
+implementation of serverless functions, such as [AWS Lambda](https://aws.amazon.com/lambda/),
+[Azure Functions](https://azure.microsoft.com/en-us/products/functions/),
+[Cloudflare Workers](https://www.cloudflare.com/products/workers/) and [Knative](https://knative.dev/docs/) for
+Kubernetes clusters.
 
 All of these products allow you to run your Python code concurrently on multiple CPUs and on multiple computers, and can
 use asynchronous code.
