@@ -1,31 +1,179 @@
 +++
-title = "Tooling for Maintaining Markdown Files"
-slug = "markdown-maintenance"
-date = "2026-07-04T18:13:00+01:00"
-description = "Tooling for maintenance of Markdown files"
-draft = true
 categories = ["automation", "devops", "documentation", "programming"]
+date = "2026-07-19T09:15:00+01:00"
+description = "Using rumdl to Maintain Markdown Documents"
+slug = "rumdl-markdown-maintenance"
 tags = ["automation", "devops", "documentation", "markdown"]
+title = "Using rumdl to Maintain Markdown Documents"
 +++
 
-[Markdown](https://en.wikipedia.org/wiki/Markdown) has effectively become the standard for formatted text. Many, many products now use Markdown, from [Jupyter](https://jupyter.org/) notebooks for interactive computation to static Website generators like [Hugo](https://gohugo.io/) and [Zensical](https://zensical.org/). Current versions of the [LibreOffice](https://www.libreoffice.org/) office suite support Markdown. LLMs now use Markdown as their standard text format for input and output.
+[Markdown](https://en.wikipedia.org/wiki/Markdown) has effectively become the standard for formatted text. Many, many
+products now use Markdown, from [Jupyter](https://jupyter.org/) notebooks for interactive computation to static Website
+generators like [Hugo](https://gohugo.io/) and [Zensical](https://zensical.org/). Current versions of the
+[LibreOffice](https://www.libreoffice.org/) office suite support Markdown. LLMs now use Markdown as their standard text
+format for input and output.
 
-The Markdown format supports extensions and embedded elements. You can embed metadata (frontmatter), [MDX components](https://mdxjs.com/) and [Mermaid](https://mermaid-js.github.io) diagrams into Markdown documents, as well as links to assets like images.
+The Markdown format supports extensions and embedded elements. You can embed metadata (frontmatter),
+[MDX components](https://mdxjs.com/) and [Mermaid](https://mermaid-js.github.io) diagrams into Markdown documents, as
+well as links to assets like images.
 
-Markdown files often contain formatting errors and broken links. This means that we should always check the Markdown documents that we rely on.
+Markdown files often contain formatting errors and broken links. This means that we should always check the Markdown
+documents that we rely on.
 
-Tools become most effective when they work automatically. This article describes tools that run in both text editors and with Git hooks that call them when we commit changes to version control. We should also run them in continuous integration pipelines, to ensure that changes never introduce errors.
+The [rumdl](https://rumdl.dev/) tool provides both formatting and linting for Markdown documents. You can run `rumdl`
+with Git hooks, on-demand by [using a hook manager](https://www.stuartellis.name/articles/prek-containers/), and as part
+of continuous integration pipelines. It supports the popular variations of Markdown, such as
+[CommonMark](https://commonmark.org/), [GFM](https://github.github.com/gfm/) and
+[Python Markdown](https://python-markdown.github.io/).
 
-## Formatting, Linting and Validating Markdown
+> The `rumdl` checks test [relative links](https://rumdl.dev/link-validation/?h=links#relative-links-md057) and
+> [anchor links](https://rumdl.dev/link-validation/?h=links#anchor-links-md051). You will need to use a tool like
+> [lychee](https://lychee.cli.rs/) to check the links to external sites.
 
-You can run these tools with both Git hooks and on-demand by [using a hook manager](https://www.stuartellis.name/articles/prek-containers/). Since they are command-line tools, you can also run them as part of continuous integration pipelines.
+## Installing `rumdl`
 
-> The tools have useful default configurations, so you only need to add configuration files if you need to customize their behavior.
+To install `rumdl` on a development system, use the packages from the [npm](https://www.npmjs.com/package/@j178/prek) or
+[Python](https://pypi.org/project/prek/) registries. If you use a package management tool like
+[npm](https://docs.npmjs.com/cli), [pipx](https://pipx.pypa.io/stable/), or [uv](https://docs.astral.sh/uv/), you can
+specify which version of `rumdl` it installs:
 
-### Formatting
+```shell
+npm install -g rumdl@0.2.36
+```
 
-Automated formatting improves projects for no cost. When we apply the same formatter on every change, the format becomes consistent and predictable, which enables us to rapidly refactor projects. Automatic formatting also removes the need for commits that only format files.
+```shell
+pipx install rumdl==0.2.36
+```
 
-### Linting
+You can also install `rumdl` with [Homebrew](https://brew.sh/). Homebrew always installs the latest version of `rumdl`:
 
-Linting ensures that files contain valid Markdown, and that the Markdown content follows good practice.
+```shell
+brew install rumdl
+```
+
+## Example Configuration File for `rumdl`
+
+This example configuration file for a project enable the complete set of features that `rumdl` provides, including
+[reflow](https://rumdl.dev/md013/?h=reflow#reflow-modes) of text:
+
+```toml
+# rumdl configuration file
+#
+# https://rumdl.dev/
+
+[global]
+
+enable = ["ALL"]
+
+exclude = [
+    ".git",
+    "LICENSES",
+    "LICENSE.md"
+]
+
+line-length = 120
+
+respect-gitignore = true
+
+[MD004]
+style = "dash"
+
+[MD013]
+reflow = true
+reflow-mode = "normalize"
+```
+
+## Using `rumdl` in Your Editor
+
+Set up integrations with your text editors to automatically receive feedback as you work and enable the editor to format
+Markdown documents with `rumdl`.
+
+### Enabling Visual Studio Code Integration
+
+To use `rumdl` with Visual Studio Code or a compatible editor, install the
+[rvben.rumdl](https://marketplace.visualstudio.com/items?itemName=rvben.rumdl) extension.
+
+> The extension includes a copy of `rumdl`. This means that it will function even if you have not installed a package
+> for `rumdl`.
+
+### Enabling Integration with JetBrains IDEs
+
+To enable support for `rumdl` in JetBrains IDEs such as PyCharm, install the
+[rumdl](https://plugins.jetbrains.com/plugin/29943-rumdl) plugin.
+
+## Automating Checks with `prek` or `pre-commit`
+
+To automate the maintenance of Markdown files in your project, add Git hooks. The most popular tools for managing hooks
+are [prek](https://prek.j178.dev/) and [pre-commit](https://pre-commit.com/). The [prek](https://prek.j178.dev/) tool
+supersedes [pre-commit](https://pre-commit.com/). It can use hooks that are written for `pre-commit`, and works with
+existing `pre-commit` project configurations.
+
+This example `.pre-commit-config.yaml` configuration file for a project uses the copy of `rumdl` on the system:
+
+```yaml
+---
+minimum_prek_version: "0.4.0"
+
+repos:
+  - repo: builtin
+    hooks:
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-vcs-permalinks
+      - id: check-xml
+      - id: check-yaml
+      - id: destroyed-symlinks
+      - id: end-of-file-fixer
+      - id: fix-byte-order-marker
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+
+  - repo: local
+    hooks:
+
+      - id: rumdl-fmt
+        name: rumdl fmt
+        description: Format Markdown files in place. Always exits 0; relies on pre-commit file-change detection.
+        entry: rumdl fmt
+        language: system
+        types: [markdown]
+        require_serial: true
+
+      - id: rumdl-check
+        name: rumdl check
+        description: Lint Markdown files. Exits 1 if violations are found. Run rumdl-fix to auto-fix in place.
+        entry: rumdl check
+        language: system
+        types: [markdown]
+        require_serial: true
+
+      - id: rumdl-fix
+        name: rumdl fix
+        description: Fix Markdown files.
+        entry: rumdl check --fix
+        language: system
+        types: [markdown]
+        require_serial: true
+        stages: [manual]
+```
+
+The hooks automatically run on the staged changes each time that you commit. The only exception is `rumdl-fix`, which is
+`manual` and runs when explicitly called.
+
+To run a tool without commiting a change, use `prek run`. If you add the option `--all-files` it will check the current
+files in the project, not just staged changes. For example, to run the `rumdl-fix` hook on the project, use this
+command:
+
+```shell
+prek run rumdl-fix --all-files
+```
+
+To run every hook on the project, use this command:
+
+```shell
+prek run --all-files
+```
