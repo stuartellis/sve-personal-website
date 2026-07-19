@@ -2,17 +2,16 @@
 #
 # SPDX-License-Identifier: MIT
 #
-# Tasks for prek OR pre-commit:
+# Tasks for prek:
 #
 # - https://prek.j178.dev/
-# - https://pre-commit.com/
 
 version: "3.38"
 
 silent: true
 
 vars:
-  PRE_COMMIT_EXE: "prek"
+  PREK_EXE: "prek"
 
 tasks:
   default:
@@ -22,16 +21,16 @@ tasks:
   check:
     desc: Check the project
     cmds:
-      - "{{.PRE_COMMIT_EXE}} run --all-files"
+      - "{{.PREK_EXE}} run --all-files"
 
   run:
     desc: Run a specific check on the project
     cmds:
-      - "{{.PRE_COMMIT_EXE}} run {{.HOOK_ID}} --all-files"
+      - "{{.PREK_EXE}} run {{.HOOK_ID}} --all-files"
     requires:
       vars: [HOOK_ID]
 
   setup:
-    desc: Setup pre-commit hooks for use
+    desc: Setup hooks for use
     cmds:
-      - "{{.PRE_COMMIT_EXE}} install"
+      - "{{.PREK_EXE}} install"

@@ -12,7 +12,7 @@ silent: true
 
 includes:
   hugo: .tasks/shared/hugo
-  pre-commit: .tasks/shared/pre-commit
+  prek: .tasks/shared/prek
   project:
     taskfile: .tasks/project
     flatten: true
