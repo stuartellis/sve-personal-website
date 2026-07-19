@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "containers", "devops", "programming"]
-date = "2026-07-04T18:13:00+01:00"
+date = "2026-07-19T16:50:00+01:00"
 description = "Using container images with Git hooks"
 slug = "prek-containers"
 tags = ["automation", "containers", "devops"]
@@ -31,11 +31,11 @@ To install `prek` on a development system, use the packages from the [npm](https
 specify which version of `prek` it installs:
 
 ```shell
-npm install -g @j178/prek@0.4.8
+npm install -g @j178/prek@0.4.10
 ```
 
 ```shell
-pipx install prek==0.4.8
+pipx install prek==0.4.10
 ```
 
 The `prek` project releases [container images](https://prek.j178.dev/integrations/#docker), so that you can run the same
