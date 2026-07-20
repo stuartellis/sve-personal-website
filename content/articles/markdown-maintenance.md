@@ -119,6 +119,7 @@ repos:
     hooks:
       - id: check-added-large-files
       - id: check-case-conflict
+      - id: check-illegal-windows-names
       - id: check-json
       - id: check-merge-conflict
       - id: check-symlinks
