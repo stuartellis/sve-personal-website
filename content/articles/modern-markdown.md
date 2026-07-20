@@ -40,3 +40,6 @@ well as links to assets like images.
   use GFM syntax.
 - Tools that assume that Markdown documents use CommonMark and GFM syntax may fail on Python Markdown documents.
 - Content from humans often contain formatting errors and broken links.
+
+> Use [rumdl](https://www.stuartellis.name/articles/rumdl-markdown-maintenance/) to lint and format Markdown files. It
+> supports the popular variations of Markdown, including CommonMark, GFM and Python Markdown.
