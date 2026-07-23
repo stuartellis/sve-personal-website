@@ -82,6 +82,9 @@ repos:
 This configuration enables [built-in to `prek`](https://prek.j178.dev/builtin/) hooks. You can then add
 [docker_image](https://prek.j178.dev/languages/#docker_image) hooks to run other tools with container images.
 
+> To make this example configuration compatible with `pre-commit`, you would need to replace the `builtin` hooks with
+> [remote hooks](https://github.com/pre-commit/pre-commit-hooks).
+
 To activate the configuration, run `prek install`. This adds the hooks to the Git configuration for your copy of the
 project, so that the tools automatically run on the staged changes each time that you commit.
 
