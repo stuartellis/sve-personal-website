@@ -13,16 +13,14 @@ generators like [Hugo](https://gohugo.io/) and [Zensical](https://zensical.org/)
 [LibreOffice](https://www.libreoffice.org/) office suite support Markdown. LLMs now use Markdown as their standard text
 format for input and output.
 
-The Markdown format supports extensions and embedded elements. You can embed metadata (frontmatter),
-[MDX components](https://mdxjs.com/) and [Mermaid](https://mermaid-js.github.io) diagrams into Markdown documents, as
-well as links to assets like images.
+We often write Markdown manually, so the documents that we rely on can easily contain syntax issues and broken links as
+well as inconsistent formatting. This means that we should automatically lint and format Markdown files, in the same way
+that we maintain code files.
 
-Markdown files often contain formatting errors and broken links. This means that we should always check the Markdown
-documents that we rely on.
-
-The [rumdl](https://rumdl.dev/) tool provides both formatting and linting for Markdown documents. You can run `rumdl`
-with Git hooks, on-demand by [using a hook manager](https://www.stuartellis.name/articles/prek-containers/), and as part
-of continuous integration pipelines. It supports the popular variations of Markdown, such as
+The [rumdl](https://rumdl.dev/) tool provides both linting and formatting for Markdown documents, including
+[reflowing text](https://rumdl.dev/md013/?h=reflow#reflow-modes) to standardise line lengths. You can run `rumdl` with
+Git hooks, on-demand by [using a hook manager](https://www.stuartellis.name/articles/prek-containers/), and as part of
+continuous integration pipelines. It supports the popular variations of Markdown, such as
 [CommonMark](https://commonmark.org/), [GFM](https://github.github.com/gfm/) and
 [Python Markdown](https://python-markdown.github.io/).
 
@@ -38,11 +36,11 @@ To install `rumdl` on a development system, use the packages from the [npm](http
 specify which version of `rumdl` it installs:
 
 ```shell
-npm install -g rumdl@0.2.36
+npm install -g rumdl@0.2.40
 ```
 
 ```shell
-pipx install rumdl==0.2.36
+pipx install rumdl==0.2.40
 ```
 
 You can also install `rumdl` with [Homebrew](https://brew.sh/). Homebrew always installs the latest version of `rumdl`:
@@ -105,8 +103,8 @@ To enable support for `rumdl` in JetBrains IDEs such as PyCharm, install the
 
 To automate the maintenance of Markdown files in your project, add Git hooks. The most popular tools for managing hooks
 are [prek](https://prek.j178.dev/) and [pre-commit](https://pre-commit.com/). The [prek](https://prek.j178.dev/) tool
-supersedes [pre-commit](https://pre-commit.com/). It can use hooks that are written for `pre-commit`, and works with
-existing `pre-commit` project configurations.
+supersedes [pre-commit](https://pre-commit.com/). It can use existing `pre-commit` hooks, and also works with existing
+`pre-commit` project configurations.
 
 This example `.pre-commit-config.yaml` configuration file for a project uses the copy of `rumdl` on the system:
 
@@ -164,6 +162,9 @@ repos:
 
 The hooks automatically run on the staged changes each time that you commit. The only exception is `rumdl-fix`, which is
 `manual` and runs when explicitly called.
+
+> For security, the example above uses `builtin` hooks. To make it compatible with `pre-commit`, you would need to
+> replace these with [remote hooks](https://github.com/pre-commit/pre-commit-hooks).
 
 To run a tool without commiting a change, use `prek run`. If you add the option `--all-files` it will check the current
 files in the project, not just staged changes. For example, to run the `rumdl-fix` hook on the project, use this
