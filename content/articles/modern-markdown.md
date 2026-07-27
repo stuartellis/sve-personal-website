@@ -33,8 +33,8 @@ The Markdown format supports extensions and embedded elements. You can embed met
 - [MyST](https://mystmd.org) - Extends Markdown for technical and scientific publications
 
 > All Markdown files use the file extension `.md`. There is no automatic means of distinguishing between stored
-> CommonMark, GFM and Python Markdown documents. Content in the CommonMark format may be served with the _variant_ MIME
-> type _text/markdown; variant=CommonMark_.
+> CommonMark, GFM and Python Markdown documents. Content in the CommonMark format may be served with the `variant` MIME
+> type `text/markdown; variant=CommonMark`.
 
 ## Known Issues with Markdown
 
@@ -42,7 +42,9 @@ The Markdown format supports extensions and embedded elements. You can embed met
   use GFM syntax.
 - Tools that assume that Markdown documents use CommonMark and GFM syntax may fail on Python Markdown documents.
 - Content from humans often contain formatting errors.
-- Internal and external links may be invalid or broken.
+- Internal and external links may be invalid or broken. Use
+  [rumdl](https://www.stuartellis.name/articles/rumdl-markdown-maintenance/) to check internal and anchor links, and a
+  tool such as [lychee](https://lychee.cli.rs/) to check the links to external sites.
 
 > Use [rumdl](https://www.stuartellis.name/articles/rumdl-markdown-maintenance/) to lint and format Markdown files. It
 > supports the popular variations of Markdown, including CommonMark, GFM and Python Markdown.
