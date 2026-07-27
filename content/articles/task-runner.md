@@ -261,7 +261,7 @@ To ensure that you have ready access to tasks, set up integrations with your tex
 
 ### Enabling Visual Studio Code Integration
 
-To use Task with Visual Studio Code, install the
+To use Task with Visual Studio Code or a compatible editor, install the
 [redhat.vscode-yaml](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) and
 [task.vscode-task](https://marketplace.visualstudio.com/items?itemName=task.vscode-task) extensions.
 
@@ -269,6 +269,9 @@ The _vscode-yaml_ extension enables YAML formatting and validation, and _vscode-
 running tasks.
 
 > _You must install Task to use the vscode-task extension._
+
+Use the command palette to see the commands for Task. Choose _Task:Focus on Tasks View_ to list the available tasks in a
+project and _Task:Run Task_ to select a task.
 
 ### Enabling Integration with JetBrains IDEs
 
