@@ -270,8 +270,8 @@ running tasks.
 
 > _You must install Task to use the vscode-task extension._
 
-Use the command palette to see the commands for Task. Choose _Task:Focus on Tasks View_ to list the available tasks in a
-project and _Task:Run Task_ to select a task.
+Use the command palette to see the commands for Task. Choose _Task: Focus on Tasks View_ to list the available tasks in
+a project and _Task: Run Task_ to select a task.
 
 ### Enabling Integration with JetBrains IDEs
 
