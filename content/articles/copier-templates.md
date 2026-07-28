@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "devops", "programming"]
-date = "2026-07-24T07:34:00+01:00"
+date = "2026-07-28T07:32:00+01:00"
 description = "Maintaining projects with Copier templates"
 draft = true
 slug = "copier-templates"
@@ -10,6 +10,25 @@ title = "Maintaining Projects with Copier Templates"
 
 [Copier](https://copier.readthedocs.io/en/stable/) enables you to continuously update software projects from sets of
 templates, so that you can maintain consistent configurations across many projects.
+
+## How It Works
+
+A Copier template is a Git repository that contains a configuration file and template files.
+
+You can safely use multiple Copier templates on the same project. This means that you can maintain large numbers of
+projects that are composed from sets of Copier templates.
+
+### Versioning Your Copier Templates
+
+Copier treats each Git tag on a template repository as a version. Use Semantic Versioning for template repositories.
+
+By default, Copier will copy from the last release found in template Git tags, sorted as
+[a Python version specifier](https://packaging.python.org/en/latest/specifications/version-specifiers/), regardless of
+whether the template is from a URL or a local clone of a Git repository.
+
+> [Version tags may have a prefix of v](https://packaging.python.org/en/latest/specifications/version-specifiers/#preceding-v-character).
+> Tools like [Python Semantic Release](https://python-semantic-release.readthedocs.io/en/stable/) create Git tags that
+> have a _v_ prefix, e.g. _v1.2.3_.
 
 ## Running Copier
 
@@ -24,9 +43,9 @@ uvx copier copy git+https://github.com/my-username/copier-mynamespace-mytemplate
 
 > You can specify which version of Copier it runs.
 
-You can safely use multiple Copier templates on the same project.
-
 ## Creating a Copier Template
+
+> This process does not require the Copier tool.
 
 1. First, create a Git repository to hold the template. By convention, the name of this template repository should start
    with `copier-`. Add a namespace and a name for the specific template to the full name of the repository. For example:
@@ -36,9 +55,11 @@ You can safely use multiple Copier templates on the same project.
 3. Create a directory called `template/` in the repository to hold the files and directories that make up the template.
 4. Create a template answers file called `{{_copier_conf.answers_file}}.jinja` in the `template/` directory. See below
    for an example.
-5. _Optional:_ Set up a project release tool for the template repository, such as
+5. Set the template delimiters. By default, Copier uses curly braces to denote templated values, but these may cause
+   issues with some types of files, such as Jinja templates in projects. Specify square brackets as delimiters.
+6. _Optional:_ Set up a project release tool for the template repository, such as
    [Python Semantic Release](https://python-semantic-release.readthedocs.io/en/stable/).
-6. _Optional:_ Add metadata to the project for the template repository. For example, if it is hosted on GitHub, add the
+7. _Optional:_ Add metadata to the project for the template repository. For example, if it is hosted on GitHub, add the
    GitHub Topic _copier-template_.
 
 ### Example Configuration File for the Template
@@ -62,12 +83,22 @@ _subdirectory: template
 # Name of the answers file.
 # This must be unique to avoid conflicts with other Copier templates.
 _answers_file: .copier-answers-mynamespace-mytemplate.yaml
+
+# Use alternate template delimiters
+# This avoids conflicts with templating that is defined in the managed files
+_envops:
+  block_end_string: "%]"
+  block_start_string: "[%"
+  comment_end_string: "#]"
+  comment_start_string: "[#"
+  variable_end_string: "]]"
+  variable_start_string: "[["
 ```
 
 ### Example Template Answers File
 
-Always create a template answers file called `{{_copier_conf.answers_file}}.jinja` in the `template/` directory. It must
-render the answers that are provided to YAML:
+Always create a template answers file in the `template/` directory. It must render the answers that are provided to
+YAML:
 
 ```yaml
 ---
@@ -77,23 +108,27 @@ render the answers that are provided to YAML:
 #
 # https://copier.readthedocs.io/en/stable/updating/#never-change-the-answers-file-manually
 
-{{ _copier_answers|to_nice_yaml - }}
+[[ _copier_answers|to_nice_yaml -]]
 ```
 
-## Versioning Your Copier Templates
+Copier must template the name of the answers file from `_copier_conf.answers_file`. This means that if you use square
+brackets as delimiters, it will be called `[[_copier_conf.answers_file]].jinja`.
 
-Copier treats each Git tag on a template repository as a version. By default, it will copy from the last release found
-in template Git tags, sorted as
-[a Python version specifier](https://packaging.python.org/en/latest/specifications/version-specifiers/). regardless of
-whether the template is from a URL or a local clone of a Git repository.
+## Automating Version Tags
 
-> [Version tags may have a prefix of v](https://packaging.python.org/en/latest/specifications/version-specifiers/#preceding-v-character).
-> Tools like [Python Semantic Release](https://python-semantic-release.readthedocs.io/en/stable/) create Git tags that
-> have a _v_ prefix, e.g. _v1.2.3_.
+Automate your release process, to ensure that every version of a Copier template has a version tag. Popular tools for
+release automation include:
 
-This means that we should use Semantic Versioning for template repositories.
+- [GoReleaser](https://goreleaser.com/)
+- [Python Semantic Release](https://python-semantic-release.readthedocs.io/en/stable/)
+- [semantic-release](https://semantic-release.org/)
+
+> I provide an article on using
+> [Python Semantic Release with GitLab](https://www.stuartellis.name/articles/python-semantic-release-gitlab/).
 
 ## Resources
+
+Articles and tutorials about Copier.
 
 ### Copier
 
