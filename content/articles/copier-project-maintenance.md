@@ -2,7 +2,7 @@
 categories = ["automation", "devops", "programming"]
 date = "2026-07-29T07:28:00+01:00"
 description = "Maintaining projects with Copier templates"
-slug = "copier-templates"
+slug = "copier-project-maintenance"
 tags = ["automation", "devops"]
 title = "Maintaining Projects with Copier Templates"
 +++
@@ -17,16 +17,28 @@ contain one Copier template, because Copier uses Git tags for version informatio
 [Jinja](https://jinja.palletsprojects.com/en/stable/) for templating files and directories, with
 [extensions](https://copier.readthedocs.io/en/stable/configuring/#jinja_extensions).
 
-The first time that you run Copier, you must specify the address of the repository for a template. It prompts you for
-answers to the questions that are defined in the template, and then creates the files and directories that are included
-by the template. It uses an `answers` file to store the address of the template, the version of the template that you
-used, and your responses to the questions.
+The first time that you run Copier, you must specify the address of the repository for a template, like this:
+
+```shell
+copier copy git+https://github.com/my-username/copier-mynamespace-mytemplate my-project
+```
+
+It then prompts you for answers to the questions that are defined in the template, and then creates the files and
+directories that are included in the template in the `my-project/` directory. It creates an `answers` file in the
+project directory to store the address of the template, the version of the template that you used, and your responses to
+the questions.
 
 > You can also define options on the command-line or in a data file.
 
 You can run Copier again on a project at any time. It uses Git to fetch either the latest version of the template, or
-the version of the template that you [specify](https://copier.readthedocs.io/en/stable/configuring/#vcs_ref), and
-performs an [update](https://copier.readthedocs.io/en/stable/updating/). The update can also include running
+the version of the template that you [specify](https://copier.readthedocs.io/en/stable/configuring/#vcs_ref):
+
+```shell
+copier update git+https://github.com/my-username/copier-mynamespace-mytemplate my-project
+```
+
+By default, Copier prompts you to answer the questions again. You can tell it to use the same answers. It then performs
+an [update](https://copier.readthedocs.io/en/stable/updating/). The update can also include running
 [migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations) or
 [defined tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks).
 
@@ -93,7 +105,7 @@ run.
    Copier templates that are in use, the `_answers_file` must specify a unique name. See below for an example.
 3. Create a directory called `template/` in the repository to hold the files and directories that make up the template.
 4. Create a directory called `template/.copier/` in the repository to hold the template answers file.
-5. Create a template answers file called `{{_copier_conf.answers_file}}.jinja` in the directory `template/.copier/`. See
+5. Create a template answers file called `[[_copier_conf.answers_file]].jinja` in the directory `template/.copier/`. See
    below for an example.
 6. Set the template delimiters. By default, Copier uses curly braces to denote templated values, but these may cause
    issues with some types of files, such as Jinja templates in projects. Specify square brackets as delimiters.
