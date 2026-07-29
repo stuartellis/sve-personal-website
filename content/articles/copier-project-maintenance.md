@@ -128,7 +128,7 @@ _subdirectory: template
 _answers_file: .copier/.copier-answers-mynamespace-mytemplate.yaml
 
 # Use alternate template delimiters
-# This avoids conflicts with templating that is defined in the managed files
+# This avoids conflicts with templating that is defined in the managed files.
 _envops:
   block_end_string: "%]"
   block_start_string: "[%"
@@ -136,6 +136,11 @@ _envops:
   comment_start_string: "[#"
   variable_end_string: "]]"
   variable_start_string: "[["
+
+# Create these files from the template, if they are not already present.
+# If one of these files exists, it will not be updated from the template.
+_skip_if_exists:
+  - README.md
 ```
 
 Set defaults for answers as much as possible. They minimise user effort and increase consistency. You can also use
