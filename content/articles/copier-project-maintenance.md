@@ -13,17 +13,20 @@ templates, so that you can maintain consistent configurations across many projec
 ## How It Works
 
 A Copier template is a Git repository that contains a configuration file and template files. Each Git repository should
-contain one Copier template, because Copier uses Git tags for version information. You can use [Jinja](https://jinja.palletsprojects.com/en/stable/) for templating files and directories, with [extensions](https://copier.readthedocs.io/en/stable/configuring/#jinja_extensions).
+contain one Copier template, because Copier uses Git tags for version information. You can use
+[Jinja](https://jinja.palletsprojects.com/en/stable/) for templating files and directories, with
+[extensions](https://copier.readthedocs.io/en/stable/configuring/#jinja_extensions).
 
-The first time that you run Copier, you must specify the address of the repository for a template. It prompts you for answers to the questions that are defined in the template, and
-then creates the files and directories that are included by the template. It uses an `answers` file to store the
-address of the template, the version of the template that you used, and your responses to the questions.
+The first time that you run Copier, you must specify the address of the repository for a template. It prompts you for
+answers to the questions that are defined in the template, and then creates the files and directories that are included
+by the template. It uses an `answers` file to store the address of the template, the version of the template that you
+used, and your responses to the questions.
 
 > You can also define options on the command-line or in a data file.
 
 You can run Copier again on a project at any time. It uses Git to fetch either the latest version of the template, or
-the version of the template that you [specify](https://copier.readthedocs.io/en/stable/configuring/#vcs_ref), and performs an
-[update](https://copier.readthedocs.io/en/stable/updating/). The update can also include running
+the version of the template that you [specify](https://copier.readthedocs.io/en/stable/configuring/#vcs_ref), and
+performs an [update](https://copier.readthedocs.io/en/stable/updating/). The update can also include running
 [migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations) or
 [defined tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks).
 
@@ -31,10 +34,13 @@ the version of the template that you [specify](https://copier.readthedocs.io/en/
 
 You can safely use
 [multiple Copier templates](https://copier.readthedocs.io/en/stable/configuring/#applying-multiple-templates-to-the-same-subproject)
-on the same project. Templates can uses the answers that users have provided to other templates, as explained in a later section.
+on the same project. Templates can uses the answers that users have provided to other templates, as explained in a later
+section.
 
-These features mean that you can maintain large numbers of projects that are composed from sets of Copier templates. The developers that work on these projects can update them as needed, or you can use automation to run template updates and commit the changes. If you use [Renovate](https://docs.renovatebot.com/) it updates projects with the latest versions of Copier templates, in the same
-way that it updates dependencies.
+These features mean that you can maintain large numbers of projects that are composed from sets of Copier templates. The
+developers that work on these projects can update them as needed, or you can use automation to run template updates and
+commit the changes. If you use [Renovate](https://docs.renovatebot.com/) it updates projects with the latest versions of
+Copier templates, in the same way that it updates dependencies.
 
 > Use SSH authentication for Git operations with Copier. You can pass
 > [credentials](https://copier.readthedocs.io/en/stable/faq/#how-to-pass-credentials-to-git), if you do not use an SSH
@@ -68,11 +74,13 @@ pipx run copier==9.17.0 copy git+https://github.com/my-username/copier-mynamespa
 
 > Both `pipx run` and `uvx` download Copier to a cache, so that you do not need to manage a Python virtual environment.
 
-If you use extra Jinja filters in a Copier template, the clients must have the Python packages for these. You will need to inject additional these packages into the virtual environment that `pipx` or `uvx` maintains for Copier.
+If you use extra Jinja filters in a Copier template, the clients must have the Python packages for these. You will need
+to inject additional these packages into the virtual environment that `pipx` or `uvx` maintains for Copier.
 
-By default, Copier disables features that allow arbitrary code execution, including [migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations) and 
-[tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks). You must use the _—trust_ flag to enable these
-to run.
+By default, Copier disables features that allow arbitrary code execution, including
+[migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations) and
+[tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks). You must use the _—trust_ flag to enable these to
+run.
 
 ## Creating a Copier Template
 
@@ -188,7 +196,7 @@ project_name:
 
 ## Updating Specific Files
 
-Use *--exclude* to update a single file in a project from a template:
+Use _--exclude_ to update a single file in a project from a template:
 
 ```shell
 copier copy --exclude '*' --exclude '!file-i-want' ./template ./destination
