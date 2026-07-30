@@ -21,7 +21,7 @@ contain one Copier template, because Copier uses Git tags for version informatio
 The first time that you run Copier, you must specify the address of the repository for a template, like this:
 
 ```shell
-copier copy git+https://github.com/my-username/copier-mynamespace-mytemplate my-project
+copier copy git+ssh://github.com/my-username/copier-mynamespace-mytemplate.git my-project
 ```
 
 It then prompts you for answers to the questions that are defined in the template, and then creates the files and
@@ -93,7 +93,7 @@ To run Copier on a development system, use a tool like [pipx](https://pipx.pypa.
 This command uses `pipx` to run `copier copy`:
 
 ```shell
-pipx run copier==9.17.0 copy git+https://github.com/my-username/copier-mynamespace-mytemplate my-project
+pipx run copier==9.17.0 copy git+ssh://github.com/my-username/copier-mynamespace-mytemplate.git my-project
 ```
 
 > Both `pipx run` and `uvx` download Copier to a cache, so that you do not need to manage a Python virtual environment.
@@ -244,6 +244,7 @@ Here are some useful articles and tutorials about Copier.
 ### Copier
 
 - [Copier documentation](https://copier.readthedocs.io/en/stable/)
+- [Bootstrapping Python projects with copier](https://blog.dusktreader.dev/2025/04/06/bootstrapping-python-projects-with-copier/)
 - [Renovate Support for Copier](https://docs.renovatebot.com/modules/manager/copier/)
 
 ### Example Templates
