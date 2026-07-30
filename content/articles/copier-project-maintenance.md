@@ -1,9 +1,9 @@
 +++
 categories = ["automation", "devops", "programming"]
-date = "2026-07-29T07:28:00+01:00"
+date = "2026-07-30T23:35:00+01:00"
 description = "Maintaining projects with Copier templates"
 slug = "copier-project-maintenance"
-tags = ["automation", "devops"]
+tags = ["automation", "devops", "python"]
 title = "Maintaining Projects with Copier Templates"
 +++
 
@@ -24,17 +24,22 @@ copier copy git+https://github.com/my-username/copier-mynamespace-mytemplate my-
 ```
 
 It then prompts you for answers to the questions that are defined in the template, and then creates the files and
-directories that are included in the template in the `my-project/` directory. It creates an `answers` file in the
+directories that are included in the template in the `my-project/` directory. It also creates an `answers` file in the
 project directory to store the address of the template, the version of the template that you used, and your responses to
 the questions.
 
 > You can also define options on the command-line or in a data file.
 
-You can run Copier again on a project at any time. It uses Git to fetch either the latest version of the template, or
-the version of the template that you [specify](https://copier.readthedocs.io/en/stable/configuring/#vcs_ref):
+You can update a project at any time. Specify the answers file that was created by the first run of Copier. Copier then
+uses Git to fetch either the latest version of the template, or the version of the template that you
+[specify](https://copier.readthedocs.io/en/stable/configuring/#vcs_ref):
 
 ```shell
-copier update git+https://github.com/my-username/copier-mynamespace-mytemplate my-project
+# Update the current project with the latest version of the template
+copier update -a .copier-answers-my-template.yaml
+
+# Update the current project with version v1.2.3 of the template
+copier update -a .copier-answers-my-template.yaml -r v1.2.3 
 ```
 
 By default, Copier prompts you to answer the questions again. You can tell it to use the same answers. It then performs
@@ -42,7 +47,11 @@ an [update](https://copier.readthedocs.io/en/stable/updating/). The update can a
 [migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations) or
 [defined tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks).
 
-> By default, Copier [excludes pre-releases](https://copier.readthedocs.io/en/stable/configuring/#use_prereleases).
+Add the `-A` option to use the same responses from the answers file without prompting you:
+
+```shell
+copier update -A -a .copier-answers-my-template.yaml
+```
 
 You can safely use
 [multiple Copier templates](https://copier.readthedocs.io/en/stable/configuring/#applying-multiple-templates-to-the-same-subproject)
@@ -67,9 +76,11 @@ By default, Copier will copy from the last release found in template Git tags, s
 [a Python version specifier](https://packaging.python.org/en/latest/specifications/version-specifiers/), regardless of
 whether the template is from a URL or a local clone of a Git repository.
 
-> [Version tags may have a prefix of v](https://packaging.python.org/en/latest/specifications/version-specifiers/#preceding-v-character).
-> Tools like [Python Semantic Release](https://python-semantic-release.readthedocs.io/en/stable/) create Git tags that
-> have a _v_ prefix, e.g. _v1.2.3_.
+[Version tags may have a prefix of v](https://packaging.python.org/en/latest/specifications/version-specifiers/#preceding-v-character).
+Tools like [Python Semantic Release](https://python-semantic-release.readthedocs.io/en/stable/) create Git tags that
+have a `v` prefix, e.g. `v1.2.3`.
+
+> By default, Copier [excludes pre-releases](https://copier.readthedocs.io/en/stable/configuring/#use_prereleases).
 
 ## Running Copier
 
