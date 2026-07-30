@@ -8,7 +8,8 @@ title = "Maintaining Projects with Copier Templates"
 +++
 
 [Copier](https://copier.readthedocs.io/en/stable/) enables you to continuously update software projects from sets of
-templates, so that you can maintain consistent configurations across many projects.
+templates, so that you can maintain consistent configurations across many projects. The projects can receive files from
+multiple templates, which means that each of your templates only needs to provide a specific capability.
 
 ## How It Works
 
