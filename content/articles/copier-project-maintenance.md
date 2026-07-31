@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "devops", "programming"]
-date = "2026-07-31T22:40:00+01:00"
+date = "2026-07-31T22:52:00+01:00"
 description = "Using shared Copier templates to maintain projects"
 slug = "copier-project-maintenance"
 tags = ["automation", "devops", "python"]
@@ -13,18 +13,16 @@ then evolving the projects by updating the shared templates that they use.
 
 ## How It Works
 
-A Copier template is a Git repository that contains a configuration file and template files. Copier uses
-[Jinja](https://jinja.palletsprojects.com/en/stable/) for templating files and directories, with
+A Copier template is a Git repository that contains a configuration file, along with template files and directories.
+Each Git repository contains one Copier template, because Copier uses
+[Git tags for version information](#versioning-your-copier-templates).
+
+Copier uses [Jinja](https://jinja.palletsprojects.com/en/stable/) for templating the files and directories, with
 [extensions](https://copier.readthedocs.io/en/stable/configuring/#jinja_extensions). The configuration file includes
 definitions for the questions that Copier will ask a user when they apply a template to a project. The responses to
-these questions become variables that the templates can use.
-
-You can also use the [external data](https://copier.readthedocs.io/en/stable/configuring/#external_data) option to set
-variables for the Jinja templating. This enables you to use Jinja extensions, or define your own macros to run custom
-Python code.
-
-> Each Git repository contains one Copier template, because Copier uses
-> [Git tags for version information](#versioning-your-copier-templates).
+these questions become variables that the templates can use. You can also use the
+[external data](https://copier.readthedocs.io/en/stable/configuring/#external_data) option to set variables for the
+Jinja templating.
 
 Once a template is applied for the first time, Copier creates an
 [answers file](https://copier.readthedocs.io/en/stable/configuring/#the-copier-answersyml-file) in the project. This
