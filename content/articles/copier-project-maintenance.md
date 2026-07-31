@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "devops", "programming"]
-date = "2026-07-31T10:40:00+01:00"
+date = "2026-07-31T10:52:00+01:00"
 description = "Maintaining projects with Copier templates"
 slug = "copier-project-maintenance"
 tags = ["automation", "devops", "python"]
@@ -14,13 +14,17 @@ capability and mix templates into projects as they are needed.
 
 ## How It Works
 
-A Copier template is a Git repository that contains a configuration file and template files. Each Git repository
-contains one Copier template, because Copier uses Git tags for version information. Copier uses
+A Copier template is a Git repository that contains a configuration file and template files. Copier uses
 [Jinja](https://jinja.palletsprojects.com/en/stable/) for templating files and directories, with
-[extensions](https://copier.readthedocs.io/en/stable/configuring/#jinja_extensions).
+[extensions](https://copier.readthedocs.io/en/stable/configuring/#jinja_extensions). The configuration file includes
+definitions for the questions that Copier will ask a user when they apply a template to a project. The responses to
+these questions become variables that the templates can use.
 
-The first time that you run Copier to add a template to a project specify the address of the repository that contains
-the template, like this:
+> Each Git repository contains one Copier template, because Copier uses
+> [Git tags for version information](#versioning-your-copier-templates).
+
+The first time that you run Copier to add a template to a project, you specify the address of the Git repository that
+contains the template, like this:
 
 ```shell
 copier copy git+ssh://github.com/my-username/copier-mynamespace-mytemplate.git my-project
@@ -256,8 +260,8 @@ project_name:
 
 ### Automating Version Tags
 
-Always automate the release process for your templates. This ensures that every version of a Copier template has a
-version tag. Popular tools for release automation include:
+Always automate the release process for your templates. This ensures that every version of a Copier template has a Git
+tag in the valid format. Popular tools for release automation include:
 
 - [GoReleaser](https://goreleaser.com/)
 - [Python Semantic Release](https://python-semantic-release.readthedocs.io/en/stable/)
