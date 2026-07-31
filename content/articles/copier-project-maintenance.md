@@ -1,33 +1,35 @@
 +++
 categories = ["automation", "devops", "programming"]
-date = "2026-07-31T08:17:00+01:00"
+date = "2026-07-31T10:40:00+01:00"
 description = "Maintaining projects with Copier templates"
 slug = "copier-project-maintenance"
 tags = ["automation", "devops", "python"]
 title = "Maintaining Projects with Copier Templates"
 +++
 
-[Copier](https://copier.readthedocs.io/en/stable/) enables you to continuously update software projects from sets of
-templates, so that you can maintain consistent configurations across many projects. A project can receive files from
-multiple Copier templates, which means that each of your templates only needs to provide a specific capability.
+[Copier](https://copier.readthedocs.io/en/stable/) enables you to continuously update software projects from templates,
+so that you can maintain consistent configurations across many projects. A project can receive files from multiple
+Copier templates. This means that you can maintain sets of templates that each manage configuration for a particular
+capability and mix templates into projects as they are needed.
 
 ## How It Works
 
-A Copier template is a Git repository that contains a configuration file and template files. Each Git repository should
-contain one Copier template, because Copier uses Git tags for version information. You can use
+A Copier template is a Git repository that contains a configuration file and template files. Each Git repository
+contains one Copier template, because Copier uses Git tags for version information. Copier uses
 [Jinja](https://jinja.palletsprojects.com/en/stable/) for templating files and directories, with
 [extensions](https://copier.readthedocs.io/en/stable/configuring/#jinja_extensions).
 
-The first time that you run Copier, you must specify the address of the repository for a template, like this:
+The first time that you run Copier to add a template to a project specify the address of the repository that contains
+the template, like this:
 
 ```shell
 copier copy git+ssh://github.com/my-username/copier-mynamespace-mytemplate.git my-project
 ```
 
-It then prompts you for answers to the questions that are defined in the template. Once you have responded to all of the
-questions it will create the files and directories that are included in the template in the `my-project/` directory. It
-also creates an `answers` file in the project directory to store the address of the template, the version of the
-template that you used, and your responses to the questions.
+Copier then prompts you for answers to the questions that are defined in the template. Once you have responded to all of
+the questions it will create the files and directories from the template in the `my-project/` directory. It also creates
+an `answers` file in the project directory to store the address of the template, the version of the template that you
+used, and your responses to the questions.
 
 > You can also provide responses on the command-line or in a data file.
 
@@ -43,12 +45,13 @@ copier update -a .copier-answers-my-template.yaml
 copier update -a .copier-answers-my-template.yaml -r v1.2.3 
 ```
 
-By default, Copier prompts you to answer the questions again. You can tell it to use the same answers. It then performs
-an [update](https://copier.readthedocs.io/en/stable/updating/). The update can also include running
+Copier then prompts you to answer the questions again. It uses the previous responses as the defaults. Once it has
+responses to all of the questions that are defined in the template it performs an
+[update](https://copier.readthedocs.io/en/stable/updating/). The update can also include running
 [migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations) or
 [defined tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks).
 
-Add the `-A` option to use the same responses from the answers file without prompting you:
+Add the `-A` option to update the project without prompting you at all, using the responses from the answers file:
 
 ```shell
 copier update -A -a .copier-answers-my-template.yaml
@@ -56,39 +59,37 @@ copier update -A -a .copier-answers-my-template.yaml
 
 You can safely use
 [multiple Copier templates](https://copier.readthedocs.io/en/stable/configuring/#applying-multiple-templates-to-the-same-subproject)
-on the same project. Templates can uses the answers that users have provided to other templates, as explained in a later
-section.
+on the same project. Templates can use the responses that users have provided to other templates, as explained in a
+[later section](#referencing-other-copier-templates).
 
 These features mean that you can maintain large numbers of projects that are composed from sets of Copier templates. The
 developers that work on these projects can update them as needed, or you can use automation to run template updates and
-commit the changes. If you use [Renovate](https://docs.renovatebot.com/) it updates projects with the latest versions of
-Copier templates, in the same way that it updates dependencies.
+commit the changes.
 
-> Access Copier templates in private Git repositories by using SSH authentication. You can pass
-> [credentials](https://copier.readthedocs.io/en/stable/faq/#how-to-pass-credentials-to-git), if you do not use an SSH
-> agent.
+> If you use [Renovate](https://docs.renovatebot.com/) it updates projects with the latest versions of Copier templates,
+> in the same way that it updates dependencies.
 
 ### Versioning Your Copier Templates
 
-Copier treats each Git tag on a template repository as a version. Use [Semantic Versioning](https://semver.org/) for
-template repositories.
+Copier reads the Git tags on a template repository to determine the available versions. It expects version tags to
+follow the format of
+[a Python version specifier](https://packaging.python.org/en/latest/specifications/version-specifiers/).
 
-By default, Copier will copy from the last release found in template Git tags, sorted as
-[a Python version specifier](https://packaging.python.org/en/latest/specifications/version-specifiers/), regardless of
-whether the template is from a URL or a local clone of a Git repository.
+This means that you should use [Semantic Versioning](https://semver.org/) for template repositories. To identify the
+tags that are for versions, give each
+[version tag a prefix of v](https://packaging.python.org/en/latest/specifications/version-specifiers/#preceding-v-character).
+Set up [an automated release tool](#automating-version-tags) to handle versioning for you, with Git tags that have a `v`
+prefix, e.g. `v1.2.3`.
 
-[Version tags may have a prefix of v](https://packaging.python.org/en/latest/specifications/version-specifiers/#preceding-v-character).
-Tools like [Python Semantic Release](https://python-semantic-release.readthedocs.io/en/stable/) create Git tags that
-have a `v` prefix, e.g. `v1.2.3`.
-
-> By default, Copier [excludes pre-releases](https://copier.readthedocs.io/en/stable/configuring/#use_prereleases).
+> By default, Copier will use the current release found in the Git version tags for the template,
+> [excluding pre-releases](https://copier.readthedocs.io/en/stable/configuring/#use_prereleases).
 
 ## Running Copier
 
-> Copier requires Git for all operations.
-
-To run Copier on a development system, use a tool like [pipx](https://pipx.pypa.io/stable/) or
-[uv](https://docs.astral.sh/uv/). If you are using `uv`, call Copier with `uvx`.
+Copier requires Git and Python. To run Copier on a development system, use a Python tool like
+[pipx](https://pipx.pypa.io/stable/) or [uv](https://docs.astral.sh/uv/). If you are using `uv`, call Copier with `uvx`.
+Alternatively, you can create your own container image that includes Copier, Git, Python and any other required
+dependencies.
 
 This command uses `pipx` to run `copier copy`:
 
@@ -96,15 +97,25 @@ This command uses `pipx` to run `copier copy`:
 pipx run copier==9.17.0 copy git+ssh://github.com/my-username/copier-mynamespace-mytemplate.git my-project
 ```
 
+This command uses `uv` to run `copier copy`:
+
+```shell
+uvx copier==9.17.0 copy git+ssh://github.com/my-username/copier-mynamespace-mytemplate.git my-project
+```
+
 > Both `pipx run` and `uvx` download Copier to a cache, so that you do not need to manage a Python virtual environment.
 
-If you use extra Jinja filters in a Copier template, the clients must have the Python packages for these. You will need
-to inject additional these packages into the virtual environment that `pipx` or `uvx` maintains for Copier.
+If you use extra Jinja filters in a Copier template, you will need include these packages into the virtual environment
+that `pipx` or `uvx` maintains for Copier.
 
 By default, Copier disables features that allow arbitrary code execution, including
 [migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations) and
 [tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks). You must use the _—trust_ flag to enable these to
 run.
+
+> Copier supports both HTTPS and SSH. Access Copier templates in private Git repositories by using SSH authentication.
+> If you do not use an SSH agent, you can pass
+> [credentials](https://copier.readthedocs.io/en/stable/faq/#how-to-pass-credentials-to-git).
 
 ### Updating Specific Files
 
@@ -153,8 +164,8 @@ To create a Copier template:
    below for an example.
 6. Set the template delimiters. By default, Copier uses curly braces to denote templated values, but these may cause
    issues with some types of files, such as Jinja templates in projects. Specify square brackets as delimiters.
-7. _Optional:_ Set up a project release tool for the template repository, such as
-   [Python Semantic Release](https://python-semantic-release.readthedocs.io/en/stable/).
+7. _Optional:_ Set up [automated releases](#automating-version-tags) for the template repository to ensure that there
+   are [Git tags for versions](#versioning-your-copier-templates).
 8. _Optional:_ Add metadata to the project for the template repository. For example, if it is hosted on GitHub, add the
    GitHub Topic _copier-template_.
 
