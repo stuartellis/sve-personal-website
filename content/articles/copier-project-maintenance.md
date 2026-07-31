@@ -64,7 +64,7 @@ developers that work on these projects can update them as needed, or you can use
 commit the changes. If you use [Renovate](https://docs.renovatebot.com/) it updates projects with the latest versions of
 Copier templates, in the same way that it updates dependencies.
 
-> Use SSH authentication for Git to work with Copier templates in private repositories. You can pass
+> Access Copier templates in private Git repositories by using SSH authentication. You can pass
 > [credentials](https://copier.readthedocs.io/en/stable/faq/#how-to-pass-credentials-to-git), if you do not use an SSH
 > agent.
 
