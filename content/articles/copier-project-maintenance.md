@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "devops", "programming"]
-date = "2026-07-31T10:52:00+01:00"
+date = "2026-07-31T11:08:00+01:00"
 description = "Maintaining projects with Copier templates"
 slug = "copier-project-maintenance"
 tags = ["automation", "devops", "python"]
@@ -10,7 +10,7 @@ title = "Maintaining Projects with Copier Templates"
 [Copier](https://copier.readthedocs.io/en/stable/) enables you to continuously update software projects from templates,
 so that you can maintain consistent configurations across many projects. A project can receive files from multiple
 Copier templates. This means that you can maintain sets of templates that each manage configuration for a particular
-capability and mix templates into projects as they are needed.
+capability and then mix templates into projects as they are needed.
 
 ## How It Works
 
@@ -161,13 +161,15 @@ To create a Copier template:
    with `copier-`. Add a namespace and a name for the specific template to the full name of the repository. For example:
    `copier-mynamespace-mytemplate`.
 2. Create a `copier.yaml` configuration file in the root of the template repository. To avoid conflicts with other
-   Copier templates that are in use, the `_answers_file` must specify a unique name. See below for an example.
+   Copier templates that are in use, the `_answers_file` must specify a unique name.
+   [See below](#example-configuration-file-for-the-template) for an example.
 3. Create a directory called `template/` in the repository to hold the files and directories that make up the template.
 4. Create a directory called `template/.copier/` in the repository to hold the template answers file.
 5. Create a template answers file called `[[_copier_conf.answers_file]].jinja` in the directory `template/.copier/`. See
-   below for an example.
+   below for an [example answers file]](#example-template-answers-file).
 6. Set the template delimiters. By default, Copier uses curly braces to denote templated values, but these may cause
-   issues with some types of files, such as Jinja templates in projects. Specify square brackets as delimiters.
+   issues with some types of files, such as Jinja templates in projects. Specify square brackets as delimiters in the
+   configuration file as shown in [the example configuration file](#example-configuration-file-for-the-template).
 7. _Optional:_ Set up [automated releases](#automating-version-tags) for the template repository to ensure that there
    are [Git tags for versions](#versioning-your-copier-templates).
 8. _Optional:_ Add metadata to the project for the template repository. For example, if it is hosted on GitHub, add the
