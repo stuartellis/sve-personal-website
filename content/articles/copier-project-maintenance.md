@@ -1,16 +1,15 @@
 +++
 categories = ["automation", "devops", "programming"]
-date = "2026-07-31T15:14:00+01:00"
-description = "Using Copier templates to maintain projects"
+date = "2026-07-31T22:40:00+01:00"
+description = "Using shared Copier templates to maintain projects"
 slug = "copier-project-maintenance"
 tags = ["automation", "devops", "python"]
-title = "Using Copier Templates to Maintain Projects"
+title = "Maintaining Projects with Shared Templates Using Copier"
 +++
 
-[Copier](https://copier.readthedocs.io/en/stable/) enables you to continuously update software projects from one or more
-templates, so that you can maintain consistent configurations across many projects. This means that you can maintain
-large numbers of projects by defining Copier templates for common capabilites, adding selected templates to all of the
-projects that require those capabilities, and then updating the templates as needed.
+[Copier](https://copier.readthedocs.io/en/stable/) enables you to maintain large numbers of projects by defining
+templates for common capabilites, adding the relevant templates to the projects that require those capabilities, and
+then evolving the projects by updating the shared templates that they use.
 
 ## How It Works
 
@@ -21,16 +20,16 @@ definitions for the questions that Copier will ask a user when they apply a temp
 these questions become variables that the templates can use.
 
 You can also use the [external data](https://copier.readthedocs.io/en/stable/configuring/#external_data) option to set
-variables with Jinja. This enables you to use Jinja extensions, or define your own macros to run custom Python code.
+variables for the Jinja templating. This enables you to use Jinja extensions, or define your own macros to run custom
+Python code.
 
 > Each Git repository contains one Copier template, because Copier uses
 > [Git tags for version information](#versioning-your-copier-templates).
 
 Once a template is applied for the first time, Copier creates an
-[answers file](https://copier.readthedocs.io/en/stable/configuring/#the-copier-answersyml-file) in the project
-directory. This answers file enables Copier to manage updates to new versions of the template. It stores the address of
-the template, the version of the template that you used, and your most recent responses to the questions in the
-template.
+[answers file](https://copier.readthedocs.io/en/stable/configuring/#the-copier-answersyml-file) in the project. This
+answers file enables Copier to manage updates to new versions of the template. It stores the address of the template,
+the version of the template that you used, and your most recent responses to the questions in the template.
 
 ### Using a Copier Template
 
@@ -47,16 +46,16 @@ the questions it will create the files and directories from the template in the 
 
 > You can also provide responses on the command-line or in a data file.
 
-You can update a project at any time. Specify the answers file that was created by the first run of Copier. Copier uses
-the template repository that is listed in the answers file. It will fetch either the latest version of the template, or
-the version of the template that you provide:
+You can update a project at any time. Run Copier, using the
+[-a](https://copier.readthedocs.io/en/stable/configuring/#answers_file) option to specify an answers file in the
+project. Copier will read the address of the template repository from the answers file and begin the update process. It
+will fetch either the latest version of the template, or the version of the template that you provide:
 
 ```shell
-# Update the current project with the answers file 
-# Use the latest version of the template
+# Apply the latest version of the template that is specified in the answers file
 copier update -a .copier/.copier-answers-mycompany-myteam-aws-lambda-py.yaml
 
-# Update the current project with version v1.2.3 of the template
+# Apply version v1.2.3 of the template that is specified in the answers file
 copier update -a .copier/.copier-answers-mycompany-myteam-aws-lambda-py.yaml -r v1.2.3 
 ```
 
@@ -323,7 +322,7 @@ Here are some guidelines for naming Copier templates answers files:
 - Include namespaces in the template name, such as your company and your team.
 - Include a unique identifier for the template.
 - Use the same name for the answers file and the repository.
-- Always use the file extension `.yaml`, so that the file as a YAML file.
+- Always use the file extension `.yaml`, so that the file is identified as a YAML file.
 
 For example, you could name the answers file for a Copier template for AWS Lambda projects as
 `.copier-answers-mycompany-myteam-aws-lambda-py.yaml`, so that the template has the namespaces `mycompany` and `myteam`
@@ -375,6 +374,7 @@ Here are some useful articles and tutorials about Copier.
 ### Copier
 
 - [The Official Copier documentation](https://copier.readthedocs.io/en/stable/)
+- [Exploring Copier Python: A Comprehensive Guide](https://coderivers.org/blog/copier-python/)
 - [Bootstrapping Python projects with copier](https://blog.dusktreader.dev/2025/04/06/bootstrapping-python-projects-with-copier/)
 - [Effective Repository Templates with Copier](https://browniantech.com/blog/post/Effective-Repository-Templates-with-Copier)
 - [Renovate Support for Copier](https://docs.renovatebot.com/modules/manager/copier/)
