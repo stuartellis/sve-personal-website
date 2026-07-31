@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "devops", "programming"]
-date = "2026-07-30T23:35:00+01:00"
+date = "2026-07-31T07:32:00+01:00"
 description = "Maintaining projects with Copier templates"
 slug = "copier-project-maintenance"
 tags = ["automation", "devops", "python"]
@@ -8,8 +8,8 @@ title = "Maintaining Projects with Copier Templates"
 +++
 
 [Copier](https://copier.readthedocs.io/en/stable/) enables you to continuously update software projects from sets of
-templates, so that you can maintain consistent configurations across many projects. The projects can receive files from
-multiple templates, which means that each of your templates only needs to provide a specific capability.
+templates, so that you can maintain consistent configurations across many projects. A project can receive files from
+multiple Copier templates, which means that each of your templates only needs to provide a specific capability.
 
 ## How It Works
 
@@ -24,12 +24,12 @@ The first time that you run Copier, you must specify the address of the reposito
 copier copy git+ssh://github.com/my-username/copier-mynamespace-mytemplate.git my-project
 ```
 
-It then prompts you for answers to the questions that are defined in the template, and then creates the files and
-directories that are included in the template in the `my-project/` directory. It also creates an `answers` file in the
-project directory to store the address of the template, the version of the template that you used, and your responses to
-the questions.
+It then prompts you for answers to the questions that are defined in the template. Once you have responded to all of the
+questions it will create the files and directories that are included in the template in the `my-project/` directory. It
+also creates an `answers` file in the project directory to store the address of the template, the version of the
+template that you used, and your responses to the questions.
 
-> You can also define options on the command-line or in a data file.
+> You can also provide responses on the command-line or in a data file.
 
 You can update a project at any time. Specify the answers file that was created by the first run of Copier. Copier then
 uses Git to fetch either the latest version of the template, or the version of the template that you
@@ -64,7 +64,7 @@ developers that work on these projects can update them as needed, or you can use
 commit the changes. If you use [Renovate](https://docs.renovatebot.com/) it updates projects with the latest versions of
 Copier templates, in the same way that it updates dependencies.
 
-> Use SSH authentication for Git operations with Copier. You can pass
+> Use SSH authentication for Git to work with Copier templates in private repositories. You can pass
 > [credentials](https://copier.readthedocs.io/en/stable/faq/#how-to-pass-credentials-to-git), if you do not use an SSH
 > agent.
 
@@ -105,6 +105,20 @@ By default, Copier disables features that allow arbitrary code execution, includ
 [migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations) and
 [tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks). You must use the _—trust_ flag to enable these to
 run.
+
+### Updating Specific Files
+
+Use _--exclude_ to update a single file in a project from a template:
+
+```shell
+copier copy --exclude '*' --exclude '!file-i-want' ./template ./destination
+```
+
+For example:
+
+```shell
+copier copy -a .copier/.copier-answers-my-template.yaml --exclude '*' --exclude '!.pre-commit-config.yaml' git+https://github.com/my-account/copier-my-template .
+```
 
 ## Creating a Copier Template
 
@@ -188,19 +202,7 @@ Always create a template answers file. It must render the answers that are provi
 Copier must template the name of the answers file from `_copier_conf.answers_file`. This means that if you use square
 brackets as delimiters, it will be called `[[_copier_conf.answers_file]].jinja`.
 
-## Automating Version Tags
-
-Automate your release process, to ensure that every version of a Copier template has a version tag. Popular tools for
-release automation include:
-
-- [GoReleaser](https://goreleaser.com/)
-- [Python Semantic Release](https://python-semantic-release.readthedocs.io/en/stable/)
-- [semantic-release](https://semantic-release.org/)
-
-> I provide an article on using
-> [Python Semantic Release with GitLab](https://www.stuartellis.name/articles/python-semantic-release-gitlab/).
-
-## Referencing Other Copier Templates
+### Referencing Other Copier Templates
 
 A Copier template can reference other templates that have already been applied to the project:
 
@@ -223,19 +225,17 @@ project_name:
   default: "[[ _external_data.parent_tpl.project_name ]]"
 ```
 
-## Updating Specific Files
+### Automating Version Tags
 
-Use _--exclude_ to update a single file in a project from a template:
+Always automate the release process for your templates. This ensures that every version of a Copier template has a
+version tag. Popular tools for release automation include:
 
-```shell
-copier copy --exclude '*' --exclude '!file-i-want' ./template ./destination
-```
+- [GoReleaser](https://goreleaser.com/)
+- [Python Semantic Release](https://python-semantic-release.readthedocs.io/en/stable/)
+- [semantic-release](https://semantic-release.org/)
 
-For example:
-
-```shell
-copier copy -a .copier/.copier-answers-my-template.yaml --exclude '*' --exclude '!.pre-commit-config.yaml' git+https://github.com/my-account/copier-my-template .
-```
+> I provide an article on using
+> [Python Semantic Release with GitLab](https://www.stuartellis.name/articles/python-semantic-release-gitlab/).
 
 ## Resources
 
