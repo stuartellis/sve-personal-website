@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "devops", "programming"]
-date = "2026-07-31T07:32:00+01:00"
+date = "2026-07-31T08:17:00+01:00"
 description = "Maintaining projects with Copier templates"
 slug = "copier-project-maintenance"
 tags = ["automation", "devops", "python"]
@@ -124,6 +124,24 @@ copier copy -a .copier/.copier-answers-my-template.yaml --exclude '*' --exclude 
 
 > This process does not require the Copier tool.
 
+A Copier template is a Git repository with a structure like this:
+
+```shell
+|- template/
+|   |
+|   |- .copier/
+|   |    |- .copier-answers-mynamespace-mytemplate.yaml
+|   |
+|   |- <templated files and directories...>
+|
+|- .gitignore
+|- LICENSE.md
+|- README.md
+|- copier.yaml
+```
+
+To create a Copier template:
+
 1. First, create a Git repository to hold the template. By convention, the name of this template repository should start
    with `copier-`. Add a namespace and a name for the specific template to the full name of the repository. For example:
    `copier-mynamespace-mytemplate`.
@@ -216,7 +234,7 @@ _external_data:
 # Ask the user where the answers file for the previous template is located
 parent_tpl_answers_file:
   help: Where did you store answers for the parent template?
-  default: .copier-answers-example-parent.yaml
+  default: .copier/.copier-answers-example-parent.yaml
 
 # Answers can then reference answers in the other template through _external_data
 project_name:
@@ -245,6 +263,7 @@ Here are some useful articles and tutorials about Copier.
 
 - [Copier documentation](https://copier.readthedocs.io/en/stable/)
 - [Bootstrapping Python projects with copier](https://blog.dusktreader.dev/2025/04/06/bootstrapping-python-projects-with-copier/)
+- [Effective Repository Templates with Copier](https://browniantech.com/blog/post/Effective-Repository-Templates-with-Copier)
 - [Renovate Support for Copier](https://docs.renovatebot.com/modules/manager/copier/)
 
 ### Example Templates
