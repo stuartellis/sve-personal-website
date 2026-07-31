@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "devops", "programming"]
-date = "2026-07-31T11:08:00+01:00"
+date = "2026-07-31T11:50:00+01:00"
 description = "Maintaining projects with Copier templates"
 slug = "copier-project-maintenance"
 tags = ["automation", "devops", "python"]
@@ -23,11 +23,13 @@ these questions become variables that the templates can use.
 > Each Git repository contains one Copier template, because Copier uses
 > [Git tags for version information](#versioning-your-copier-templates).
 
+### Using a Copier Template
+
 The first time that you run Copier to add a template to a project, you specify the address of the Git repository that
 contains the template, like this:
 
 ```shell
-copier copy git+ssh://github.com/my-username/copier-mynamespace-mytemplate.git my-project
+copier copy git+ssh://github.com/my-username/copier-mycompany-myteam-aws-lambda-py.git my-project
 ```
 
 Copier then prompts you for answers to the questions that are defined in the template. Once you have responded to all of
@@ -43,22 +45,24 @@ uses Git to fetch either the latest version of the template, or the version of t
 
 ```shell
 # Update the current project with the latest version of the template
-copier update -a .copier-answers-my-template.yaml
+copier update -a .copier-answers-mycompany-myteam-aws-lambda-py.yaml
 
 # Update the current project with version v1.2.3 of the template
-copier update -a .copier-answers-my-template.yaml -r v1.2.3 
+copier update -a .copier-answers-mycompany-myteam-aws-lambda-py.yaml -r v1.2.3 
 ```
 
-Copier then prompts you to answer the questions again. It uses the previous responses as the defaults. Once it has
-responses to all of the questions that are defined in the template it performs an
+Copier then reads the questions that are defined for the new version of the template. By default, it prompts the user
+for answers. If question existed in the previous version, it sets the previous response from the answer file as the
+default response. Once it has responses to all of the questions that are defined in the template it performs an
 [update](https://copier.readthedocs.io/en/stable/updating/). The update can also include running
 [migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations) or
 [defined tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks).
 
-Add the `-A` option to update the project without prompting you at all, using the responses from the answers file:
+Add the `-A` option to make Copier update the project without prompting you at all, using the responses from the answers
+file:
 
 ```shell
-copier update -A -a .copier-answers-my-template.yaml
+copier update -A -a .copier-answers-mycompany-myteam-aws-lambda-py.yaml
 ```
 
 You can safely use
@@ -98,13 +102,13 @@ dependencies.
 This command uses `pipx` to run `copier copy`:
 
 ```shell
-pipx run copier==9.17.0 copy git+ssh://github.com/my-username/copier-mynamespace-mytemplate.git my-project
+pipx run copier==9.17.0 copy git+ssh://github.com/my-username/copier-mycompany-myteam-aws-lambda-py.git my-project
 ```
 
 This command uses `uv` to run `copier copy`:
 
 ```shell
-uvx copier==9.17.0 copy git+ssh://github.com/my-username/copier-mynamespace-mytemplate.git my-project
+uvx copier==9.17.0 copy git+ssh://github.com/my-username/copier-mycompany-myteam-aws-lambda-py.git my-project
 ```
 
 > Both `pipx run` and `uvx` download Copier to a cache, so that you do not need to manage a Python virtual environment.
@@ -117,8 +121,9 @@ By default, Copier disables features that allow arbitrary code execution, includ
 [tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks). You must use the _—trust_ flag to enable these to
 run.
 
-> Copier supports both HTTPS and SSH. Access Copier templates in private Git repositories by using SSH authentication.
-> If you do not use an SSH agent, you can pass
+> Copier supports fetching templates from remote Git repositories over HTTPS and SSH, as well as from repositories on
+> the local system. Access Copier templates in private Git repositories by using SSH authentication. If you do not use
+> an SSH agent, you can pass
 > [credentials](https://copier.readthedocs.io/en/stable/faq/#how-to-pass-credentials-to-git).
 
 ### Updating Specific Files
@@ -132,7 +137,7 @@ copier copy --exclude '*' --exclude '!file-i-want' ./template ./destination
 For example:
 
 ```shell
-copier copy -a .copier/.copier-answers-my-template.yaml --exclude '*' --exclude '!.pre-commit-config.yaml' git+https://github.com/my-account/copier-my-template .
+copier copy -a .copier/.copier-answers-mycompany-myteam-aws-lambda-py.yaml --exclude '*' --exclude '!.pre-commit-config.yaml' git+ssh://github.com/my-username/copier-mycompany-myteam-aws-lambda-py.git .
 ```
 
 ## Creating a Copier Template
@@ -145,7 +150,7 @@ A Copier template is a Git repository with a structure like this:
 |- template/
 |   |
 |   |- .copier/
-|   |    |- .copier-answers-mynamespace-mytemplate.yaml
+|   |    |- [[_copier_conf.answers_file]].jinja
 |   |
 |   |- <templated files and directories...>
 |
@@ -158,21 +163,21 @@ A Copier template is a Git repository with a structure like this:
 To create a Copier template:
 
 1. First, create a Git repository to hold the template. By convention, the name of this template repository should start
-   with `copier-`. Add a namespace and a name for the specific template to the full name of the repository. For example:
-   `copier-mynamespace-mytemplate`.
-2. Create a `copier.yaml` configuration file in the root of the template repository. To avoid conflicts with other
-   Copier templates that are in use, the `_answers_file` must specify a unique name.
-   [See below](#example-configuration-file-for-the-template) for an example.
+   with `copier-`. To simplify management, set the name of the repository to match the
+   [identifier of the answers file](#managing-answer-files). For example: `copier-mycompany-myteam-aws-lambda-py` when
+   the answers file will be identified as `mycompany-myteam-aws-lambda-py`.
+2. Create a `copier.yaml` configuration file in the root of the template repository. See below for an
+   [example configuration file](#example-configuration-file-for-the-template). To avoid conflicts with other Copier
+   templates that projects may use, the `_answers_file` must specify [a unique name](#managing-answer-files).
 3. Create a directory called `template/` in the repository to hold the files and directories that make up the template.
 4. Create a directory called `template/.copier/` in the repository to hold the template answers file.
-5. Create a template answers file called `[[_copier_conf.answers_file]].jinja` in the directory `template/.copier/`. See
-   below for an [example answers file]](#example-template-answers-file).
-6. Set the template delimiters. By default, Copier uses curly braces to denote templated values, but these may cause
-   issues with some types of files, such as Jinja templates in projects. Specify square brackets as delimiters in the
-   configuration file as shown in [the example configuration file](#example-configuration-file-for-the-template).
-7. _Optional:_ Set up [automated releases](#automating-version-tags) for the template repository to ensure that there
+5. Create a template answers file with the name `[[_copier_conf.answers_file]].jinja` in the directory
+   `template/.copier/`. This name must include the delimiters, because the file is generated in each project by Copier,
+   using the unique answer file name that is specified by the template configuration. See below for an
+   [example answers file](#example-template-answers-file).
+6. _Optional:_ Set up [automated releases](#automating-version-tags) for the template repository to ensure that there
    are [Git tags for versions](#versioning-your-copier-templates).
-8. _Optional:_ Add metadata to the project for the template repository. For example, if it is hosted on GitHub, add the
+7. _Optional:_ Add metadata to the project for the template repository. For example, if it is hosted on GitHub, add the
    GitHub Topic _copier-template_.
 
 ### Example Configuration File for the Template
@@ -198,7 +203,7 @@ _subdirectory: template
 # Start the name of the file with .copier-answers so that Renovate can detect it.
 # By default, Copier uses the root directory of the project for answers files,
 # but this example uses a .copier/ directory.
-_answers_file: .copier/.copier-answers-mynamespace-mytemplate.yaml
+_answers_file: .copier/.copier-answers-myorg-myteam-aws-lambda-py.yaml
 
 # Use alternate template delimiters
 # This avoids conflicts with templating that is defined in the managed files.
@@ -216,8 +221,13 @@ _skip_if_exists:
   - README.md
 ```
 
-Set defaults for answers as much as possible. They minimise user effort and increase consistency. You can also use
-[the well-known variables](https://copier.readthedocs.io/en/stable/settings/#well-known-variables) to get information.
+> To avoid conflicts with other Copier templates that projects may use, the `_answers_file` must specify
+[a unique name](#managing-answer-files).
+
+You also define the questions for the template in the configuration file. The Copier maintainers recommend that you use
+[the well-known variable names](https://copier.readthedocs.io/en/stable/settings/#well-known-variables) for common
+variables. Set default answers for questions as much as possible, because they minimise user effort and increase
+consistency.
 
 ### Example Template Answers File
 
@@ -235,7 +245,25 @@ Always create a template answers file. It must render the answers that are provi
 ```
 
 Copier must template the name of the answers file from `_copier_conf.answers_file`. This means that if you use square
-brackets as delimiters, it will be called `[[_copier_conf.answers_file]].jinja`.
+brackets as delimiters, the file itself will be called `[[_copier_conf.answers_file]].jinja` in the template repository.
+
+### Managing Answer Files
+
+Each Copier template must have a separate answers file in the projects that use it, to avoid conflicts with other Copier
+templates. This article suggests two practices to help you avoid issues when you use multiple Copier templates.
+
+Firstly, set a unique name for the answers file in each of your Copier templates. Start the name of each answers file
+with `.copier-answers`, so that [Renovate](https://www.mend.io/renovate/) and other tools can identify it as a Copier
+answers file. After this, set namespaces and a unique identifier for the template. Always include the file extension
+`.yaml` to identify the file as a YAML file.
+
+For example, you could name the answers file for a Copier template for AWS Lambda projects as
+`.copier-answers-mycompany-myteam-aws-lambda-py.yaml`, so that the template has the namespaces `mycompany` and `myteam`
+and the template identifier `aws-lambda-py`.
+
+Secondly, this article suggests that you put answers files in a `.copier/` directory. This simplifies automation and
+reduces clutter in the root directory of each project. By default, Copier puts answers files in the root directory of
+projects.
 
 ### Referencing Other Copier Templates
 
