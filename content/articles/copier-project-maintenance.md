@@ -1,15 +1,15 @@
 +++
 categories = ["automation", "devops", "programming"]
-date = "2026-08-01T08:46:00+01:00"
+date = "2026-08-01T17:42:00+01:00"
 description = "Using shared Copier templates to maintain projects"
 slug = "copier-project-maintenance"
 tags = ["automation", "devops", "python"]
 title = "Maintaining Projects with Shared Templates Using Copier"
 +++
 
-[Copier](https://copier.readthedocs.io/en/stable/) enables you to maintain large numbers of projects by defining
-templates for common capabilites, adding the relevant templates to the projects that require those capabilities, and
-then evolving the projects by updating the shared templates that they use.
+[Copier](https://copier.readthedocs.io/en/stable/) is a command-line tool and a Python library that enables you to
+maintain large numbers of projects by defining templates for common capabilites, adding the relevant templates to the
+projects that require those capabilities, and then evolving the projects by updating the shared templates that they use.
 
 ## How It Works
 
@@ -31,8 +31,11 @@ the version of the template that you used, and your most recent responses to the
 
 ### Using a Copier Template
 
-The first time that you run Copier to add a template to a project, you specify the address of the Git repository that
-contains the template, like this:
+You can either run the Copier command-line tool, or use the library with Python. The examples here use the command-line
+tool.
+
+The first time that you run the Copier command-line tool to add a template to a project, you specify the address of the
+Git repository that contains the template, like this:
 
 ```shell
 copier copy git+ssh://github.com/my-username/copier-mycompany-myteam-aws-lambda-py.git my-project
@@ -119,9 +122,9 @@ template, it does not prompt the user.
 > Consider using [Renovate](https://www.mend.io/renovate/) to manage updates for Copier templates that do not require
 > any responses.
 
-You can use any automation tools that you wish to update templates that require responses. You may decide to use
-different approaches for different templates, or depending on whether the update is a minor version or a major version
-change that could introduce breaking changes.
+You can call the command-line tool with any automation tools that you wish, or use the Python library. You may decide to
+use different approaches for different templates, or depending on whether the update is a minor version or a major
+version change that could introduce breaking changes.
 
 Copier accepts responses [from the command-line](https://copier.readthedocs.io/en/stable/configuring/#data) and from
 [YAML data files](https://copier.readthedocs.io/en/stable/configuring/#data_file). If you think that it is safe to use
