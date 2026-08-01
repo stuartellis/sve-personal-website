@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "devops", "programming"]
-date = "2026-07-31T22:52:00+01:00"
+date = "2026-08-01T08:46:00+01:00"
 description = "Using shared Copier templates to maintain projects"
 slug = "copier-project-maintenance"
 tags = ["automation", "devops", "python"]
@@ -369,13 +369,21 @@ tag in the valid format. Popular tools for release automation include:
 
 Here are some useful articles and tutorials about Copier.
 
-### Copier
+### Official Documentation
 
-- [The Official Copier documentation](https://copier.readthedocs.io/en/stable/)
+- [Copier documentation](https://copier.readthedocs.io/en/stable/)
+- [Renovate Support for Copier](https://docs.renovatebot.com/modules/manager/copier/)
+
+### Tutorials
+
 - [Exploring Copier Python: A Comprehensive Guide](https://coderivers.org/blog/copier-python/)
 - [Bootstrapping Python projects with copier](https://blog.dusktreader.dev/2025/04/06/bootstrapping-python-projects-with-copier/)
 - [Effective Repository Templates with Copier](https://browniantech.com/blog/post/Effective-Repository-Templates-with-Copier)
-- [Renovate Support for Copier](https://docs.renovatebot.com/modules/manager/copier/)
+
+### Media
+
+- [Project Scaffolding That Evolves With Your Software Using Copier](https://www.pythonpodcast.com/episodepage/project-scaffolding-that-evolves-with-your-software-using-copier) -
+  A podcast interview with the maintainer of Copier
 
 ### Example Templates
 
