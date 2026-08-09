@@ -11,21 +11,48 @@ thumbs.db
 .vscode/
 
 # Project generated directories
-.task/
-bin/
-logs/
+build/
+dist/
+pids/
+public/
+resources/
+site/
+temp/
 tmp/
+
+# Logs
+logs/
+*.log
+
+# dotenv environment variable files
+.env
+.env.*
+.envrc
+!.env.example
 
 # fnox
 fnox.local.toml
 
 # Hugo
 .hugo_build.lock
-public
-resources
+
+# npm
+.npm
+node_modules
+
+# Python
+.mypy_cache/
+.ruff_cache/
+.venv/
+__pycache__/
+*.py[codz]
+*$py.class
 
 # rumdl
 .rumdl_cache
+
+# Task
+.task/
 
 # Vale
 .vale/styles/
