@@ -13,19 +13,25 @@ documentation for Copier describes it as a
 [code lifecycle management tool](https://copier.readthedocs.io/en/stable/comparisons/).
 
 Copier uses the idea of generating the files in projects from templates, which is implemented by tools like
-[cookiecutter](https://github.com/cookiecutter/cookiecutter), but adds two extra capabilities. Firstly, you can apply
-multiple Copier templates to a software project. Secondly, you can safely reapply new versions of a Copier template to
-projects that use them. Copier then [updates](https://copier.readthedocs.io/en/stable/updating/) the files and
-directories in the project from the newer version of the template. Each update can also include running
-[migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations) or other
+[cookiecutter](https://github.com/cookiecutter/cookiecutter), but adds these capabilities:
+
+- You can [apply
+multiple Copier
+templates](https://copier.readthedocs.io/en/stable/configuring/#applying-multiple-templates-to-the-same-subproject) to a
+software project.
+- You can reapply new versions of a Copier template to
+projects that have already used that template. Copier [updates](https://copier.readthedocs.io/en/stable/updating/) the
+files in the project to match those in the newer version of the template.
+- Each update can run [migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations) or other
 [defined tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks).
 
-This means that you can define Copier templates that each manage the directory structures and configuration files that
-are needed for a specific tool or capability, add the relevant templates to the projects that require the capabilities
-that they provide, and then evolve your projects by running Copier to apply updates to the shared templates. For
-example, you could define a Copier template that provides configurations for quality tools like
-[Ruff](https://docs.astral.sh/ruff/) and apply that template to all of your projects, so that the configurations for
-every project are synchronised.
+This means that you can systematically evolve your projects by defining specific capabilities or configurations for
+tools as Copier templates that projects can share, then updating the shared templates as needed and applying the new
+versions of the template to all of the relevant projects.
+
+For example, you could define a Copier template that provides configurations for quality tools like
+[Ruff](https://docs.astral.sh/ruff/) and apply new versions of that template to all of your projects, so that the
+configurations for every project are synchronised.
 
 ## How It Works
 
@@ -60,8 +66,9 @@ use_ruff: true
 The answers file stores the address of the template and the version of the template that you used, along with your most
 recent responses to the questions in the template.
 
-> You can apply Copier templates to the repositories that hold Copier templates. This means that you can manage the
-> projects for Copier templates in the same way that you manage other software projects.
+> You can apply Copier templates to the repositories that hold Copier templates. This includes applying a template to
+> the repository that holds itself. This means that you can use Copier to manage the projects for Copier templates in
+> the same way that you manage other software projects.
 
 ### Using a Copier Template
 
