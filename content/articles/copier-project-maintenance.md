@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "devops", "programming"]
-date = "2026-08-01T17:42:00+01:00"
+date = "2026-08-09T14:41:00+01:00"
 description = "Using shared Copier templates to maintain projects"
 slug = "copier-project-maintenance"
 tags = ["automation", "devops", "python"]
@@ -8,13 +8,21 @@ title = "Maintaining Projects with Shared Templates Using Copier"
 +++
 
 [Copier](https://copier.readthedocs.io/en/stable/) is a command-line tool and a Python library that enables you to
-maintain large numbers of projects by defining templates for common capabilites, adding the relevant templates to the
-projects that require those capabilities, and then evolving the projects by updating the shared templates that they use.
+automate the maintenance of large numbers of software projects, so that they all consistently evolve over time.
+
+It does this by extending the idea of generating the files in projects from templates with two extra capabilities: you
+can apply multiple Copier templates to a software project, and you can safely reapply new versions of a Copier template
+to projects, updating the files and directories that they manage. The documentation for Copier describes it as a
+[code lifecycle management tool](https://copier.readthedocs.io/en/stable/comparisons/).
+
+This means that you can define Copier templates that each manage the directory structures and configuration files that
+are needed for a specific tool or capability, add the relevant templates to the projects that require the capabilities
+that they provide, and then automatically evolve your projects by updating the shared Copier templates.
 
 ## How It Works
 
 A Copier template is a Git repository that contains a configuration file, along with template files and directories.
-Each Git repository contains one Copier template, because Copier uses
+Each Git repository must only contain one Copier template, because Copier uses
 [Git tags for version information](#versioning-your-copier-templates).
 
 Copier uses [Jinja](https://jinja.palletsprojects.com/en/stable/) for templating the files and directories, with
@@ -24,10 +32,28 @@ these questions become variables that the templates can use. You can also use th
 [external data](https://copier.readthedocs.io/en/stable/configuring/#external_data) option to set variables for the
 Jinja templating.
 
+> You can use any extension that is available for Jinja, and include
+> [custom extensions in specific Copier templates](https://copier.readthedocs.io/en/stable/configuring/#importing-jinja-templates-and-macros).
+> Consider using [copier-pydantic](https://pypi.org/project/copier-pydantic/) to integate Pydantic models into Copier
+> templating.
+
 Once a template is applied for the first time, Copier creates an
 [answers file](https://copier.readthedocs.io/en/stable/configuring/#the-copier-answersyml-file) in the project. This
-answers file enables Copier to manage updates to new versions of the template. It stores the address of the template,
-the version of the template that you used, and your most recent responses to the questions in the template.
+answers file enables Copier to manage updates to new versions of the template. Here is an example of a Copier answers
+file:
+
+```yaml
+_commit: v0.7.0
+_src_path: git@github.com:my-username/copier-mycompany-myteam-aws-lambda-py.git
+lambda_name: example-lambda
+use_ruff: true
+```
+
+The answers file stores the address of the template and the version of the template that you used, along with your most
+recent responses to the questions in the template.
+
+> You can apply Copier templates to the repositories that hold Copier templates. This means that you can manage the
+> projects for Copier templates in the same way that you manage other software projects.
 
 ### Using a Copier Template
 
@@ -38,19 +64,19 @@ The first time that you run the Copier command-line tool to add a template to a 
 Git repository that contains the template, like this:
 
 ```shell
-copier copy git+ssh://github.com/my-username/copier-mycompany-myteam-aws-lambda-py.git my-project
+copier copy git@github.com:my-username/copier-mycompany-myteam-aws-lambda-py.git my-project
 ```
 
 Copier then prompts you for answers to the questions that are defined in the template. Once you have responded to all of
-the questions it will create the files and directories from the template in the `my-project/` directory, including the
+the questions it will create the files and directories from the template in the target directory, including the
 [answers file](https://copier.readthedocs.io/en/stable/configuring/#the-copier-answersyml-file).
 
 > You can also provide responses on the command-line or in a data file.
 
 You can update a project at any time. Run Copier, using the
 [-a](https://copier.readthedocs.io/en/stable/configuring/#answers_file) option to specify an answers file in the
-project. Copier will read the address of the template repository from the answers file and begin the update process. It
-will fetch either the latest version of the template, or the version of the template that you provide:
+project. Copier will read the address of the template repository from the answers file, and begin the update process. It
+fetches either the latest version of the template, or the version of the template that you provide:
 
 ```shell
 # Apply the latest version of the template that is specified in the answers file
@@ -110,21 +136,22 @@ projects.
 ### Automating Updates
 
 > Use [tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks) and
-> [migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations) to trigger actions that should not be
+> [migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations) to trigger actions that will not be
 > carried out by Copier itself.
+
+You can call the command-line tool with any automation tools that you wish, or write automations with Python that uses
+the [package for Copier](https://pypi.org/project/copier/). You may decide to use different approaches for different
+templates, or different classes of update. For example, you might choose a one approach for minor versions that should
+not require any changes to answers and another for the major version changes that could introduce breaking changes.
+
+> Consider using [Renovate](https://www.mend.io/renovate/) to manage updates for Copier templates that do not require
+> any responses.
 
 Each time that Copier updates a project to a different version of a template, it reads the configuration for the new
 version of the template. It then uses any
 [external data](https://copier.readthedocs.io/en/stable/configuring/#external_data) to set variables and reads the
 questions that are defined for that version of the template. If Copier has responses to all of the questions in the
 template, it does not prompt the user.
-
-> Consider using [Renovate](https://www.mend.io/renovate/) to manage updates for Copier templates that do not require
-> any responses.
-
-You can call the command-line tool with any automation tools that you wish, or use the Python library. You may decide to
-use different approaches for different templates, or depending on whether the update is a minor version or a major
-version change that could introduce breaking changes.
 
 Copier accepts responses [from the command-line](https://copier.readthedocs.io/en/stable/configuring/#data) and from
 [YAML data files](https://copier.readthedocs.io/en/stable/configuring/#data_file). If you think that it is safe to use
@@ -140,13 +167,13 @@ container image that includes Copier along with Python, Git and any other requir
 This command uses `pipx` to run `copier copy`:
 
 ```shell
-pipx run copier==9.17.0 copy git+ssh://github.com/my-username/copier-mycompany-myteam-aws-lambda-py.git my-project
+pipx run copier==9.17.1 copy git@github.com:my-username/copier-mycompany-myteam-aws-lambda-py.git my-project
 ```
 
 This command uses `uv` to run `copier copy`:
 
 ```shell
-uvx copier==9.17.0 copy git+ssh://github.com/my-username/copier-mycompany-myteam-aws-lambda-py.git my-project
+uvx copier==9.17.1 copy git@github.com:my-username/copier-mycompany-myteam-aws-lambda-py.git my-project
 ```
 
 > Both `pipx run` and `uvx` download Copier to a cache, so that you do not need to manage a Python virtual environment.
@@ -186,9 +213,11 @@ copier copy --exclude '*' --exclude '!file-i-want' ./template ./destination
 
 For example:
 
+<!-- rumdl-disable MD013 MD031 -->
 ```shell
-copier copy -a .copier/.copier-answers-mycompany-myteam-aws-lambda-py.yaml --exclude '*' --exclude '!.pre-commit-config.yaml' git+ssh://github.com/my-username/copier-mycompany-myteam-aws-lambda-py.git .
+copier copy -a .copier/.copier-answers-mycompany-myteam-aws-lambda-py.yaml --exclude '*' --exclude '!.pre-commit-config.yaml' git@github.com:my-username/copier-mycompany-myteam-aws-lambda-py.git . 
 ```
+<!-- rumdl-enable MD013 MD031 -->
 
 ## Creating a Copier Template
 
@@ -247,9 +276,10 @@ This is an example of a `copier.yaml` file:
 # See:
 #
 # https://copier.readthedocs.io/en/stable/
+#
 
 # This template uses the configuration format introduced in Copier version 9.
-# Specify version 9.17 as the minimum because of security fixes in that version.
+# Specify the minimum version of Copier that you will support.
 _min_copier_version: "9.17"
 
 # Use this subdirectory of the template repository as the root directory of the template.
@@ -381,6 +411,9 @@ Here are some useful articles and tutorials about Copier.
 
 - [Exploring Copier Python: A Comprehensive Guide](https://coderivers.org/blog/copier-python/)
 - [Bootstrapping Python projects with copier](https://blog.dusktreader.dev/2025/04/06/bootstrapping-python-projects-with-copier/)
+
+### Tips and Suggestions
+
 - [Effective Repository Templates with Copier](https://browniantech.com/blog/post/Effective-Repository-Templates-with-Copier)
 
 ### Media
@@ -391,5 +424,7 @@ Here are some useful articles and tutorials about Copier.
 ### Example Templates
 
 - [Example Copier template for Python projects](https://github.com/pawamoy/copier-uv), by Timothée Mazzucotelli
+- [CeDA project copier template](https://ceda-unibas.gitlab.io/tools/ceda-project-copier/) - A Copier template for
+  scientific Python-centric projects, by CeDA (the University of Basel School for Data Analytics)
 - [Example Copier baseline template](https://github.com/stuartellis/sve-copier-baseline), an example of a
   general-purpose template
