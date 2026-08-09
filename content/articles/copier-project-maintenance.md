@@ -26,8 +26,8 @@ that they provide, and then automatically evolve your projects by updating the s
 
 ## How It Works
 
-A Copier template is a Git repository that contains a configuration file, along with template files and directories.
-Each Git repository must only contain one Copier template, because Copier uses
+A Copier template is a Git repository that has a configuration file, along with template files and directories. Each Git
+repository must only contain one Copier template, because Copier uses
 [Git tags for version information](#versioning-your-copier-templates).
 
 Copier uses [Jinja](https://jinja.palletsprojects.com/en/stable/) for templating the files and directories, with
@@ -193,6 +193,9 @@ By default, Copier disables features that allow arbitrary code execution, includ
 [tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks) and
 [migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations). You must use the _--trust_ flag to enable
 these to run.
+
+Use the [--pretend flag](https://copier.readthedocs.io/en/stable/configuring/#pretend) to carry out a dry-run, where
+Copier lists the changes that it would make but does not apply them.
 
 > Copier supports fetching templates from remote Git repositories over HTTPS and SSH, as well as from repositories on
 > the local system. Use SSH authentication to access Copier templates in private Git repositories. If you do not use an
