@@ -8,12 +8,17 @@ title = "Maintaining Projects with Shared Templates Using Copier"
 +++
 
 [Copier](https://copier.readthedocs.io/en/stable/) is a command-line tool and a Python library that enables you to
-automate the maintenance of large numbers of software projects, so that they all consistently evolve over time.
-
-It does this by extending the idea of generating the files in projects from templates with two extra capabilities: you
-can apply multiple Copier templates to a software project, and you can safely reapply new versions of a Copier template
-to projects, updating the files and directories that they manage. The documentation for Copier describes it as a
+automate the maintenance of large numbers of software projects, so that they all consistently evolve over time. The
+documentation for Copier describes it as a
 [code lifecycle management tool](https://copier.readthedocs.io/en/stable/comparisons/).
+
+Copier uses the idea of generating the files in projects from templates, which is implemented by tools like
+[cookiecutter](https://github.com/cookiecutter/cookiecutter), but adds two extra capabilities. Firstly, you can apply
+multiple Copier templates to a software project. Secondly, you can safely reapply new versions of a Copier template to
+projects that use them. Copier then [updates](https://copier.readthedocs.io/en/stable/updating/) the files and
+directories in the project from the newer version of the template. Each update can also include running
+[migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations) or other
+[defined tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks).
 
 This means that you can define Copier templates that each manage the directory structures and configuration files that
 are needed for a specific tool or capability, add the relevant templates to the projects that require the capabilities
@@ -83,7 +88,7 @@ fetches either the latest version of the template, or the version of the templat
 copier update -a .copier/.copier-answers-mycompany-myteam-aws-lambda-py.yaml
 
 # Apply version v1.2.3 of the template that is specified in the answers file
-copier update -a .copier/.copier-answers-mycompany-myteam-aws-lambda-py.yaml -r v1.2.3 
+copier update -a .copier/.copier-answers-mycompany-myteam-aws-lambda-py.yaml -r v1.2.3
 ```
 
 Copier then reads the questions that are defined for the new version of the template. By default, it prompts the user
@@ -94,6 +99,9 @@ Once it has responses to all of the questions that are defined in the template i
 [update](https://copier.readthedocs.io/en/stable/updating/). The update can also include running
 [migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations) or other
 [defined tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks).
+
+> Copier only updates a project if the version of the template is higher than the version that has already been applied
+> to that project. It does not support downgrading to previous versions of a template.
 
 You can safely use
 [multiple Copier templates](https://copier.readthedocs.io/en/stable/configuring/#applying-multiple-templates-to-the-same-subproject)
@@ -215,7 +223,7 @@ For example:
 
 <!-- rumdl-disable MD013 MD031 -->
 ```shell
-copier copy -a .copier/.copier-answers-mycompany-myteam-aws-lambda-py.yaml --exclude '*' --exclude '!.pre-commit-config.yaml' git@github.com:my-username/copier-mycompany-myteam-aws-lambda-py.git . 
+copier copy -a .copier/.copier-answers-mycompany-myteam-aws-lambda-py.yaml --exclude '*' --exclude '!.pre-commit-config.yaml' git@github.com:my-username/copier-mycompany-myteam-aws-lambda-py.git .
 ```
 <!-- rumdl-enable MD013 MD031 -->
 
