@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "devops", "programming"]
-date = "2026-08-09T23:02:00+01:00"
+date = "2026-08-12T06:51:00+01:00"
 description = "Using shared Copier templates to maintain software projects"
 slug = "copier-project-maintenance"
 tags = ["automation", "devops", "python"]
@@ -91,7 +91,7 @@ the questions it will create the files and directories from the template in the 
 
 You can update a project at any time. Run Copier,
 [specifying the answers file in the project](https://copier.readthedocs.io/en/stable/configuring/#answers_file) that
-tracks the relevant template. Copier will read the address of the template repository from the answers file, and begin
+tracks the relevant template. Copier will read the address of the template repository from the answers file and begin
 the update process. It fetches either the latest version of the template, or the version of the template that you
 specify:
 
@@ -105,7 +105,8 @@ copier update -a .copier/.copier-answers-mycompany-myteam-aws-lambda-py.yaml -r 
 
 Copier then reads the questions that are defined for the new version of the template. By default, it prompts the user
 for responses, but we can provide responses by other means in order to [automate updates](#automating-updates). If a
-question existed in the previous version, it sets the previous response from the answers file as the default response.
+question existed in the previous version, Copier sets the previous response from the answers file as the default
+response.
 
 Once it has responses to all of the questions that are defined in the template it performs an
 [update](https://copier.readthedocs.io/en/stable/updating/). The update can also include running
@@ -179,9 +180,10 @@ to make Copier automatically use those responses from the answers file.
 
 ## Running Copier
 
-To run Copier on a development system, use a Python tool like [pipx](https://pipx.pypa.io/stable/) or
-[uv](https://docs.astral.sh/uv/). If you are using `uv`, call Copier with `uvx`. Alternatively, you can create your own
-container image that includes Copier along with Python, Git and any other required dependencies.
+To run Copier on a development system, either use
+[a container image](https://copier.readthedocs.io/en/stable/faq/#how-to-use-copier-from-docker-or-podman) or a Python
+tool such as [pipx](https://pipx.pypa.io/stable/) or [uv](https://docs.astral.sh/uv/). If you are using `uv`, call
+Copier with `uvx`.
 
 This command uses `pipx` to run `copier copy`:
 
