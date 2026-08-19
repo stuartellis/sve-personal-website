@@ -1,10 +1,10 @@
 +++
 categories = ["documentation", "programming"]
-date = "2026-07-27T22:08:00+01:00"
+date = "2026-08-19T22:12:00+01:00"
 description = "Markdown formatted text for modern systems"
 slug = "modern-markdown"
 tags = ["python", "markdown"]
-title = "Modern Markdown"
+title = "Notes on Modern Markdown"
 +++
 
 [Markdown](https://en.wikipedia.org/wiki/Markdown) has become the standard syntax for formatted text. Use Markdown
@@ -24,7 +24,7 @@ The Markdown format supports extensions and embedded elements. You can embed met
 [frontmatter](https://github.com/jlevy/frontmatter-format), [MDX components](https://mdxjs.com/) and
 [Mermaid](https://mermaid-js.github.io) diagrams into Markdown documents, as well as links to assets like images.
 
-## Dialects of Markdown
+## Popular Dialects of Markdown
 
 - [CommonMark](https://commonmark.org/) - The standard for Markdown
 - [GFM](https://github.github.com/gfm/) - GitHub Flavored Markdown

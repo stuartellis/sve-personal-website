@@ -1,21 +1,16 @@
 +++
 categories = ["automation", "devops", "documentation", "programming"]
-date = "2026-07-19T09:15:00+01:00"
+date = "2026-08-19T22:13:00+01:00"
 description = "Using rumdl to Maintain Markdown Documents"
 slug = "rumdl-markdown-maintenance"
 tags = ["automation", "devops", "documentation", "markdown"]
 title = "Using rumdl to Maintain Markdown Documents"
 +++
 
-[Markdown](https://en.wikipedia.org/wiki/Markdown) has effectively become the standard for formatted text. Many, many
-products now use Markdown, from [Jupyter](https://jupyter.org/) notebooks for interactive computation to static Website
-generators like [Hugo](https://gohugo.io/) and [Zensical](https://zensical.org/). Current versions of the
-[LibreOffice](https://www.libreoffice.org/) office suite support Markdown. LLMs now use Markdown as their standard text
-format for input and output.
-
-We often write Markdown manually, so the documents that we rely on can easily contain syntax issues and broken links as
-well as inconsistent formatting. This means that we should automatically lint and format Markdown files, in the same way
-that we maintain code files.
+[Markdown](https://en.wikipedia.org/wiki/Markdown) has effectively become the standard for formatted text. We often
+write Markdown manually, so the documents that we rely on can easily contain syntax issues and broken links as well as
+inconsistent formatting. This means that we should automatically lint and format Markdown files, in the same way that we
+maintain code files.
 
 The [rumdl](https://rumdl.dev/) tool provides both linting and formatting for Markdown documents, including
 [reflowing text](https://rumdl.dev/md013/?h=reflow#reflow-modes) to standardise line lengths. You can run `rumdl` with
@@ -36,11 +31,11 @@ To install `rumdl` on a development system, use the packages from the [npm](http
 specify which version of `rumdl` it installs:
 
 ```shell
-npm install -g rumdl@0.2.40
+npm install -g rumdl@0.2.58
 ```
 
 ```shell
-pipx install rumdl==0.2.40
+pipx install rumdl==0.2.58
 ```
 
 You can also install `rumdl` with [Homebrew](https://brew.sh/). Homebrew always installs the latest version of `rumdl`:
