@@ -123,25 +123,27 @@ setting up GitLab Pipelines that use Buildah.
 
 ### Buildah
 
+<!-- rumdl-disable MD013 MD031 -->
 - [A Complete Overview of Buildah](https://mkdev.me/posts/buildah-a-complete-overview) - Part of
   [the Dockerless Course](https://mkdev.me/posts/what-s-wrong-with-docker-introduction-to-the-dockerless-course), by
   Kirill Shirinkin
 - [Red Hat Linux documentation on using Buildah](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/building_running_and_managing_containers/working-with-containers#building-a-container)
-- [How to Set Up Buildah for Rootless Container Image Builds](https://oneuptime.com/blog/post/2026-02-09-buildah-rootless-builds-kubernetes/)
-  - Using Buildah, in the context of Kubernetes and Tekton, by Nawaz Dhandala
+- [How to Set Up Buildah for Rootless Container Image Builds](https://oneuptime.com/blog/post/2026-02-09-buildah-rootless-builds-kubernetes/) - Using Buildah, in the context of Kubernetes and Tekton, by Nawaz Dhandala
 - [Using ONBUILD in Buildah](https://github.com/podman-container-tools/buildah/blob/main/docs/tutorials/03-on-build.md)
+<!-- rumdl-enable MD013 -->
 
 ### GitLab
 
+<!-- rumdl-disable MD013 -->
 - [GitLab Pipelines documentation](https://docs.gitlab.com/ci/pipelines/)
-- [How to Use Container Registry in GitLab CI](https://oneuptime.com/blog/post/2026-01-28-container-registry-gitlab-ci/view)
-  - Article by Nawaz Dhandala
+- [How to Use Container Registry in GitLab CI](https://oneuptime.com/blog/post/2026-01-28-container-registry-gitlab-ci/view) - Article by Nawaz Dhandala
+<!-- rumdl-enable MD013 -->
 
 ### Buildah on GitLab
 
-- [GitLab documentation on using Buildah for multi-platform images](https://docs.gitlab.com/ci/docker/buildah_rootless_multi_arch/)
-  - Official documentation on using Buildah for multiarch images
-- [Using Buildah over DinD for building container images](https://arcsoft.uvic.ca/log/2025-08-07-buildah-over-dind/) -
-  Article by Paurav Hosur Param on replacing Docker-in-Docker (DinD) for container builds
+<!-- rumdl-disable MD013 MD031 -->
+- [GitLab documentation on using Buildah for multi-platform images](https://docs.gitlab.com/ci/docker/buildah_rootless_multi_arch/) - Official documentation on using Buildah for multiarch images
+- [Using Buildah over DinD for building container images](https://arcsoft.uvic.ca/log/2025-08-07-buildah-over-dind/) - Article by Paurav Hosur Param on replacing Docker-in-Docker (DinD) for container builds
 - [Build containers in GitLab CI with buildah](https://major.io/p/build-containers-in-gitlab-ci-with-buildah/) - Example
   by Major Hayden
+<!-- rumdl-enable MD013 -->
