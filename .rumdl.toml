@@ -9,7 +9,7 @@ exclude = [
     "public",
     "LICENSE.md"
 ]
-
+flavor = "gfm"
 line-length = 120
 respect-gitignore = true
 
@@ -19,3 +19,6 @@ style = "dash"
 [MD013]
 reflow = true
 reflow-mode = "normalize"
+
+[per-file-flavor]
+"docs/**/*.md" = "hugo"
