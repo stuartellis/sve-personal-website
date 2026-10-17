@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "devops", "programming"]
-date = "2026-10-17T08:01:00+01:00"
+date = "2026-10-17T08:41:00+01:00"
 description = "Using shared Copier templates to maintain software projects"
 slug = "copier-project-maintenance"
 tags = ["automation", "devops", "python"]
@@ -301,7 +301,7 @@ This is an example of a `copier.yaml` file:
 
 # This template uses the configuration format introduced in Copier version 9.
 # Specify the minimum version of Copier that you will support.
-_min_copier_version: "9.17"
+_min_copier_version: "9.18"
 
 # Use this subdirectory of the template repository as the root directory of the template.
 _subdirectory: template
@@ -427,7 +427,7 @@ tag in the valid format. Popular tools for release automation include:
 
 ## Resources
 
-Here are some useful articles and tutorials about Copier.
+These resources will help you learn about Copier.
 
 ### Official Documentation
 
