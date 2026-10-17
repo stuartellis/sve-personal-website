@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "devops", "programming"]
-date = "2026-08-12T06:51:00+01:00"
+date = "2026-10-17T08:01:00+01:00"
 description = "Using shared Copier templates to maintain software projects"
 slug = "copier-project-maintenance"
 tags = ["automation", "devops", "python"]
@@ -25,13 +25,13 @@ files in the project to match those in the newer version of the template.
 - Each update can run [migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations) or other
 [defined tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks).
 
-This means that you can systematically evolve your projects by defining specific capabilities or configurations for
-tools as Copier templates that projects can share, then updating the shared templates as needed and applying the new
-versions of the template to all of the relevant projects.
+This means that you can systematically evolve your software projects. Once you define specific capabilities or
+configurations for tools as Copier templates that projects can share, then you can update the shared templates as needed
+and applying the new versions of the template to every project.
 
 For example, you could define a Copier template that provides configurations for quality tools like
-[Ruff](https://docs.astral.sh/ruff/) and apply new versions of that template to all of your projects, so that the
-configurations for every project are synchronised.
+[Ruff](https://docs.astral.sh/ruff/) and apply new versions of that template to your projects, so that the
+configurations for every project remain synchronised.
 
 ## How It Works
 
@@ -159,8 +159,8 @@ projects.
 > [migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations) to trigger actions that will not be
 > carried out by Copier itself.
 
-You can call the command-line tool with any scripts or tools that you wish, or write automations with Python that use
-the [package for Copier](https://pypi.org/project/copier/). You may decide to use different approaches for different
+You can call the command-line tool with any scripts or tools that you wish, or write automation with Python that use the
+[package for Copier](https://pypi.org/project/copier/). You may decide to use different approaches for different
 templates, or different classes of update. For example, you might choose a one approach for minor versions that should
 not require any changes to answers and another for the major version changes that could introduce breaking changes.
 
@@ -188,13 +188,13 @@ Copier with `uvx`.
 This command uses `pipx` to run `copier copy`:
 
 ```shell
-pipx run copier==9.17.1 copy git@github.com:my-username/copier-mycompany-myteam-aws-lambda-py.git my-project
+pipx run copier==9.19.1 copy git@github.com:my-username/copier-mycompany-myteam-aws-lambda-py.git my-project
 ```
 
 This command uses `uv` to run `copier copy`:
 
 ```shell
-uvx copier==9.17.1 copy git@github.com:my-username/copier-mycompany-myteam-aws-lambda-py.git my-project
+uvx copier==9.19.1 copy git@github.com:my-username/copier-mycompany-myteam-aws-lambda-py.git my-project
 ```
 
 > Both `pipx run` and `uvx` download Copier to a cache, so that you do not need to manage a Python virtual environment.
@@ -363,7 +363,7 @@ brackets as delimiters, the file itself will be called `[{_copier_conf.answers_f
 
 Each Copier template must have a separate answers file in the projects that use it. templates. This means that every
 Copier template must specify a unique name for the answers file that it creates. The names of the answers files become
-particularly important if projects may use templates that are maintained by different groups.
+particularly important if projects may use templates that are maintained by different teams.
 
 Here are some guidelines for naming Copier templates answers files:
 
@@ -453,5 +453,3 @@ Here are some useful articles and tutorials about Copier.
 - [Example Copier template for Python projects](https://github.com/pawamoy/copier-uv), by Timothée Mazzucotelli
 - [CeDA project copier template](https://ceda-unibas.gitlab.io/tools/ceda-project-copier/) - A Copier template for
   scientific Python-centric projects, by CeDA (the University of Basel School for Data Analytics)
-- [Example Copier baseline template](https://github.com/stuartellis/sve-copier-baseline), an example of a
-  general-purpose template
