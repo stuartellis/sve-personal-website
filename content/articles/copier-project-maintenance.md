@@ -4,7 +4,7 @@ date = "2026-10-17T08:41:00+01:00"
 description = "Using shared Copier templates to maintain software projects"
 slug = "copier-project-maintenance"
 tags = ["automation", "devops", "python"]
-title = "Evolving Projects By Using Shared Copier Templates"
+title = "Evolving Collections of Projects By Using Shared Copier Templates"
 +++
 
 [Copier](https://copier.readthedocs.io/en/stable/) is a command-line tool and a Python library that enables you to
