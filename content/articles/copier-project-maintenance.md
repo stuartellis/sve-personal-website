@@ -25,9 +25,9 @@ files in the project to match those in the newer version of the template.
 - Each update can run [migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations) or other
 [defined tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks).
 
-This means that you can systematically evolve your software projects. Once you define specific capabilities or
-configurations for tools as Copier templates that projects can share, then you can update the shared templates as needed
-and applying the new versions of the template to every project.
+This means that you can systematically evolve your entire collection of software projects together. First, you define
+specific capabilities or configurations for tools as Copier templates that projects can share. You then update the
+shared templates as needed and apply the new versions of the template to every project.
 
 For example, you could define a Copier template that provides configurations for quality tools like
 [Ruff](https://docs.astral.sh/ruff/) and apply new versions of that template to your projects, so that the
