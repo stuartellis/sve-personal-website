@@ -46,3 +46,17 @@ repos:
         types: [markdown]
         require_serial: true
         stages: [manual]
+
+      - id: vale-sync
+        name: vale sync
+        language: system
+        pass_filenames: false
+        entry: vale
+        args: [sync]
+
+      - id: vale-check
+        name: vale check
+        language: system
+        entry: vale
+        args: [--output=line, --minAlertLevel=error]
+        types: [markdown]
