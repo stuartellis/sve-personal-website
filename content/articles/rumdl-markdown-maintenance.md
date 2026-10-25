@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "devops", "documentation", "programming"]
-date = "2026-08-19T22:13:00+01:00"
+date = "2026-10-25T07:56:00+01:00"
 description = "Using rumdl to Maintain Markdown Documents"
 slug = "rumdl-markdown-maintenance"
 tags = ["automation", "devops", "documentation", "markdown"]
@@ -25,17 +25,17 @@ continuous integration pipelines. It supports the popular variations of Markdown
 
 ## Installing `rumdl`
 
-To install `rumdl` on a development system, use the packages from the [npm](https://www.npmjs.com/package/@j178/prek) or
-[Python](https://pypi.org/project/prek/) registries. If you use a package management tool like
+To install `rumdl` on a development system, use the packages from the [npm](https://www.npmjs.com/package/rumdl) or
+[Python](https://pypi.org/project/rumdl/) registries. If you use a package management tool like
 [npm](https://docs.npmjs.com/cli), [pipx](https://pipx.pypa.io/stable/), or [uv](https://docs.astral.sh/uv/), you can
 specify which version of `rumdl` it installs:
 
 ```shell
-npm install -g rumdl@0.2.58
+npm install -g rumdl@0.3.0
 ```
 
 ```shell
-pipx install rumdl==0.2.58
+pipx install rumdl==0.3.0
 ```
 
 You can also install `rumdl` with [Homebrew](https://brew.sh/). Homebrew always installs the latest version of `rumdl`:
@@ -161,7 +161,7 @@ The hooks automatically run on the staged changes each time that you commit. The
 > For security, the example above uses `builtin` hooks. To make it compatible with `pre-commit`, you would need to
 > replace these with [remote hooks](https://github.com/pre-commit/pre-commit-hooks).
 
-To run a tool without commiting a change, use `prek run`. If you add the option `--all-files` it will check the current
+To run a tool without committing a change, use `prek run`. If you add the option `--all-files` it will check the current
 files in the project, not just staged changes. For example, to run the `rumdl-fix` hook on the project, use this
 command:
 
