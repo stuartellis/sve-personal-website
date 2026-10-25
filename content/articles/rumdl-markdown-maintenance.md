@@ -16,7 +16,8 @@ The [rumdl](https://rumdl.dev/) tool provides both linting and formatting for Ma
 [reflowing text](https://rumdl.dev/md013/?h=reflow#reflow-modes) to standardise line lengths. You can run `rumdl` with
 Git hooks, on-demand by [using a hook manager](https://www.stuartellis.name/articles/prek-containers/), and as part of
 continuous integration pipelines. It supports the popular variations of Markdown, such as
-[CommonMark](https://commonmark.org/), [GFM](https://github.github.com/gfm/) and
+[CommonMark](https://commonmark.org/), [GitHub Flavored Markdown](https://github.github.com/gfm/),
+[Obsidian Flavoured Markdown](https://obsidian.md/help/obsidian-flavored-markdown) and
 [Python Markdown](https://python-markdown.github.io/).
 
 > The `rumdl` checks test [relative links](https://rumdl.dev/link-validation/?h=links#relative-links-md057) and
