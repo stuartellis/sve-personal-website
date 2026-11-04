@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "devops", "documentation", "programming"]
-date = "2026-10-25T07:56:00+01:00"
+date = "2026-11-02T01:51:00+01:00"
 description = "Using rumdl to Maintain Markdown Documents"
 slug = "rumdl-markdown-maintenance"
 tags = ["automation", "devops", "documentation", "markdown"]
@@ -32,11 +32,11 @@ To install `rumdl` on a development system, use the packages from the [npm](http
 specify which version of `rumdl` it installs:
 
 ```shell
-npm install -g rumdl@0.3.0
+npm install -g rumdl@0.3.2
 ```
 
 ```shell
-pipx install rumdl==0.3.0
+pipx install rumdl==0.3.2
 ```
 
 You can also install `rumdl` with [Homebrew](https://brew.sh/). Homebrew always installs the latest version of `rumdl`:
@@ -48,26 +48,36 @@ brew install rumdl
 ## Example Configuration File for `rumdl`
 
 This example configuration file for a project enable the complete set of features that `rumdl` provides, including
-[reflow](https://rumdl.dev/md013/?h=reflow#reflow-modes) of text:
+[reflow](https://rumdl.dev/md013/?h=reflow#reflow-modes) of text and running
+[external tools on code blocks](https://rumdl.dev/code-block-tools/):
 
 ```toml
 # rumdl configuration file
 #
 # https://rumdl.dev/
+#
+# This configuration uses external tools for code blocks:
+#
+# Ruff - Python formatting and linting
+# shellcheck - Shell script linting
+# shellfmt - Shell script formatting
 
 [global]
-
-enable = ["ALL"]
-
 exclude = [
     ".git",
     "LICENSES",
     "LICENSE.md"
 ]
 
-line-length = 120
-
+line-length = 88
 respect-gitignore = true
+
+[code-block-tools]
+enabled = true
+
+[code-block-tools.languages]
+python = { lint = ["ruff:check"], format = ["ruff:format"] }
+shell = { lint = ["shellcheck"], format = ["shfmt"] }
 
 [MD004]
 style = "dash"
