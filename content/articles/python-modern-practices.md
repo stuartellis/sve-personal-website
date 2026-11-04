@@ -1,6 +1,6 @@
 +++
 categories = ["programming", "python"]
-date = "2026-07-11T08:21:00+01:00"
+date = "2026-11-04T01:24:00+01:00"
 description = "Good development practices for modern Python"
 slug = "python-modern-practices"
 tags = ["python"]
@@ -20,8 +20,8 @@ Python later without interfering with other tools and projects that use Python.
 
 ### Installing Python with Tools That Support Multiple Versions
 
-Version manager tools like [pyenv](https://github.com/pyenv/pyenv) also allow you to switch between different versions
-of Python at will, as well as providing the defined version for each of your projects. If you use Microsoft Windows, you
+Version manager tools like [pyenv](https://github.com/pyenv/pyenv) allow you to switch between different versions of
+Python at will, as well as providing the defined version for each of your projects. If you use Microsoft Windows, you
 can use the official [Python Install Manager](https://docs.python.org/dev/using/windows.html). This enables you to run
 multiple Python versions on the same system, and you can use the `py.exe` tool to choose which version of Python to run.
 
@@ -29,8 +29,8 @@ multiple Python versions on the same system, and you can use the `py.exe` tool t
 such as
 [mise](https://www.stuartellis.name/articles/mise-en-place/).
 
-In most cases, you should use a modern [project development tool](#use-a-project-tool) like `uv` for your work. These
-can also install copies of Python as needed, in addition to their other features. They do this by using
+In most cases, you should use a modern [project development tool](#use-a-project-tool) like Poetry or `uv` for your
+work. These can also install copies of Python as needed, in addition to their other features. They do this by using
 [standalone builds](https://github.com/astral-sh/python-build-standalone), which are modified versions of Python that
 are maintained by [Astral](https://astral.sh/), not the Python project. These standalone builds have
 [some limitations](https://gregoryszorc.com/docs/python-build-standalone/main/quirks.html) that are not present with
@@ -158,16 +158,16 @@ installed application.
 
 Use _pipx install_ or _uv tool install_ for tools that are essential for your development process. These options install
 the tool on to your system. This ensures that the tool is available if you have no Internet access, and that you keep
-the same version of the tool until you decide to upgrade it. For example, if you use [Posting](https://posting.sh/) to
-test services that you develop on your laptop then you should install it, rather than use a temporary copy. To install
-_posting_ as a Python package, run the appropriate command for _pipx_ or _uv_:
+the same version of the tool until you decide to upgrade it. For example, if you use [prek](https://prek.j178.dev/) to
+manage Git hooks on your laptop then you should install it, rather than use a temporary copy. To install _prek_ as a
+Python package, run the appropriate command for _pipx_ or _uv_:
 
 ```shell
-pipx install posting
+pipx install prek
 ```
 
 ```shell
-uv tool install posting
+uv tool install prek
 ```
 
 > Use OCI container images to run Python command-line tools and applications in controlled environments, such as
@@ -181,9 +181,12 @@ Consider these points when you begin a new Python project.
 ### Use a Project Tool
 
 Use a project tool when you work with Python. There are several of these tools, which all provide the key features for
-managing Python projects. They generate directory structures that follow best practices, manage package dependencies,
-and automate Python virtual environments so that you do not need to manually create and activate environments as you
-work.
+managing Python projects. They all provide these capabilities:
+
+- Generating directory structures for projects
+- Managing package dependencies
+- Automating Python virtual environments so that you do not need to manually create and activate environments as you
+  work.
 
 Project tools can also manage the versions of Python, so that you will automatically have the correct version of Python
 for each project. Your project tool can install copies of Python as needed. The
@@ -214,16 +217,19 @@ When you need to run operations at any scale, look for existing products that su
 
 - Use _workflow platforms_ such as [Apache Airflow](https://airflow.apache.org/), [Prefect](https://www.prefect.io/) or
   [Windmill](https://www.windmill.dev/) to run sets of tasks.
-- Build a _Web application_ by combining a framework like [FastAPI](https://fastapi.tiangolo.com/) or
-  [Django](https://www.djangoproject.com/) with an application server such as
-  [Granian](https://github.com/emmett-framework/granian) or [Gunicorn](https://gunicorn.org/).
-- _Distribute work across many computers_ by using the [Dask](https://www.dask.org/) or
-  [Ray](https://docs.ray.io/en/latest/index.html) frameworks.
 - Use _serverless functions_ to run jobs on cloud platforms in response to events. Each cloud platform has its own
 implementation of serverless functions, such as [AWS Lambda](https://aws.amazon.com/lambda/),
 [Azure Functions](https://azure.microsoft.com/en-us/products/functions/),
 [Cloudflare Workers](https://www.cloudflare.com/products/workers/) and [Knative](https://knative.dev/docs/) for
 Kubernetes clusters.
+- _Distribute work across many computers_ by using the [Dask](https://www.dask.org/) or
+  [Ray](https://docs.ray.io/en/latest/index.html) frameworks.
+- Build a _Web application_ by combining a framework like [FastAPI](https://fastapi.tiangolo.com/) or
+  [Django](https://www.djangoproject.com/) with an application server such as
+  [Granian](https://github.com/emmett-framework/granian) or [Gunicorn](https://gunicorn.org/).
+- Add _queues_ for your application, to process background tasks. Python queue managers like
+  [taskiq](https://taskiq-python.github.io/) work with distributed services like [RabbitMQ](https://www.rabbitmq.com/)
+  and [Valkey](https://valkey.io/).
 
 All of these products allow you to run your Python code concurrently on multiple CPUs and on multiple computers, and can
 use asynchronous code.
@@ -241,21 +247,30 @@ asynchronous code.
 
 If you need to create a script or custom application with concurrency, consider using the
 [concurrent.futures](https://docs.python.org/3/library/concurrent.futures.html) package in the Python standard library.
-This includes executors for distributing work across a pool of multiple threads or separate CPUs.
+This includes executors for distributing work across a pool of threads or separate CPUs.
 
 ### Plan for Distributing Your Work
 
 Always plan for how you will distribute the work that you produce. The standard options are:
 
-- Version control
-- Python packages in the [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/)
-  format
-- OCI container images
+- Version control - Code
+- Python packages in the [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) -
+  Libraries and developer tools format
+- OCI container images -
 - Executable files
+
+The main purpose of wheel packages is to distribute code libraries, but you can also use them to publish tools and
+applications for other Python developers. For other cases, package your work into OCI container images or executable
+files. These will includes a copy of the required version of Python as well as your code and the dependencies. This
+ensures that your code runs with the expected version of Python, and that it has the correct version of each dependency.
+
+#### Distributing Python Projects with Version Control
 
 The simplest method of distribution is to use a version control system, such as Git. If you store Python scripts and
 projects in a version control repository, anyone with access to the repository can get a copy of this code. They will
 need to have a version control tool and Python tools installed on a system.
+
+#### Distributing Python Libraries and Tools with wheel Packages
 
 Use [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages to publish
 projects to the [Python Package Index](https://pypi.org/) and equivalent services. Project tools like Poetry include
@@ -265,18 +280,19 @@ can run it with the _pipx_ and _uv_ tools, as explained in the section on [helpe
 
 > Read the [Python Packaging User Guide](https://packaging.python.org/en/latest/flow/) for more about wheel packages.
 
-For other cases, use extra tools to package your work into a format that includes a copy of the required version of
-Python as well as your code and the dependencies. This ensures that your code runs with the expected version of Python,
-and that it has the correct version of each dependency.
+#### Distributing Python Applications with OCI Container Images
 
-OCI container images will run on any system that has a container runtime such as Docker, Podman, Apple Container or WSL
-container, as well as on cloud infrastructure You can build OCI container images to include a copy of Python, along with
-your code and the required dependencies. Use OCI container images to package applications that are intended to be run in
-controlled environments, such as servers, cloud infrastructure, and CI systems. You can use
-[Podman](https://podman.io/), [buildah](https://buildah.io/) or Docker to create OCI images.
+Use container images for Python command-line tools, agents and Web applications. You can build container images to
+include a copy of Python, along with your code and the required dependencies. These images will run on any system that
+has a container runtime such as Docker, Podman, Apple Container or WSL container, as well as on cloud infrastructure.
+
+You can use various tools to create container images, such as [Podman](https://podman.io/),
+[buildah](https://buildah.io/) and Docker.
 
 > Consider using the [official Python container image](https://hub.docker.com/_/python) as the base image for your
 > application container images.
+
+#### Distributing Python Applications in Executable Files
 
 Use [PyInstaller](https://pyinstaller.org/), [Briefcase](https://briefcase.beeware.org/en/stable/) or
 [Nuitka](https://nuitka.net) to compile desktop and command-line applications as a single executable file. Each
@@ -286,24 +302,22 @@ Windows on Intel-compatible machines will work on all editions of Windows, but i
 can put executables in an operating system package to distribute them with package management tools, such as an RPM or
 DEB package for Linux.
 
-> _Requirements files:_ If you use requirements files to build or deploy projects then configure your tools to
-> [use hashes](#ensure-that-requirements-files-include-hashes).
-
 ### Use a Modern Framework for Your Command-Line Applications
 
 > If you are building a command-line application, you can use the
 > [flat project layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/). This is the
 > default layout for projects that are created by `uv`.
 
-When you build new command-line applications, consider using a framework or library that supports type hints. Both
+When you build new command-line applications, use a framework or library that supports type hints.
 [Typer](https://typer.tiangolo.com/) and [Cyclopts](https://cyclopts.readthedocs.io/en/latest/) use type hints and are
-built for modern Python.
+built for modern Python. Typer also enables you to add a command-line interface to scripts and libraries.
 
-> Many existing projects still use the older [Click](https://click.palletsprojects.com/) framework. Typer extends Click.
-
-To add a command-line interface to a script or library, use the
+If you need to add a command-line interface to a script or library but cannot add extra dependencies, use the
 [argparse](https://docs.python.org/3/library/argparse.html) module. Refer to
 [the argparse tutorial](https://docs.python.org/3/howto/argparse.html) in the official documentation for more details.
+
+> Many existing projects still use the older [Click](https://click.palletsprojects.com/) framework. Avoid use Click for
+> new projects.
 
 ### Use Environment Variables or TOML for Configuration
 
@@ -399,7 +413,7 @@ with your CI system, so that it rejects any code that does not match the format 
 
 Use a code linting tool with a plugin to your editor, so that your code is automatically checked for issues.
 
-Consider using [Ruff](https://docs.astral.sh/ruff/) for linting Python code. Before Ruff, the most popular code linter
+[Ruff](https://docs.astral.sh/ruff/) is the standard linter for Python code. Before Ruff, the most popular code linter
 was [flake8](https://flake8.pycqa.org/en/latest/). Ruff includes the features of both flake8 and the most popular
 plugins for flake8, along with many other capabilities.
 
@@ -419,13 +433,26 @@ software development.
 To see how much of your code is covered by tests, add the [pytest-cov](https://pytest-cov.readthedocs.io) plugin to
 _pytest_. This plugin uses [coverage](https://coverage.readthedocs.io) to analyze your code.
 
+### Use `pylock.toml` Files Instead of Requirements Files
+
+The [pylock.toml](https://packaging.python.org/en/latest/specifications/pylock-toml/) and
+[requirements](https://pip.pypa.io/en/stable/reference/requirements-file-format/) file formats enable you to specify the
+dependencies for building a Python package.
+
+The requirements file format is being superseded by the `pylock.toml` format. Use `pylock.toml` files instead of
+requirements files if your project tool supports them. For example, the `uv` tool supports `pylock.toml` files.
+
 ### Ensure That Requirements Files Include Hashes
 
-Python tools support [hash checking](https://pip.pypa.io/en/stable/topics/secure-installs/#hash-checking-mode) to ensure
-that packages are valid. Some tools require extra configuration to include package hashes in the requirements files that
-they generate. For example, you must set the _generate-hashes_ option for the _pip-compile_ and _uv_ utilities to
-generate _requirements.txt_ files that include hashes. Add this option to the relevant section of the _pyproject.toml_
-file.
+In some cases, you may still need to use
+[requirements](https://pip.pypa.io/en/stable/reference/requirements-file-format/) files, rather than
+[pylock.toml](https://packaging.python.org/en/latest/specifications/pylock-toml/) files. If you do need to create
+requirements files, always generate requirements files that include packages hashes, so that
+[hash checking](https://pip.pypa.io/en/stable/topics/secure-installs/#hash-checking-mode) can operate.
+
+Some tools require extra configuration to include package hashes in the requirements files that they generate. For
+example, you must set the _generate-hashes_ option for the _pip-compile_ and _uv_ utilities to generate
+_requirements.txt_ files that include hashes. Add this option to the relevant section of the _pyproject.toml_ file.
 
 For _pip-tools_, add the option to the _tool.pip-tools_ section:
 
