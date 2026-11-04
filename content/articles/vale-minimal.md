@@ -2,8 +2,7 @@
 categories = ["automation", "documentation", "programming"]
 date = "2026-10-25T07:16:00+01:00"
 description = "Vale for spelling and style checking"
-draft = true
-slug = "vale"
+slug = "vale-minimal"
 tags = ["automation", "documentation", "markdown"]
 title = "Starting with Vale for Linting Prose"
 +++
@@ -40,6 +39,9 @@ Packages = write-good
 [*.md]
 BasedOnStyles = Vale, write-good
 ```
+
+> By default, Vale downloads the latest version of each style. To specify the version of a style, use a URL instead of
+> the style name in the `Packages` list.
 
 Add these lines to the `.gitignore` file for your project:
 
