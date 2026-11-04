@@ -217,7 +217,7 @@ When you need to run operations at any scale, look for existing products that su
 
 - Use _workflow platforms_ such as [Apache Airflow](https://airflow.apache.org/), [Prefect](https://www.prefect.io/) or
   [Windmill](https://www.windmill.dev/) to run sets of tasks.
-- Use _serverless functions_ to run jobs on cloud platforms in response to events. Each cloud platform has its own
+- Use _serverless functions_ to run tasks on cloud platforms in response to events. Each cloud platform has its own
 implementation of serverless functions, such as [AWS Lambda](https://aws.amazon.com/lambda/),
 [Azure Functions](https://azure.microsoft.com/en-us/products/functions/),
 [Cloudflare Workers](https://www.cloudflare.com/products/workers/) and [Knative](https://knative.dev/docs/) for
@@ -253,30 +253,37 @@ This includes executors for distributing work across a pool of threads or separa
 
 Always plan for how you will distribute the work that you produce. The standard options are:
 
-- Version control - Code
-- Python packages in the [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) -
-  Libraries and developer tools format
-- OCI container images -
-- Executable files
+- Version control - Repositories make code and documentation available to everyone who has access to them
+- Packages in the [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) format -
+  The Python file format for distributing libraries and developer tools
+- OCI container images - Images are published to registries and each includes everything that is needed to run an
+  application
+- Executable files - Single files that each include everything that is needed to run an application
 
 The main purpose of wheel packages is to distribute code libraries, but you can also use them to publish tools and
-applications for other Python developers. For other cases, package your work into OCI container images or executable
-files. These will includes a copy of the required version of Python as well as your code and the dependencies. This
-ensures that your code runs with the expected version of Python, and that it has the correct version of each dependency.
+applications for other Python developers.
+
+For other cases, package your work into OCI container images or executable files. These formats will includes a copy of
+the required version of Python as well as your code and the dependencies. This ensures that your code runs with the
+expected version of Python, and that it has the correct version of each dependency.
 
 #### Distributing Python Projects with Version Control
 
 The simplest method of distribution is to use a version control system, such as Git. If you store Python scripts and
-projects in a version control repository, anyone with access to the repository can get a copy of this code. They will
-need to have a version control tool and Python tools installed on a system.
+projects in a version control repository, anyone with access to the repository can get a copy of this code and all of
+the other files there, such as the documentation.
+
+Other developers will need to have a version control tool and Python tools to use a version control repository.
 
 #### Distributing Python Libraries and Tools with wheel Packages
 
 Use [wheel](https://packaging.python.org/en/latest/specifications/binary-distribution-format/) packages to publish
 projects to the [Python Package Index](https://pypi.org/) and equivalent services. Project tools like Poetry include
-support for building wheel packages. Their main purpose is to distribute code libraries, but you can also use wheel
-packages to publish tools and applications for other developers. If your Python application as a _wheel_, other people
-can run it with the _pipx_ and _uv_ tools, as explained in the section on [helpers](#running-python-tools).
+support for building wheel packages.
+
+The main purpose of wheels is to distribute code libraries, but you can also use wheel packages to publish tools and
+applications for other Python developers. If your Python application as a wheel package, other people can run it with
+the _pipx_ and _uv_ tools, as explained in the section on [helpers](#running-python-tools).
 
 > Read the [Python Packaging User Guide](https://packaging.python.org/en/latest/flow/) for more about wheel packages.
 
@@ -285,6 +292,10 @@ can run it with the _pipx_ and _uv_ tools, as explained in the section on [helpe
 Use container images for Python command-line tools, agents and Web applications. You can build container images to
 include a copy of Python, along with your code and the required dependencies. These images will run on any system that
 has a container runtime such as Docker, Podman, Apple Container or WSL container, as well as on cloud infrastructure.
+
+OCI container images can be uploaded and downloaded from any registry service. The most well-known service is
+[Docker Hub](hub.docker.com) but code hosting services like GitHub and GitLab also provide container services.
+Organizations will have private registries for distributing container images within their own infrastructure.
 
 You can use various tools to create container images, such as [Podman](https://podman.io/),
 [buildah](https://buildah.io/) and Docker.
@@ -296,11 +307,12 @@ You can use various tools to create container images, such as [Podman](https://p
 
 Use [PyInstaller](https://pyinstaller.org/), [Briefcase](https://briefcase.beeware.org/en/stable/) or
 [Nuitka](https://nuitka.net) to compile desktop and command-line applications as a single executable file. Each
-executable file includes a copy of Python, along with your code and the required dependencies. Each executable will only
-run on the type of operating system and CPU that it was compiled to use. For example, an executable for Microsoft
-Windows on Intel-compatible machines will work on all editions of Windows, but it will not run on macOS. Optionally, you
-can put executables in an operating system package to distribute them with package management tools, such as an RPM or
-DEB package for Linux.
+executable file includes a copy of Python, along with your code and the required dependencies.
+
+Each executable will only run on the type of operating system and CPU that it was compiled to use. For example, an
+executable for Microsoft Windows on Intel-compatible machines will work on all editions of Windows, but it will not run
+on macOS. Optionally, you can put executables in an operating system package to distribute them with package management
+tools, such as an RPM or DEB package for Linux.
 
 ### Use a Modern Framework for Your Command-Line Applications
 
@@ -316,8 +328,8 @@ If you need to develop a simple command-line interface to a script or library bu
 use the [argparse](https://docs.python.org/3/library/argparse.html) module in the standard library. Refer to
 [the argparse tutorial](https://docs.python.org/3/howto/argparse.html) in the official documentation for more details.
 
-> Many existing projects still use the older [Click](https://click.palletsprojects.com/) framework. Avoid use Click for
-> new projects.
+> Many existing projects still use the older [Click](https://click.palletsprojects.com/) framework. Avoid using Click
+> for new projects.
 
 ### Use Environment Variables or TOML for Configuration
 
