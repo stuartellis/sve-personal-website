@@ -1,6 +1,6 @@
 +++
 categories = ["programming", "python"]
-date = "2026-11-04T01:24:00+01:00"
+date = "2026-11-04T06:57:00+01:00"
 description = "Good development practices for modern Python"
 slug = "python-modern-practices"
 tags = ["python"]
@@ -62,11 +62,11 @@ with little risk.
 
 ### Avoid Using the Python Installation for Your Operating System
 
-If your operating system includes a Python installation, avoid using it for your projects. This Python installation will
+If your operating system includes a Python installation, avoid using that copy of Python. The Python installation will
 be for system tools. It is likely to use an older version of Python, and may not include all of the standard features.
 Operating system copies of Python should be
 [marked](https://packaging.python.org/en/latest/specifications/externally-managed-environments/#externally-managed-environments)
-to prevent you from installing packages into it, but not all operating systems set this marker.
+to prevent you from installing packages into them, but not all operating systems set this marker.
 
 ## Use a Helper to Run Python Scripts and Tools
 
@@ -312,8 +312,8 @@ When you build new command-line applications, use a framework or library that su
 [Typer](https://typer.tiangolo.com/) and [Cyclopts](https://cyclopts.readthedocs.io/en/latest/) use type hints and are
 built for modern Python. Typer also enables you to add a command-line interface to scripts and libraries.
 
-If you need to add a command-line interface to a script or library but cannot add extra dependencies, use the
-[argparse](https://docs.python.org/3/library/argparse.html) module. Refer to
+If you need to develop a simple command-line interface to a script or library but cannot add extra dependencies, you can
+use the [argparse](https://docs.python.org/3/library/argparse.html) module in the standard library. Refer to
 [the argparse tutorial](https://docs.python.org/3/howto/argparse.html) in the official documentation for more details.
 
 > Many existing projects still use the older [Click](https://click.palletsprojects.com/) framework. Avoid use Click for
@@ -400,7 +400,8 @@ your CI system, to check that the code in your project is consistent.
 
 ### Format Your Code
 
-Use a formatting tool with a plugin to your editor, so that your code is automatically formatted to a consistent style.
+Use a formatting tool with a plugin to your editor, so that your code is automatically formatted to a consistent style
+as you work.
 
 Consider using [Ruff](https://docs.astral.sh/ruff/), which provides both code formatting and quality checks for Python
 code. [Black](https://black.readthedocs.io/en/stable/) is supported by the Python Software Foundation, and was the most
@@ -411,7 +412,7 @@ with your CI system, so that it rejects any code that does not match the format 
 
 ### Use a Code Linter
 
-Use a code linting tool with a plugin to your editor, so that your code is automatically checked for issues.
+Use a code linting tool with a plugin to your editor, so that your code is automatically checked for issues as you work.
 
 [Ruff](https://docs.astral.sh/ruff/) is the standard linter for Python code. Before Ruff, the most popular code linter
 was [flake8](https://flake8.pycqa.org/en/latest/). Ruff includes the features of both flake8 and the most popular
@@ -433,14 +434,16 @@ software development.
 To see how much of your code is covered by tests, add the [pytest-cov](https://pytest-cov.readthedocs.io) plugin to
 _pytest_. This plugin uses [coverage](https://coverage.readthedocs.io) to analyze your code.
 
-### Use `pylock.toml` Files Instead of Requirements Files
+### Use Lock Files to Record Dependencies
 
-The [pylock.toml](https://packaging.python.org/en/latest/specifications/pylock-toml/) and
-[requirements](https://pip.pypa.io/en/stable/reference/requirements-file-format/) file formats enable you to specify the
-dependencies for building a Python package.
+You should use the `pyproject.toml` file in your project to list dependencies, and the lock file that your project
+management tool generates to track the exact versions and hashes for those dependencies.
 
-The requirements file format is being superseded by the `pylock.toml` format. Use `pylock.toml` files instead of
-requirements files if your project tool supports them. For example, the `uv` tool supports `pylock.toml` files.
+Both the [pylock.toml](https://packaging.python.org/en/latest/specifications/pylock-toml/) and
+[requirements](https://pip.pypa.io/en/stable/reference/requirements-file-format/) file formats enable you to specify a
+set of dependencies in an interchange format that can be read by many different tools. The requirements file format is
+being superseded by the `pylock.toml` format. Use `pylock.toml` files instead of requirements files if your tools
+support them. For example, current versions of the `pip` and `uv` tools support `pylock.toml` files.
 
 ### Ensure That Requirements Files Include Hashes
 
