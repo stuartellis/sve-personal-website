@@ -13,6 +13,13 @@ flavor = "gfm"
 line-length = 120
 respect-gitignore = true
 
+[code-block-tools]
+enabled = true
+
+[code-block-tools.languages]
+python = { lint = ["ruff:check"], format = ["ruff:format"] }
+shell = { lint = ["shellcheck"], format = ["shfmt"] }
+
 [MD004]
 style = "dash"
 
