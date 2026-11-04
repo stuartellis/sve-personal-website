@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "containers", "devops", "programming"]
-date = "2026-07-19T16:50:00+01:00"
+date = "2026-11-04T01:21:00+01:00"
 description = "Using container images with Git hooks"
 slug = "prek-containers"
 tags = ["automation", "containers", "devops"]
@@ -31,11 +31,11 @@ To install `prek` on a development system, use the packages from the [npm](https
 specify which version of `prek` it installs:
 
 ```shell
-npm install -g @j178/prek@0.4.10
+npm install -g @j178/prek@0.5.9
 ```
 
 ```shell
-pipx install prek==0.4.10
+pipx install prek==0.5.9
 ```
 
 The `prek` project releases [container images](https://prek.j178.dev/integrations/#docker), so that you can run the same
@@ -47,7 +47,7 @@ You can also install `prek` with [Homebrew](https://brew.sh/). Homebrew always i
 brew install prek
 ```
 
-## Adding Prek to a Project
+## Adding prek to a Project
 
 By default, `prek` uses the configuration file `prek.toml`. Both `prek` and `pre-commit` can use a
 `.pre-commit-config.yaml` file. Consider using the YAML format, because the YAML maintenance tools that the hook manager
