@@ -23,10 +23,6 @@ interactive computation and static Website generators like [Hugo](https://gohugo
 > Structured data formats like JSON can include Markdown documents as strings, since Markdown uses plain-text. This
 > means that any modern data storage system will store Markdown documents.
 
-The Markdown format supports extensions and embedded elements. You can embed metadata as
-[frontmatter](https://github.com/jlevy/frontmatter-format), [MDX components](https://mdxjs.com/) and
-[Mermaid](https://mermaid-js.github.io) diagrams into Markdown documents, as well as links to assets like images.
-
 ## Popular Dialects of Markdown
 
 - [CommonMark](https://commonmark.org/) - The standard for Markdown
@@ -40,11 +36,25 @@ The Markdown format supports extensions and embedded elements. You can embed met
 > Python Markdown documents. Content in the CommonMark format may be served with the `variant` MIME type
 > `text/markdown; variant=CommonMark`.
 
+## Extensions to Markdown
+
+The Markdown format supports extensions and embedded elements, as well as links to assets like images. These extensions
+are widely used:
+
+- [frontmatter](https://github.com/jlevy/frontmatter-format) for embedding metadata
+- [Mermaid](https://mermaid-js.github.io) for diagrams
+- [MDX components](https://mdxjs.com/)
+
+> There is no published standard for frontmatter. It is a set of conventions, and different tools may implement
+> frontmatter in different ways.
+
 ## Known Issues with Markdown
 
 - The CommonMark standard does not specify tables and other important elements. This means that many Markdown documents
   use GFM syntax.
 - Tools that assume that Markdown documents use CommonMark and GFM syntax may fail on Python Markdown documents.
+- There is no published standard for frontmatter. Different tools may implement frontmatter in different and
+  incompatible ways.
 - Content from humans often contain formatting errors.
 - Internal and external links may be invalid or broken. Use
   [rumdl](https://www.stuartellis.name/articles/rumdl-markdown-maintenance/) to check internal and anchor links, and a
