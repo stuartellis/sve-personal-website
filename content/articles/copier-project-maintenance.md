@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "devops", "programming"]
-date = "2026-10-17T08:41:00+01:00"
+date = "2026-11-05T18:31:00+01:00"
 description = "Using shared Copier templates to maintain software projects"
 slug = "copier-project-maintenance"
 tags = ["automation", "devops", "python"]
@@ -12,22 +12,21 @@ automate the maintenance of large numbers of software projects, so that they evo
 documentation for Copier describes it as a
 [code lifecycle management tool](https://copier.readthedocs.io/en/stable/comparisons/).
 
-Copier uses the idea of generating the files in projects from templates, which is implemented by tools like
+Copier uses the idea of generating the files in software projects from templates, which is implemented by tools like
 [cookiecutter](https://github.com/cookiecutter/cookiecutter), but adds these capabilities:
 
-- You can [apply
-multiple Copier
-templates](https://copier.readthedocs.io/en/stable/configuring/#applying-multiple-templates-to-the-same-subproject) to a
-software project.
-- You can reapply new versions of a Copier template to
-projects that have already used that template. Copier [updates](https://copier.readthedocs.io/en/stable/updating/) the
-files in the project to match those in the newer version of the template.
+- You can
+  [apply multiple Copier templates](https://copier.readthedocs.io/en/stable/configuring/#applying-multiple-templates-to-the-same-subproject)
+  to a software project.
+- You can reapply new versions of a Copier template to projects that have already used that template. Copier
+  [updates](https://copier.readthedocs.io/en/stable/updating/) the files in the project to match those in the newer
+  version of the template.
 - Each update can run [migrations](https://copier.readthedocs.io/en/stable/configuring/#migrations) or other
 [defined tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks).
 
 This means that you can systematically evolve your entire collection of software projects together. First, you define
 specific capabilities or configurations for tools as Copier templates that projects can share. You then update the
-shared templates as needed and apply the new versions of the template to every project.
+shared templates as needed, and apply the new versions of the templates to every project.
 
 For example, you could define a Copier template that provides configurations for quality tools like
 [Ruff](https://docs.astral.sh/ruff/) and apply new versions of that template to your projects, so that the
@@ -65,10 +64,6 @@ use_ruff: true
 
 The answers file stores the address of the template and the version of the template that you used, along with your most
 recent responses to the questions in the template.
-
-> You can apply Copier templates to the repositories that hold Copier templates. This includes applying a template to
-> the repository that holds itself. This means that you can use Copier to manage the projects for Copier templates in
-> the same way that you manage other software projects.
 
 ### Using a Copier Template
 
@@ -160,9 +155,11 @@ projects.
 > carried out by Copier itself.
 
 You can call the command-line tool with any scripts or tools that you wish, or write automation with Python that use the
-[package for Copier](https://pypi.org/project/copier/). You may decide to use different approaches for different
-templates, or different classes of update. For example, you might choose a one approach for minor versions that should
-not require any changes to answers and another for the major version changes that could introduce breaking changes.
+[package for Copier](https://pypi.org/project/copier/).
+
+You may decide to use different approaches for different templates, or different classes of update. For example, you
+might choose a one approach for minor versions that should not require any changes to answers and another for the major
+version changes that could introduce breaking changes.
 
 > Consider using [Renovate](https://www.mend.io/renovate/) to manage updates for Copier templates that do not require
 > any responses.
@@ -177,6 +174,12 @@ Copier accepts responses [from the command-line](https://copier.readthedocs.io/e
 [YAML data files](https://copier.readthedocs.io/en/stable/configuring/#data_file). If you think that it is safe to use
 the existing responses for an update, you can also use the [skip answered](#using-existing-responses-for-updates) option
 to make Copier automatically use those responses from the answers file.
+
+### Copier Templates Can Maintain Copier Templates
+
+You can apply Copier templates to the repositories that hold Copier templates. This includes applying a template to the
+repository that holds itself. This means that you can use Copier to manage the projects for Copier templates in the same
+way that you manage other software projects.
 
 ## Running Copier
 
@@ -227,15 +230,16 @@ copier update -A -a .copier/.copier-answers-mycompany-myteam-aws-lambda-py.yaml
 
  This option does not handle responses to new questions, because the answers file will not have a response for them.
 
-### Updating Specific Files
+### Getting Specific Files from a Template
 
-Use _--exclude_ to update a single file in a project from a template:
+Use _--exclude_ to get a single file in a project from a Copier template:
 
 ```shell
 copier copy --exclude '*' --exclude '!file-i-want' ./template ./destination
 ```
 
-For example:
+For example, to get only the file `.pre-commit-config.yaml` in your repository from the template
+`github.com:my-username/copier-mycompany-myteam-aws-lambda-py.git`, you would run this command:
 
 <!-- rumdl-disable MD013 MD031 -->
 ```shell
@@ -361,8 +365,8 @@ brackets as delimiters, the file itself will be called `[{_copier_conf.answers_f
 
 ### Managing Copier Answers Files
 
-Each Copier template must have a separate answers file in the projects that use it. templates. This means that every
-Copier template must specify a unique name for the answers file that it creates. The names of the answers files become
+Each Copier template must have a separate answers file in the projects that use it. This means that every Copier
+template must specify a unique name for the answers file that it creates. The names of the answers files become
 particularly important if projects may use templates that are maintained by different teams.
 
 Here are some guidelines for naming Copier templates answers files:
