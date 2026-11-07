@@ -111,20 +111,20 @@ If none of these methods are suitable, you can get Task with an [installation sc
 
 ### Installing Task with `npm`
 
-This command installs version 3.52.0 of Task with [npm](https://docs.npmjs.com/) and makes it available to your user
+This command installs version 3.54.0 of Task with [npm](https://docs.npmjs.com/) and makes it available to your user
 account:
 
 ```shell
-npm install -g @go-task/cli@3.52.0
+npm install -g @go-task/cli@3.54.0
 ```
 
 ### Installing Task with Mise
 
-This command installs version 3.52.0 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user
+This command installs version 3.54.0 of Task with [mise](https://mise.jdx.dev/) and makes it available to your user
 account:
 
 ```shell
-mise use -gy task@3.52.0
+mise use -gy task@3.54.0
 ```
 
 ### Installing Task with Operating System Packages
@@ -184,7 +184,7 @@ To use the installation script, call it with the Git tag and the _-b_ option. Th
 The _-b_ option specifies which directory to install it to:
 
 ```shell
-./install-task.sh -b $HOME/.local/bin v3.52.0
+./install-task.sh -b $HOME/.local/bin v3.54.0
 ```
 
 {{< alert >}}
@@ -199,14 +199,16 @@ To ensure that you have ready access to tasks, set up integrations with your she
 ### Enabling Autocompletion
 
 To enable autocompletion for Task in a shell,
-[follow the instructions for the shell that you use](https://taskfile.dev/installation/#option-1-load-the-completions-in-your-shells-startup-config-recommended).
+[follow the instructions for the shell that you use](https://taskfile.dev/docs/installation#setup-completions).
 For example, to add autocompletion for the fish shell, add this line to the file _~/.config/fish/config.fish_:
 
 ```shell
 task --completion fish | source
 ```
 
-The Task project currently provides completion support for Bash, zsh, fish and PowerShell.
+The Task project currently provides completion support for Bash, zsh, fish, PowerShell and Nushell.
+
+> If you install Task with Homebrew, then Homebrew may automatically set up shell completions.
 
 ### Creating a User Taskfile for Global Tasks
 
@@ -459,8 +461,8 @@ Follow [the style guidelines](https://taskfile.dev/styleguide/) when writing tas
   for formatting YAML files to Visual Studio Code. The [Prettier](https://prettier.io/) tool formats YAML files, and can
   be used in any environment.
 - Always set [a minimum version in Task files](https://taskfile.dev/taskfile-versions/). If possible, use version _3.45_
-  or above, which was the first version to include built-in UNIX commands. Otherwise, use a minimum version of _3.38_,
-  because _TASK_EXE_ was introduced in version 3.38.
+  or above. This was the first version to include built-in UNIX commands and work with Visual Studio Code. Otherwise,
+  use a minimum version of _3.38_, because _TASK_EXE_ was introduced in version 3.38.
 - Write _set: [pipefail]_ at the beginning of top-level Taskfiles to enable failing on the first error. This is a
   [shell option](https://taskfile.dev/usage/#set-and-shopt).
 - Always use _TASK_EXE_ rather than _task_ when you write a task that calls Task itself, such as a call to _--list_.
