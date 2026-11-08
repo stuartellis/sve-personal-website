@@ -1,15 +1,15 @@
 +++
 categories = ["automation", "containers", "devops", "programming"]
-date = "2026-11-04T01:21:00+01:00"
+date = "2026-11-08T08:54:00+01:00"
 description = "Using container images with Git hooks"
 slug = "prek-containers"
 tags = ["automation", "containers", "devops"]
 title = "Using Container Images with prek and pre-commit"
 +++
 
-The [prek](https://prek.j178.dev/) tool manages Git hooks, and enables you to run the same hooks at any time, not just
-when you commit changes. It downloads the tools and runtimes for the hooks as needed. This means that it can provide a
-cross-platform way to install and run a complete set of tools for formatting and checking code.
+The [prek](https://prek.j178.dev/) tool manages Git hooks, and enables you to run the same hooks whenever you wish, not
+just when you commit changes. This means that it can provide a cross-platform way to install and run a set of tools for
+formatting and checking your code.
 
 For security and consistency, use container images to provide the tools for these hooks. This ensures that the
 contributors to a project run the same container images, and that CI systems also use those same images. For better
@@ -18,7 +18,7 @@ supply chain security, you can specify images that you distribute through your o
 > The [prek](https://prek.j178.dev/) tool supersedes [pre-commit](https://pre-commit.com/). It can use the same hooks as
 > `pre-commit`, and works with existing `pre-commit` project configurations.
 
-## Installing Prek
+## Installing prek
 
 > Running [docker_image](https://prek.j178.dev/languages/#docker_image) or
 > [docker](https://prek.j178.dev/languages/#docker) hooks requires a container runtime such as Podman, Docker or Apple
@@ -31,11 +31,11 @@ To install `prek` on a development system, use the packages from the [npm](https
 specify which version of `prek` it installs:
 
 ```shell
-npm install -g @j178/prek@0.5.9
+npm install -g @j178/prek@0.5.10
 ```
 
 ```shell
-pipx install prek==0.5.9
+pipx install prek==0.5.10
 ```
 
 The `prek` project releases [container images](https://prek.j178.dev/integrations/#docker), so that you can run the same
@@ -58,7 +58,7 @@ your project:
 
 ```yaml
 ---
-minimum_prek_version: "0.4.0"
+minimum_prek_version: "0.5.0"
 
 repos:
   - repo: builtin
@@ -66,12 +66,16 @@ repos:
       - id: check-added-large-files
       - id: check-case-conflict
       - id: check-json
+      - id: check-json5
+      - id: check-jsonc
       - id: check-merge-conflict
       - id: check-symlinks
       - id: check-toml
       - id: check-vcs-permalinks
       - id: check-xml
+      # Allow multiple documents in a file when using GitLab Pipelines
       - id: check-yaml
+        args: [--allow-multiple-documents]
       - id: destroyed-symlinks
       - id: end-of-file-fixer
       - id: fix-byte-order-marker
@@ -93,7 +97,7 @@ cd my-project
 prek install
 ```
 
-## Adding Hooks
+## Adding Hooks to a Project
 
 To add a hook that uses a container image, you can either specify a remote hook configuration that uses containers, or
 define the hook directly in the configuration file. Many Open Source projects provide remote hook configurations for the
@@ -139,7 +143,7 @@ configuration file:
 
 ```yaml
 ---
-minimum_prek_version: "0.4.0"
+minimum_prek_version: "0.5.0"
 
 repos:
   - repo: builtin
@@ -148,12 +152,16 @@ repos:
       - id: check-case-conflict
       - id: check-illegal-windows-names
       - id: check-json
+      - id: check-json5
+      - id: check-jsonc
       - id: check-merge-conflict
       - id: check-symlinks
       - id: check-toml
       - id: check-vcs-permalinks
       - id: check-xml
+        # Allow multiple documents in a file when using GitLab Pipelines
       - id: check-yaml
+        args: [--allow-multiple-documents]
       - id: destroyed-symlinks
       - id: end-of-file-fixer
       - id: fix-byte-order-marker
