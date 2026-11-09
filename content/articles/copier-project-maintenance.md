@@ -305,7 +305,7 @@ This is an example of a `copier.yaml` file:
 
 # This template uses the configuration format introduced in Copier version 9.
 # Specify the minimum version of Copier that you will support.
-_min_copier_version: "9.18"
+_min_copier_version: "9.19"
 
 # Use this subdirectory of the template repository as the root directory of the template.
 _subdirectory: template
