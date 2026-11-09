@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "containers", "devops", "programming"]
-date = "2026-11-08T08:54:00+01:00"
+date = "2026-11-09T07:21:00+01:00"
 description = "Using container images with Git hooks"
 slug = "prek-containers"
 tags = ["automation", "containers", "devops"]
@@ -110,29 +110,33 @@ tools that they produce.
 If possible, avoid using remote hook configurations altogether. Instead, create hooks in your `prek` configuration
 files. This enables you to have full control over the configuration of the hook and which container image it runs.
 
-For example, you may want to use a hook to detect secrets in code, and decide to use [gitleaks](https://gitleaks.io/)
-for this. The Gitleaks project provides three hooks in the
-[remote hook configuration](https://raw.githubusercontent.com/gitleaks/gitleaks/refs/heads/master/.pre-commit-hooks.yaml)
+For example, you may want to use a hook to detect secrets in code, and decide to use
+[Betterleaks](https://betterleaks.com/) for this. The Betterleaks project provides three hooks in the
+[remote hook configuration](https://raw.githubusercontent.com/betterleaks/betterleaks/refs/heads/main/.pre-commit-hooks.yaml)
 that it publishes:
 
 ```yaml
-- id: gitleaks
+- id: betterleaks
   name: Detect hardcoded secrets
-  description: Detect hardcoded secrets using Gitleaks
-  entry: gitleaks git --pre-commit --redact --staged --verbose
+  description: Detect hardcoded secrets using Betterleaks
+  entry: bash -o pipefail -c 'git diff --cached --no-ext-diff --no-textconv --no-color --src-prefix=a/ --dst-prefix=b/ | betterleaks stdin --git-diff --redact'
   language: golang
   pass_filenames: false
-- id: gitleaks-docker
+
+# This pinned release retains its legacy staged command until the next image release.
+- id: betterleaks-docker
   name: Detect hardcoded secrets
-  description: Detect hardcoded secrets using Gitleaks
-  entry: zricethezav/gitleaks git --pre-commit --redact --staged --verbose
+  description: Detect hardcoded secrets using Betterleaks
+  entry: ghcr.io/betterleaks/betterleaks:v2.0.0-rc.1 git --staged --redact
   language: docker_image
   pass_filenames: false
-- id: gitleaks-system
+
+- id: betterleaks-system
   name: Detect hardcoded secrets
-  description: Detect hardcoded secrets using Gitleaks
-  entry: gitleaks git --pre-commit --redact --staged --verbose
+  description: Detect hardcoded secrets using Betterleaks
+  entry: bash -o pipefail -c 'git diff --cached --no-ext-diff --no-textconv --no-color --src-prefix=a/ --dst-prefix=b/ | betterleaks stdin --git-diff --redact'
   language: system
+  pass_filenames: false
 ```
 
 You could call the `docker_image` hook as a remote hook, but it is safer to copy the hook into your own configuration
@@ -170,10 +174,10 @@ repos:
 
   - repo: local
     hooks:
-      - id: gitleaks-docker
+      - id: betterleaks-docker
         name: Detect hardcoded secrets
-        description: Detect hardcoded secrets using Gitleaks
-        entry: zricethezav/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f git --pre-commit --redact --staged --verbose
+        description: Detect hardcoded secrets using Betterleaks
+        entry: ghcr.io/betterleaks/betterleaks@sha256:cf904106df86db65caacaf5592485314968e269ba47343bb78f48179f3606780 git --staged --redact
         language: docker_image
         pass_filenames: false
 ```
@@ -183,13 +187,24 @@ repos:
 Here, we use the SHA index digest to specify the version of the image, rather than `latest` or a version tag. If an
 attacker gains access to the container registry they might change the image tags to point to images that contain
 malware. You can see the SHA digests for a container image in the Web interface of the container registry that publishes
-it. For example, the Gitleaks project publishes images on Docker Hub, and
-[this page](https://hub.docker.com/r/zricethezav/gitleaks/tags) lists the tags.
+it, or by running the `inspect` command for Podman or Docker:
 
-> To avoid issues with different systems using different CPU architectures, use _multi-architecture_ container images
-> where possible. If you cannot, container images may run with CPU emulation. Docker Desktop automatically emulates the
-> required CPU architecture as needed, but other runtimes like Podman require extra configuration to run images with CPU
-> emulation.
+```shell
+podman inspect ghcr.io/betterleaks/betterleaks:v2.0.0-rc.1
+```
+
+The `inspect` command outputs the details of the image in JSON format. The `Digest` attribute provides the SHA digest
+that you use to identify the exact image:
+
+```json
+[
+     {
+          "Id": "97e14b8d827a020b5bb7b10a398b650794b65d212d633c85a77a9dbb3e92ffb9",
+          "Digest": "sha256:cf904106df86db65caacaf5592485314968e269ba47343bb78f48179f3606780",
+          "RepoTags": [
+               "ghcr.io/betterleaks/betterleaks:v2.0.0-rc.1"
+          ],
+```
 
 If a project does not provide a `docker_image` hook, you can copy the configuration for a hook that they publish, and
 adapt it. To convert a hook configuration to use a container image, set the `language` to `docker_image` and update the
@@ -198,30 +213,21 @@ entry to start with required container image, like this:
 <!-- rumdl-disable MD013 -->
 
 ```yaml
-entry: zricethezav/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f git --pre-commit --redact --staged --verbose
+entry: ghcr.io/betterleaks/betterleaks@sha256:cf904106df86db65caacaf5592485314968e269ba47343bb78f48179f3606780 git --staged --redact
 language: docker_image
 ```
 
 <!-- rumdl-enable MD013 -->
 
-You can replace the container image that a hook uses at any time. This example uses the
-[Docker Hardened Image for gitleaks](https://hub.docker.com/hardened-images/catalog/dhi/gitleaks/images), which is a
-multi-architecture image:
+You can replace the container image that a hook uses at any time.
 
-<!-- rumdl-disable MD013 -->
+### Container Images and CPU Architectures
 
-```yaml
-- repo: local
-  hooks:
-    - id: gitleaks-docker
-      name: Detect hardcoded secrets
-      description: Detect hardcoded secrets using Gitleaks
-      entry: dhi.io/gitleaks:8@sha256:3ffd6debb567b711bb6cd741caf084d76904ece99f7fe88d906cc57501b53469 git --pre-commit --redact --staged --verbose
-      language: docker_image
-      pass_filenames: false
-```
+To avoid issues with different systems using different CPU architectures, use _multi-architecture_ container images
+where possible.
 
-<!-- rumdl-enable MD013 -->
+If you cannot, container images may run with CPU emulation. Docker Desktop automatically emulates the required CPU
+architecture as needed, but other runtimes like Podman require extra configuration to run images with CPU emulation.
 
 ## Using Hooks
 
@@ -229,10 +235,10 @@ The hooks automatically run on the staged changes each time that you commit. To 
 use `prek run`. If you add the option `--all-files` it will check the current files in the project, not just staged
 changes.
 
-For example, to run the `gitleaks-docker` hook on the project, use this command:
+For example, to run the `betterleaks-docker` hook on the project, use this command:
 
 ```shell
-prek run gitleaks-docker --all-files
+prek run betterleaks-docker --all-files
 ```
 
 To run every hook on the project, use this command:
