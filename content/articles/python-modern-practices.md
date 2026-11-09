@@ -449,13 +449,15 @@ _pytest_. This plugin uses [coverage](https://coverage.readthedocs.io) to analyz
 ### Use Lock Files to Record Dependencies
 
 You should use the `pyproject.toml` file in your project to list dependencies, and the lock file that your project
-management tool generates to track the exact versions and hashes for those dependencies.
+management tool generates to track the exact versions and hashes for those dependencies. Each Python project management
+tool uses their own format for lock files.
 
-Both the [pylock.toml](https://packaging.python.org/en/latest/specifications/pylock-toml/) and
-[requirements](https://pip.pypa.io/en/stable/reference/requirements-file-format/) file formats enable you to specify a
-set of dependencies in an interchange format that can be read by many different tools. The requirements file format is
-being superseded by the `pylock.toml` format. Use `pylock.toml` files instead of requirements files if your tools
-support them. For example, current versions of the `pip` and `uv` tools support `pylock.toml` files.
+Project management tools can also generate
+[pylock.toml](https://packaging.python.org/en/latest/specifications/pylock-toml/) and
+[requirements](https://pip.pypa.io/en/stable/reference/requirements-file-format/) files. Both of these are interchange
+formats that enable you to specify a list of package dependencies, so that the list can be read by many different tools.
+Use `pylock.toml` files instead of `requirements` files if your tools support them, because the `requirements` format is
+being superseded by `pylock.toml`. Current versions of the `pip` and `uv` tools support `pylock.toml` files.
 
 ### Ensure That Requirements Files Include Hashes
 
