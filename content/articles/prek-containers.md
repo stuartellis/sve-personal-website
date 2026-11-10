@@ -110,7 +110,7 @@ tools that they produce.
 If possible, avoid using remote hook configurations altogether. Instead, create hooks in your `prek` configuration
 files. This enables you to have full control over the configuration of the hook and which container image it runs.
 
-For example, you may want to use a hook to detect secrets in code, and decide to use
+For example, you may want to use a hook to detect secrets in code, and decide to use the latest version of
 [Betterleaks](https://betterleaks.com/) for this. The Betterleaks project provides three hooks in the
 [remote hook configuration](https://raw.githubusercontent.com/betterleaks/betterleaks/refs/heads/main/.pre-commit-hooks.yaml)
 that it publishes:
@@ -139,9 +139,40 @@ that it publishes:
   pass_filenames: false
 ```
 
-You could call the `docker_image` hook as a remote hook, but it is safer to copy the hook into your own configuration
-file. You can then specify the exact container image that your project hook uses. Here is an example of a complete
-configuration file:
+You could call the `docker_image` hook as a remote hook, but it is safer to copy the hook into a configuration file for
+your project. You can then specify the exact container image that your project hook uses.
+
+To copy a hook, take the configuration for that hook and add it to the `hooks` that are listed under the section for
+`repo: local`.
+
+Once you have copied the hook, look up the current version of the product. Many remote hooks specify an older version of
+a product, because the file is not changed as new versions are released. Use the container image for the current
+version. Newer versions of products may have slightly different command options. For example, current versions of
+`betterleaks` do not use the `--staged` option.
+
+Always use the SHA index digest to specify the image, rather than `latest` or a version tag. If an attacker gains access
+to the container registry they might change the image tags to point to images that contain malware. You can see the SHA
+digests for a container image in the Web interface of the container registry that publishes it, or by running the
+`inspect` command for Podman or Docker:
+
+```shell
+podman inspect ghcr.io/betterleaks/betterleaks:v2.0.0-rc.7
+```
+
+The `inspect` command outputs the details of the image in JSON format. The `Digest` attribute provides the SHA digest
+that you use to identify the exact image:
+
+```json
+[
+     {
+          "Id": "a74bae16d053205e049bf86756e0797ffe9a94d3aa973743230ef736e4d04ec3",
+          "Digest": "sha256:af51ddce3addcce5656a550c51e6476e5fe028dc142ef2ebe2d8c766d6bd14ef",
+          "RepoTags": [
+               "ghcr.io/betterleaks/betterleaks:v2.0.0-rc.7"
+          ],
+```
+
+Here is a complete example of a project configuration file:
 
 <!-- rumdl-disable MD013 -->
 
@@ -174,37 +205,15 @@ repos:
 
   - repo: local
     hooks:
-      - id: betterleaks-docker
+      - id: betterleaks
         name: Detect hardcoded secrets
         description: Detect hardcoded secrets using Betterleaks
-        entry: ghcr.io/betterleaks/betterleaks@sha256:cf904106df86db65caacaf5592485314968e269ba47343bb78f48179f3606780 git --staged --redact
+        entry: ghcr.io/betterleaks/betterleaks@sha256:af51ddce3addcce5656a550c51e6476e5fe028dc142ef2ebe2d8c766d6bd14ef git --redact
         language: docker_image
         pass_filenames: false
 ```
 
 <!-- rumdl-enable MD013 -->
-
-Here, we use the SHA index digest to specify the version of the image, rather than `latest` or a version tag. If an
-attacker gains access to the container registry they might change the image tags to point to images that contain
-malware. You can see the SHA digests for a container image in the Web interface of the container registry that publishes
-it, or by running the `inspect` command for Podman or Docker:
-
-```shell
-podman inspect ghcr.io/betterleaks/betterleaks:v2.0.0-rc.1
-```
-
-The `inspect` command outputs the details of the image in JSON format. The `Digest` attribute provides the SHA digest
-that you use to identify the exact image:
-
-```json
-[
-     {
-          "Id": "97e14b8d827a020b5bb7b10a398b650794b65d212d633c85a77a9dbb3e92ffb9",
-          "Digest": "sha256:cf904106df86db65caacaf5592485314968e269ba47343bb78f48179f3606780",
-          "RepoTags": [
-               "ghcr.io/betterleaks/betterleaks:v2.0.0-rc.1"
-          ],
-```
 
 If a project does not provide a `docker_image` hook, you can copy the configuration for a hook that they publish, and
 adapt it. To convert a hook configuration to use a container image, set the `language` to `docker_image` and update the
@@ -213,7 +222,7 @@ entry to start with required container image, like this:
 <!-- rumdl-disable MD013 -->
 
 ```yaml
-entry: ghcr.io/betterleaks/betterleaks@sha256:cf904106df86db65caacaf5592485314968e269ba47343bb78f48179f3606780 git --staged --redact
+entry: ghcr.io/betterleaks/betterleaks@sha256:af51ddce3addcce5656a550c51e6476e5fe028dc142ef2ebe2d8c766d6bd14ef git --redact
 language: docker_image
 ```
 
@@ -235,10 +244,10 @@ The hooks automatically run on the staged changes each time that you commit. To 
 use `prek run`. If you add the option `--all-files` it will check the current files in the project, not just staged
 changes.
 
-For example, to run the `betterleaks-docker` hook on the project, use this command:
+For example, to run the `betterleaks` hook on the project, use this command:
 
 ```shell
-prek run betterleaks-docker --all-files
+prek run betterleaks --all-files
 ```
 
 To run every hook on the project, use this command:

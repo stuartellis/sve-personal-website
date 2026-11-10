@@ -49,3 +49,10 @@ repos:
         types: [markdown]
         require_serial: true
         stages: [manual]
+
+      - id: betterleaks-docker
+        name: Detect hardcoded secrets
+        description: Detect hardcoded secrets using Betterleaks
+        entry: ghcr.io/betterleaks/betterleaks@sha256:af51ddce3addcce5656a550c51e6476e5fe028dc142ef2ebe2d8c766d6bd14ef git --staged --redact
+        language: docker_image
+        pass_filenames: false
