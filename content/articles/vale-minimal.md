@@ -83,7 +83,7 @@ This example `.pre-commit-config.yaml` configuration file for a project uses the
 
 ```yaml
 ---
-minimum_prek_version: "0.4.0"
+minimum_prek_version: "0.5.0"
 
 repos:
   - repo: builtin
@@ -92,6 +92,8 @@ repos:
       - id: check-case-conflict
       - id: check-illegal-windows-names
       - id: check-json
+      - id: check-json5
+      - id: check-jsonc
       - id: check-merge-conflict
       - id: check-symlinks
       - id: check-toml
