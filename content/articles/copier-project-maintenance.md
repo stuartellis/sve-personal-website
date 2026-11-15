@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "devops", "programming"]
-date = "2026-11-05T18:31:00+01:00"
+date = "2026-11-15T08:14:00+01:00"
 description = "Using shared Copier templates to maintain software projects"
 slug = "copier-project-maintenance"
 tags = ["automation", "devops", "python"]
@@ -25,11 +25,11 @@ Copier uses the idea of generating the files in software projects from templates
 [defined tasks](https://copier.readthedocs.io/en/stable/configuring/#tasks).
 
 This means that you can systematically evolve your entire collection of software projects together. First, you define
-specific capabilities or configurations for tools as Copier templates that projects can share. You then update the
-shared templates as needed, and apply the new versions of the templates to every project.
+specific capabilities or configurations for tools as Copier templates that projects can share. You then change the
+shared templates as needed, and use Copier to apply the new versions of the templates to your current projects.
 
 For example, you could define a Copier template that provides configurations for quality tools like
-[Ruff](https://docs.astral.sh/ruff/) and apply new versions of that template to your projects, so that the
+[Ruff](https://docs.astral.sh/ruff/) and apply new versions of that template to your projects, so that the tool
 configurations for every project remain synchronised.
 
 ## How It Works
@@ -38,17 +38,11 @@ A Copier template is a Git repository that has a configuration file, along with 
 repository must only contain one Copier template, because Copier uses
 [Git tags for version information](#versioning-your-copier-templates).
 
-Copier uses [Jinja](https://jinja.palletsprojects.com/en/stable/) for templating the files and directories, with
-[extensions](https://copier.readthedocs.io/en/stable/configuring/#jinja_extensions). The configuration file includes
-definitions for the questions that Copier will ask a user when they apply a template to a project. The responses to
-these questions become variables that the templates can use. You can also use the
+Copier uses [Jinja](https://jinja.palletsprojects.com/en/stable/) for templating the files and directories. The
+configuration file includes definitions for the questions that Copier will ask a user when they apply a template to a
+project. The responses to these questions become variables that the templates can use. You can also use the
 [external data](https://copier.readthedocs.io/en/stable/configuring/#external_data) option to set variables for the
 Jinja templating.
-
-> You can use any extension that is available for Jinja, and include
-> [custom extensions in specific Copier templates](https://copier.readthedocs.io/en/stable/configuring/#importing-jinja-templates-and-macros).
-> Consider using [copier-pydantic](https://pypi.org/project/copier-pydantic/) to integate Pydantic models into Copier
-> templating.
 
 Once a template is applied for the first time, Copier creates an
 [answers file](https://copier.readthedocs.io/en/stable/configuring/#the-copier-answersyml-file) in the project. This
@@ -174,6 +168,15 @@ Copier accepts responses [from the command-line](https://copier.readthedocs.io/e
 [YAML data files](https://copier.readthedocs.io/en/stable/configuring/#data_file). If you think that it is safe to use
 the existing responses for an update, you can also use the [skip answered](#using-existing-responses-for-updates) option
 to make Copier automatically use those responses from the answers file.
+
+### Extensions for Templating
+
+Copier includes [a set of extensions](https://copier.readthedocs.io/en/stable/configuring/#jinja_extensions) for the
+Jinja templating system. You can also use any other extension that is available for Jinja, and include
+[custom extensions in specific Copier templates](https://copier.readthedocs.io/en/stable/configuring/#importing-jinja-templates-and-macros).
+
+> Consider using [copier-pydantic](https://pypi.org/project/copier-pydantic/) to integrate Pydantic models into Copier
+> templating.
 
 ### Copier Templates Can Maintain Copier Templates
 
