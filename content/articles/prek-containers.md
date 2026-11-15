@@ -110,33 +110,31 @@ tools that they produce.
 If possible, avoid using remote hook configurations altogether. Instead, create hooks in your `prek` configuration
 files. This enables you to have full control over the configuration of the hook and which container image it runs.
 
-For example, you may want to use a hook to detect secrets in code, and decide to use the latest version of
-[Betterleaks](https://betterleaks.com/) for this. The Betterleaks project provides three hooks in the
-[remote hook configuration](https://raw.githubusercontent.com/betterleaks/betterleaks/refs/heads/main/.pre-commit-hooks.yaml)
+For example, you may want to use a hook to detect secrets in code, and decide to use version 1 of
+[Betterleaks](https://betterleaks.com/) for this. The Betterleaks project provides three hooks in a
+[remote hook configuration](https://raw.githubusercontent.com/betterleaks/betterleaks/2736d9d8e9932c7b787a678cd2f64bd124671854/.pre-commit-hooks.yaml)
 that it publishes:
 
 ```yaml
-- id: betterleaks
+ id: betterleaks
   name: Detect hardcoded secrets
   description: Detect hardcoded secrets using Betterleaks
-  entry: bash -o pipefail -c 'git diff --cached --no-ext-diff --no-textconv --no-color --src-prefix=a/ --dst-prefix=b/ | betterleaks stdin --git-diff --redact'
+  entry: betterleaks git --pre-commit --redact --staged --verbose
   language: golang
   pass_filenames: false
 
-# This pinned release retains its legacy staged command until the next image release.
 - id: betterleaks-docker
   name: Detect hardcoded secrets
   description: Detect hardcoded secrets using Betterleaks
-  entry: ghcr.io/betterleaks/betterleaks:v2.0.0-rc.1 git --staged --redact
+  entry: ghcr.io/betterleaks/betterleaks:latest git --pre-commit --redact --staged --verbose
   language: docker_image
   pass_filenames: false
 
 - id: betterleaks-system
   name: Detect hardcoded secrets
   description: Detect hardcoded secrets using Betterleaks
-  entry: bash -o pipefail -c 'git diff --cached --no-ext-diff --no-textconv --no-color --src-prefix=a/ --dst-prefix=b/ | betterleaks stdin --git-diff --redact'
+  entry: betterleaks git --pre-commit --redact --staged --verbose
   language: system
-  pass_filenames: false
 ```
 
 You could call the `docker_image` hook as a remote hook, but it is safer to copy the hook into a configuration file for
@@ -147,8 +145,8 @@ To copy a hook, take the configuration for that hook and add it to the `hooks` t
 
 Once you have copied the hook, look up the current version of the product. Many remote hooks specify an older version of
 a product, because the file is not changed as new versions are released. Use the container image for the current
-version. Newer versions of products may have slightly different command options. For example, current versions of
-`betterleaks` do not use the `--staged` option.
+version. Newer versions of products may have slightly different command options. For example, version 2 of `betterleaks`
+will not use the `--staged` option.
 
 Always use the SHA index digest to specify the image, rather than `latest` or a version tag. If an attacker gains access
 to the container registry they might change the image tags to point to images that contain malware. You can see the SHA
@@ -156,7 +154,7 @@ digests for a container image in the Web interface of the container registry tha
 `inspect` command for Podman or Docker:
 
 ```shell
-podman inspect ghcr.io/betterleaks/betterleaks:v2.0.0-rc.7
+podman inspect ghcr.io/betterleaks/betterleaks:v1.10.1
 ```
 
 The `inspect` command outputs the details of the image in JSON format. The `Digest` attribute provides the SHA digest
@@ -165,12 +163,17 @@ that you use to identify the exact image:
 ```json
 [
      {
-          "Id": "a74bae16d053205e049bf86756e0797ffe9a94d3aa973743230ef736e4d04ec3",
-          "Digest": "sha256:af51ddce3addcce5656a550c51e6476e5fe028dc142ef2ebe2d8c766d6bd14ef",
+          "Id": "4fc2b15fdcdf7c162df7abe4ab2ba6016850373ed8d89d5c4dd1c4af4e65830e",
+          "Digest": "sha256:07ef039be491a6c076b239dd8b8e42fdde984af6609c8541bdb7c9507708403e",
           "RepoTags": [
-               "ghcr.io/betterleaks/betterleaks:v2.0.0-rc.7"
+               "ghcr.io/betterleaks/betterleaks:v1.10.1"
           ],
 ```
+
+> The Betterleaks project uses
+> [GitHub Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry),
+> which means that you can also see the current container images and digests on the
+> [list of container images for the repository](https://github.com/betterleaks/betterleaks/pkgs/container/betterleaks).
 
 Here is a complete example of a project configuration file:
 
@@ -208,7 +211,7 @@ repos:
       - id: betterleaks
         name: Detect hardcoded secrets
         description: Detect hardcoded secrets using Betterleaks
-        entry: ghcr.io/betterleaks/betterleaks@sha256:af51ddce3addcce5656a550c51e6476e5fe028dc142ef2ebe2d8c766d6bd14ef git --redact
+        entry: ghcr.io/betterleaks/betterleaks@sha256:07ef039be491a6c076b239dd8b8e42fdde984af6609c8541bdb7c9507708403e git --pre-commit --redact --staged --verbose
         language: docker_image
         pass_filenames: false
 ```
@@ -222,7 +225,7 @@ entry to start with required container image, like this:
 <!-- rumdl-disable MD013 -->
 
 ```yaml
-entry: ghcr.io/betterleaks/betterleaks@sha256:af51ddce3addcce5656a550c51e6476e5fe028dc142ef2ebe2d8c766d6bd14ef git --redact
+entry: ghcr.io/betterleaks/betterleaks@sha256:07ef039be491a6c076b239dd8b8e42fdde984af6609c8541bdb7c9507708403e git --redact
 language: docker_image
 ```
 
