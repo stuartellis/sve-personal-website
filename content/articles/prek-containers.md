@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "containers", "devops", "programming"]
-date = "2026-11-09T07:21:00+01:00"
+date = "2026-11-15T09:06:00+01:00"
 description = "Using container images with Git hooks"
 slug = "prek-containers"
 tags = ["automation", "containers", "devops"]
@@ -240,6 +240,46 @@ where possible.
 
 If you cannot, container images may run with CPU emulation. Docker Desktop automatically emulates the required CPU
 architecture as needed, but other runtimes like Podman require extra configuration to run images with CPU emulation.
+
+## Adding a Global Hook
+
+You also use `prek` to
+[run a hook on every project](https://prek.j178.dev/cookbook/#enable-a-global-hook-with-git-config). For example, you
+might decide that you want to run the Betterleaks check for secrets on every project that you use.
+
+> Global hooks configuration requires Git version 2.54 and above.
+
+To set up global hooks, create a global configuration file for `prek` and then register it with Git. This example global
+configuration file runs Betterleaks from a container image:
+
+<!-- rumdl-disable MD013 -->
+```yaml
+---
+minimum_prek_version: "0.5.0"
+
+repos:
+  - repo: local
+    hooks:
+      - id: betterleaks
+        name: Detect hardcoded secrets
+        description: Detect hardcoded secrets using Betterleaks
+        entry: ghcr.io/betterleaks/betterleaks@sha256:07ef039be491a6c076b239dd8b8e42fdde984af6609c8541bdb7c9507708403e git --pre-commit --redact --staged --verbose
+        language: docker_image
+        pass_filenames: false
+```
+<!-- rumdl-enable MD013 -->
+
+Create the directory `.config/prek/` in your home directory. Then save the configuration file as
+`.config/prek/.pre-commit-config.yaml` in your home directory.
+
+Run these commands to register your global hook configuration:
+
+<!-- rumdl-disable MD013 -->
+```shell
+git config --global hook.gitleaks.event pre-commit
+git config --global hook.gitleaks.command 'prek hook-impl --hook-type pre-commit --config ~/.config/prek/.pre-commit-config.yaml --'
+```
+<!-- rumdl-enable MD013 -->
 
 ## Using Hooks
 
