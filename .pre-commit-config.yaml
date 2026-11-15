@@ -53,6 +53,6 @@ repos:
       - id: betterleaks
         name: Detect hardcoded secrets
         description: Detect hardcoded secrets using Betterleaks
-        entry: ghcr.io/betterleaks/betterleaks:v1.10.1 git --pre-commit --redact --staged --verbose
+        entry: ghcr.io/betterleaks/betterleaks@sha256:07ef039be491a6c076b239dd8b8e42fdde984af6609c8541bdb7c9507708403e git --pre-commit --redact --staged --verbose
         language: docker_image
         pass_filenames: false
