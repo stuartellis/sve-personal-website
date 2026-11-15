@@ -1,6 +1,6 @@
 +++
 categories = ["automation", "containers", "devops", "programming"]
-date = "2026-11-15T09:06:00+01:00"
+date = "2026-11-15T09:19:00+01:00"
 description = "Using container images with Git hooks"
 slug = "prek-containers"
 tags = ["automation", "containers", "devops"]
@@ -97,6 +97,45 @@ cd my-project
 prek install
 ```
 
+## Using Container Images
+
+### Using Digests
+
+Use the SHA index digest to specify the image, rather than `latest` or a version tag. If an attacker gains access to the
+container registry they might change the image tags to point to images that contain malware. You can see the SHA digests
+for a container image in the Web interface of the container registry that publishes it, or by running the `inspect`
+command for Podman or Docker:
+
+```shell
+podman inspect ghcr.io/betterleaks/betterleaks:v1.10.1
+```
+
+The `inspect` command outputs the details of the image in JSON format. The `Digest` attribute provides the SHA digest
+that you use to identify the exact image:
+
+```json
+[
+     {
+          "Id": "4fc2b15fdcdf7c162df7abe4ab2ba6016850373ed8d89d5c4dd1c4af4e65830e",
+          "Digest": "sha256:07ef039be491a6c076b239dd8b8e42fdde984af6609c8541bdb7c9507708403e",
+          "RepoTags": [
+               "ghcr.io/betterleaks/betterleaks:v1.10.1"
+          ],
+```
+
+> The Betterleaks project uses
+> [GitHub Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)
+> (`ghcr.io`), which means that you can also see the current container images and digests on the
+> [list of container images for the repository](https://github.com/betterleaks/betterleaks/pkgs/container/betterleaks).
+
+### Container Images and CPU Architectures
+
+To avoid issues with different systems using different CPU architectures, use multi-architecture container images where
+possible.
+
+If you cannot, container images may run with CPU emulation. Docker Desktop automatically emulates the required CPU
+architecture as needed, but other runtimes like Podman require extra configuration to run images with CPU emulation.
+
 ## Adding Hooks to a Project
 
 To add a hook that uses a container image, you can either specify a remote hook configuration that uses containers, or
@@ -143,37 +182,12 @@ your project. You can then specify the exact container image that your project h
 To copy a hook, take the configuration for that hook and add it to the `hooks` that are listed under the section for
 `repo: local`.
 
-Once you have copied the hook, look up the current version of the product. Many remote hooks specify an older version of
-a product, because the file is not changed as new versions are released. Use the container image for the current
-version. Newer versions of products may have slightly different command options. For example, version 2 of `betterleaks`
-will not use the `--staged` option.
+Once you have copied the hook, look up the current version of the product and get the digest for the relevant container
+image. Many remote hooks specify an older version of a product, because the file is not changed as new versions are
+released. Use the container image for the current version.
 
-Always use the SHA index digest to specify the image, rather than `latest` or a version tag. If an attacker gains access
-to the container registry they might change the image tags to point to images that contain malware. You can see the SHA
-digests for a container image in the Web interface of the container registry that publishes it, or by running the
-`inspect` command for Podman or Docker:
-
-```shell
-podman inspect ghcr.io/betterleaks/betterleaks:v1.10.1
-```
-
-The `inspect` command outputs the details of the image in JSON format. The `Digest` attribute provides the SHA digest
-that you use to identify the exact image:
-
-```json
-[
-     {
-          "Id": "4fc2b15fdcdf7c162df7abe4ab2ba6016850373ed8d89d5c4dd1c4af4e65830e",
-          "Digest": "sha256:07ef039be491a6c076b239dd8b8e42fdde984af6609c8541bdb7c9507708403e",
-          "RepoTags": [
-               "ghcr.io/betterleaks/betterleaks:v1.10.1"
-          ],
-```
-
-> The Betterleaks project uses
-> [GitHub Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry),
-> which means that you can also see the current container images and digests on the
-> [list of container images for the repository](https://github.com/betterleaks/betterleaks/pkgs/container/betterleaks).
+Remember that newer versions of products may have slightly different command options than older releases. For example,
+version 2 of `betterleaks` will not use the `--staged` option.
 
 Here is a complete example of a project configuration file:
 
@@ -215,7 +229,6 @@ repos:
         language: docker_image
         pass_filenames: false
 ```
-
 <!-- rumdl-enable MD013 -->
 
 If a project does not provide a `docker_image` hook, you can copy the configuration for a hook that they publish, and
@@ -232,14 +245,6 @@ language: docker_image
 <!-- rumdl-enable MD013 -->
 
 You can replace the container image that a hook uses at any time.
-
-### Container Images and CPU Architectures
-
-To avoid issues with different systems using different CPU architectures, use _multi-architecture_ container images
-where possible.
-
-If you cannot, container images may run with CPU emulation. Docker Desktop automatically emulates the required CPU
-architecture as needed, but other runtimes like Podman require extra configuration to run images with CPU emulation.
 
 ## Adding a Global Hook
 
