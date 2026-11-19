@@ -47,6 +47,8 @@ brew install rumdl
 
 ## Example Configuration File for `rumdl`
 
+Add a configuration file for `rumdl` to the root directory of each project. Name this configuration file `.rumdl.toml`.
+
 This example configuration file for a project enable the complete set of features that `rumdl` provides, including
 [reflow](https://rumdl.dev/md013/?h=reflow#reflow-modes) of text and running
 [external tools on code blocks](https://rumdl.dev/code-block-tools/):
