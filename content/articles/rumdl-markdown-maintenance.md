@@ -32,11 +32,11 @@ To install `rumdl` on a development system, use the packages from the [npm](http
 specify which version of `rumdl` it installs:
 
 ```shell
-npm install -g rumdl@0.3.2
+npm install -g rumdl@0.3.5
 ```
 
 ```shell
-pipx install rumdl==0.3.2
+pipx install rumdl==0.3.5
 ```
 
 You can also install `rumdl` with [Homebrew](https://brew.sh/). Homebrew always installs the latest version of `rumdl`:
