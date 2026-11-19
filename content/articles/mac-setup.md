@@ -10,7 +10,9 @@ tags = ["devops", "macos", "golang", "java", "javascript", "python"]
 
 A guide to setting up an Apple Mac for DevOps and software development.
 
-If you are thinking of switching to Linux, I also provide a [guide for setting up Fedora Workstation for development and DevOps](https://www.stuartellis.name/articles/fedora-workstation-setup/). Fedora is consistently one of the highest quality Linux desktop distributions.
+If you are thinking of switching to Linux, I also provide a
+[guide for setting up Fedora Workstation for development and DevOps](https://www.stuartellis.name/articles/fedora-workstation-setup/).
+Fedora is consistently one of the highest quality Linux desktop distributions.
 
 ## Do This First
 
@@ -19,31 +21,32 @@ point release. After all of the updates have been applied, restart the computer.
 
 ## Configuring a User Account
 
-Log in again and create an Admin user account for your use. If other people will be
-using the machine, create Standard accounts for them. Log out of the initial account,
-and log in to the Admin account that you have just created.
+Log in again and create an Admin user account for your use. If other people will be using the machine, create Standard
+accounts for them. Log out of the initial account, and log in to the Admin account that you have just created.
 
-Always log in with this new Admin account. The benefit of leaving the initial account
-untouched is that it ensures that you always have a working account to login with.
+Always log in with this new Admin account. The benefit of leaving the initial account untouched is that it ensures that
+you always have a working account to login with.
 
 {{< alert >}}
-_Admin accounts have sudo privileges:_ All Admin accounts on a Mac may use sudo to run command-line utilities with administrative (root) privileges.
+_Admin accounts have sudo privileges:_ All Admin accounts on a Mac may use sudo to run command-line utilities with
+administrative (root) privileges.
 {{< /alert >}}
 
 ### Securing the Safari Browser
 
-Whether or not you regularly use Safari, you should open it once, and adjust the
-settings in case that you use it later.
+Whether or not you regularly use Safari, you should open it once, and adjust the settings in case that you use it later.
 
 First, choose _Safari \> Settings \> General_ and deselect the option _Open “safe” files after downloading_.
 
-Second, go to _Safari \> Settings \> Search_. Decide which search engine that you want to use. Ensure that _Include search engine suggestions_, _Include Safari Suggestions_ and _Preload Top Hit in the background_ are not enabled.
+Second, go to _Safari \> Settings \> Search_. Decide which search engine that you want to use. Ensure that
+_Include search engine suggestions_, _Include Safari Suggestions_ and _Preload Top Hit in the background_ are not
+enabled.
 
 ## Configuring Security
 
-Apple provide quite secure operating systems, but unfortunately convenience has won out
-over security in a few places. These can easily be corrected by changing a few settings.
-If you are using a laptop then make all of these changes as soon as possible.
+Apple provide quite secure operating systems, but unfortunately convenience has won out over security in a few places.
+These can easily be corrected by changing a few settings. If you are using a laptop then make all of these changes as
+soon as possible.
 
 ### Security & Privacy
 
@@ -65,36 +68,33 @@ Select _System Settings \> Privacy & Security_.
 
 ### Enable File Vault NOW
 
-File Vault is a full-disk encryption system. You should enable File Vault
-_NOW_, because it is the only protection against anyone with physical access to your
-computer. All other security measures will be completely bypassed if someone with
-physical access simply restarts the computer with a bootable pen drive.
+File Vault is a full-disk encryption system. You should enable File Vault _NOW_, because it is the only protection
+against anyone with physical access to your computer. All other security measures will be completely bypassed if someone
+with physical access simply restarts the computer with a bootable pen drive.
 
 {{< alert >}}
-File Vault really is secure, which means that you can permanently lose access to your data if you lose the passwords and the recovery key.
+File Vault really is secure, which means that you can permanently lose access to your data if you lose the passwords and
+the recovery key.
 {{< /alert >}}
 
 ### Set a Firmware Password
 
-Set a password to stop access to the
-[Recovery](https://support.apple.com/en-us/HT201314) mode. Otherwise, any malicious
-individual can change the firmware settings to boot from a disc or device of their
-choosing. If you did not enable File Vault, then the attacker will have complete access
-to the files on the system.
+Set a password to stop access to the [Recovery](https://support.apple.com/en-us/HT201314) mode. Otherwise, any malicious
+individual can change the firmware settings to boot from a disc or device of their choosing. If you did not enable File
+Vault, then the attacker will have complete access to the files on the system.
 
 [Apple Knowledge Base article HT204455](https://support.apple.com/en-gb/HT204455)
 provides full details.
 
 ### Setting Up Time Machine Backups
 
-Time Machine is simple to set up. Just take a suitably large external hard drive, plug it
-in to your Mac, and agree when prompted. The drive setup process will reformat the hard
-drive. The only settings that may need to change are the exclusions.
+Time Machine is simple to set up. Just take a suitably large external hard drive, plug it in to your Mac, and agree when
+prompted. The drive setup process will reformat the hard drive. The only settings that may need to change are the
+exclusions.
 
-Choose _System Preferences \> Time Machine_, and click _Options_. Add to the exclusions
-list any folders that contain ISO disk images, virtual machines, or database files (such
-as Outlook). If the external hard drive is short of space, exclude the _System_
-folder.
+Choose _System Preferences \> Time Machine_, and click _Options_. Add to the exclusions list any folders that contain
+ISO disk images, virtual machines, or database files (such as Outlook). If the external hard drive is short of space,
+exclude the _System_ folder.
 
 ## Setting Up for Development
 
@@ -103,23 +103,27 @@ The first step is to install the _Command Line Tools for Xcode_. Once you have i
 
 ### Getting Xcode
 
-Apple now provide the Xcode suite as a free download from the App Store. To install the Command Line Tools, install Xcode from the App Store, then open a terminal window and enter the following command:
+Apple now provide the Xcode suite as a free download from the App Store. To install the Command Line Tools, install
+Xcode from the App Store, then open a terminal window and enter the following command:
 
 ```shell
 xcode-select --install
 ```
 
-If you want to install just the Command Line Tools, you can download a package from [the Apple Developer Downloads site](https://developer.apple.com/download/all/).
+If you want to install just the Command Line Tools, you can download a package from
+[the Apple Developer Downloads site](https://developer.apple.com/download/all/).
 
 ### Setting Up Homebrew
 
-[Homebrew](http://brew.sh/) provides a package management system for macOS. It enables you
-to quickly install the tools and libraries that you need and regularly update them. Always use Homebrew for tools that have frequently have new releases, like the [AWS CLI](https://aws.amazon.com/cli/).
+[Homebrew](http://brew.sh/) provides a package management system for macOS. It enables you to quickly install the tools
+and libraries that you need and regularly update them. Always use Homebrew for tools that have frequently have new
+releases, like the [AWS CLI](https://aws.amazon.com/cli/).
 
-To install Homebrew, download and open the latest PKG file from [the Releases on GitHub](https://github.com/Homebrew/brew/releases/latest).
+To install Homebrew, download and open the latest PKG file from
+[the Releases on GitHub](https://github.com/Homebrew/brew/releases/latest).
 
-You should also amend your PATH, so that the versions of tools that Homebrew provides will take precedence over others. To do this, edit the file _.zshrc_ in
-your home directory to include this line:
+You should also amend your PATH, so that the versions of tools that Homebrew provides will take precedence over others.
+To do this, edit the file _.zshrc_ in your home directory to include this line:
 
 ```shell
 export PATH="/usr/local/bin:/usr/local/sbin:~/bin:$PATH"
@@ -147,7 +151,9 @@ brew upgrade
 
 ### Enabling Auto Completion of Commands
 
-Many command-line tools provide automatic completion of commands. These include Git, curl and the AWS command-line tool. Homebrew installs the files for each command-line tool that provides completion, but it does not enable automatic completion in your shell.
+Many command-line tools provide automatic completion of commands. These include Git, curl and the AWS command-line tool.
+Homebrew installs the files for each command-line tool that provides completion, but it does not enable automatic
+completion in your shell.
 
 To enable auto completion, edit the file _.zshrc_ in your home directory to include this line:
 
@@ -157,13 +163,18 @@ autoload bashcompinit && bashcompinit
 
 Close any terminal windows that you currently have open. Every new terminal window will support autocompletion.
 
-To use auto completion, type the name of the command, and press the Tab key on your keyboard. You will see a list of possible completions. Press the Tab key to cycle through the completions, and press the Enter key to accept a completion.
+To use auto completion, type the name of the command, and press the Tab key on your keyboard. You will see a list of
+possible completions. Press the Tab key to cycle through the completions, and press the Enter key to accept a
+completion.
 
 ### Setting Up Tools for Passwords and Secrets
 
-Every technical user frequently needs to use API tokens and other sensitive credentials, keeping them secure whilst making them available when required. Set up your tools for managing passwords and secrets before you begin to use a system for work.
+Every technical user frequently needs to use API tokens and other sensitive credentials, keeping them secure whilst
+making them available when required. Set up your tools for managing passwords and secrets before you begin to use a
+system for work.
 
-If you work for an organization, they should specify the tools that they require you to use. Otherwise, consider reading my article on [tools for credentials and secrets](https://www.stuartellis.name/articles/tech-credentials-and-secrets/).
+If you work for an organization, they should specify the tools that they require you to use. Otherwise, consider reading
+my article on [tools for credentials and secrets](https://www.stuartellis.name/articles/tech-credentials-and-secrets/).
 
 ### Installing the Git Version Control System
 
@@ -175,21 +186,20 @@ To install a newer version of Git than Apple provide, use Homebrew. Enter this c
 brew install git
 ```
 
-If you do not use Homebrew, go to the [Web site](http://www.git-scm.com/) and follow the
-link for _Other Download Options_ to get a macOS disk image. Open your downloaded
-copy of the disk image and run the enclosed installer in the usual way, then dismount
-the disk image.
+If you do not use Homebrew, go to the [Web site](http://www.git-scm.com/) and follow the link for
+_Other Download Options_ to get a macOS disk image. Open your downloaded copy of the disk image and run the enclosed
+installer in the usual way, then dismount the disk image.
 
-Always set your details before you create or clone repositories on a new system. This
-requires two commands in a terminal window:
+Always set your details before you create or clone repositories on a new system. This requires two commands in a
+terminal window:
 
 ```shell
 git config --global user.name "Your Name"
 git config --global user.email "you@your-domain.com"
 ```
 
-The _global_ option means that the setting will apply to every repository that you work
-with in the current user account.
+The _global_ option means that the setting will apply to every repository that you work with in the current user
+account.
 
 To enable colors in the output, enter this command:
 
@@ -197,24 +207,33 @@ To enable colors in the output, enter this command:
 git config --global color.ui auto
 ```
 
-> Enable commit signing in Git before you work on shared projects. Follow the steps in [this article on signing code commits](https://www.stuartellis.name/articles/signing-code-commits/) to enable Git to sign your commits with a GPG key.
+> Enable commit signing in Git before you work on shared projects. Follow the steps in
+> [this article on signing code commits](https://www.stuartellis.name/articles/signing-code-commits/) to enable Git to
+> sign your commits with a GPG key.
 
 ### Text Editors
 
-Installations of macOS include a command-line version of [vim](http://www.vim.org/) and TextEdit, a desktop text editor. TextEdit is designed for light-weight word processing, and it has no support for programming. Add the code editors or IDEs that you would prefer to use.
+Installations of macOS include a command-line version of [vim](http://www.vim.org/) and TextEdit, a desktop text editor.
+TextEdit is designed for light-weight word processing, and it has no support for programming. Add the code editors or
+IDEs that you would prefer to use.
 
-If you do not have a preferred editor, consider using [Zed](https://zed.dev/) or a version of [Visual Studio Code](https://code.visualstudio.com). These powerful desktop editors for programming, with built-in support for version control, debugging and working with LLMs. Their large range of extensions enable them to work with every popular programming language and framework. They are available free of charge.
+If you do not have a preferred editor, consider using [Zed](https://zed.dev/) or a version of
+[Visual Studio Code](https://code.visualstudio.com). These powerful desktop editors for programming, with built-in
+support for version control, debugging and working with LLMs. Their large range of extensions enable them to work with
+every popular programming language and framework. They are available free of charge.
 
-The Microsoft releases of Visual Studio Code are proprietary software with telemetry enabled by default, and download extensions from a proprietary Microsoft app store. if you have issues or concerns about the Microsoft releases, use [vscodium](https://vscodium.com) instead.
+The Microsoft releases of Visual Studio Code are proprietary software with telemetry enabled by default, and download
+extensions from a proprietary Microsoft app store. if you have issues or concerns about the Microsoft releases, use
+[vscodium](https://vscodium.com) instead.
 
-> If you prefer to avoid using LLMs, consider using the [Gram editor](https://gram-editor.com/). Gram is a fork of [Zed](https://zed.dev/) that removes the support for LLMs.
+> If you prefer to avoid using LLMs, consider using the [Gram editor](https://gram-editor.com/). Gram is a fork of
+> [Zed](https://zed.dev/) that removes the support for LLMs.
 
 #### Setting The EDITOR Environment Variable
 
-Whichever text editor you choose, remember to set the EDITOR environment variable in
-your _~/.zshrc_ file, so that this editor is automatically invoked by command-line
-tools like your version control system. For example, put this line in your profile to
-make Visual Studio Code the favored text editor:
+Whichever text editor you choose, remember to set the EDITOR environment variable in your _~/.zshrc_ file, so that this
+editor is automatically invoked by command-line tools like your version control system. For example, put this line in
+your profile to make Visual Studio Code the favored text editor:
 
 ```shell
 export EDITOR="code"
@@ -222,11 +241,11 @@ export EDITOR="code"
 
 ### Setting Up A Directory Structure for Projects
 
-To keep your projects tidy, I would recommend following these guidelines. They may seem
-slightly fussy, but they pay off when you have many projects, some of which are on
-different version control hosts.
+To keep your projects tidy, I would recommend following these guidelines. They may seem slightly fussy, but they pay off
+when you have many projects, some of which are on different version control hosts.
 
-First, create a top-level directory with the name _Projects_. For each repository host, create a subdirectory in _Projects_. Add a subdirectory that matches your username. The final directory structure looks like this:
+First, create a top-level directory with the name _Projects_. For each repository host, create a subdirectory in
+_Projects_. Add a subdirectory that matches your username. The final directory structure looks like this:
 
 ```text
 Projects/
@@ -239,17 +258,24 @@ Projects/
             another-project/
 ```
 
-> _Projects_ is a recognised directory name that will be used by Open Source tools, in the same way that _Downloads_ and _Music_ are standard locations.
+> _Projects_ is a recognised directory name that will be used by Open Source tools, in the same way that _Downloads_ and
+> _Music_ are standard locations.
 
 ## Working with Programming Languages
 
-Avoid using the installations of programming languages that are included in macOS. Instead, use [version manager tools](https://www.stuartellis.name/articles/version-managers/). These enable you to use the correct versions and dependencies for each project that you work on. Follow the advice in the sections below to install version managers for popular programming languages with Homebrew.
+Avoid using the installations of programming languages that are included in macOS. Instead, use
+[version manager tools](https://www.stuartellis.name/articles/version-managers/). These enable you to use the correct
+versions and dependencies for each project that you work on. Follow the advice in the sections below to install version
+managers for popular programming languages with Homebrew.
 
-If possible, avoid using Homebrew itself to install programming languages. Homebrew has limited support for working with multiple versions of the same programming language.
+If possible, avoid using Homebrew itself to install programming languages. Homebrew has limited support for working with
+multiple versions of the same programming language.
 
 ### Python Development: pyenv and pipx
 
-The copy of Python 3 that is supplied with macOS is never the latest version of Python. Use either [mise](https://mise.jdx.dev/) or [pyenv](https://github.com/pyenv/pyenv) to install newer versions of Python. Both of these tools enable you to use multiple versions of Python.
+The copy of Python 3 that is supplied with macOS is never the latest version of Python. Use either
+[mise](https://mise.jdx.dev/) or [pyenv](https://github.com/pyenv/pyenv) to install newer versions of Python. Both of
+these tools enable you to use multiple versions of Python.
 
 To install _pyenv_ with Homebrew, run this command in a terminal window:
 
@@ -257,7 +283,8 @@ To install _pyenv_ with Homebrew, run this command in a terminal window:
 brew install pyenv
 ```
 
-Use [pipx](https://pypa.github.io/pipx/) to install Python applications, rather than _pip_ or Homebrew. To set up _pipx_, run these commands in a terminal window:
+Use [pipx](https://pypa.github.io/pipx/) to install Python applications, rather than _pip_ or Homebrew. To set up
+_pipx_, run these commands in a terminal window:
 
 ```shell
 brew install pipx
@@ -266,12 +293,12 @@ pipx ensurepath
 
 ### Rust Development: rustup
 
-The official _rustup_ utility enables you to install the tools for building software
-with the Rust programming language. Click on the Install button on the front page of the
-[Rust Website](https://www.rust-lang.org), and follow the instructions.
+The official _rustup_ utility enables you to install the tools for building software with the Rust programming language.
+Click on the Install button on the front page of the [Rust Website](https://www.rust-lang.org), and follow the
+instructions.
 
-By default, the installer adds the correct directory to your path. If this does not
-work, add this to your PATH manually:
+By default, the installer adds the correct directory to your path. If this does not work, add this to your PATH
+manually:
 
 ```shell
 $HOME/.cargo/bin
@@ -281,7 +308,8 @@ This process installs all of the tools into your home directory, and does not ad
 
 ### JavaScript Development: Node.js and fnm
 
-Use [fnm](https://github.com/Schniz/fnm) to manage your Node.js installations. To install it with Homebrew, enter this command:
+Use [fnm](https://github.com/Schniz/fnm) to manage your Node.js installations. To install it with Homebrew, enter this
+command:
 
 ```shell
 brew install fnm
@@ -299,11 +327,13 @@ Use Homebrew to install the _go_ tool. To install [Go](https://go.dev/) with Hom
 brew install golang
 ```
 
-This provides the standard command-line tool for Go. The _go_ tool includes support for working with [multiple versions of Go](https://go.dev/doc/manage-install#installing-multiple).
+This provides the standard command-line tool for Go. The _go_ tool includes support for working with
+[multiple versions of Go](https://go.dev/doc/manage-install#installing-multiple).
 
 #### Setting a GOPATH
 
-Current versions of Go do not require a GOPATH environment variable, but you should set it to ensure that third-party tools and Terminal auto-completion work correctly.
+Current versions of Go do not require a GOPATH environment variable, but you should set it to ensure that third-party
+tools and Terminal auto-completion work correctly.
 
 Set a GOPATH environment variable in your _~/.zshrc_ file:
 
@@ -323,11 +353,15 @@ Close the Terminal and open it again for the changes to take effect.
 
 #### Which Version of Java?
 
-Many vendors provide a JDK. To avoid licensing and support issues, use Eclipse Temurin. This is an Open Source JDK that is maintained by the [Adoptium](https://adoptium.net/) project. The versions of Java on the OpenJDK Website are for testers, and the Oracle JDK is a proprietary product. Use the _LTS_ version of Temurin, unless you need features that are in the latest releases.
+Many vendors provide a JDK. To avoid licensing and support issues, use Eclipse Temurin. This is an Open Source JDK that
+is maintained by the [Adoptium](https://adoptium.net/) project. The versions of Java on the OpenJDK Website are for
+testers, and the Oracle JDK is a proprietary product. Use the _LTS_ version of Temurin, unless you need features that
+are in the latest releases.
 
 Use either [mise](https://mise.jdx.dev/) or the [jEnv](https://www.jenv.be/) version manager to work with multiple JDKs.
 
-Once you have installed a JDK, get the [Apache Maven](https://maven.apache.org) build tool. This is provided by the Maven project itself, and is not part of Temurin or the OpenJDK.
+Once you have installed a JDK, get the [Apache Maven](https://maven.apache.org) build tool. This is provided by the
+Maven project itself, and is not part of Temurin or the OpenJDK.
 
 #### Setting up jEnv
 
@@ -357,7 +391,8 @@ jenv enable-plugin export
 
 This enables jEnv to manage the JAVA_HOME environment variable.
 
-To avoid inconsistent behaviour, close all the terminal windows that you currently have open. The jEnv utility will work correctly in new terminal windows.
+To avoid inconsistent behaviour, close all the terminal windows that you currently have open. The jEnv utility will work
+correctly in new terminal windows.
 
 Lastly, run this command to register your current JDK with jEnv:
 
@@ -394,25 +429,35 @@ To manually install a copy of [Apache Maven](https://maven.apache.org):
 
 Replace _MAVEN-DIRECTORY_ with the name of the directory that Maven uses, such as _apache-maven-3.6.0_.
 
-Maven is written in Java, which means that the project provides one package, which works on any operating system that has a supported version of Java.
+Maven is written in Java, which means that the project provides one package, which works on any operating system that
+has a supported version of Java.
 
 ### Terraform and OpenTofu
 
-Use the [tenv](https://tofuutils.github.io/tenv/) version manager to install versions of Terraform and OpenTofu. To install _tenv_ with Homebrew, run this command in a terminal window:
+Use the [tenv](https://tofuutils.github.io/tenv/) version manager to install versions of Terraform and OpenTofu. To
+install _tenv_ with Homebrew, run this command in a terminal window:
 
 ```shell
 brew install tenv cosign
 ```
 
-Always install _cosign_ along with _tenv_. If _cosign_ is present, _tenv_ automatically uses it to carry out signature verification on the binaries that it downloads.
+Always install _cosign_ along with _tenv_. If _cosign_ is present, _tenv_ automatically uses it to carry out signature
+verification on the binaries that it downloads.
 
 ## Working with Containers
 
-[Docker Desktop](https://www.docker.com/products/docker-desktop/) is the most well-known tool for working with container images. It is proprietary software, and the license terms require you to purchase a subscription for commercial use in a larger organization. Consider using the Podman tools instead. These are Open Source products that are maintained by a project of the Cloud Native Computing Foundation.
+[Docker Desktop](https://www.docker.com/products/docker-desktop/) is the most well-known tool for working with container
+images. It is proprietary software, and the license terms require you to purchase a subscription for commercial use in a
+larger organization. Consider using the Podman tools instead. These are Open Source products that are maintained by a
+project of the Cloud Native Computing Foundation.
 
-For a graphical interface for working with containers, add [Podman Desktop](https://podman-desktop.io) to your system. It provides equivalent features to Docker Desktop.
+For a graphical interface for working with containers, add [Podman Desktop](https://podman-desktop.io) to your system.
+It provides equivalent features to Docker Desktop.
 
-[Podman](https://podman.io/) itself provides the features of the Docker command-line tool for running container images. By design, Podman accepts the same syntax as the `docker` command-line tool, and will read Dockerfiles, so that is a drop-in replacement. The [Usage Transfer](https://github.com/podman-container-tools/podman/blob/main/transfer.md) page lists Docker commands, and the equivalents for Podman.
+[Podman](https://podman.io/) itself provides the features of the Docker command-line tool for running container images.
+By design, Podman accepts the same syntax as the `docker` command-line tool, and will read Dockerfiles, so that is a
+drop-in replacement. The [Usage Transfer](https://github.com/podman-container-tools/podman/blob/main/transfer.md) page
+lists Docker commands, and the equivalents for Podman.
 
 To install the Podman command-line tool with Homebrew, enter this command in a terminal window:
 
@@ -420,12 +465,14 @@ To install the Podman command-line tool with Homebrew, enter this command in a t
 brew install podman
 ```
 
-> Apple are now developing [Container](https://opensource.apple.com/projects/container/), a command-line tool for working with container images. This tool is not yet shipped as part of macOS.
+> Apple are now developing [Container](https://opensource.apple.com/projects/container/), a command-line tool for
+> working with container images. This tool is not yet shipped as part of macOS.
 
 ## Databases
 
-Consider using containers to run the databases that you need. If you prefer to install services
-directly on to your workstation, Homebrew provides packages for PostgreSQL, MariaDB, MySQL and the [Community Edition of MongoDB](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-os-x/).
+Consider using containers to run the databases that you need. If you prefer to install services directly on to your
+workstation, Homebrew provides packages for PostgreSQL, MariaDB, MySQL and the
+[Community Edition of MongoDB](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-os-x/).
 
 ### Installing PostgreSQL
 
@@ -435,13 +482,12 @@ To install PostgreSQL using Homebrew, enter this command in a terminal window:
 brew install postgresql
 ```
 
-This command installs the server, the command-line tools, and the client libraries that
-are needed to compile adapters for programming languages.
+This command installs the server, the command-line tools, and the client libraries that are needed to compile adapters
+for programming languages.
 
-Homebrew also provides some commands for managing your PostgreSQL installation. For
-example, to start the server, follow the instructions that are displayed after the
-installation process is completed. If you upgrade your copy of PostgreSQL, you should
-use the _postgresql-upgrade-database_ command that Homebrew gives you.
+Homebrew also provides some commands for managing your PostgreSQL installation. For example, to start the server, follow
+the instructions that are displayed after the installation process is completed. If you upgrade your copy of PostgreSQL,
+you should use the _postgresql-upgrade-database_ command that Homebrew gives you.
 
 ### Installing MariaDB or MySQL
 
@@ -457,23 +503,24 @@ To install MySQL using Homebrew, enter this command in a terminal window:
 brew install mysql
 ```
 
-These commands install the server, the command-line tools, and the client libraries that
-are needed to compile adapters for programming languages. To start the server, follow
-the instructions that are displayed after the installation process is completed.
+These commands install the server, the command-line tools, and the client libraries that are needed to compile adapters
+for programming languages. To start the server, follow the instructions that are displayed after the installation
+process is completed.
 
 {{< alert >}}
 For compatibility, MariaDB uses the same names for command-line tools as MySQL.
 {{< /alert >}}
 
-Remember to set a password for the root accounts. First, login with the _mysql_
-command-line utility:
+Remember to set a password for the root accounts. First, login with the _mysql_ command-line utility:
 
 ```shell
 mysql -u root -q
 ```
 
 {{< alert >}}
-_The -q Option Disables Command History:_ By default, the command-line client stores the full text of every command in a history file. If you know that you are going to run statements that include passwords or other sensitive data, use the -q option.
+_The -q Option Disables Command History:_ By default, the command-line client stores the full text of every command in a
+history file. If you know that you are going to run statements that include passwords or other sensitive data, use the
+-q option.
 {{< /alert >}}
 
 Run these statements to change the password for root access:
@@ -485,8 +532,7 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
-You now need a password to login to the installation as root. To login with root again,
-use this command:
+You now need a password to login to the installation as root. To login with root again, use this command:
 
 ```shell
 mysql -u root -p
@@ -494,8 +540,7 @@ mysql -u root -p
 
 Enter the password when prompted.
 
-You should also remove the anonymous accounts and test database that MySQL automatically
-includes:
+You should also remove the anonymous accounts and test database that MySQL automatically includes:
 
 ```sql
 DROP DATABASE test;
@@ -503,14 +548,15 @@ DELETE FROM mysql.user WHERE user = ’’;
 FLUSH PRIVILEGES;
 ```
 
-If you intend to duplicate a production environment for testing, create a configuration
-file on your Mac. Production installations of MySQL should be configured with
-appropriate _SQL modes_ to enable data integrity safeguards. By default, MySQL permits
-various types of invalid data to be entered.
+If you intend to duplicate a production environment for testing, create a configuration file on your Mac. Production
+installations of MySQL should be configured with appropriate _SQL modes_ to enable data integrity safeguards. By
+default, MySQL permits various types of invalid data to be entered.
 
 ### Database Management Tools
 
-To work with SQL databases, use [Beekeeper Studio](https://www.beekeeperstudio.io). This graphical tool supports the popular Open Source databases, as well as Microsoft SQL Server and Amazon Redshift. This enables you to use the same tool for all of your databases.
+To work with SQL databases, use [Beekeeper Studio](https://www.beekeeperstudio.io). This graphical tool supports the
+popular Open Source databases, as well as Microsoft SQL Server and Amazon Redshift. This enables you to use the same
+tool for all of your databases.
 
 Install Beekeeper with Homebrew:
 
@@ -518,12 +564,15 @@ Install Beekeeper with Homebrew:
 brew install --cask beekeeper-studio
 ```
 
-Each vendor recommends a specific graphical tool for their particular database product. These are the tools that the vendors suggest:
+Each vendor recommends a specific graphical tool for their particular database product. These are the tools that the
+vendors suggest:
 
-- [Azure Data Studio](https://docs.microsoft.com/en-gb/sql/azure-data-studio/what-is?view=sql-server-2017) - Microsoft tool for SQL Server and Azure databases
+- [Azure Data Studio](https://docs.microsoft.com/en-gb/sql/azure-data-studio/what-is?view=sql-server-2017) - Microsoft
+  tool for SQL Server and Azure databases
 - [Compass](https://www.mongodb.com/products/compass) - The official tool for MongoDB
 - [MySQL Workbench](http://wb.mysql.com/) - The official tool for MySQL
-- [Oracle SQL Developer](https://www.oracle.com/database/technologies/appdev/sql-developer.html) - The official tool for Oracle
+- [Oracle SQL Developer](https://www.oracle.com/database/technologies/appdev/sql-developer.html) - The official tool for
+  Oracle
 - [pgAdmin](https://www.pgadmin.org/) - The recommended tool for PostgreSQL
 
 ## Other Useful Desktop Applications for Developers
@@ -533,4 +582,5 @@ Each vendor recommends a specific graphical tool for their particular database p
 
 ## Online Resources
 
-The [macOS Privacy and Security Guide](https://github.com/drduh/macOS-Security-and-Privacy-Guide) by Dr Duh provides extensive information about those topics.
+The [macOS Privacy and Security Guide](https://github.com/drduh/macOS-Security-and-Privacy-Guide) by Dr Duh provides
+extensive information about those topics.

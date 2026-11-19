@@ -545,7 +545,7 @@ example:
 ```python
 from datetime import datetime, timezone
 
-dt = datetime.now(timezone.utc)
+dt = datetime.now(timezone.UTC)
 ```
 
 Python 3.9 and above include the **zoneinfo** module. This provides access to the standard IANA database of time zones.
@@ -578,7 +578,7 @@ This function provides an iterator, and works with a context manager:
 ```python
 import os
 
-with os.scandir('some_directory/') as entries:
+with os.scandir("some_directory/") as entries:
     for entry in entries:
         print(entry.name)
 ```

@@ -7,45 +7,84 @@ categories = ["automation", "devops", "kubernetes"]
 tags = ["automation", "devops", "kubernetes"]
 +++
 
-[Helmfile](https://helmfile.readthedocs.io/en/stable/) is a command-line tool for describing and applying configurations to Kubernetes clusters. It enables you to define sets of configuration for Kubernetes that each include multiple Helm charts, kustomizations and manifests. Helmfile supports templating in the configuration and lookups that can query [local or remote data sources](https://github.com/helmfile/vals?tab=readme-ov-file#supported-backends), such as secrets storage, configuration services and external files.
+[Helmfile](https://helmfile.readthedocs.io/en/stable/) is a command-line tool for describing and applying configurations
+to Kubernetes clusters. It enables you to define sets of configuration for Kubernetes that each include multiple Helm
+charts, kustomizations and manifests. Helmfile supports templating in the configuration and lookups that can query
+[local or remote data sources](https://github.com/helmfile/vals?tab=readme-ov-file#supported-backends), such as secrets
+storage, configuration services and external files.
 
-Many administrators use [GitOps](https://www.gitops.tech/) systems like [Flux](https://fluxcd.io/flux/) or [Argo CD](https://argo-cd.readthedocs.io/en/stable/) that run on a Kubernetes cluster and continuously apply a configuration. You can deploy a GitOps system on a cluster with Helmfile, or you could manage all of the configuration of a cluster with just Helmfile.
+Many administrators use [GitOps](https://www.gitops.tech/) systems like [Flux](https://fluxcd.io/flux/) or
+[Argo CD](https://argo-cd.readthedocs.io/en/stable/) that run on a Kubernetes cluster and continuously apply a
+configuration. You can deploy a GitOps system on a cluster with Helmfile, or you could manage all of the configuration
+of a cluster with just Helmfile.
 
-Helmfile is particularly useful for clusters that are temporary or should change rapidly as part of another process. For example, you might use it to configure development Kubernetes clusters on laptops, or in a CI pipeline that deploys test clusters on demand.
+Helmfile is particularly useful for clusters that are temporary or should change rapidly as part of another process. For
+example, you might use it to configure development Kubernetes clusters on laptops, or in a CI pipeline that deploys test
+clusters on demand.
 
 > This article is written for Helmfile 1.3.0 and above.
 
 ## How It Works
 
-Each Helmfile configuration consists of one of more YAML files that describe a set of [Helm releases](https://helm.sh/docs/intro/using_helm/#three-big-concepts). These YAML files can include templating and lookups. You can define multiple [environments](https://helmfile.readthedocs.io/en/stable/#environment) within the same Helmfile configuration, to provide different sets of values and for use in conditions.
+Each Helmfile configuration consists of one of more YAML files that describe a set of
+[Helm releases](https://helm.sh/docs/intro/using_helm/#three-big-concepts). These YAML files can include templating and
+lookups. You can define multiple [environments](https://helmfile.readthedocs.io/en/stable/#environment) within the same
+Helmfile configuration, to provide different sets of values and for use in conditions.
 
-> There is a [published YAML schema for Helmfile configuration](https://www.schemastore.org/helmfile.json), so that you can validate your configuration files with standard tools.
+> There is a [published YAML schema for Helmfile configuration](https://www.schemastore.org/helmfile.json), so that you
+> can validate your configuration files with standard tools.
 
-Helmfile is designed to build on other existing tools and services as much as possible. It runs [Helm](https://helm.sh) to work with Helm releases and [Kustomize](https://kustomize.io/) for [kustomizations](https://kubectl.docs.kubernetes.io/guides/introduction/kustomize/). The templating uses [the standard Go template package](https://pkg.go.dev/text/template) with functions from the [Sprig](https://masterminds.github.io/sprig/) library and [HCL](https://helmfile.readthedocs.io/en/stable/hcl_funcs/#standard-library). Helmfile includes the [vals](https://github.com/helmfile/vals) package to lookup values from [a wide range of data sources](https://github.com/helmfile/vals?tab=readme-ov-file#supported-backends), and it works with [SOPS](https://getsops.io/) by using the Helm plugin for [secrets](https://github.com/jkroepke/helm-secrets).
+Helmfile is designed to build on other existing tools and services as much as possible. It runs [Helm](https://helm.sh)
+to work with Helm releases and [Kustomize](https://kustomize.io/) for
+[kustomizations](https://kubectl.docs.kubernetes.io/guides/introduction/kustomize/). The templating uses
+[the standard Go template package](https://pkg.go.dev/text/template) with functions from the
+[Sprig](https://masterminds.github.io/sprig/) library and
+[HCL](https://helmfile.readthedocs.io/en/stable/hcl_funcs/#standard-library). Helmfile includes the
+[vals](https://github.com/helmfile/vals) package to lookup values from
+[a wide range of data sources](https://github.com/helmfile/vals?tab=readme-ov-file#supported-backends), and it works
+with [SOPS](https://getsops.io/) by using the Helm plugin for [secrets](https://github.com/jkroepke/helm-secrets).
 
-Helmfile will use Helm charts from either remote repositories or the filesystem. It can also maintain [lockfiles](https://helmfile.readthedocs.io/en/stable/#deps) for the Helm charts from repositories. If you specify a version constraint for a chart in the configuration then Helmfile can resolve the exact version that is required for that chart. It writes these to a lockfile which you can store in version control. This ensures that the same versions are used consistently.
+Helmfile will use Helm charts from either remote repositories or the filesystem. It can also maintain
+[lockfiles](https://helmfile.readthedocs.io/en/stable/#deps) for the Helm charts from repositories. If you specify a
+version constraint for a chart in the configuration then Helmfile can resolve the exact version that is required for
+that chart. It writes these to a lockfile which you can store in version control. This ensures that the same versions
+are used consistently.
 
-> If you define more than one environment in a Helmfile configuration, you should have [a separate lockfile for each environment](https://helmfile.readthedocs.io/en/stable/advanced-features/#lockfile-per-environment).
+> If you define more than one environment in a Helmfile configuration, you should have
+> [a separate lockfile for each environment](https://helmfile.readthedocs.io/en/stable/advanced-features/#lockfile-per-environment).
 
-When you run Helmfile, it generates the YAML for Helm releases from the configuration and the lockfile, using templating and lookups to resolve values as needed. It only applies this generated configuration if you run the specific commands that change the state of the target cluster. This means that you can develop a configuration and compare it with the deployed releases on a target cluster without making any changes to the current state of that cluster.
+When you run Helmfile, it generates the YAML for Helm releases from the configuration and the lockfile, using templating
+and lookups to resolve values as needed. It only applies this generated configuration if you run the specific commands
+that change the state of the target cluster. This means that you can develop a configuration and compare it with the
+deployed releases on a target cluster without making any changes to the current state of that cluster.
 
-You can use a combination of Helmfile and other tools to manage different resources on the same cluster. Since Helmfile runs Helm and produces standard Helm releases, it is compatible with other Kubernetes management tools.
+You can use a combination of Helmfile and other tools to manage different resources on the same cluster. Since Helmfile
+runs Helm and produces standard Helm releases, it is compatible with other Kubernetes management tools.
 
-> If you would like to use Helmfile and Argo CD on the same Kubernetes clusters, see the Helmfile documentation on [Argo CD integration](https://helmfile.readthedocs.io/en/stable/#argocd-integration).
+> If you would like to use Helmfile and Argo CD on the same Kubernetes clusters, see the Helmfile documentation on
+> [Argo CD integration](https://helmfile.readthedocs.io/en/stable/#argocd-integration).
 
 ### Selectors
 
-You can develop and apply limited changes by specifying [selectors](https://helmfile.readthedocs.io/en/stable/#labels-overview). To use selectors, ensure that your Helmfile configuration has labels for release definitions and included files.
+You can develop and apply limited changes by specifying
+[selectors](https://helmfile.readthedocs.io/en/stable/#labels-overview). To use selectors, ensure that your Helmfile
+configuration has labels for release definitions and included files.
 
-You can then specify one or more selectors with any Helmfile command and it will use the labels to determine which parts of the configuration should be used. The generated YAML will only include the required releases.
+You can then specify one or more selectors with any Helmfile command and it will use the labels to determine which parts
+of the configuration should be used. The generated YAML will only include the required releases.
 
 ### Using Manifests
 
-If you need to deploy Kubernetes manifests that are not part of a Helm chart then you can specify a directory as the source for a release, instead of the location of a Helm chart. The directory only needs to contain YAML files for the manifests and any kustomizations that you want to apply to them. Helmfile will automatically create a temporary Helm chart for the directory and generate a release for it, alongside the Helm releases that it generates for existing charts.
+If you need to deploy Kubernetes manifests that are not part of a Helm chart then you can specify a directory as the
+source for a release, instead of the location of a Helm chart. The directory only needs to contain YAML files for the
+manifests and any kustomizations that you want to apply to them. Helmfile will automatically create a temporary Helm
+chart for the directory and generate a release for it, alongside the Helm releases that it generates for existing
+charts.
 
 ## Quick Examples
 
-To create a Helmfile configuration, make a directory that contains a file with the name _helmfile.yaml.gotmpl_ and add some configuration to the file. The simplest Helmfile configuration looks like this:
+To create a Helmfile configuration, make a directory that contains a file with the name _helmfile.yaml.gotmpl_ and add
+some configuration to the file. The simplest Helmfile configuration looks like this:
 
 ```yaml
 ---
@@ -64,11 +103,14 @@ releases:
         value: false
 ```
 
-This example configuration defines the values for the Helm chart as part of the block for the release. In most cases, you will create separate files and use templating to provide the values for Helm charts.
+This example configuration defines the values for the Helm chart as part of the block for the release. In most cases,
+you will create separate files and use templating to provide the values for Helm charts.
 
-> Use the file extension _.yaml.gotmpl_ for the main Helmfile configuration file, and any other files with templated values. Helmfile only applies templating to files that have _.gotmpl_ as part of their file extension.
+> Use the file extension _.yaml.gotmpl_ for the main Helmfile configuration file, and any other files with templated
+> values. Helmfile only applies templating to files that have _.gotmpl_ as part of their file extension.
 
-To use a Helmfile configuration, ensure that you have set the correct Kubernetes context to access the target cluster, and change your working directory to the directory for the main file. Then run Helmfile commands:
+To use a Helmfile configuration, ensure that you have set the correct Kubernetes context to access the target cluster,
+and change your working directory to the directory for the main file. Then run Helmfile commands:
 
 ```shell
 # Generate a lock file for Helm chart versions
@@ -81,27 +123,33 @@ helmfile diff
 helmfile apply
 ```
 
-> When you run `apply`, the namespace for a release will be automatically created if it does not already exist. Helmfile operations do not delete namespaces.
+> When you run `apply`, the namespace for a release will be automatically created if it does not already exist. Helmfile
+> operations do not delete namespaces.
 
-To update the configuration on the cluster, change the Helmfile configuration and run `helmfile apply` again. We should use `apply` for most deployments. If you need to force Helm to reconcile the releases on the cluster with the configuration, use `sync` instead:
+To update the configuration on the cluster, change the Helmfile configuration and run `helmfile apply` again. We should
+use `apply` for most deployments. If you need to force Helm to reconcile the releases on the cluster with the
+configuration, use `sync` instead:
 
 ```shell
 helmfile sync
 ```
 
-To see the complete set of YAML that Helmfile generates, rather than a diff between the generated YAML and the target cluster, use `helmfile template`:
+To see the complete set of YAML that Helmfile generates, rather than a diff between the generated YAML and the target
+cluster, use `helmfile template`:
 
 ```shell
 helmfile template
 ```
 
-Add `--debug` to get more information about how Helmfile generates the YAML, with warnings and error messages for any issues:
+Add `--debug` to get more information about how Helmfile generates the YAML, with warnings and error messages for any
+issues:
 
 ```shell
 helmfile template --debug
 ```
 
-To remove a specific release, set the `installed` option for the release definition to `false`, and run `helmfile apply`. To delete all of the releases from a cluster, use `destroy`:
+To remove a specific release, set the `installed` option for the release definition to `false`, and run
+`helmfile apply`. To delete all of the releases from a cluster, use `destroy`:
 
 ```shell
 helmfile destroy
@@ -111,17 +159,22 @@ Deleting a Helm release removes all of the resources that it manages. Helmfile w
 
 ## Other Examples of Helmfile Configurations
 
-For examples of configurations that use a directory structure, see my [example EKS project](https://github.com/stuartellis/eks-auto-example). This project uses three Helmfile configurations:
+For examples of configurations that use a directory structure, see my
+[example EKS project](https://github.com/stuartellis/eks-auto-example). This project uses three Helmfile configurations:
 
 - _helmfile/aws/_ - AWS EKS Auto Mode
 - _helmfile/kind/_ - Docker Desktop (Kubernetes in Docker)
 - _helmfile/minikube/_ - Minikube
 
-This project also includes a [Task file](https://github.com/stuartellis/eks-auto-example/blob/main/tasks/helmfile/Taskfile.yaml) for standard Helmfile tasks.
+This project also includes a
+[Task file](https://github.com/stuartellis/eks-auto-example/blob/main/tasks/helmfile/Taskfile.yaml) for standard
+Helmfile tasks.
 
 ## Requirements
 
-Helmfile itself is a single executable file. It relies on [Helm](https://helm.sh) and several Helm plugins. It also uses the [kustomize](https://kustomize.io/) command-line tool when working with kustomizations. This means that both Helm and Kustomize must be installed on the system.
+Helmfile itself is a single executable file. It relies on [Helm](https://helm.sh) and several Helm plugins. It also uses
+the [kustomize](https://kustomize.io/) command-line tool when working with kustomizations. This means that both Helm and
+Kustomize must be installed on the system.
 
 To install Helmfile on macOS and Linux, you can use [Homebrew](https://brew.sh/):
 
@@ -131,20 +184,24 @@ brew install helmfile kustomize
 
 > Homebrew will install Helm 4 as a dependency of Helmfile.
 
-Once you have Helmfile, use `init` to add the required plugins to your Helm installation. Run this command in a terminal window:
+Once you have Helmfile, use `init` to add the required plugins to your Helm installation. Run this command in a terminal
+window:
 
 ```shell
 helmfile init
 ```
 
-> Helmfile uses these plugins for Helm: [diff](https://github.com/databus23/helm-diff), [helm-git](https://github.com/aslafy-z/helm-git), [s3](https://github.com/hypnoglow/helm-s3) and [secrets](https://github.com/jkroepke/helm-secrets).
+> Helmfile uses these plugins for Helm: [diff](https://github.com/databus23/helm-diff),
+> [helm-git](https://github.com/aslafy-z/helm-git), [s3](https://github.com/hypnoglow/helm-s3) and
+> [secrets](https://github.com/jkroepke/helm-secrets).
 
 ### Enabling Autocompletion
 
-To enable autocompletion for Helmfile in a shell, use `helmfile completion`. For example, to add autocompletion for the fish shell, run this command:
+To enable autocompletion for Helmfile in a shell, use `helmfile completion`. For example, to add autocompletion for the
+fish shell, run this command:
 
 ```shell
-helmfile completion fish > ~/.config/fish/completions/helmfile.fish
+helmfile completion fish >~/.config/fish/completions/helmfile.fish
 ```
 
 Helmfile currently provides completion support for Bash, fish and zsh.
@@ -154,14 +211,18 @@ Helmfile currently provides completion support for Bash, fish and zsh.
 ### Documentation
 
 - [Official Helmfile Documentation](https://helmfile.readthedocs.io/)
-- The [Helmfile best practices guide](https://helmfile.readthedocs.io/en/stable/writing-helmfile/#the-helmfile-best-practices-guide)
+- The
+  [Helmfile best practices guide](https://helmfile.readthedocs.io/en/stable/writing-helmfile/#the-helmfile-best-practices-guide)
 - [Renovate support for Helmfile](https://docs.renovatebot.com/modules/manager/helmfile/)
 
 ### Tutorials
 
-- [Even more powerful Helming with Helmfile](https://www.hackerstack.org/even-more-powerful-helming-with-helmfile/) - A tutorial for Helmfile by _Gmkziz_
+- [Even more powerful Helming with Helmfile](https://www.hackerstack.org/even-more-powerful-helming-with-helmfile/) - A
+  tutorial for Helmfile by _Gmkziz_
 
 ### Videos
 
-- [Helmfile - How to manage Kubernetes Helm releases](https://www.youtube.com/watch?v=qIJt8Iq8Zb0), from _AI & DevOps Toolkit_, 29 minutes
-- [Complete Helm Chart Tutorial: From Beginner to Expert Guide](https://www.youtube.com/watch?v=DQk8HOVlumI) - by _Rahul Wagh_, 2 hours, includes Helmfile
+- [Helmfile - How to manage Kubernetes Helm releases](https://www.youtube.com/watch?v=qIJt8Iq8Zb0), from
+  _AI & DevOps Toolkit_, 29 minutes
+- [Complete Helm Chart Tutorial: From Beginner to Expert Guide](https://www.youtube.com/watch?v=DQk8HOVlumI) - by
+  _Rahul Wagh_, 2 hours, includes Helmfile

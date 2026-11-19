@@ -74,9 +74,9 @@ The `--list-all` option shows the jobs in the GitLab configuration:
 $ gitlab-ci-local --list-all
 parsing and downloads finished in 105 ms.
 json schema validated in 495 ms
-name              description  stage   when        allow_failure  needs
-check-python                   build   on_success  false
-secret_detection               test    always      true
+name description stage when allow_failure needs
+check-python build on_success false
+secret_detection test always true
 ```
 
 You set variables for pipelines either in
@@ -115,7 +115,7 @@ To enable autocompletion in a shell, use `gitlab-ci-local --completion`. This co
 shells:
 
 ```shell
-gitlab-ci-local --completion >> ~/.bashrc
+gitlab-ci-local --completion >>~/.bashrc
 ```
 
 > Bash is currently the only type of shell that is supported for autocompletion.
@@ -147,9 +147,9 @@ The `--list-all` option shows the jobs in the GitLab configuration:
 $ gitlab-ci-local --list-all
 parsing and downloads finished in 105 ms.
 json schema validated in 495 ms
-name              description  stage   when        allow_failure  needs
-check-python                   build   on_success  false
-secret_detection               test    always      true
+name description stage when allow_failure needs
+check-python build on_success false
+secret_detection test always true
 ```
 
 ## Documentation

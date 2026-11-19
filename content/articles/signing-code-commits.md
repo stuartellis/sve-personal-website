@@ -8,27 +8,41 @@ tags = ["devops"]
 
 +++
 
-We should always sign the commits that we make in source code repositories, especially for shared projects like Open Source software. This ensures that every commit includes a signature that links it to a specific author. Since I use more than one repository hosting service, I have written this article on how to set up commit signing in a way that works across services.
+We should always sign the commits that we make in source code repositories, especially for shared projects like Open
+Source software. This ensures that every commit includes a signature that links it to a specific author. Since I use
+more than one repository hosting service, I have written this article on how to set up commit signing in a way that
+works across services.
 
-This method uses [GnuPG](https://gnupg.org/), the current standard Open Source tool for signing code commits. [Sequoia PGP](https://sequoia-pgp.org/) may supersede GnuPG in future.
+This method uses [GnuPG](https://gnupg.org/), the current standard Open Source tool for signing code commits.
+[Sequoia PGP](https://sequoia-pgp.org/) may supersede GnuPG in future.
 
-> _GPG_: Many existing documents use the term _GPG_ instead of _GnuPG_ or _OpenPGP_. To avoid confusion, this article follows the same convention.
+> _GPG_: Many existing documents use the term _GPG_ instead of _GnuPG_ or _OpenPGP_. To avoid confusion, this article
+> follows the same convention.
 
 ## How Commit Signing Works
 
-If you use a repository hosting service like [Codeberg](https://codeberg.org/), [GitHub](https://github.com/) or an instance of [GitLab](https://about.gitlab.com/), you will see that it can show commits as _Verified_. This means that it has successfully checked the signature on the commit. Git can also [verify signed commits](https://git-scm.com/docs/git-verify-commit).
+If you use a repository hosting service like [Codeberg](https://codeberg.org/), [GitHub](https://github.com/) or an
+instance of [GitLab](https://about.gitlab.com/), you will see that it can show commits as _Verified_. This means that it
+has successfully checked the signature on the commit. Git can also
+[verify signed commits](https://git-scm.com/docs/git-verify-commit).
 
-> GitHub and GitLab allow you to sign commits with SSH keys. Avoid using SSH keys to sign commits, because the SSH key standard does not support verification or revocation of keys across independent and distributed systems.
+> GitHub and GitLab allow you to sign commits with SSH keys. Avoid using SSH keys to sign commits, because the SSH key
+> standard does not support verification or revocation of keys across independent and distributed systems.
 
-To sign your commits, create a keypair with GPG and configure Git to use it. Once you do this, Git can automatically sign every commit and tag that you make. The private key in the keypair stays on your device. You publish the public key, so that other systems can use it to verify signed items.
+To sign your commits, create a keypair with GPG and configure Git to use it. Once you do this, Git can automatically
+sign every commit and tag that you make. The private key in the keypair stays on your device. You publish the public
+key, so that other systems can use it to verify signed items.
 
-Register the public key with the hosting services that you use, so that they can verify your commits. If you work on Open Source projects, publish your GPG public keys to open key servers as well. This enables other people to verify your commits without relying on the hosting service.
+Register the public key with the hosting services that you use, so that they can verify your commits. If you work on
+Open Source projects, publish your GPG public keys to open key servers as well. This enables other people to verify your
+commits without relying on the hosting service.
 
 The rest of this article leads you through the process to enable commit signing.
 
 ## Installing GPG
 
-Many Linux distributions automatically include GPG. To install GPG on macOS, use [Homebrew](http://brew.sh/). Run these commands to install GPG and integration with the desktop:
+Many Linux distributions automatically include GPG. To install GPG on macOS, use [Homebrew](http://brew.sh/). Run these
+commands to install GPG and integration with the desktop:
 
 ```shell
 brew install gnupg
@@ -80,7 +94,8 @@ git config --global commit.gpgsign true
 
 ## Registering Your GPG Key with Repository Hosts
 
-Add your GPG key to your accounts on code hosting services that you use. These services each provide their own documentation on how to register your GPG key:
+Add your GPG key to your accounts on code hosting services that you use. These services each provide their own
+documentation on how to register your GPG key:
 
 - [Codeberg](https://docs.codeberg.org/security/gpg-key/)
 - [GitHub](https://docs.github.com/en/authentication/managing-commit-signature-verification/adding-a-gpg-key-to-your-github-account)
@@ -88,4 +103,6 @@ Add your GPG key to your accounts on code hosting services that you use. These s
 
 ## Publishing Your GPG Key to Key Servers
 
-If you work on Open Source projects, publish your GPG public key to [the OpenPGP key server](https://keys.openpgp.org/). If you contribute to an existing project, you might also publish your GPG public key to other servers that the project recommends. This enables other people to verify your commits without relying on a hosting service.
+If you work on Open Source projects, publish your GPG public key to [the OpenPGP key server](https://keys.openpgp.org/).
+If you contribute to an existing project, you might also publish your GPG public key to other servers that the project
+recommends. This enables other people to verify your commits without relying on a hosting service.

@@ -22,7 +22,8 @@ Useful links for working with Azure DevOps.
 - [Terraform Provider](https://registry.terraform.io/providers/microsoft/azuredevops/latest/docs)
 - [Using Postman to call the Azure DevOps API](https://sanderh.dev/call-Azure-DevOps-REST-API-Postman/)
 
-> A collection is available through the Postman Public API Network: **manb-msft/Azure DevOps REST Security APIs with Examples**.
+> A collection is available through the Postman Public API Network:
+> **manb-msft/Azure DevOps REST Security APIs with Examples**.
 
 ## Pipelines Documentation
 
