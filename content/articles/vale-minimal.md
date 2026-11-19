@@ -27,6 +27,8 @@ brew install vale
 
 ## Example Configuration Files for Vale
 
+Add a configuration file for Vale to the root directory of each project. Name this configuration file `.vale.ini`.
+
 This example configuration file for a project enables the features that Vale provides, including
 [checking spelling](https://docs.vale.sh/checks/spelling) with US English, and style checks from the
 [write-good](https://vale.sh/explorer/write-good) package:
