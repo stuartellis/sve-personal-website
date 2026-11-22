@@ -474,7 +474,7 @@ Follow [the style guidelines](https://taskfile.dev/styleguide/) when writing tas
   [wildcard task names](https://taskfile.dev/usage/#wildcard-arguments) to get inputs for a task from the command-line.
 - Specify the [requires](https://taskfile.dev/usage/#ensuring-required-variables-are-set) attribute for each task that
   uses a variable. This ensures that the task has the necessary variables.
-- Use a tool like [fnox](https://fnox.jdx.dev/) to provide environment variables. Avoid using
+- Use a tool like [SecretSpec](https://secretspec.dev/) to provide environment variables. Avoid using
   [dotenv files](https://taskfile.dev/usage/#env-files) for usernames, passwords, API tokens, or any other kind of
   secret.
 - Use Bash shell syntax for tasks. Task uses [mvdan/sh](https://github.com/mvdan/sh) to provide the equivalent of the

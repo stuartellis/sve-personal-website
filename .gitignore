@@ -30,9 +30,6 @@ logs/
 .envrc
 !.env.example
 
-# fnox
-fnox.local.toml
-
 # Hugo
 .hugo_build.lock
 

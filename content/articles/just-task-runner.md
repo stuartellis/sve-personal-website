@@ -374,7 +374,7 @@ Follow these guidelines when writing recipes:
 - Set a [default recipe](https://just.systems/man/en/the-default-recipe.html). When _just_ is invoked without the name
   of a recipe, it runs the default recipe. If there no default recipe, it will run the first recipe in the _justfile_.
 - Use [parameters](https://just.systems/man/en/recipe-parameters.html) to get inputs for a recipe from the command-line.
-- Use a tool like [fnox](https://fnox.jdx.dev/) to provide environment variables. Avoid using
+- Use a tool like [SecretSpec](https://secretspec.dev/) to provide environment variables. Avoid using
   [dotenv files](https://just.systems/man/en/settings.html#dotenv-settings) for usernames, passwords, API tokens, or any
   other kind of secret.
 - Remember to use POSIX shell (_sh_) syntax for single-line recipes. By default, _just_ uses the _sh_ shell on the

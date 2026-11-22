@@ -101,17 +101,17 @@ to log in to systems with your identity.
 You will need to make API tokens, credentials and other secrets available to development tools when required, without
 storing them in unencrypted files. If you work for an organization, they should provide a solution for you to use, such
 as [Infisical](https://infisical.com/) or [Hashicorp Vault](https://www.hashicorp.com/en/products/vault). Otherwise,
-consider using [fnox](https://fnox.jdx.dev/).
+consider using [SecretSpec](https://secretspec.dev/).
 
 > Always rotate your API tokens regularly. If you work for an organization, they should automatically rotate the API
 > tokens for their services and the tools that they specify should provide the current API tokens for you.
 
-The `fnox` tool works with a range of local and remote [providers](https://fnox.jdx.dev/providers/overview.html) to get
+SecretSpec works with a range of local and remote [providers](https://secretspec.dev/concepts/providers/) to get
 credentials and set them as environment variables. For example, it supports KeePassXC as a local provider. This means
 that you can store secrets in the providers of your choice, with different providers for different secrets.
 
-To install `fnox` with Homebrew, run this command in a terminal window:
+To install SecretSpec with Homebrew, run this command in a terminal window:
 
 ```shell
-brew install fnox
+brew install secretspec
 ```

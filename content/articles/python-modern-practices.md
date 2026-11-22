@@ -338,7 +338,7 @@ like API tokens. If your application is a command-line tool, you should also pro
 environment variables.
 
 This approach enables you to set the variables in whatever way is appropriate for the current environment without
-changing the code. For example, you can use a tool like [fnox](https://fnox.jdx.dev/) or a service like
+changing the code. For example, you can use a tool like [SecretSpec](https://secretspec.dev/) or a service like
 [Infisical](https://infisical.com/) to manage environment variables in development, and then configure the orchestration
 system that runs the code on cloud services to set the same variables as needed.
 
